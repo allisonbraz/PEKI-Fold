@@ -23,7 +23,16 @@ const estado = {
   comparacao: null,   // [{id, pdbText, dados}] das proteinas comparadas
   cmpPockets: null,   // [{id, pockets:[...]}] resultado dos pockets na comparacao
   ultimoMotivo: null, // {motivo, ocorrencias} da ultima busca (para exportacao)
+  superficie: null,   // estado da superficie 3D: null | {sel, color, opacity}
+  pocketSort: null,   // {col, dir} de ordenacao da tabela de pockets
 };
+
+// Atualiza a query string para permitir compartilhar/recarregar a análise por link.
+function atualizarURL(chave, valor) {
+  const u = new URL(location.href);
+  u.search = valor ? `?${chave}=${valor}` : "";
+  history.replaceState(null, "", u);
+}
 
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => Array.from(document.querySelectorAll(sel));
@@ -76,12 +85,15 @@ async function analisar({ pdbId, file }) {
     }
 
     ProtAnalysis.validar(texto);
+    const nModelos = ProtAnalysis.contarModelos(texto);
+    texto = ProtAnalysis.primeiroModelo(texto); // NMR: usa só o 1º modelo
     const dados = ProtAnalysis.analisarCompleto(texto);
     dados.nome = nome;
     dados.pdb_text = texto;
     dados.pdb_id = id;
+    dados.nModelos = nModelos;
     iniciarWorkspace(dados);
-    if (id) enriquecerMetaRCSB(id); // enriquece o card de metadados (assíncrono)
+    if (id) { enriquecerMetaRCSB(id); atualizarURL("pdb", id); } // enriquece + URL compartilhável
   } catch (e) {
     mostrarErro(e.message);
   } finally {
@@ -98,7 +110,10 @@ function iniciarWorkspace(dados) {
   estado.pockets = null;
   estado.pocketsRaw = null;
   estado.ultimoMotivo = null;
+  estado.superficie = null;
+  estado.pocketSort = null;
   estado.meta = ProtAnalysis.extrairMetadados(dados.pdb_text);
+  if (dados.nModelos > 1) estado.meta.modelos = dados.nModelos;
 
   estado.corPorCadeia = {};
   dados.cadeias.forEach((cid, i) => {
@@ -158,6 +173,7 @@ function renderMeta() {
   const tags = [];
   if (m.metodo) tags.push(m.metodo);
   if (m.resolucao) tags.push(`${m.resolucao} Å`);
+  if (m.modelos > 1) tags.push(`modelo 1 de ${m.modelos}`);
   if (m.organismos?.length) tags.push(`<em>${m.organismos.join(", ")}</em>`);
   if (m.peso) tags.push(`${Math.round(m.peso)} kDa`);
   if (m.data) tags.push(m.data);
@@ -180,6 +196,7 @@ function renderViewer() {
   estado.viewer = $3Dmol.createViewer(div, { backgroundColor: "#0b1020" });
   estado.viewer.addModel(estado.pdbText, "pdb");
   $("#lig-controle").hidden = !(estado.meta?.ligantes?.length);
+  $("#surf-toggle").checked = false;
   aplicarEstilo();
   estado.viewer.zoomTo();
   estado.viewer.render();
@@ -200,6 +217,24 @@ function aplicarEstilo() {
   const ligs = (estado.meta?.ligantes || []).map((l) => l.id);
   if (ligs.length && $("#lig-toggle")?.checked) {
     v.setStyle({ resn: ligs }, { stick: { radius: 0.18 }, sphere: { scale: 0.28 } });
+  }
+  v.render();
+}
+
+// Superfície molecular: estado.superficie = null | { sels:[...], color, opacity }.
+// sels é uma lista de seleções (toda a proteína = [{}]; pocket = uma por cadeia).
+function aplicarSuperficie() {
+  const v = estado.viewer;
+  if (!v) return;
+  v.removeAllSurfaces();
+  const s = estado.superficie;
+  if (s) {
+    for (const sel of s.sels) {
+      try {
+        const p = v.addSurface($3Dmol.SurfaceType.SAS, { opacity: s.opacity, color: s.color }, sel);
+        if (p && p.then) p.then(() => v.render());
+      } catch (e) { /* ignora falhas de geração de superfície */ }
+    }
   }
   v.render();
 }
@@ -318,7 +353,9 @@ function renderStats() {
       🟢 Maior: cadeia ${st.maior.cadeia} (${st.maior.residuos} resíduos) ·
       🔴 Menor: cadeia ${st.menor.cadeia} (${st.menor.residuos} resíduos)</p>`;
   }
+  html += `<div class="tab-acoes"><button id="btn-stats-csv" class="dl-btn">⬇ CSV</button></div>`;
   cont.innerHTML = html;
+  $("#btn-stats-csv").addEventListener("click", baixarCsvStats);
 }
 
 // ----- aba: aminoacidos -----
@@ -581,6 +618,29 @@ function maxPor(pockets, chave) {
   return melhor;
 }
 
+// Colunas da tabela de pockets (ordenáveis ao clicar no cabeçalho).
+const POCKET_TABELA = [
+  { key: "name", label: "Pocket" }, { key: "volume", label: "Volume (Å³)" },
+  { key: "surface", label: "Superfície (Å²)" }, { key: "depth", label: "Profundidade" },
+  { key: "hydrophobicity", label: "Hidrofob." }, { key: "accept", label: "Aceptores" },
+  { key: "donor", label: "Doadores" }, { key: "drugScore", label: "DrugScore" },
+];
+
+// Aplica a ordenação atual (estado.pocketSort) preservando o índice original.
+function pocketsOrdenados(pockets) {
+  const arr = pockets.map((p, i) => ({ p, i }));
+  const s = estado.pocketSort;
+  if (s) {
+    arr.sort((a, b) => {
+      if (s.col === "name") return s.dir * String(a.p.name).localeCompare(String(b.p.name));
+      const va = a.p[s.col] == null ? -Infinity : a.p[s.col];
+      const vb = b.p[s.col] == null ? -Infinity : b.p[s.col];
+      return s.dir * (va - vb);
+    });
+  }
+  return arr;
+}
+
 function renderTabelaPockets(pockets) {
   const cont = $("#pockets-resultado");
   const maiorVol = maxPor(pockets, "volume");
@@ -588,13 +648,16 @@ function renderTabelaPockets(pockets) {
   const maisHidro = maxPor(pockets, "hydrophobicity");
   const melhorDrug = maxPor(pockets, "drugScore");
 
-  let html = `<table class="pockets-tabela"><thead><tr>
-    <th>Pocket</th><th>Volume (Å³)</th><th>Superfície (Å²)</th><th>Profundidade</th>
-    <th>Hidrofob.</th><th>Aceptores</th><th>Doadores</th><th>DrugScore</th><th>3D</th>
-  </tr></thead><tbody>`;
-  pockets.forEach((p, i) => {
-    let cls = "";
-    if (maiorVol && p.name === maiorVol.name) cls = "destaque-maior";
+  const s = estado.pocketSort;
+  const th = POCKET_TABELA.map((c) => {
+    const seta = s && s.col === c.key ? (s.dir === 1 ? " ▲" : " ▼") : "";
+    return `<th class="th-sort" data-col="${c.key}">${c.label}${seta}</th>`;
+  }).join("");
+
+  let html = `<div class="tab-acoes"><button id="btn-pockets-csv" class="dl-btn">⬇ CSV</button></div>`;
+  html += `<table class="pockets-tabela"><thead><tr>${th}<th>3D</th></tr></thead><tbody>`;
+  for (const { p, i } of pocketsOrdenados(pockets)) {
+    const cls = maiorVol && p.name === maiorVol.name ? "destaque-maior" : "";
     html += `<tr class="${cls}">
       <td><strong>${p.name}</strong></td>
       <td>${fmt(p.volume)}</td><td>${fmt(p.surface)}</td><td>${fmt(p.depth)}</td>
@@ -602,7 +665,7 @@ function renderTabelaPockets(pockets) {
       <td>${fmt(p.drugScore, 3)}</td>
       <td>${p.residuosUrl ? `<button class="link-btn pocket-3d" data-idx="${i}">👁 ver</button>` : "—"}</td>
     </tr>`;
-  });
+  }
   html += `</tbody></table>`;
 
   // Respostas analiticas (adaptadas: por pocket dentro desta proteina)
@@ -636,6 +699,15 @@ function renderTabelaPockets(pockets) {
   $$("#pockets-resultado .pocket-3d").forEach((btn) => {
     btn.addEventListener("click", () => destacarPocket(Number(btn.dataset.idx)));
   });
+  $$("#pockets-resultado .th-sort").forEach((th) => {
+    th.addEventListener("click", () => {
+      const col = th.dataset.col;
+      const cur = estado.pocketSort;
+      estado.pocketSort = cur && cur.col === col ? { col, dir: -cur.dir } : { col, dir: 1 };
+      renderTabelaPockets(estado.pockets);
+    });
+  });
+  $("#btn-pockets-csv").addEventListener("click", baixarCsvPockets);
 
   plotPockets(pockets);
 }
@@ -679,14 +751,16 @@ async function destacarPocket(idx) {
       (selPorCadeia[cadeia] = selPorCadeia[cadeia] || new Set()).add(resi);
     }
     aplicarEstilo();
-    for (const [cadeia, resis] of Object.entries(selPorCadeia)) {
-      estado.viewer.setStyle(
-        { chain: cadeia, resi: [...resis] },
-        { stick: { color: "magenta" }, sphere: { color: "magenta", radius: 0.4 } }
-      );
+    const sels = Object.entries(selPorCadeia).map(([cadeia, resis]) => ({ chain: cadeia, resi: [...resis] }));
+    for (const sel of sels) {
+      estado.viewer.setStyle(sel, { stick: { color: "magenta" }, sphere: { color: "magenta", radius: 0.4 } });
     }
     estado.viewer.render();
-    status.textContent = `✓ ${p.name} destacado em magenta no viewer 3D.`;
+    // superfície da cavidade (sobre os resíduos do pocket)
+    estado.superficie = { sels, color: "#ff5cd0", opacity: 0.8 };
+    $("#surf-toggle").checked = true;
+    aplicarSuperficie();
+    status.textContent = `✓ ${p.name}: resíduos destacados e superfície exibida no 3D.`;
   } catch (e) {
     status.innerHTML = `❌ Falha ao destacar o pocket: ${e.message}`;
   }
@@ -715,6 +789,7 @@ async function compararProteinas(idsRaw) {
     estado.comparacao = proteinas;
     estado.cmpPockets = null;
     iniciarComparacao();
+    atualizarURL("compare", ids.join(","));
   } catch (e) {
     mostrarErro(e.message);
   } finally {
@@ -767,8 +842,9 @@ function renderCmpStats() {
     html += `<tr class="${cls}"><td><strong>${r.id}</strong></td><td>${r.cadeias}</td>
       <td>${r.atomos}</td><td>${r.residuos}</td><td>${r.aaDiferentes}</td></tr>`;
   }
-  html += `</tbody></table><div id="cmp-graf-stats" class="grafico"></div>`;
+  html += `</tbody></table><div class="tab-acoes"><button id="btn-cmp-stats-csv" class="dl-btn">⬇ CSV</button></div><div id="cmp-graf-stats" class="grafico"></div>`;
   cont.innerHTML = html;
+  $("#btn-cmp-stats-csv").addEventListener("click", baixarCsvCmpStats);
 
   const escuro = document.body.dataset.theme === "dark";
   Plotly.newPlot("cmp-graf-stats", [
@@ -856,7 +932,8 @@ function renderCmpPockets(resultado) {
 
   // tabela: pocket principal por proteina
   const maxVolPrinc = Math.max(...principais.map((p) => p.volume ?? -Infinity));
-  let html = `<h4 style="margin-top:14px">Pocket principal por proteína</h4>
+  let html = `<div class="tab-acoes"><button id="btn-cmp-pockets-csv" class="dl-btn">⬇ CSV (todos os pockets)</button></div>`;
+  html += `<h4 style="margin-top:14px">Pocket principal por proteína</h4>
     <table class="pockets-tabela"><thead><tr>
     <th>Proteína</th><th>Pocket</th><th>Volume (Å³)</th><th>Profundidade</th><th>Hidrofob.</th><th>DrugScore</th>
     </tr></thead><tbody>`;
@@ -901,6 +978,7 @@ function renderCmpPockets(resultado) {
   <div id="cmp-graf-phydro" class="grafico"></div>`;
 
   cont.innerHTML = html;
+  $("#btn-cmp-pockets-csv").addEventListener("click", baixarCsvCmpPockets);
   plotCmpPockets(principais);
 }
 
@@ -1001,6 +1079,30 @@ function baixarTexto(nome, conteudo, mime) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a"); a.href = url; a.download = nome; a.click();
   URL.revokeObjectURL(url);
+}
+function toCsv(headers, rows) {
+  const esc = (v) => { const s = String(v ?? ""); return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; };
+  return [headers, ...rows].map((r) => r.map(esc).join(",")).join("\n") + "\n";
+}
+function baixarCsvStats() {
+  const st = estado.dados.estatisticas;
+  const rows = st.cadeias.map((c) => [c.cadeia, c.atomos, c.residuos, c.aminoacidos_diferentes]);
+  baixarTexto(`${baseNome()}_estatisticas.csv`, toCsv(["Cadeia", "Atomos", "Residuos", "Aminoacidos_diferentes"], rows), "text/csv;charset=utf-8");
+}
+function baixarCsvPockets() {
+  if (!estado.pockets) return;
+  const rows = pocketsOrdenados(estado.pockets).map(({ p }) => [p.name, p.volume ?? "", p.surface ?? "", p.depth ?? "", p.hydrophobicity ?? "", p.accept ?? "", p.donor ?? "", p.drugScore ?? ""]);
+  baixarTexto(`${baseNome()}_pockets.csv`, toCsv(["Pocket", "Volume_A3", "Superficie_A2", "Profundidade", "Hidrofobicidade", "Aceptores", "Doadores", "DrugScore"], rows), "text/csv;charset=utf-8");
+}
+function baixarCsvCmpStats() {
+  const rows = estado.comparacao.map(resumoProteina).map((r) => [r.id, r.cadeias, r.atomos, r.residuos, r.aaDiferentes]);
+  baixarTexto(`PEKI-Fold_comparacao_${estado.comparacao.map((p) => p.id).join("-")}_estatisticas.csv`, toCsv(["Proteina", "Cadeias", "Atomos", "Residuos", "Aminoacidos_diferentes"], rows), "text/csv;charset=utf-8");
+}
+function baixarCsvCmpPockets() {
+  if (!estado.cmpPockets) return;
+  const rows = [];
+  for (const r of estado.cmpPockets) for (const p of r.pockets) rows.push([r.id, p.name, p.volume ?? "", p.surface ?? "", p.depth ?? "", p.hydrophobicity ?? "", p.accept ?? "", p.donor ?? "", p.drugScore ?? ""]);
+  baixarTexto(`PEKI-Fold_comparacao_${estado.cmpPockets.map((r) => r.id).join("-")}_pockets.csv`, toCsv(["Proteina", "Pocket", "Volume_A3", "Superficie_A2", "Profundidade", "Hidrofobicidade", "Aceptores", "Doadores", "DrugScore"], rows), "text/csv;charset=utf-8");
 }
 function mdTabela(head, rows) {
   let s = "| " + head.join(" | ") + " |\n| " + head.map(() => "---").join(" | ") + " |\n";
@@ -1303,6 +1405,7 @@ function init() {
     $("#entrada").hidden = false;
     $("#pdb-id").value = "";
     $("#file-input").value = "";
+    atualizarURL();
   });
 
   // comparação
@@ -1313,12 +1416,17 @@ function init() {
     $("#comparacao").hidden = true;
     $("#entrada").hidden = false;
     $("#cmp-ids").value = "";
+    atualizarURL();
   });
   $$("#comparacao .aba").forEach((a) => a.addEventListener("click", () => trocarAbaCmp(a.dataset.ctab)));
   $$("#workspace .aba").forEach((a) => a.addEventListener("click", () => trocarAba(a.dataset.tab)));
   $("#estilo-3d").addEventListener("change", aplicarEstilo);
   $("#spin").addEventListener("change", (e) => { if (estado.viewer) estado.viewer.spin(e.target.checked ? "y" : false); });
   $("#lig-toggle").addEventListener("change", aplicarEstilo);
+  $("#surf-toggle").addEventListener("change", (e) => {
+    estado.superficie = e.target.checked ? { sels: [{}], color: "#9ec5ff", opacity: 0.65 } : null;
+    aplicarSuperficie();
+  });
   $("#aa-ordem").addEventListener("change", plotAA);
   $("#btn-aa-csv").addEventListener("click", baixarCsvAA);
   $("#btn-motivo").addEventListener("click", buscarMotivo);
@@ -1338,6 +1446,13 @@ function init() {
     $("#exp-full").checked = false;
   });
   $("#export-modal").addEventListener("click", (e) => { if (e.target.id === "export-modal") fecharExport(); });
+
+  // deep-link: abre direto a análise a partir da URL (?pdb=1A00 ou ?compare=1A00,4HHB)
+  const params = new URLSearchParams(location.search);
+  const cmpParam = params.get("compare");
+  const pdbParam = params.get("pdb");
+  if (cmpParam) compararProteinas(cmpParam);
+  else if (pdbParam) analisar({ pdbId: pdbParam });
 }
 
 document.addEventListener("DOMContentLoaded", init);

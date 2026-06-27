@@ -199,6 +199,22 @@ const ProtAnalysis = (() => {
     return meta;
   }
 
+  // Em estruturas multi-modelo (NMR), mantém apenas o primeiro MODEL para não
+  // inflar contagens. Estruturas de modelo único são retornadas sem alteração.
+  function primeiroModelo(texto) {
+    if (!/^MODEL\s/m.test(texto)) return texto;
+    const out = [];
+    for (const l of texto.split("\n")) {
+      out.push(l);
+      if (l.startsWith("ENDMDL")) break;
+    }
+    return out.join("\n") + "\n";
+  }
+
+  function contarModelos(texto) {
+    return (texto.match(/^MODEL\s/gm) || []).length;
+  }
+
   function validar(texto) {
     if (!texto.includes("ATOM") && !texto.includes("HETATM")) {
       throw new Error("Arquivo invalido: nenhuma linha ATOM/HETATM encontrada.");
@@ -209,5 +225,6 @@ const ProtAnalysis = (() => {
     AMINOACIDOS_PADRAO,
     listarCadeias, separarCadeias, estatisticas, frequenciaAminoacidos,
     sequenciaUmaLetra, buscarMotivo, analisarCompleto, validar, extrairMetadados,
+    primeiroModelo, contarModelos,
   };
 })();

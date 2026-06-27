@@ -148,6 +148,9 @@ tr.destaque-menor td { background: rgba(232,81,58,.10); }
 .pockets-analise ol { margin: 0; padding-left: 20px; }
 .pockets-analise li { margin-bottom: 6px; font-size: .9rem; }
 .pocket-3d { font-size: .85rem; }
+.th-sort { cursor: pointer; user-select: none; white-space: nowrap; }
+.th-sort:hover { color: var(--primary); }
+.tab-acoes { display: flex; justify-content: flex-end; margin: 10px 0; }
 
 /* Comparação */
 .cmp-painel { margin-top: 4px; }
