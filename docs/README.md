@@ -1,4 +1,6 @@
-# ProtAnalyzer — App estático (GitHub Pages)
+# PEKI Fold — App estático (GitHub Pages)
+
+> **PEKI Fold** = *Protein Exploration Kit for Insights*
 
 Aplicação web **100% estática** para análise estrutural de proteínas (formato PDB).
 Toda a análise roda **no navegador** — não há servidor, banco de dados nem limite de
@@ -11,6 +13,13 @@ em **3D** e explore:
 - **Estatísticas** — átomos, resíduos e aminoácidos diferentes; maior/menor (Programa 03)
 - **Aminoácidos** — frequência e porcentagem dos 20 aminoácidos, em gráfico (Programa 04)
 - **Motivos** — busca de padrões (ex.: `GLY-LYS-SER`) com destaque na 3D (Programa 05)
+- **Pockets** — detecção de cavidades com descritores (volume, superfície, profundidade,
+  hidrofobicidade, aceptores, doadores, drugScore), respostas analíticas, gráficos e
+  destaque dos resíduos na 3D (Programa 06, via API DoGSiteScorer/ProteinsPlus)
+- **Comparação** — compare de 2 a 4 PDBs lado a lado: estatísticas, composição de
+  aminoácidos (gráfico agrupado) e pockets cross-protein, respondendo às 5 perguntas
+  do trabalho entre as proteínas (maior volume, mais profundo, relação volume×profundidade,
+  mais hidrofóbicas, escolha para docking)
 
 ## Arquivos
 
@@ -54,8 +63,10 @@ Acesse: http://localhost:8080
   Precisa de internet; estruturas que não existem retornam erro amigável.
 - O upload é lido com `FileReader` — o arquivo **não sai do computador** do usuário.
 - Estruturas NMR multi-modelo (ex.: 1A0N) podem inflar a contagem de átomos.
-- Detecção de pockets (DoGSite3) **não** está aqui (precisa de backend) — fica para
-  uma versão futura (API oficial ou hospedagem própria na universidade).
+- A detecção de pockets chama a API do **DoGSiteScorer** (`proteins.plus`) direto do
+  navegador (CORS habilitado). Requer um **ID do PDB** (a API trabalha por ID, não por
+  upload) e está sujeita ao *rate limit* do serviço. O cálculo roda no servidor da
+  ProteinsPlus e leva alguns segundos.
 
 ## Backend opcional
 

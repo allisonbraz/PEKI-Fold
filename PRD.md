@@ -1,7 +1,9 @@
 # PRD — Plataforma Web de Análise Estrutural de Proteínas
 
-**Projeto:** ProtAnalyzer (nome provisório)
+**Projeto:** PEKI Fold — Protein Exploration Kit for Insights
 **Autor:** Allison Braz
+**Instituição:** Universidade Federal de Jataí (UFJ)
+**Orientador:** Prof. Dr. Roosevelt Alves da Silva
 **Data:** 2026-06-27
 **Status:** Rascunho para discussão
 **Base:** Evolução dos Programas 01–06 (CLI em Python) do Trabalho Final de Algoritmos para uma aplicação web online, visual e capaz de processar qualquer PDB.
@@ -54,6 +56,7 @@ Hoje o projeto é um conjunto de 6 scripts de linha de comando que analisam 10 a
 - Visualização 3D interativa.
 - Análises dos Programas 01–05 na web.
 - Detecção de pockets (Programa 06) — ver decisão na seção 8.
+- **Comparação de 2 a 4 proteínas** (estatísticas, composição de aminoácidos e pockets cross-protein).
 - Exportação CSV/PNG/PDF.
 
 ### Fora do escopo (por enquanto)
@@ -73,6 +76,7 @@ Hoje o projeto é um conjunto de 6 scripts de linha de comando que analisam 10 a
 | 04 — Frequência de aminoácidos | Gráfico de barras interativo por cadeia | Hover com %; opção empilhar cadeias |
 | 05 — Busca de motivos | Campo de busca (ex.: `GLY-LYS-SER`) | Resíduos do motivo destacados na 3D |
 | 06 — Pockets (DoGSite3) | Tabela de pockets + ranking | Pockets renderizados como superfície/esferas na 3D |
+| **Comparação (novo)** | Comparar 2–4 PDBs: estatísticas, aminoácidos e pockets | Tabelas e gráficos comparativos; 5 perguntas cross-protein |
 | Relatório PDF | Botão "Exportar relatório" | PDF gerado on-demand com os resultados da sessão |
 
 ---
@@ -89,6 +93,10 @@ Hoje o projeto é um conjunto de 6 scripts de linha de comando que analisam 10 a
 - **RF8** Viewer 3D com: rotação/zoom, cor por cadeia, destaque de motivo e de pockets.
 - **RF9** Exportação: CSV (estatísticas/pockets), PNG (gráficos) e PDF (relatório).
 - **RF10** Processamento assíncrono para tarefas longas (pockets), com indicador de progresso.
+- **RF11** Comparação de 2 a 4 proteínas (por ID do PDB) lado a lado:
+  - **Estatísticas comparadas:** cadeias, átomos, resíduos e aminoácidos diferentes por proteína, em tabela e gráfico.
+  - **Aminoácidos comparados:** porcentagem dos 20 aminoácidos por proteína, em gráfico de barras agrupado.
+  - **Pockets cross-protein:** pocket principal de cada proteína (volume, profundidade, hidrofobicidade, drugScore) e respostas às 5 perguntas do enunciado entre as proteínas (maior volume, mais profundo, relação volume×profundidade, mais hidrofóbicas, escolha para docking), com gráficos de volume/profundidade/hidrofobicidade do pocket principal por proteína.
 
 ---
 

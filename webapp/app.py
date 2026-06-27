@@ -19,7 +19,7 @@ from fastapi.staticfiles import StaticFiles
 
 import pdb_analysis as analise
 
-app = FastAPI(title="ProtAnalyzer", version="0.1.0")
+app = FastAPI(title="PEKI Fold", version="0.1.0")
 
 DIR_BASE = Path(__file__).resolve().parent
 DIR_STATIC = DIR_BASE / "static"
@@ -48,7 +48,7 @@ def _buscar_rcsb(pdb_id: str) -> str:
 
     url = RCSB_URL.format(id=pdb_id.upper())
     try:
-        req = urllib.request.Request(url, headers={"User-Agent": "ProtAnalyzer/0.1"})
+        req = urllib.request.Request(url, headers={"User-Agent": "PEKIFold/0.1"})
         with urllib.request.urlopen(req, timeout=30) as resp:
             dados = resp.read(TAMANHO_MAX + 1)
     except urllib.error.HTTPError as e:

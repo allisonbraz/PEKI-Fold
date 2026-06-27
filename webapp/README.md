@@ -1,4 +1,6 @@
-# ProtAnalyzer — MVP
+# PEKI Fold — MVP
+
+> **PEKI Fold** = *Protein Exploration Kit for Insights*
 
 Aplicação web para análise estrutural de proteínas (formato PDB). Versão visual
 e online dos Programas 01–05 do Trabalho Final de Algoritmos.

@@ -1,4 +1,4 @@
-// ProtAnalyzer - frontend (MVP)
+// PEKI Fold (Protein Exploration Kit for Insights) - frontend (MVP)
 // Conecta a tela de entrada, o viewer 3D (3Dmol.js), as abas de analise
 // e os graficos (Plotly) ao backend FastAPI.
 

@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ProtAnalyzer — Análise Estrutural de Proteínas</title>
+  <title>PEKI Fold — Protein Exploration Kit for Insights</title>
+  <link rel="icon" type="image/png" href="peki-fold.png" />
   <link rel="stylesheet" href="style.css" />
   <!-- Bibliotecas via CDN: 3Dmol.js (viewer molecular) e Plotly (gráficos) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/3Dmol/2.4.0/3Dmol-min.js"></script>
@@ -14,8 +15,8 @@
     <div class="brand">
       <span class="logo">🧬</span>
       <div>
-        <h1>ProtAnalyzer</h1>
-        <p class="tagline">Análise estrutural de proteínas — cadeias, estatísticas, aminoácidos e motivos</p>
+        <h1>PEKI Fold</h1>
+        <p class="tagline">Protein Exploration Kit for Insights — cadeias, estatísticas, aminoácidos e motivos</p>
       </div>
     </div>
     <button id="theme-toggle" class="ghost-btn" title="Alternar tema">🌙</button>
@@ -24,6 +25,7 @@
   <!-- Tela de entrada -->
   <section id="entrada" class="entrada">
     <div class="card entrada-card">
+      <img class="hero-logo" src="peki-fold.png" alt="PEKI Fold — Protein Exploration Kit for Insights" />
       <h2>Comece por aqui</h2>
       <p class="muted">Cole um ID do PDB ou envie um arquivo <code>.pdb</code>.</p>
 
@@ -112,7 +114,11 @@
   </main>
 
   <footer class="rodape">
-    <span>ProtAnalyzer · MVP · Programas 01–05 · dados do RCSB PDB</span>
+    <p class="creditos">
+      Desenvolvido por <strong>Allison Braz</strong> · Universidade Federal de Jataí (UFJ)<br />
+      sob orientação do <strong>Prof. Dr. Roosevelt Alves da Silva</strong>
+    </p>
+    <p class="muted small">PEKI Fold · MVP · Programas 01–05 · dados do RCSB PDB</p>
   </footer>
 
   <script src="app.js"></script>

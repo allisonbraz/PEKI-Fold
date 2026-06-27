@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ProtAnalyzer — Análise Estrutural de Proteínas</title>
+  <title>PEKI Fold — Protein Exploration Kit for Insights</title>
+  <link rel="icon" type="image/png" href="peki-fold.png" />
   <link rel="stylesheet" href="style.css" />
   <!-- Bibliotecas via CDN: 3Dmol.js (viewer molecular) e Plotly (gráficos) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/3Dmol/2.4.0/3Dmol-min.js"></script>
@@ -14,8 +15,8 @@
     <div class="brand">
       <span class="logo">🧬</span>
       <div>
-        <h1>ProtAnalyzer</h1>
-        <p class="tagline">Análise estrutural de proteínas — cadeias, estatísticas, aminoácidos e motivos</p>
+        <h1>PEKI Fold</h1>
+        <p class="tagline">Protein Exploration Kit for Insights — cadeias, estatísticas, aminoácidos, motivos e pockets</p>
       </div>
     </div>
     <button id="theme-toggle" class="ghost-btn" title="Alternar tema">🌙</button>
@@ -24,6 +25,7 @@
   <!-- Tela de entrada -->
   <section id="entrada" class="entrada">
     <div class="card entrada-card">
+      <img class="hero-logo" src="peki-fold.png" alt="PEKI Fold — Protein Exploration Kit for Insights" />
       <h2>Comece por aqui</h2>
       <p class="muted">Cole um ID do PDB ou envie um arquivo <code>.pdb</code>. Tudo é processado no seu navegador.</p>
 
@@ -46,6 +48,13 @@
         <button class="chip" data-id="4HHB">4HHB</button>
         <button class="chip" data-id="1CRN">1CRN (crambina)</button>
       </div>
+
+      <div class="ou">— ou compare proteínas —</div>
+      <div class="entrada-row">
+        <input id="cmp-ids" type="text" placeholder="IDs separados por espaço (ex.: 1A00 4HHB 1CRN)" />
+        <button id="btn-cmp" class="primary-btn">Comparar</button>
+      </div>
+      <p class="muted small">De 2 a 4 PDBs. Compara estatísticas, aminoácidos e pockets.</p>
 
       <div id="erro" class="erro" hidden></div>
       <div id="loading" class="loading" hidden><span class="spinner"></span> Processando…</div>
@@ -85,6 +94,7 @@
           <button class="aba" data-tab="stats">Estatísticas</button>
           <button class="aba" data-tab="aa">Aminoácidos</button>
           <button class="aba" data-tab="motivos">Motivos</button>
+          <button class="aba" data-tab="pockets">Pockets</button>
         </nav>
 
         <div class="aba-conteudo" id="tab-cadeias"></div>
@@ -105,12 +115,59 @@
           <p class="muted small">Use códigos de 3 letras separados por hífen.</p>
           <div id="motivo-resultado"></div>
         </div>
+        <div class="aba-conteudo" id="tab-pockets" hidden>
+          <p class="muted small">
+            Detecção de pockets (cavidades) com <strong>DoGSiteScorer</strong>
+            (ProteinsPlus — ZBH, Universidade de Hamburgo). Requer um
+            <strong>ID do PDB</strong> e conexão com a internet; o cálculo roda
+            no servidor da ProteinsPlus e leva alguns segundos.
+          </p>
+          <button id="btn-pockets" class="primary-btn">🔍 Detectar pockets</button>
+          <div id="pockets-status" class="muted small" style="margin-top:10px"></div>
+          <div id="pockets-resultado"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Workspace de comparação (2 a 4 proteínas) -->
+  <main id="comparacao" class="workspace" hidden>
+    <div class="ws-header">
+      <div>
+        <h2 id="cmp-titulo">Comparação</h2>
+        <p class="muted small" id="cmp-resumo">—</p>
+      </div>
+      <button id="btn-cmp-novo" class="ghost-btn">↻ Nova análise</button>
+    </div>
+
+    <div class="card painel cmp-painel">
+      <nav class="abas">
+        <button class="aba ativa" data-ctab="stats">Estatísticas</button>
+        <button class="aba" data-ctab="aa">Aminoácidos</button>
+        <button class="aba" data-ctab="pockets">Pockets</button>
+      </nav>
+
+      <div class="aba-conteudo" id="ctab-stats"></div>
+      <div class="aba-conteudo" id="ctab-aa" hidden></div>
+      <div class="aba-conteudo" id="ctab-pockets" hidden>
+        <p class="muted small">
+          Detecta os pockets de cada proteína via <strong>DoGSiteScorer</strong>
+          e compara entre elas, respondendo às 5 perguntas do trabalho. Roda no
+          servidor da ProteinsPlus — leva alguns segundos por proteína.
+        </p>
+        <button id="btn-cmp-pockets" class="primary-btn">🔍 Detectar pockets (todas)</button>
+        <div id="cmp-pockets-status" class="muted small" style="margin-top:10px"></div>
+        <div id="cmp-pockets-resultado"></div>
       </div>
     </div>
   </main>
 
   <footer class="rodape">
-    <span>ProtAnalyzer · App estático · Programas 01–05 · dados do RCSB PDB</span>
+    <p class="creditos">
+      Desenvolvido por <strong>Allison Braz</strong> · Universidade Federal de Jataí (UFJ)<br />
+      sob orientação do <strong>Prof. Dr. Roosevelt Alves da Silva</strong>
+    </p>
+    <p class="muted small">PEKI Fold · App estático · Programas 01–06 · dados do RCSB PDB · pockets via ProteinsPlus/DoGSiteScorer</p>
   </footer>
 
   <script src="pdb-analysis.js"></script>

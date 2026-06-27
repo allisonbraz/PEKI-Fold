@@ -1,4 +1,6 @@
-# ProtAnalyzer
+# PEKI Fold
+
+*Protein Exploration Kit for Insights*
 
 Ferramentas de **análise estrutural de proteínas** (formato PDB) desenvolvidas
 como Trabalho Final da disciplina de Algoritmos (Doutorado — UFJ), com uma
@@ -14,7 +16,7 @@ como Trabalho Final da disciplina de Algoritmos (Doutorado — UFJ), com uma
 | 03 | Estatísticas estruturais (átomos, resíduos, aminoácidos) | `programa03.py` | ✅ |
 | 04 | Frequência de aminoácidos + gráficos | `programa04.py` | ✅ |
 | 05 | Busca de motivos estruturais | `programa05.py` | ✅ |
-| 06 | Detecção de pockets (DoGSite3) | `programa06.py` | ⏳ futuro |
+| 06 | Detecção de pockets (DoGSite3) | `programa06.py` | ✅ (via API ProteinsPlus) |
 
 ## Estrutura do repositório
 
@@ -37,7 +39,13 @@ como Trabalho Final da disciplina de Algoritmos (Doutorado — UFJ), com uma
 
 Aplicação **100% no navegador** — sem servidor, sem instalação, sem limite de
 upload. Cole um ID do PDB (ex.: `1A00`) ou envie um `.pdb`, veja a estrutura em
-3D e explore cadeias, estatísticas, frequência de aminoácidos e motivos.
+3D e explore cadeias, estatísticas, frequência de aminoácidos, motivos e
+**pockets**. A detecção de pockets usa a API oficial do **DoGSiteScorer**
+(ProteinsPlus/ZBH) chamada direto do navegador — só requer um ID do PDB.
+
+Também é possível **comparar de 2 a 4 proteínas** lado a lado (estatísticas,
+aminoácidos e pockets cross-protein, com as 5 perguntas do trabalho respondidas
+entre as proteínas).
 
 Testar localmente:
 ```bash
@@ -66,6 +74,12 @@ python gerar_relatorio.py     # gera Relatorio_Final.pdf
 - **Backend opcional:** FastAPI.
 - **CLI:** Python (pandas, matplotlib, reportlab).
 - **Dados:** estruturas do [RCSB PDB](https://www.rcsb.org/).
+
+## Autoria
+
+Desenvolvido por **Allison Braz** na **Universidade Federal de Jataí (UFJ)**,
+sob orientação do **Prof. Dr. Roosevelt Alves da Silva**, como Trabalho Final da
+disciplina de Algoritmos (Doutorado).
 
 ## Licença / créditos
 
