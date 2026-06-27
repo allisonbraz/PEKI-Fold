@@ -179,6 +179,7 @@ function renderViewer() {
   div.innerHTML = "";
   estado.viewer = $3Dmol.createViewer(div, { backgroundColor: "#0b1020" });
   estado.viewer.addModel(estado.pdbText, "pdb");
+  $("#lig-controle").hidden = !(estado.meta?.ligantes?.length);
   aplicarEstilo();
   estado.viewer.zoomTo();
   estado.viewer.render();
@@ -194,6 +195,11 @@ function aplicarEstilo() {
     const spec = {};
     spec[estilo] = { color: estado.corPorCadeia[cid] };
     v.setStyle(sel, spec);
+  }
+  // ligantes (HET) — exibidos como sticks/esferas com cores por elemento
+  const ligs = (estado.meta?.ligantes || []).map((l) => l.id);
+  if (ligs.length && $("#lig-toggle")?.checked) {
+    v.setStyle({ resn: ligs }, { stick: { radius: 0.18 }, sphere: { scale: 0.28 } });
   }
   v.render();
 }
@@ -329,13 +335,23 @@ function renderAA() {
   plotAA();
 }
 
+// Ordena os itens de frequência conforme o seletor (alfabética/percentual/contagem).
+function itensAAOrdenados(freq) {
+  const itens = freq.itens.slice();
+  const ordem = $("#aa-ordem")?.value || "alpha";
+  if (ordem === "perc") itens.sort((a, b) => b.porcentagem - a.porcentagem);
+  else if (ordem === "cont") itens.sort((a, b) => b.contagem - a.contagem);
+  return itens; // "alpha" = ordem natural (já alfabética)
+}
+
 function plotAA() {
   const cid = $("#aa-cadeia").value;
   const freq = estado.dados.frequencias[cid];
   if (!freq) return;
 
-  const x = freq.itens.map((i) => i.aa);
-  const y = freq.itens.map((i) => i.porcentagem);
+  const itens = itensAAOrdenados(freq);
+  const x = itens.map((i) => i.aa);
+  const y = itens.map((i) => i.porcentagem);
   const cor = estado.corPorCadeia[cid] || "#2a5599";
   const escuro = document.body.dataset.theme === "dark";
 
@@ -351,6 +367,15 @@ function plotAA() {
     plot_bgcolor: "transparent",
     font: { color: escuro ? "#e7edf7" : "#1c2433" },
   }, { responsive: true, displayModeBar: false });
+}
+
+function baixarCsvAA() {
+  const cid = $("#aa-cadeia").value;
+  const freq = estado.dados.frequencias[cid];
+  if (!freq) return;
+  let csv = "Aminoacido,Contagem,Porcentagem\n";
+  for (const i of itensAAOrdenados(freq)) csv += `${i.aa},${i.contagem},${i.porcentagem}\n`;
+  baixarTexto(`${baseNome()}_${cid}_aminoacidos.csv`, csv, "text/csv;charset=utf-8");
 }
 
 // ----- aba: motivos -----
@@ -939,6 +964,7 @@ function abrirExport(ctx) {
     `<label><input type="checkbox" class="exp-item" value="${s.id}" checked /> ${s.label}</label>`
   ).join("");
   $("#exp-full").checked = true;
+  $("#exp-so-pockets").hidden = !itens.some((s) => s.id === "pockets");
   $("#exp-status").textContent = "";
   $("#export-modal").hidden = false;
 }
@@ -1292,6 +1318,9 @@ function init() {
   $$("#workspace .aba").forEach((a) => a.addEventListener("click", () => trocarAba(a.dataset.tab)));
   $("#estilo-3d").addEventListener("change", aplicarEstilo);
   $("#spin").addEventListener("change", (e) => { if (estado.viewer) estado.viewer.spin(e.target.checked ? "y" : false); });
+  $("#lig-toggle").addEventListener("change", aplicarEstilo);
+  $("#aa-ordem").addEventListener("change", plotAA);
+  $("#btn-aa-csv").addEventListener("click", baixarCsvAA);
   $("#btn-motivo").addEventListener("click", buscarMotivo);
   $("#motivo-input").addEventListener("keydown", (e) => { if (e.key === "Enter") buscarMotivo(); });
   $("#btn-pockets").addEventListener("click", detectarPockets);
@@ -1304,6 +1333,10 @@ function init() {
   $("#exp-confirmar").addEventListener("click", confirmarExport);
   $("#exp-full").addEventListener("change", (e) => { $$(".exp-item").forEach((c) => (c.checked = e.target.checked)); });
   $("#exp-itens").addEventListener("change", () => { $("#exp-full").checked = $$(".exp-item").every((c) => c.checked); });
+  $("#exp-so-pockets").addEventListener("click", () => {
+    $$(".exp-item").forEach((c) => (c.checked = c.value === "pockets"));
+    $("#exp-full").checked = false;
+  });
   $("#export-modal").addEventListener("click", (e) => { if (e.target.id === "export-modal") fecharExport(); });
 }
 

@@ -91,6 +91,7 @@
             </select>
           </label>
           <label><input type="checkbox" id="spin" /> Girar</label>
+          <label id="lig-controle" hidden><input type="checkbox" id="lig-toggle" checked /> Ligantes</label>
         </div>
         <div id="viewer" class="viewer"></div>
         <div id="cadeias-legenda" class="legenda"></div>
@@ -112,6 +113,14 @@
             <label>Cadeia:
               <select id="aa-cadeia"></select>
             </label>
+            <label>Ordenar:
+              <select id="aa-ordem">
+                <option value="alpha">Alfabética</option>
+                <option value="perc">Percentual ↓</option>
+                <option value="cont">Contagem ↓</option>
+              </select>
+            </label>
+            <button id="btn-aa-csv" class="dl-btn">⬇ CSV</button>
           </div>
           <div id="aa-grafico" class="grafico"></div>
         </div>
@@ -190,6 +199,7 @@
         <span class="modal-label">O que incluir</span>
         <label class="exp-full-lbl"><input type="checkbox" id="exp-full" checked /> <strong>Tudo</strong></label>
         <div id="exp-itens" class="exp-itens"></div>
+        <button type="button" id="exp-so-pockets" class="link-btn exp-preset" hidden>Só pockets</button>
       </div>
 
       <div class="modal-acoes">
