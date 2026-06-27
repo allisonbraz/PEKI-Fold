@@ -1,0 +1,44 @@
+Construir um programa em python que deverá:
+
+a) Acessar automaticamente a pasta: pdbproteins e listar todos os arquivos .pdb encontrados.
+b) Criar automaticamente uma pasta denominada: resultados_dogsite caso ela ainda não exista.
+c) Executar o DoGSite3 para cada proteína encontrada. 
+Exemplo: Para a proteina1.pdb da pasta pdbproteins o comando deve ser:
+
+dogsite3 -p pdbproteins/proteina1.pdb -o resultados_dogsite/proteina1 -d --writeSiteResiduesPDB
+
+d) Criar automaticamente uma subpasta para cada proteína processada.
+Exemplo:
+resultados_dogsite/
+├── proteina1/
+├── proteina2/
+├── proteina3/
+└── proteina4/
+e) Ao final do processamento, o programa deverá informar: 
+	1) número total de proteínas analisadas;
+        2) tempo total de execução;
+        3) nome das proteínas processadas; 
+        4) existência ou não de erros durante a execução.
+
+O programa deverá tambem procurar automaticamente arquivos de resultados gerados pelo DoGSite3 e
+construir uma tabela denominada: resumo_geral_pockets.csv
+Quando disponíveis, devem ser extraídas as seguintes informações: 
+a) nome da proteína; 
+b) nome do pocket; 
+c) volume; 
+d) superfície; e) profundidade; f) hidrofobicidade; g) número de aceptores; h) número de doadores.
+
+O programa deve tambem analisar os resultados para responder as seguintes perguntas:
+1. Qual proteína apresentou o pocket de maior volume?
+2. Qual proteína apresentou o pocket mais profundo?
+3. Existe relação entre volume e profundidade?
+4. Quais proteínas apresentaram pockets mais hidrofóbicos?
+5. Qual pocket você escolheria para realizar um docking molecular? Justifique.
+
+Construção de Gráficos
+Por mim, o programa deve construir pelo menos dois gráficos utilizando Python.
+Sugestões:
+• Volume do principal pocket por proteína;
+• Profundidade do principal pocket por proteína;
+• Hidrofobicidade do principal pocket por proteína.
+Os gráficos devem conter: a) título; b) legenda; c) nomes dos eixos; d) identificação das proteínas.

@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Saidas geradas pelos programas (reproduziveis ao executar)
+chainsproteins/
+graphs/
+resultados_dogsite/
+_teste_dogsite/
+
+# Deploy / ferramentas
+.vercel/
+node_modules/
+
+# Sistema operacional
+.DS_Store
+**/.DS_Store
+Thumbs.db
+desktop.ini
