@@ -141,5 +141,19 @@ tr.destaque-menor td { background: rgba(232,81,58,.10); }
 #cmp-pockets-resultado h4 { margin: 16px 0 8px; color: var(--primary); }
 #ctab-stats .grafico, #cmp-pockets-resultado .grafico { margin-top: 14px; }
 
+/* Ações do workspace + modal de exportação */
+.ws-acoes { display: flex; gap: 10px; }
+.modal-overlay { position: fixed; inset: 0; background: rgba(8, 14, 28, .55); display: flex; align-items: center; justify-content: center; padding: 20px; z-index: 100; }
+.modal { background: var(--card); color: var(--text); border: 1px solid var(--border); border-radius: 14px; box-shadow: var(--shadow); padding: 22px; width: 100%; max-width: 440px; }
+.modal h3 { margin: 0 0 14px; color: var(--primary-dark); }
+.modal-secao { margin-bottom: 16px; }
+.modal-label { display: block; font-weight: 600; font-size: .85rem; color: var(--muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: .03em; }
+.radio-row { display: flex; gap: 18px; }
+.radio-row label, .exp-itens label, .exp-full-lbl { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+.exp-full-lbl { margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+.exp-itens { display: flex; flex-direction: column; gap: 8px; }
+.modal-acoes { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; }
+#exp-status { margin-top: 10px; text-align: right; }
+
 .rodape { text-align: center; padding: 20px; color: var(--muted); font-size: .85rem; }
 .rodape .creditos { margin: 0 0 8px; color: var(--text); font-size: .92rem; line-height: 1.6; }

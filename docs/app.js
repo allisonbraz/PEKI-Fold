@@ -21,6 +21,7 @@ const estado = {
   pocketsRaw: null,   // resposta bruta da API (inclui URLs de residuos)
   comparacao: null,   // [{id, pdbText, dados}] das proteinas comparadas
   cmpPockets: null,   // [{id, pockets:[...]}] resultado dos pockets na comparacao
+  ultimoMotivo: null, // {motivo, ocorrencias} da ultima busca (para exportacao)
 };
 
 const $ = (sel) => document.querySelector(sel);
@@ -94,6 +95,7 @@ function iniciarWorkspace(dados) {
   estado.dados = dados;
   estado.pockets = null;
   estado.pocketsRaw = null;
+  estado.ultimoMotivo = null;
 
   estado.corPorCadeia = {};
   dados.cadeias.forEach((cid, i) => {
@@ -286,10 +288,13 @@ function buscarMotivo() {
   const ocorrencias = ProtAnalysis.buscarMotivo(estado.pdbText, lista);
 
   if (!ocorrencias.length) {
+    estado.ultimoMotivo = null;
     cont.innerHTML = `<p class="muted">Nenhuma ocorrência de <code>${motivo.join("-")}</code>.</p>`;
     aplicarEstilo();
     return;
   }
+
+  estado.ultimoMotivo = { motivo: motivo.join("-"), ocorrencias };
 
   let html = `<p><strong>${ocorrencias.length}</strong> ocorrência(s) de <code>${motivo.join("-")}</code>:</p>`;
   for (const oc of ocorrencias) {
@@ -816,6 +821,290 @@ function trocarAbaCmp(nome) {
   }, 50);
 }
 
+// ----- exportação (PDF / Markdown) -----
+// As seções disponíveis dependem do contexto (proteína única ou comparação)
+// e do que já foi calculado. Imagens vêm do viewer 3D (3Dmol) e dos gráficos
+// (Plotly.toImage a partir de specs, para não depender da aba estar visível).
+let exportContexto = "single";
+
+const EXPORT_SECOES = {
+  single: () => [
+    { id: "viewer", label: "Estrutura 3D (imagem)", on: () => !!estado.viewer },
+    { id: "cadeias", label: "Cadeias", on: () => !!estado.dados },
+    { id: "stats", label: "Estatísticas", on: () => !!estado.dados },
+    { id: "aa", label: "Aminoácidos (gráficos)", on: () => !!estado.dados },
+    { id: "motivos", label: "Motivos", on: () => !!estado.ultimoMotivo },
+    { id: "pockets", label: "Pockets", on: () => !!estado.pockets },
+  ],
+  cmp: () => [
+    { id: "stats", label: "Estatísticas", on: () => !!estado.comparacao },
+    { id: "aa", label: "Aminoácidos (gráfico)", on: () => !!estado.comparacao },
+    { id: "pockets", label: "Pockets", on: () => !!estado.cmpPockets },
+  ],
+};
+
+function abrirExport(ctx) {
+  exportContexto = ctx;
+  const itens = EXPORT_SECOES[ctx]().filter((s) => s.on());
+  $("#exp-itens").innerHTML = itens.map((s) =>
+    `<label><input type="checkbox" class="exp-item" value="${s.id}" checked /> ${s.label}</label>`
+  ).join("");
+  $("#exp-full").checked = true;
+  $("#exp-status").textContent = "";
+  $("#export-modal").hidden = false;
+}
+
+function fecharExport() { $("#export-modal").hidden = true; }
+
+async function confirmarExport() {
+  const fmt = document.querySelector('input[name="exp-fmt"]:checked').value;
+  const secoes = $$(".exp-item").filter((c) => c.checked).map((c) => c.value);
+  if (!secoes.length) { $("#exp-status").textContent = "Selecione ao menos uma seção."; return; }
+  $("#exp-status").innerHTML = `<span class="spinner"></span> Gerando ${fmt.toUpperCase()}…`;
+  try {
+    if (exportContexto === "single") {
+      fmt === "pdf" ? await exportarPdfSingle(secoes) : await exportarMdSingle(secoes);
+    } else {
+      fmt === "pdf" ? await exportarPdfCmp(secoes) : await exportarMdCmp(secoes);
+    }
+    $("#exp-status").textContent = "✓ Arquivo gerado.";
+    setTimeout(fecharExport, 800);
+  } catch (e) {
+    $("#exp-status").innerHTML = `❌ ${e.message}`;
+  }
+}
+
+// --- helpers de imagem e arquivo ---
+function imgViewer() {
+  try { return estado.viewer ? estado.viewer.pngURI() : null; } catch (e) { return null; }
+}
+async function imgPlotly(spec, w = 760, h = 400) {
+  return await Plotly.toImage(spec, { format: "png", width: w, height: h });
+}
+function baixarTexto(nome, conteudo, mime) {
+  const blob = new Blob([conteudo], { type: mime || "text/plain;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a"); a.href = url; a.download = nome; a.click();
+  URL.revokeObjectURL(url);
+}
+function mdTabela(head, rows) {
+  let s = "| " + head.join(" | ") + " |\n| " + head.map(() => "---").join(" | ") + " |\n";
+  for (const r of rows) s += "| " + r.map((c) => String(c)).join(" | ") + " |\n";
+  return s + "\n";
+}
+function exportBase() {
+  const nome = exportContexto === "cmp"
+    ? "comparacao_" + estado.comparacao.map((p) => p.id).join("-")
+    : (estado.nome || "analise").replace(/\.[^.]+$/, "");
+  return "PEKI-Fold_" + nome;
+}
+const CREDITO = "Desenvolvido por Allison Braz · Universidade Federal de Jataí (UFJ) · orientação do Prof. Dr. Roosevelt Alves da Silva.";
+
+// --- specs de gráficos (reutilizados na exportação) ---
+function specAAChain(cid) {
+  const freq = estado.dados.frequencias[cid];
+  const cor = estado.corPorCadeia[cid] || "#2a5599";
+  return { data: [{ x: freq.itens.map((i) => i.aa), y: freq.itens.map((i) => i.porcentagem), type: "bar", marker: { color: cor } }],
+    layout: { title: `Frequência de aminoácidos — cadeia ${cid}`, xaxis: { title: "Aminoácido" }, yaxis: { title: "Porcentagem (%)" } } };
+}
+function specPocketBar(pockets, chave, titulo, ytit, cor) {
+  return { data: [{ x: pockets.map((p) => p.name), y: pockets.map((p) => p[chave]), type: "bar", marker: { color: cor } }],
+    layout: { title: titulo, xaxis: { title: "Pocket" }, yaxis: { title: ytit } } };
+}
+function specCmpStats() {
+  const res = estado.comparacao.map(resumoProteina);
+  return { data: [{ x: res.map((r) => r.id), y: res.map((r) => r.residuos), type: "bar", marker: { color: res.map((_, i) => CORES_CADEIA[i % CORES_CADEIA.length]) } }],
+    layout: { title: "Resíduos por proteína", xaxis: { title: "Proteína" }, yaxis: { title: "Resíduos" } } };
+}
+function specCmpAA() {
+  const aas = ProtAnalysis.AMINOACIDOS_PADRAO;
+  const data = estado.comparacao.map((p, i) => {
+    const f = ProtAnalysis.frequenciaAminoacidos(p.pdbText); const m = {};
+    f.itens.forEach((it) => (m[it.aa] = it.porcentagem));
+    return { x: aas, y: aas.map((a) => m[a] || 0), type: "bar", name: p.id, marker: { color: CORES_CADEIA[i % CORES_CADEIA.length] } };
+  });
+  return { data, layout: { title: "Composição de aminoácidos por proteína", barmode: "group", xaxis: { title: "Aminoácido" }, yaxis: { title: "%" } } };
+}
+function specCmpPocketBar(principais, chave, titulo, ytit, cor) {
+  return { data: [{ x: principais.map((p) => p.prot), y: principais.map((p) => p[chave]), type: "bar", marker: { color: cor } }],
+    layout: { title: titulo, xaxis: { title: "Proteína" }, yaxis: { title: ytit } } };
+}
+
+// --- textos analíticos ---
+function corrTexto(corr) {
+  if (corr == null) return "dados insuficientes para avaliar.";
+  const f = Math.abs(corr) >= 0.7 ? "forte" : Math.abs(corr) >= 0.4 ? "moderada" : "fraca";
+  return `correlação ${corr >= 0 ? "positiva" : "negativa"} ${f} (r = ${corr.toFixed(2)}).`;
+}
+function textoAnalisePocketsSingle(pk) {
+  const mv = maxPor(pk, "volume"), mp = maxPor(pk, "depth"), mh = maxPor(pk, "hydrophobicity"), md = maxPor(pk, "drugScore");
+  return [
+    `Maior volume: ${mv ? `${mv.name} (${fmt(mv.volume)} Å³)` : "—"}`,
+    `Mais profundo: ${mp ? `${mp.name} (${fmt(mp.depth)})` : "—"}`,
+    `Volume × profundidade: ${corrTexto(pearson(pk.map((p) => p.volume), pk.map((p) => p.depth)))}`,
+    `Mais hidrofóbico: ${mh ? `${mh.name} (${fmt(mh.hydrophobicity)})` : "—"}`,
+    `Sugestão para docking: ${md ? `${md.name} (drugScore ${fmt(md.drugScore, 3)})` : "—"}`,
+  ];
+}
+function textoAnalisePocketsCmp(resultado) {
+  const principais = [], todos = [];
+  for (const r of resultado) {
+    const o = [...r.pockets].filter((p) => p.volume != null).sort((a, b) => b.volume - a.volume);
+    if (o.length) principais.push({ prot: r.id, ...o[0] });
+    for (const pk of r.pockets) todos.push({ prot: r.id, ...pk });
+  }
+  const mv = maxPor(todos, "volume"), mp = maxPor(todos, "depth"), md = maxPor(todos, "drugScore");
+  const rh = [...principais].filter((p) => p.hydrophobicity != null).sort((a, b) => b.hydrophobicity - a.hydrophobicity)
+    .slice(0, 2).map((p) => `${p.prot} (${fmt(p.hydrophobicity)})`).join(", ");
+  return { principais, linhas: [
+    `Proteína com pocket de maior volume: ${mv ? `${mv.prot} — ${mv.name} (${fmt(mv.volume)} Å³)` : "—"}`,
+    `Proteína com pocket mais profundo: ${mp ? `${mp.prot} — ${mp.name} (${fmt(mp.depth)})` : "—"}`,
+    `Volume × profundidade: ${corrTexto(pearson(principais.map((p) => p.volume), principais.map((p) => p.depth)))}`,
+    `Proteínas mais hidrofóbicas: ${rh || "—"}`,
+    `Pocket sugerido para docking: ${md ? `${md.prot} — ${md.name} (drugScore ${fmt(md.drugScore, 3)})` : "—"}`,
+  ] };
+}
+
+// --- Markdown ---
+async function exportarMdSingle(secoes) {
+  const d = estado.dados, st = d.estatisticas;
+  const totalAt = st.cadeias.reduce((s, c) => s + c.atomos, 0);
+  const totalRes = st.cadeias.reduce((s, c) => s + c.residuos, 0);
+  let md = `# PEKI Fold — Análise de ${estado.nome}\n\n*Protein Exploration Kit for Insights*\n\n`;
+  md += `Gerado em ${new Date().toLocaleString("pt-BR")} · ${d.cadeias.length} cadeia(s) · ${totalRes} resíduos · ${totalAt} átomos.\n\n`;
+  if (secoes.includes("viewer")) { const im = imgViewer(); if (im) md += `## Estrutura 3D\n\n![Estrutura 3D](${im})\n\n`; }
+  if (secoes.includes("cadeias")) md += `## Cadeias\n\n` + mdTabela(["Cadeia", "Resíduos", "Átomos", "Aa diferentes"], st.cadeias.map((c) => [c.cadeia, c.residuos, c.atomos, c.aminoacidos_diferentes]));
+  if (secoes.includes("stats")) {
+    md += `## Estatísticas\n\n- Cadeias: ${st.cadeias.length}\n- Átomos: ${totalAt}\n- Resíduos: ${totalRes}\n`;
+    if (st.maior && st.menor) md += `- Maior cadeia: ${st.maior.cadeia} (${st.maior.residuos} resíduos)\n- Menor cadeia: ${st.menor.cadeia} (${st.menor.residuos} resíduos)\n`;
+    md += `\n`;
+  }
+  if (secoes.includes("aa")) { md += `## Aminoácidos\n\n`; for (const cid of d.cadeias) md += `**Cadeia ${cid}**\n\n![Aminoácidos cadeia ${cid}](${await imgPlotly(specAAChain(cid))})\n\n`; }
+  if (secoes.includes("motivos") && estado.ultimoMotivo) {
+    const m = estado.ultimoMotivo;
+    md += `## Motivos\n\nMotivo \`${m.motivo}\` — ${m.ocorrencias.length} ocorrência(s):\n\n` + mdTabela(["Cadeia", "Posição", "Resíduos"], m.ocorrencias.map((o) => [o.cadeia, o.posicao, o.residuos.join(", ")]));
+  }
+  if (secoes.includes("pockets") && estado.pockets) {
+    const pk = estado.pockets;
+    md += `## Pockets\n\n` + mdTabela(["Pocket", "Volume (Å³)", "Superfície (Å²)", "Profundidade", "Hidrofob.", "Aceptores", "Doadores", "DrugScore"],
+      pk.map((p) => [p.name, fmt(p.volume), fmt(p.surface), fmt(p.depth), fmt(p.hydrophobicity), p.accept ?? "—", p.donor ?? "—", fmt(p.drugScore, 3)]));
+    md += `**Análise:**\n\n` + textoAnalisePocketsSingle(pk).map((s) => `- ${s}`).join("\n") + `\n\n`;
+    md += `![Volume por pocket](${await imgPlotly(specPocketBar(pk, "volume", "Volume por pocket", "Volume (Å³)", "#2a5599"))})\n\n`;
+    md += `![Profundidade por pocket](${await imgPlotly(specPocketBar(pk, "depth", "Profundidade por pocket", "Profundidade", "#e8513a"))})\n\n`;
+  }
+  md += `---\n${CREDITO}\n`;
+  baixarTexto(exportBase() + ".md", md, "text/markdown;charset=utf-8");
+}
+
+async function exportarMdCmp(secoes) {
+  const ps = estado.comparacao;
+  let md = `# PEKI Fold — Comparação\n\n*Protein Exploration Kit for Insights*\n\nProteínas: ${ps.map((p) => p.id).join(", ")} · gerado em ${new Date().toLocaleString("pt-BR")}.\n\n`;
+  if (secoes.includes("stats")) {
+    const res = ps.map(resumoProteina);
+    md += `## Estatísticas\n\n` + mdTabela(["Proteína", "Cadeias", "Átomos", "Resíduos", "Aa diferentes"], res.map((r) => [r.id, r.cadeias, r.atomos, r.residuos, r.aaDiferentes]));
+    md += `![Resíduos por proteína](${await imgPlotly(specCmpStats())})\n\n`;
+  }
+  if (secoes.includes("aa")) md += `## Aminoácidos\n\n![Composição de aminoácidos](${await imgPlotly(specCmpAA(), 900, 420)})\n\n`;
+  if (secoes.includes("pockets") && estado.cmpPockets) {
+    const an = textoAnalisePocketsCmp(estado.cmpPockets);
+    md += `## Pockets\n\n### Pocket principal por proteína\n\n` + mdTabela(["Proteína", "Pocket", "Volume (Å³)", "Profundidade", "Hidrofob.", "DrugScore"],
+      an.principais.map((p) => [p.prot, p.name, fmt(p.volume), fmt(p.depth), fmt(p.hydrophobicity), fmt(p.drugScore, 3)]));
+    md += `**Comparação (perguntas do trabalho):**\n\n` + an.linhas.map((s) => `- ${s}`).join("\n") + `\n\n`;
+    md += `![Volume](${await imgPlotly(specCmpPocketBar(an.principais, "volume", "Volume do pocket principal", "Volume (Å³)", "#2a5599"))})\n\n`;
+    md += `![Profundidade](${await imgPlotly(specCmpPocketBar(an.principais, "depth", "Profundidade do pocket principal", "Profundidade", "#e8513a"))})\n\n`;
+    md += `![Hidrofobicidade](${await imgPlotly(specCmpPocketBar(an.principais, "hydrophobicity", "Hidrofobicidade do pocket principal", "Hidrofobicidade", "#9b59b6"))})\n\n`;
+  }
+  md += `---\n${CREDITO}\n`;
+  baixarTexto(exportBase() + ".md", md, "text/markdown;charset=utf-8");
+}
+
+// --- PDF ---
+function pdfHelper(doc) {
+  const W = doc.internal.pageSize.getWidth();
+  const H = doc.internal.pageSize.getHeight();
+  const M = 40;
+  let y = M;
+  const ensure = (h) => { if (y + h > H - M) { doc.addPage(); y = M; } };
+  return {
+    titulo(t) { ensure(34); doc.setFont("helvetica", "bold"); doc.setFontSize(18); doc.setTextColor(14, 58, 46); doc.text(t, M, y); y += 26; doc.setTextColor(40); doc.setFont("helvetica", "normal"); },
+    sub(t) { ensure(26); doc.setFont("helvetica", "bold"); doc.setFontSize(13); doc.setTextColor(14, 58, 46); doc.text(t, M, y); y += 18; doc.setTextColor(40); doc.setFont("helvetica", "normal"); },
+    par(t) { doc.setFontSize(10); const lines = doc.splitTextToSize(t, W - 2 * M); ensure(lines.length * 13 + 4); doc.text(lines, M, y); y += lines.length * 13 + 6; },
+    img(dataUri, maxW) {
+      if (!dataUri) return;
+      const props = doc.getImageProperties(dataUri);
+      const w = Math.min(maxW || (W - 2 * M), W - 2 * M);
+      const h = w * props.height / props.width;
+      ensure(h + 10); doc.addImage(dataUri, "PNG", M, y, w, h); y += h + 12;
+    },
+    tabela(head, body) {
+      doc.autoTable({ startY: y, head: [head], body, margin: { left: M, right: M }, styles: { fontSize: 9 }, headStyles: { fillColor: [14, 58, 46] } });
+      y = doc.lastAutoTable.finalY + 14;
+    },
+    espaco(n) { y += (n || 8); },
+  };
+}
+
+async function exportarPdfSingle(secoes) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: "pt", format: "a4" });
+  const h = pdfHelper(doc);
+  const d = estado.dados, st = d.estatisticas;
+  const totalAt = st.cadeias.reduce((s, c) => s + c.atomos, 0);
+  const totalRes = st.cadeias.reduce((s, c) => s + c.residuos, 0);
+  h.titulo(`PEKI Fold — ${estado.nome}`);
+  h.par(`Protein Exploration Kit for Insights · gerado em ${new Date().toLocaleString("pt-BR")}`);
+  h.par(`${d.cadeias.length} cadeia(s) · ${totalRes} resíduos · ${totalAt} átomos.`);
+  if (secoes.includes("viewer")) { const im = imgViewer(); if (im) { h.sub("Estrutura 3D"); h.img(im, 320); } }
+  if (secoes.includes("cadeias")) { h.sub("Cadeias"); h.tabela(["Cadeia", "Resíduos", "Átomos", "Aa diferentes"], st.cadeias.map((c) => [c.cadeia, c.residuos, c.atomos, c.aminoacidos_diferentes])); }
+  if (secoes.includes("stats")) {
+    h.sub("Estatísticas");
+    const rows = [["Cadeias", st.cadeias.length], ["Átomos", totalAt], ["Resíduos", totalRes]];
+    if (st.maior && st.menor) { rows.push(["Maior cadeia", `${st.maior.cadeia} (${st.maior.residuos} res.)`]); rows.push(["Menor cadeia", `${st.menor.cadeia} (${st.menor.residuos} res.)`]); }
+    h.tabela(["Métrica", "Valor"], rows);
+  }
+  if (secoes.includes("aa")) { h.sub("Aminoácidos"); for (const cid of d.cadeias) h.img(await imgPlotly(specAAChain(cid))); }
+  if (secoes.includes("motivos") && estado.ultimoMotivo) {
+    const m = estado.ultimoMotivo; h.sub("Motivos"); h.par(`Motivo ${m.motivo} — ${m.ocorrencias.length} ocorrência(s).`);
+    h.tabela(["Cadeia", "Posição", "Resíduos"], m.ocorrencias.map((o) => [o.cadeia, o.posicao, o.residuos.join(", ")]));
+  }
+  if (secoes.includes("pockets") && estado.pockets) {
+    const pk = estado.pockets; h.sub("Pockets");
+    h.tabela(["Pocket", "Vol (Å³)", "Sup (Å²)", "Prof", "Hidr.", "Acc", "Don", "Drug"],
+      pk.map((p) => [p.name, fmt(p.volume), fmt(p.surface), fmt(p.depth), fmt(p.hydrophobicity), p.accept ?? "—", p.donor ?? "—", fmt(p.drugScore, 3)]));
+    textoAnalisePocketsSingle(pk).forEach((s) => h.par("• " + s));
+    h.img(await imgPlotly(specPocketBar(pk, "volume", "Volume por pocket", "Volume (Å³)", "#2a5599")));
+    h.img(await imgPlotly(specPocketBar(pk, "depth", "Profundidade por pocket", "Profundidade", "#e8513a")));
+  }
+  h.espaco(6); doc.setFontSize(8); doc.setTextColor(120); h.par(CREDITO);
+  doc.save(exportBase() + ".pdf");
+}
+
+async function exportarPdfCmp(secoes) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: "pt", format: "a4" });
+  const h = pdfHelper(doc);
+  const ps = estado.comparacao;
+  h.titulo("PEKI Fold — Comparação");
+  h.par(`Protein Exploration Kit for Insights · ${ps.map((p) => p.id).join(", ")} · gerado em ${new Date().toLocaleString("pt-BR")}`);
+  if (secoes.includes("stats")) {
+    const res = ps.map(resumoProteina); h.sub("Estatísticas");
+    h.tabela(["Proteína", "Cadeias", "Átomos", "Resíduos", "Aa diferentes"], res.map((r) => [r.id, r.cadeias, r.atomos, r.residuos, r.aaDiferentes]));
+    h.img(await imgPlotly(specCmpStats()));
+  }
+  if (secoes.includes("aa")) { h.sub("Aminoácidos"); h.img(await imgPlotly(specCmpAA(), 900, 420)); }
+  if (secoes.includes("pockets") && estado.cmpPockets) {
+    const an = textoAnalisePocketsCmp(estado.cmpPockets); h.sub("Pockets — pocket principal por proteína");
+    h.tabela(["Proteína", "Pocket", "Volume (Å³)", "Profundidade", "Hidrofob.", "DrugScore"],
+      an.principais.map((p) => [p.prot, p.name, fmt(p.volume), fmt(p.depth), fmt(p.hydrophobicity), fmt(p.drugScore, 3)]));
+    an.linhas.forEach((s) => h.par("• " + s));
+    h.img(await imgPlotly(specCmpPocketBar(an.principais, "volume", "Volume do pocket principal", "Volume (Å³)", "#2a5599")));
+    h.img(await imgPlotly(specCmpPocketBar(an.principais, "depth", "Profundidade do pocket principal", "Profundidade", "#e8513a")));
+    h.img(await imgPlotly(specCmpPocketBar(an.principais, "hydrophobicity", "Hidrofobicidade do pocket principal", "Hidrofobicidade", "#9b59b6")));
+  }
+  h.espaco(6); doc.setFontSize(8); doc.setTextColor(120); h.par(CREDITO);
+  doc.save(exportBase() + ".pdf");
+}
+
 // ----- abas / tema -----
 function trocarAba(nome) {
   $$("#workspace .aba").forEach((a) => a.classList.toggle("ativa", a.dataset.tab === nome));
@@ -888,6 +1177,15 @@ function init() {
   $("#motivo-input").addEventListener("keydown", (e) => { if (e.key === "Enter") buscarMotivo(); });
   $("#btn-pockets").addEventListener("click", detectarPockets);
   $("#theme-toggle").addEventListener("click", alternarTema);
+
+  // exportação
+  $("#btn-export").addEventListener("click", () => abrirExport("single"));
+  $("#btn-cmp-export").addEventListener("click", () => abrirExport("cmp"));
+  $("#exp-cancelar").addEventListener("click", fecharExport);
+  $("#exp-confirmar").addEventListener("click", confirmarExport);
+  $("#exp-full").addEventListener("change", (e) => { $$(".exp-item").forEach((c) => (c.checked = e.target.checked)); });
+  $("#exp-itens").addEventListener("change", () => { $("#exp-full").checked = $$(".exp-item").every((c) => c.checked); });
+  $("#export-modal").addEventListener("click", (e) => { if (e.target.id === "export-modal") fecharExport(); });
 }
 
 document.addEventListener("DOMContentLoaded", init);

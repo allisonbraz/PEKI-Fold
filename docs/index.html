@@ -9,6 +9,9 @@
   <!-- Bibliotecas via CDN: 3Dmol.js (viewer molecular) e Plotly (gráficos) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/3Dmol/2.4.0/3Dmol-min.js"></script>
   <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+  <!-- Exportação em PDF: jsPDF + autotable -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 </head>
 <body>
   <header class="topbar">
@@ -68,7 +71,10 @@
         <h2 id="ws-nome">—</h2>
         <p class="muted small" id="ws-resumo">—</p>
       </div>
-      <button id="btn-novo" class="ghost-btn">↻ Nova análise</button>
+      <div class="ws-acoes">
+        <button id="btn-export" class="ghost-btn">⬇ Exportar</button>
+        <button id="btn-novo" class="ghost-btn">↻ Nova análise</button>
+      </div>
     </div>
 
     <div class="ws-grid">
@@ -137,7 +143,10 @@
         <h2 id="cmp-titulo">Comparação</h2>
         <p class="muted small" id="cmp-resumo">—</p>
       </div>
-      <button id="btn-cmp-novo" class="ghost-btn">↻ Nova análise</button>
+      <div class="ws-acoes">
+        <button id="btn-cmp-export" class="ghost-btn">⬇ Exportar</button>
+        <button id="btn-cmp-novo" class="ghost-btn">↻ Nova análise</button>
+      </div>
     </div>
 
     <div class="card painel cmp-painel">
@@ -161,6 +170,33 @@
       </div>
     </div>
   </main>
+
+  <!-- Modal de exportação -->
+  <div id="export-modal" class="modal-overlay" hidden>
+    <div class="modal">
+      <h3>Exportar análise</h3>
+
+      <div class="modal-secao">
+        <span class="modal-label">Formato</span>
+        <div class="radio-row">
+          <label><input type="radio" name="exp-fmt" value="pdf" checked /> PDF</label>
+          <label><input type="radio" name="exp-fmt" value="md" /> Markdown</label>
+        </div>
+      </div>
+
+      <div class="modal-secao">
+        <span class="modal-label">O que incluir</span>
+        <label class="exp-full-lbl"><input type="checkbox" id="exp-full" checked /> <strong>Tudo</strong></label>
+        <div id="exp-itens" class="exp-itens"></div>
+      </div>
+
+      <div class="modal-acoes">
+        <button id="exp-cancelar" class="ghost-btn">Cancelar</button>
+        <button id="exp-confirmar" class="primary-btn">Exportar</button>
+      </div>
+      <div id="exp-status" class="muted small"></div>
+    </div>
+  </div>
 
   <footer class="rodape">
     <p class="creditos">
