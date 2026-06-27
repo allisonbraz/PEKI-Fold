@@ -15,6 +15,7 @@ const estado = {
   nome: null,
   pdbId: null,
   dados: null,
+  meta: null,         // metadados da estrutura (PDB + RCSB) para o card "Sobre"
   viewer: null,
   corPorCadeia: {},
   pockets: null,      // pockets ja calculados (array de objetos)
@@ -80,6 +81,7 @@ async function analisar({ pdbId, file }) {
     dados.pdb_text = texto;
     dados.pdb_id = id;
     iniciarWorkspace(dados);
+    if (id) enriquecerMetaRCSB(id); // enriquece o card de metadados (assíncrono)
   } catch (e) {
     mostrarErro(e.message);
   } finally {
@@ -96,6 +98,7 @@ function iniciarWorkspace(dados) {
   estado.pockets = null;
   estado.pocketsRaw = null;
   estado.ultimoMotivo = null;
+  estado.meta = ProtAnalysis.extrairMetadados(dados.pdb_text);
 
   estado.corPorCadeia = {};
   dados.cadeias.forEach((cid, i) => {
@@ -109,6 +112,7 @@ function iniciarWorkspace(dados) {
   const totalRes = dados.estatisticas.cadeias.reduce((s, c) => s + c.residuos, 0);
   $("#ws-resumo").textContent = `${dados.cadeias.length} cadeia(s) · ${totalRes} resíduos no total`;
 
+  renderMeta();
   renderViewer();
   renderCadeias();
   renderStats();
@@ -117,6 +121,56 @@ function iniciarWorkspace(dados) {
   $("#motivo-resultado").innerHTML = "";
 
   window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+// ----- metadados (card "Sobre a estrutura") -----
+async function buscarMetaRCSB(id) {
+  try {
+    const r = await fetch(`https://data.rcsb.org/rest/v1/core/entry/${id}`, { headers: { Accept: "application/json" } });
+    if (!r.ok) return null;
+    const d = await r.json();
+    return {
+      titulo: d.struct?.title || null,
+      metodo: d.exptl?.[0]?.method || null,
+      resolucao: d.rcsb_entry_info?.resolution_combined?.[0] ?? null,
+      peso: d.rcsb_entry_info?.molecular_weight ?? null,
+      data: d.rcsb_accession_info?.deposit_date ? d.rcsb_accession_info.deposit_date.slice(0, 10) : null,
+      classificacao: d.struct_keywords?.pdbx_keywords || null,
+    };
+  } catch (e) { return null; }
+}
+
+async function enriquecerMetaRCSB(id) {
+  const rcsb = await buscarMetaRCSB(id);
+  if (!rcsb || !estado.meta || estado.pdbId !== id) return; // ignora se já trocou de análise
+  for (const k of ["titulo", "metodo", "resolucao", "peso", "data", "classificacao"]) {
+    if (rcsb[k] != null) estado.meta[k] = rcsb[k];
+  }
+  estado.meta.rcsbId = id;
+  renderMeta();
+}
+
+function renderMeta() {
+  const m = estado.meta;
+  const el = $("#ws-meta");
+  if (!m || !(m.titulo || m.classificacao || m.organismos?.length || m.ligantes?.length)) { el.hidden = true; return; }
+
+  const tags = [];
+  if (m.metodo) tags.push(m.metodo);
+  if (m.resolucao) tags.push(`${m.resolucao} Å`);
+  if (m.organismos?.length) tags.push(`<em>${m.organismos.join(", ")}</em>`);
+  if (m.peso) tags.push(`${Math.round(m.peso)} kDa`);
+  if (m.data) tags.push(m.data);
+  if (m.rcsbId) tags.push(`<a href="https://www.rcsb.org/structure/${m.rcsbId}" target="_blank" rel="noopener">Ver no RCSB ↗</a>`);
+
+  const ligs = (m.ligantes || []).map((l) => `${l.id}${l.count > 1 ? ` ×${l.count}` : ""}`).join(", ");
+
+  el.innerHTML =
+    `<div class="meta-titulo">${m.titulo || m.classificacao || estado.nome}</div>` +
+    (m.classificacao && m.titulo ? `<div class="muted small">${m.classificacao}</div>` : "") +
+    (tags.length ? `<div class="meta-tags">${tags.map((t) => `<span class="meta-tag">${t}</span>`).join("")}</div>` : "") +
+    (ligs ? `<div class="muted small">Ligantes: ${ligs}</div>` : "");
+  el.hidden = false;
 }
 
 // ----- viewer 3D -----
@@ -162,6 +216,11 @@ function renderCadeias() {
   cont.innerHTML = "";
   leg.innerHTML = "";
 
+  const acoes = document.createElement("div");
+  acoes.className = "cadeias-acoes";
+  acoes.innerHTML = `<button id="btn-fasta-todas" class="fasta-btn">⬇ FASTA (todas)</button>`;
+  cont.appendChild(acoes);
+
   for (const c of estado.dados.estatisticas.cadeias) {
     const cor = estado.corPorCadeia[c.cadeia] || "#888";
 
@@ -180,13 +239,30 @@ function renderCadeias() {
           <div class="muted small">${c.residuos} resíduos · ${c.atomos} átomos</div>
         </div>
       </div>
-      <button class="dl-btn" data-chain="${c.cadeia}">⬇ Baixar PDB</button>`;
+      <div class="cadeia-btns">
+        <button class="dl-btn" data-chain="${c.cadeia}">⬇ PDB</button>
+        <button class="fasta-btn" data-chain="${c.cadeia}">⬇ FASTA</button>
+      </div>`;
     cont.appendChild(div);
   }
 
   $$("#tab-cadeias .dl-btn").forEach((btn) => {
     btn.addEventListener("click", () => baixarCadeia(btn.dataset.chain));
   });
+  $$("#tab-cadeias .fasta-btn[data-chain]").forEach((btn) => {
+    btn.addEventListener("click", () => baixarArquivo(`${baseNome()}_${btn.dataset.chain}.fasta`, seqFasta(btn.dataset.chain)));
+  });
+  $("#btn-fasta-todas").addEventListener("click", () =>
+    baixarArquivo(`${baseNome()}.fasta`, estado.dados.cadeias.map(seqFasta).join("")));
+}
+
+function baseNome() { return (estado.nome || "protein").replace(/\.[^.]+$/, ""); }
+
+// Sequência da cadeia em formato FASTA (quebrada em linhas de 60 caracteres).
+function seqFasta(cid) {
+  const seq = estado.dados.sequencias[cid] || "";
+  const linhas = seq.match(/.{1,60}/g) || [""];
+  return `>${baseNome()}_${cid}\n${linhas.join("\n")}\n`;
 }
 
 function baixarCadeia(chain) {
@@ -311,6 +387,21 @@ function buscarMotivo() {
 // resultado ficar pronto e a tabela de descritores (TSV) e baixada e parseada.
 const DOGSITE_API = "https://proteins.plus/api/dogsite_rest";
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+// Cache de pockets por sessão, por ID do PDB — evita re-chamar a API (e o rate limit)
+// ao reanalisar a mesma proteína ou ao usá-la na comparação.
+const POCKETS_CACHE = {};
+
+async function obterPockets(id, onTick) {
+  const chave = id.toUpperCase();
+  if (POCKETS_CACHE[chave]) return POCKETS_CACHE[chave];
+  const location = await dogsiteSubmit(id);
+  const resultado = await dogsitePoll(location, onTick);
+  const txt = await (await fetch(resultado.result_table)).text();
+  const pockets = parseTabelaPockets(txt);
+  pockets.forEach((p, i) => { p.residuosUrl = (resultado.residues || [])[i] || null; });
+  POCKETS_CACHE[chave] = { pockets, residues: resultado.residues || [] };
+  return POCKETS_CACHE[chave];
+}
 
 // Colunas usadas da tabela de descritores do DoGSiteScorer.
 const POCKET_COLS = {
@@ -336,7 +427,12 @@ function renderPockets() {
 
   btn.disabled = false;
   status.textContent = "";
+  // auto-carrega do cache se esta proteína já teve pockets calculados na sessão
+  if (!estado.pockets && POCKETS_CACHE[estado.pdbId.toUpperCase()]) {
+    estado.pockets = POCKETS_CACHE[estado.pdbId.toUpperCase()].pockets;
+  }
   if (estado.pockets) {
+    status.textContent = `✓ ${estado.pockets.length} pocket(s) para ${estado.pdbId}.`;
     renderTabelaPockets(estado.pockets);
   }
 }
@@ -346,27 +442,20 @@ async function detectarPockets() {
   const btn = $("#btn-pockets");
   const status = $("#pockets-status");
   const cont = $("#pockets-resultado");
+  const cacheado = !!POCKETS_CACHE[estado.pdbId.toUpperCase()];
 
   btn.disabled = true;
   cont.innerHTML = "";
-  status.innerHTML = `<span class="spinner"></span> Enviando ${estado.pdbId} ao DoGSiteScorer…`;
+  status.innerHTML = cacheado ? "" : `<span class="spinner"></span> Enviando ${estado.pdbId} ao DoGSiteScorer…`;
 
   try {
-    const location = await dogsiteSubmit(estado.pdbId);
-    const resultado = await dogsitePoll(location, (n) => {
+    const { pockets } = await obterPockets(estado.pdbId, (n) => {
       status.innerHTML = `<span class="spinner"></span> Calculando pockets no servidor… (verificação ${n})`;
     });
-
-    const txt = await (await fetch(resultado.result_table)).text();
-    const pockets = parseTabelaPockets(txt);
     if (!pockets.length) throw new Error("Nenhum pocket retornado pela API.");
 
-    // guarda URLs de residuos por indice (para destaque 3D)
-    pockets.forEach((p, i) => { p.residuosUrl = (resultado.residues || [])[i] || null; });
-
     estado.pockets = pockets;
-    estado.pocketsRaw = resultado;
-    status.textContent = `✓ ${pockets.length} pocket(s) detectado(s) para ${estado.pdbId}.`;
+    status.textContent = `✓ ${pockets.length} pocket(s)${cacheado ? " (do cache)" : ""} para ${estado.pdbId}.`;
     renderTabelaPockets(pockets);
   } catch (e) {
     status.innerHTML = `❌ ${e.message}`;
@@ -714,11 +803,9 @@ async function detectarPocketsComparacao() {
     const resultado = [];
     for (let i = 0; i < estado.comparacao.length; i++) {
       const p = estado.comparacao[i];
-      status.innerHTML = `<span class="spinner"></span> Calculando pockets de ${p.id} (${i + 1}/${estado.comparacao.length})…`;
-      const location = await dogsiteSubmit(p.id);
-      const res = await dogsitePoll(location);
-      const txt = await (await fetch(res.result_table)).text();
-      const pockets = parseTabelaPockets(txt);
+      const cacheado = !!POCKETS_CACHE[p.id.toUpperCase()];
+      status.innerHTML = `<span class="spinner"></span> ${cacheado ? "Carregando" : "Calculando"} pockets de ${p.id} (${i + 1}/${estado.comparacao.length})…`;
+      const { pockets } = await obterPockets(p.id);
       resultado.push({ id: p.id, pockets });
     }
     estado.cmpPockets = resultado;
@@ -829,10 +916,12 @@ let exportContexto = "single";
 
 const EXPORT_SECOES = {
   single: () => [
+    { id: "meta", label: "Sobre a estrutura", on: () => !!(estado.meta && (estado.meta.titulo || estado.meta.classificacao || estado.meta.organismos?.length)) },
     { id: "viewer", label: "Estrutura 3D (imagem)", on: () => !!estado.viewer },
     { id: "cadeias", label: "Cadeias", on: () => !!estado.dados },
     { id: "stats", label: "Estatísticas", on: () => !!estado.dados },
     { id: "aa", label: "Aminoácidos (gráficos)", on: () => !!estado.dados },
+    { id: "sequencias", label: "Sequências (FASTA)", on: () => !!estado.dados },
     { id: "motivos", label: "Motivos", on: () => !!estado.ultimoMotivo },
     { id: "pockets", label: "Pockets", on: () => !!estado.pockets },
   ],
@@ -899,6 +988,19 @@ function exportBase() {
   return "PEKI-Fold_" + nome;
 }
 const CREDITO = "Desenvolvido por Allison Braz · Universidade Federal de Jataí (UFJ) · orientação do Prof. Dr. Roosevelt Alves da Silva.";
+
+function metaLinhas() {
+  const m = estado.meta || {}; const out = [];
+  if (m.classificacao) out.push(["Classificação", m.classificacao]);
+  if (m.metodo) out.push(["Método", m.metodo]);
+  if (m.resolucao) out.push(["Resolução", `${m.resolucao} Å`]);
+  if (m.organismos?.length) out.push(["Organismo", m.organismos.join(", ")]);
+  if (m.peso) out.push(["Peso molecular", `${Math.round(m.peso)} kDa`]);
+  if (m.data) out.push(["Depósito", m.data]);
+  if (m.ligantes?.length) out.push(["Ligantes", m.ligantes.map((l) => `${l.id}${l.count > 1 ? ` ×${l.count}` : ""}${l.nome ? ` (${l.nome})` : ""}`).join(", ")]);
+  if (m.rcsbId) out.push(["RCSB", `https://www.rcsb.org/structure/${m.rcsbId}`]);
+  return out;
+}
 
 // --- specs de gráficos (reutilizados na exportação) ---
 function specAAChain(cid) {
@@ -972,6 +1074,11 @@ async function exportarMdSingle(secoes) {
   const totalRes = st.cadeias.reduce((s, c) => s + c.residuos, 0);
   let md = `# PEKI Fold — Análise de ${estado.nome}\n\n*Protein Exploration Kit for Insights*\n\n`;
   md += `Gerado em ${new Date().toLocaleString("pt-BR")} · ${d.cadeias.length} cadeia(s) · ${totalRes} resíduos · ${totalAt} átomos.\n\n`;
+  if (secoes.includes("meta") && estado.meta) {
+    md += `## Sobre a estrutura\n\n`;
+    if (estado.meta.titulo) md += `**${estado.meta.titulo}**\n\n`;
+    md += metaLinhas().map(([k, v]) => `- ${k}: ${v}`).join("\n") + `\n\n`;
+  }
   if (secoes.includes("viewer")) { const im = imgViewer(); if (im) md += `## Estrutura 3D\n\n![Estrutura 3D](${im})\n\n`; }
   if (secoes.includes("cadeias")) md += `## Cadeias\n\n` + mdTabela(["Cadeia", "Resíduos", "Átomos", "Aa diferentes"], st.cadeias.map((c) => [c.cadeia, c.residuos, c.atomos, c.aminoacidos_diferentes]));
   if (secoes.includes("stats")) {
@@ -980,6 +1087,7 @@ async function exportarMdSingle(secoes) {
     md += `\n`;
   }
   if (secoes.includes("aa")) { md += `## Aminoácidos\n\n`; for (const cid of d.cadeias) md += `**Cadeia ${cid}**\n\n![Aminoácidos cadeia ${cid}](${await imgPlotly(specAAChain(cid))})\n\n`; }
+  if (secoes.includes("sequencias")) md += `## Sequências (FASTA)\n\n\`\`\`\n` + d.cadeias.map(seqFasta).join("") + `\`\`\`\n\n`;
   if (secoes.includes("motivos") && estado.ultimoMotivo) {
     const m = estado.ultimoMotivo;
     md += `## Motivos\n\nMotivo \`${m.motivo}\` — ${m.ocorrencias.length} ocorrência(s):\n\n` + mdTabela(["Cadeia", "Posição", "Resíduos"], m.ocorrencias.map((o) => [o.cadeia, o.posicao, o.residuos.join(", ")]));
@@ -1054,6 +1162,11 @@ async function exportarPdfSingle(secoes) {
   h.titulo(`PEKI Fold — ${estado.nome}`);
   h.par(`Protein Exploration Kit for Insights · gerado em ${new Date().toLocaleString("pt-BR")}`);
   h.par(`${d.cadeias.length} cadeia(s) · ${totalRes} resíduos · ${totalAt} átomos.`);
+  if (secoes.includes("meta") && estado.meta) {
+    h.sub("Sobre a estrutura");
+    if (estado.meta.titulo) h.par(estado.meta.titulo);
+    const ml = metaLinhas(); if (ml.length) h.tabela(["Campo", "Valor"], ml);
+  }
   if (secoes.includes("viewer")) { const im = imgViewer(); if (im) { h.sub("Estrutura 3D"); h.img(im, 320); } }
   if (secoes.includes("cadeias")) { h.sub("Cadeias"); h.tabela(["Cadeia", "Resíduos", "Átomos", "Aa diferentes"], st.cadeias.map((c) => [c.cadeia, c.residuos, c.atomos, c.aminoacidos_diferentes])); }
   if (secoes.includes("stats")) {
@@ -1063,6 +1176,12 @@ async function exportarPdfSingle(secoes) {
     h.tabela(["Métrica", "Valor"], rows);
   }
   if (secoes.includes("aa")) { h.sub("Aminoácidos"); for (const cid of d.cadeias) h.img(await imgPlotly(specAAChain(cid))); }
+  if (secoes.includes("sequencias")) {
+    h.sub("Sequências (FASTA)");
+    doc.setFont("courier", "normal");
+    for (const cid of d.cadeias) h.par(seqFasta(cid).trim());
+    doc.setFont("helvetica", "normal");
+  }
   if (secoes.includes("motivos") && estado.ultimoMotivo) {
     const m = estado.ultimoMotivo; h.sub("Motivos"); h.par(`Motivo ${m.motivo} — ${m.ocorrencias.length} ocorrência(s).`);
     h.tabela(["Cadeia", "Posição", "Resíduos"], m.ocorrencias.map((o) => [o.cadeia, o.posicao, o.residuos.join(", ")]));

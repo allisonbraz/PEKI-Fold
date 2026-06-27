@@ -161,6 +161,44 @@ const ProtAnalysis = (() => {
     };
   }
 
+  // Extrai metadados dos registros de cabeçalho do PDB (HEADER, TITLE, COMPND,
+  // SOURCE, EXPDTA, REMARK 2, HET/HETNAM). Funciona para upload e para ID.
+  function extrairMetadados(texto) {
+    const meta = { id: null, classificacao: null, data: null, titulo: null,
+      metodo: null, resolucao: null, organismos: [], moleculas: [], ligantes: [] };
+    const titulo = [], hetCount = {}, hetNome = {};
+    for (const l of texto.split("\n")) {
+      const rec = l.substring(0, 6).trim();
+      if (rec === "HEADER") {
+        meta.classificacao = l.substring(10, 50).trim() || null;
+        meta.data = l.substring(50, 59).trim() || null;
+        meta.id = l.substring(62, 66).trim() || null;
+      } else if (rec === "TITLE") {
+        titulo.push(l.substring(10).trim());
+      } else if (rec === "EXPDTA") {
+        meta.metodo = ((meta.metodo ? meta.metodo + " " : "") + l.substring(10).trim()).trim();
+      } else if (l.startsWith("REMARK   2 RESOLUTION")) {
+        const m = l.match(/([\d.]+)\s*ANGSTROM/);
+        if (m) meta.resolucao = parseFloat(m[1]);
+      } else if (rec === "COMPND") {
+        const m = l.match(/MOLECULE:\s*(.+?);?\s*$/);
+        if (m && !meta.moleculas.includes(m[1].trim())) meta.moleculas.push(m[1].trim());
+      } else if (rec === "SOURCE") {
+        const m = l.match(/ORGANISM_SCIENTIFIC:\s*(.+?);?\s*$/);
+        if (m && !meta.organismos.includes(m[1].trim())) meta.organismos.push(m[1].trim());
+      } else if (rec === "HET") {
+        const id = l.substring(7, 10).trim();
+        if (id && id !== "HOH") hetCount[id] = (hetCount[id] || 0) + 1;
+      } else if (rec === "HETNAM") {
+        const id = l.substring(11, 14).trim();
+        if (id) hetNome[id] = ((hetNome[id] ? hetNome[id] + " " : "") + l.substring(15).trim()).trim();
+      }
+    }
+    meta.titulo = titulo.join(" ").replace(/\s+/g, " ").trim() || null;
+    meta.ligantes = Object.keys(hetCount).map((id) => ({ id, count: hetCount[id], nome: hetNome[id] || null }));
+    return meta;
+  }
+
   function validar(texto) {
     if (!texto.includes("ATOM") && !texto.includes("HETATM")) {
       throw new Error("Arquivo invalido: nenhuma linha ATOM/HETATM encontrada.");
@@ -170,6 +208,6 @@ const ProtAnalysis = (() => {
   return {
     AMINOACIDOS_PADRAO,
     listarCadeias, separarCadeias, estatisticas, frequenciaAminoacidos,
-    sequenciaUmaLetra, buscarMotivo, analisarCompleto, validar,
+    sequenciaUmaLetra, buscarMotivo, analisarCompleto, validar, extrairMetadados,
   };
 })();

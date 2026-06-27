@@ -23,7 +23,6 @@ como Trabalho Final da disciplina de Algoritmos (Doutorado — UFJ), com uma
 ```
 .
 ├── docs/             # App web estático (GitHub Pages) — análise no navegador
-├── webapp/           # Backend FastAPI opcional (mesmas análises via API)
 ├── pdbproteins/      # Estruturas PDB de entrada (exemplos)
 ├── programa01..06.py # Programas da atividade (CLI)
 ├── separador.py      # Módulo de separação de cadeias
@@ -69,11 +68,12 @@ python gerar_relatorio.py     # gera Relatorio_Final.pdf
 
 ## Tecnologias
 
-- **Web:** HTML/CSS/JS estático, [3Dmol.js](https://3dmol.csb.pitt.edu/) (viewer 3D)
-  e [Plotly](https://plotly.com/javascript/) (gráficos), via CDN.
-- **Backend opcional:** FastAPI.
+- **Web:** HTML/CSS/JS estático (sem backend), [3Dmol.js](https://3dmol.csb.pitt.edu/) (viewer 3D),
+  [Plotly](https://plotly.com/javascript/) (gráficos) e [jsPDF](https://github.com/parallax/jsPDF)
+  (exportação), via CDN.
 - **CLI:** Python (pandas, matplotlib, reportlab).
-- **Dados:** estruturas do [RCSB PDB](https://www.rcsb.org/).
+- **Dados:** estruturas e metadados do [RCSB PDB](https://www.rcsb.org/);
+  pockets via [DoGSiteScorer/ProteinsPlus](https://proteins.plus/).
 
 ## Autoria
 

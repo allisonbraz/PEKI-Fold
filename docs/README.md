@@ -67,8 +67,5 @@ Acesse: http://localhost:8080
   navegador (CORS habilitado). Requer um **ID do PDB** (a API trabalha por ID, não por
   upload) e está sujeita ao *rate limit* do serviço. O cálculo roda no servidor da
   ProteinsPlus e leva alguns segundos.
-
-## Backend opcional
-
-A versão com backend FastAPI (mesmas análises via API) está em `../webapp/`, caso
-no futuro seja necessário processamento no servidor (ex.: integração com DoGSite3).
+- Ao informar um **ID do PDB**, o app busca metadados na API oficial do RCSB
+  (`data.rcsb.org`, CORS habilitado) para o card "Sobre a estrutura".
