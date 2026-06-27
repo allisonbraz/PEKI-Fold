@@ -15,6 +15,26 @@ _teste_dogsite/
 .vercel/
 node_modules/
 
+# Ferramentas de desenvolvimento com IA / AIOX (nao fazem parte do trabalho)
+.agent/
+.aiox/
+.aiox-core/
+.antigravity/
+.claude/
+.codex/
+.cursor/
+.gemini/
+.github/
+squads/
+workspace/
+AGENTS.md
+pro-installed-manifest.yaml
+pro-version.json
+.env
+.env.*
+.env.example
+" (2).gitignore"
+
 # Sistema operacional
 .DS_Store
 **/.DS_Store
