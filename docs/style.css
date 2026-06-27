@@ -70,6 +70,10 @@ button { font: inherit; cursor: pointer; border-radius: 8px; border: none; }
 .dropzone { border: 2px dashed var(--border); border-radius: 12px; padding: 26px; transition: .2s; }
 .dropzone.hover { border-color: var(--primary); background: rgba(42,85,153,.06); }
 .exemplos { margin-top: 20px; font-size: .9rem; color: var(--muted); }
+.ajuda { margin-top: 18px; text-align: left; font-size: .88rem; color: var(--muted); }
+.ajuda summary { cursor: pointer; font-weight: 600; color: var(--primary); }
+.ajuda ul { margin: 8px 0 0; padding-left: 20px; }
+.ajuda li { margin-bottom: 5px; }
 .erro { margin-top: 16px; padding: 10px 14px; background: rgba(232,81,58,.12); color: var(--accent); border-radius: 8px; }
 .loading { margin-top: 16px; color: var(--primary); display: flex; align-items: center; justify-content: center; gap: 8px; }
 
@@ -147,6 +151,10 @@ tr.destaque-menor td { background: rgba(232,81,58,.10); }
 .pockets-analise h4 { margin: 0 0 8px; color: var(--primary); }
 .pockets-analise ol { margin: 0; padding-left: 20px; }
 .pockets-analise li { margin-bottom: 6px; font-size: .9rem; }
+.legenda-desc { margin-top: 10px; font-size: .85rem; color: var(--muted); }
+.legenda-desc summary { cursor: pointer; font-weight: 600; color: var(--primary); }
+.legenda-desc ul { margin: 8px 0 0; padding-left: 20px; }
+.legenda-desc li { margin-bottom: 4px; }
 .pocket-3d { font-size: .85rem; }
 .th-sort { cursor: pointer; user-select: none; white-space: nowrap; }
 .th-sort:hover { color: var(--primary); }
@@ -154,6 +162,13 @@ tr.destaque-menor td { background: rgba(232,81,58,.10); }
 
 /* Comparação */
 .cmp-painel { margin-top: 4px; }
+.cmp-estruturas { margin-bottom: 16px; }
+.cmp-est-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: .95rem; }
+.cmp-est-head select { padding: 4px 8px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg); color: var(--text); }
+.cmp-viewers { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+.cmp-viewer-item { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+.cmp-viewer-label { padding: 7px 10px; font-weight: 600; font-size: .9rem; border-bottom: 1px solid var(--border); }
+.cmp-viewer { width: 100%; background: #0b1020; position: relative; }
 #cmp-pockets-resultado h4 { margin: 16px 0 8px; color: var(--primary); }
 #ctab-stats .grafico, #cmp-pockets-resultado .grafico { margin-top: 14px; }
 

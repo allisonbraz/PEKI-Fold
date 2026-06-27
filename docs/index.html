@@ -59,6 +59,16 @@
       </div>
       <p class="muted small">De 2 a 4 PDBs. Compara estatísticas, aminoácidos e pockets.</p>
 
+      <details class="ajuda">
+        <summary>Como usar</summary>
+        <ul>
+          <li><strong>ID do PDB</strong> (ex.: <code>1A00</code>): busca a estrutura no RCSB — habilita metadados e pockets.</li>
+          <li><strong>Upload</strong> de <code>.pdb</code>: análise local, sem sair do navegador (sem pockets).</li>
+          <li><strong>Comparar</strong>: 2 a 4 IDs para ver estatísticas, aminoácidos e pockets lado a lado.</li>
+          <li>No workspace: <strong>abas</strong> (cadeias, estatísticas, aminoácidos, motivos, pockets), <strong>viewer 3D</strong> e botão <strong>Exportar</strong> (PDF/Markdown/CSV).</li>
+        </ul>
+      </details>
+
       <div id="erro" class="erro" hidden></div>
       <div id="loading" class="loading" hidden><span class="spinner"></span> Processando…</div>
     </div>
@@ -93,6 +103,13 @@
           <label><input type="checkbox" id="spin" /> Girar</label>
           <label id="lig-controle" hidden><input type="checkbox" id="lig-toggle" checked /> Ligantes</label>
           <label><input type="checkbox" id="surf-toggle" /> Superfície</label>
+          <label>Tamanho:
+            <select id="viewer-tam">
+              <option value="360">P</option>
+              <option value="460" selected>M</option>
+              <option value="620">G</option>
+            </select>
+          </label>
         </div>
         <div id="viewer" class="viewer"></div>
         <div id="cadeias-legenda" class="legenda"></div>
@@ -159,6 +176,20 @@
         <button id="btn-cmp-export" class="ghost-btn">⬇ Exportar</button>
         <button id="btn-cmp-novo" class="ghost-btn">↻ Nova análise</button>
       </div>
+    </div>
+
+    <div class="card cmp-estruturas">
+      <div class="cmp-est-head">
+        <strong>Estruturas 3D</strong>
+        <label>Tamanho:
+          <select id="cmp-tam">
+            <option value="180">P</option>
+            <option value="260" selected>M</option>
+            <option value="380">G</option>
+          </select>
+        </label>
+      </div>
+      <div id="cmp-viewers" class="cmp-viewers"></div>
     </div>
 
     <div class="card painel cmp-painel">

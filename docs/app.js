@@ -22,6 +22,7 @@ const estado = {
   pocketsRaw: null,   // resposta bruta da API (inclui URLs de residuos)
   comparacao: null,   // [{id, pdbText, dados}] das proteinas comparadas
   cmpPockets: null,   // [{id, pockets:[...]}] resultado dos pockets na comparacao
+  cmpViewers: [],     // viewers 3D (um por proteina) no modo comparacao
   ultimoMotivo: null, // {motivo, ocorrencias} da ultima busca (para exportacao)
   superficie: null,   // estado da superficie 3D: null | {sel, color, opacity}
   pocketSort: null,   // {col, dir} de ordenacao da tabela de pockets
@@ -219,6 +220,11 @@ function aplicarEstilo() {
     v.setStyle({ resn: ligs }, { stick: { radius: 0.18 }, sphere: { scale: 0.28 } });
   }
   v.render();
+}
+
+function ajustarTamViewer() {
+  $("#viewer").style.height = `${parseInt($("#viewer-tam").value, 10)}px`;
+  if (estado.viewer) { estado.viewer.resize(); estado.viewer.render(); }
 }
 
 // Superfície molecular: estado.superficie = null | { sels:[...], color, opacity }.
@@ -620,10 +626,14 @@ function maxPor(pockets, chave) {
 
 // Colunas da tabela de pockets (ordenáveis ao clicar no cabeçalho).
 const POCKET_TABELA = [
-  { key: "name", label: "Pocket" }, { key: "volume", label: "Volume (Å³)" },
-  { key: "surface", label: "Superfície (Å²)" }, { key: "depth", label: "Profundidade" },
-  { key: "hydrophobicity", label: "Hidrofob." }, { key: "accept", label: "Aceptores" },
-  { key: "donor", label: "Doadores" }, { key: "drugScore", label: "DrugScore" },
+  { key: "name", label: "Pocket", dica: "Identificador do pocket (P_0 é o de maior volume)" },
+  { key: "volume", label: "Volume (Å³)", dica: "Volume da cavidade, em Å³ — quanto maior, mais espaço para um ligante" },
+  { key: "surface", label: "Superfície (Å²)", dica: "Área da superfície do pocket, em Å²" },
+  { key: "depth", label: "Profundidade", dica: "Quão fundo é a cavidade — bolsos mais profundos tendem a ligar melhor" },
+  { key: "hydrophobicity", label: "Hidrofob.", dica: "Hidrofobicidade (0–1) — afinidade por grupos apolares" },
+  { key: "accept", label: "Aceptores", dica: "Número de aceptores de ligação de hidrogênio" },
+  { key: "donor", label: "Doadores", dica: "Número de doadores de ligação de hidrogênio" },
+  { key: "drugScore", label: "DrugScore", dica: "Drugabilidade estimada (0–1) — potencial do bolso para ligar fármacos" },
 ];
 
 // Aplica a ordenação atual (estado.pocketSort) preservando o índice original.
@@ -651,7 +661,7 @@ function renderTabelaPockets(pockets) {
   const s = estado.pocketSort;
   const th = POCKET_TABELA.map((c) => {
     const seta = s && s.col === c.key ? (s.dir === 1 ? " ▲" : " ▼") : "";
-    return `<th class="th-sort" data-col="${c.key}">${c.label}${seta}</th>`;
+    return `<th class="th-sort" data-col="${c.key}" title="${c.dica}">${c.label}${seta}</th>`;
   }).join("");
 
   let html = `<div class="tab-acoes"><button id="btn-pockets-csv" class="dl-btn">⬇ CSV</button></div>`;
@@ -689,7 +699,16 @@ function renderTabelaPockets(pockets) {
         ? `${melhorDrug.name} — maior <em>drugScore</em> (${fmt(melhorDrug.drugScore, 3)}), indicando melhor "drugabilidade"; volume ${fmt(melhorDrug.volume)} Å³ e profundidade ${fmt(melhorDrug.depth)} favorecem o encaixe de um ligante.`
         : "—"}</li>
     </ol>
-    <p class="muted small">Descritores do DoGSiteScorer; o <em>drugScore</em> estima a drugabilidade (0–1).</p>
+    <details class="legenda-desc">
+      <summary>O que significam os descritores?</summary>
+      <ul>
+        <li><strong>Volume / Superfície:</strong> tamanho da cavidade (Å³) e área da sua superfície (Å²).</li>
+        <li><strong>Profundidade:</strong> quão fundo é o bolso — bolsos mais profundos tendem a ligar melhor.</li>
+        <li><strong>Hidrofobicidade (0–1):</strong> afinidade da cavidade por grupos apolares.</li>
+        <li><strong>Aceptores / Doadores:</strong> nº de aceptores e doadores de ligação de hidrogênio.</li>
+        <li><strong>DrugScore (0–1):</strong> drugabilidade estimada — potencial do bolso para ligar um fármaco.</li>
+      </ul>
+    </details>
   </div>
   <div id="pockets-graf-volume" class="grafico"></div>
   <div id="pockets-graf-depth" class="grafico"></div>`;
@@ -806,6 +825,7 @@ function iniciarComparacao() {
   $("#cmp-titulo").textContent = "Comparação: " + ps.map((p) => p.id).join(" · ");
   $("#cmp-resumo").textContent = `${ps.length} proteínas`;
 
+  renderCmpViewers();
   trocarAbaCmp("stats");
   renderCmpStats();
   renderCmpAA();
@@ -827,6 +847,39 @@ function resumoProteina(p) {
     residuos: st.cadeias.reduce((s, c) => s + c.residuos, 0),
     aaDiferentes: freq.itens.filter((i) => i.contagem > 0).length,
   };
+}
+
+// Viewers 3D (um por proteína) no modo comparação, coloridos por cadeia.
+function renderCmpViewers() {
+  const cont = $("#cmp-viewers");
+  cont.innerHTML = "";
+  estado.cmpViewers = [];
+  const h = parseInt($("#cmp-tam").value, 10);
+  for (const p of estado.comparacao) {
+    const card = document.createElement("div");
+    card.className = "cmp-viewer-item";
+    card.innerHTML = `<div class="cmp-viewer-label">${p.id}</div><div class="cmp-viewer" style="height:${h}px"></div>`;
+    cont.appendChild(card);
+    const div = card.querySelector(".cmp-viewer");
+    const v = $3Dmol.createViewer(div, { backgroundColor: "#0b1020" });
+    v.addModel(p.pdbText, "pdb");
+    p.dados.cadeias.forEach((cid, i) => {
+      const sel = cid === "_" ? { chain: "" } : { chain: cid };
+      v.setStyle(sel, { cartoon: { color: CORES_CADEIA[i % CORES_CADEIA.length] } });
+    });
+    v.zoomTo();
+    v.render();
+    estado.cmpViewers.push({ v, div });
+  }
+}
+
+function ajustarTamCmp() {
+  const h = parseInt($("#cmp-tam").value, 10);
+  for (const { v, div } of estado.cmpViewers || []) {
+    div.style.height = `${h}px`;
+    v.resize();
+    v.render();
+  }
 }
 
 function renderCmpStats() {
@@ -1369,6 +1422,7 @@ function alternarTema() {
   const atual = document.body.dataset.theme === "dark" ? "" : "dark";
   document.body.dataset.theme = atual;
   $("#theme-toggle").textContent = atual === "dark" ? "☀️" : "🌙";
+  try { localStorage.setItem("peki-tema", atual); } catch (e) { /* modo privado */ }
   if (estado.dados) plotAA();
   if (estado.pockets) plotPockets(estado.pockets);
   if (estado.comparacao && !$("#comparacao").hidden) {
@@ -1380,6 +1434,14 @@ function alternarTema() {
 
 // ----- init -----
 function init() {
+  // restaura o tema salvo
+  try {
+    if (localStorage.getItem("peki-tema") === "dark") {
+      document.body.dataset.theme = "dark";
+      $("#theme-toggle").textContent = "☀️";
+    }
+  } catch (e) { /* modo privado */ }
+
   $("#btn-id").addEventListener("click", () => {
     const id = $("#pdb-id").value.trim();
     if (!id) { mostrarErro("Informe um ID de PDB."); return; }
@@ -1427,6 +1489,8 @@ function init() {
     estado.superficie = e.target.checked ? { sels: [{}], color: "#9ec5ff", opacity: 0.65 } : null;
     aplicarSuperficie();
   });
+  $("#viewer-tam").addEventListener("change", ajustarTamViewer);
+  $("#cmp-tam").addEventListener("change", ajustarTamCmp);
   $("#aa-ordem").addEventListener("change", plotAA);
   $("#btn-aa-csv").addEventListener("click", baixarCsvAA);
   $("#btn-motivo").addEventListener("click", buscarMotivo);

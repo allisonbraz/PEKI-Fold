@@ -6,7 +6,16 @@ Ferramentas de **análise estrutural de proteínas** (formato PDB) desenvolvidas
 como Trabalho Final da disciplina de Algoritmos (Doutorado — UFJ), com uma
 **aplicação web** que torna as análises visuais e acessíveis pelo navegador.
 
-🔬 **App online:** publicado via GitHub Pages a partir da pasta [`docs/`](docs/).
+🔬 **App online:** https://allisonbraz.github.io/PEKI-Fold/ — publicado via GitHub Pages a partir da pasta [`docs/`](docs/).
+Exemplos diretos: [1A00](https://allisonbraz.github.io/PEKI-Fold/?pdb=1A00) · [comparar 1CRN e 4HHB](https://allisonbraz.github.io/PEKI-Fold/?compare=1CRN,4HHB).
+
+![Análise da hemoglobina (1A00) com viewer 3D e ligantes HEM](screenshots/peki-1a00-3d.png)
+
+*Visualização 3D da hemoglobina (1A00) colorida por cadeia, com os grupos HEM em destaque.*
+
+![Comparação de estruturas (1CRN e 4HHB)](screenshots/peki-comparacao.png)
+
+*Modo de comparação: estruturas lado a lado (crambina 1CRN e hemoglobina 4HHB).*
 
 ## Funcionalidades
 
