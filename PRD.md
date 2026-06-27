@@ -1,212 +1,242 @@
-# PRD — Plataforma Web de Análise Estrutural de Proteínas
+# PRD — PEKI Fold · Plataforma Web de Análise Estrutural de Proteínas
 
-**Projeto:** PEKI Fold — Protein Exploration Kit for Insights
+**Projeto:** PEKI Fold — *Protein Exploration Kit for Insights*
 **Autor:** Allison Braz
 **Instituição:** Universidade Federal de Jataí (UFJ)
 **Orientador:** Prof. Dr. Roosevelt Alves da Silva
 **Data:** 2026-06-27
-**Status:** Rascunho para discussão
+**Status:** ✅ **v1 implementada e publicada** (documento consolidado)
+**App online:** https://allisonbraz.github.io/PEKI-Fold/
+**Repositório:** https://github.com/allisonbraz/PEKI-Fold
 **Base:** Evolução dos Programas 01–06 (CLI em Python) do Trabalho Final de Algoritmos para uma aplicação web online, visual e capaz de processar qualquer PDB.
+
+> **Nota de versão:** este PRD começou como rascunho propondo um backend FastAPI.
+> Durante a implementação descobrimos que as fontes externas (RCSB e ProteinsPlus)
+> liberam **CORS** para o navegador, o que permitiu entregar tudo como um app
+> **100% estático**, sem servidor. As seções abaixo já refletem a **arquitetura
+> e o escopo realmente entregues**; a proposta original ficou registrada na
+> seção 16 (Aprendizados).
 
 ---
 
 ## 1. Visão geral
 
-Hoje o projeto é um conjunto de 6 scripts de linha de comando que analisam 10 arquivos PDB fixos de hemoglobina (separação de cadeias, estatísticas, frequência de aminoácidos, busca de motivos e detecção de pockets com DoGSite3) e geram um relatório PDF.
+O ponto de partida eram 6 scripts de linha de comando que analisavam 10 arquivos PDB fixos de hemoglobina (separação de cadeias, estatísticas, frequência de aminoácidos, busca de motivos e detecção de pockets com DoGSite3) e geravam um relatório PDF.
 
-**Objetivo:** transformar esses scripts numa **aplicação web** onde qualquer pessoa possa enviar (ou buscar pelo ID) uma estrutura PDB, visualizá-la em 3D, rodar as análises de forma interativa e exportar os resultados — sem precisar de terminal nem instalar nada.
+O **PEKI Fold** transforma esses scripts numa **aplicação web** onde qualquer pessoa pode buscar pelo ID (ou enviar) uma estrutura PDB, visualizá-la em 3D, rodar as análises de forma interativa e exportar os resultados — sem terminal e sem instalar nada.
 
-**Frase-resumo:** *"Cole um ID do PDB (ou faça upload), veja a proteína em 3D e obtenha cadeias, estatísticas, composição e pockets em segundos."*
+**Frase-resumo:** *"Cole um ID do PDB (ou faça upload), veja a proteína em 3D e obtenha cadeias, estatísticas, composição, motivos e pockets em segundos — e compare proteínas."*
 
 ---
 
 ## 2. Problema e contexto
 
-| Limitação atual | Impacto |
+| Limitação original (CLI) | Como o PEKI Fold resolve |
 |---|---|
-| Roda só em terminal (Python + libs instaladas) | Barreira para usuários não-técnicos |
-| Conjunto de PDBs fixo (`pdbproteins/`) | Não serve para outras proteínas |
-| Sem visualização da molécula | Resultados abstratos, pouco intuitivos |
-| Saída em texto/PDF estático | Não é interativo nem explorável |
-| DoGSite3 exige instalação local + licença | Difícil de reproduzir/compartilhar |
+| Roda só em terminal (Python + libs) | App no navegador, sem instalação |
+| Conjunto de PDBs fixo (`pdbproteins/`) | Aceita qualquer PDB por ID (RCSB) ou upload |
+| Sem visualização da molécula | Viewer 3D (3Dmol.js) com cor por cadeia, ligantes e superfície |
+| Saída em texto/PDF estático | Tabelas e gráficos interativos + exportação on-demand |
+| DoGSite3 exige instalação + licença | API oficial DoGSiteScorer (ProteinsPlus) chamada do navegador |
 
 ---
 
 ## 3. Público-alvo (personas)
 
-1. **Estudante/pesquisador de bioinformática** — quer analisar uma proteína rapidamente sem montar ambiente.
-2. **Professor/avaliador** — quer reproduzir e explorar os resultados do trabalho de forma visual.
-3. **Autor do projeto (você)** — quer um portfólio online demonstrável e reutilizável.
+1. **Estudante/pesquisador de bioinformática** — analisa uma proteína rapidamente sem montar ambiente.
+2. **Professor/avaliador** — reproduz e explora os resultados de forma visual (inclusive via link direto).
+3. **Autor do projeto** — portfólio online demonstrável e reutilizável.
 
 ---
 
-## 4. Objetivos e métricas de sucesso
+## 4. Objetivos e métricas (resultado)
 
-- **O1 — Acessibilidade:** rodar todas as análises pelo navegador, sem instalação. → *Métrica: 100% das funções dos Programas 01–05 disponíveis na web.*
-- **O2 — Generalização:** aceitar qualquer PDB (upload ou ID RCSB). → *Métrica: análise bem-sucedida de PDBs fora do conjunto original.*
-- **O3 — Visualização:** estrutura 3D + gráficos interativos. → *Métrica: viewer 3D com seleção de cadeia e destaque de pocket.*
-- **O4 — Exportação:** baixar resultados (CSV, PNG, PDF). → *Métrica: relatório PDF equivalente ao atual, gerado on-demand.*
+- **O1 — Acessibilidade:** rodar as análises pelo navegador, sem instalação. → ✅ *100% dos Programas 01–06 disponíveis na web.*
+- **O2 — Generalização:** aceitar qualquer PDB (upload ou ID RCSB). → ✅ *qualquer ID do RCSB; upload local para 01–05.*
+- **O3 — Visualização:** estrutura 3D + gráficos interativos. → ✅ *viewer 3D com cor por cadeia, ligantes, superfície, destaque de motivo e de pocket.*
+- **O4 — Exportação:** baixar resultados. → ✅ *PDF e Markdown (com imagens) + CSV por análise.*
 
 ---
 
-## 5. Escopo
+## 5. Escopo (entregue)
 
-### Dentro do escopo (MVP + v1)
-- Upload de `.pdb`/`.cif` e busca por ID no RCSB.
-- Visualização 3D interativa.
-- Análises dos Programas 01–05 na web.
-- Detecção de pockets (Programa 06) — ver decisão na seção 8.
-- **Comparação de 2 a 4 proteínas** (estatísticas, composição de aminoácidos e pockets cross-protein).
-- Exportação CSV/PNG/PDF.
+### Dentro do escopo — implementado
+- Busca por **ID no RCSB** e **upload** de `.pdb` (lido localmente).
+- **Visualização 3D** interativa (3Dmol.js): cor por cadeia, ligantes (HET), superfície molecular/da cavidade, estilos, tamanho ajustável.
+- Análises dos **Programas 01–05** no navegador.
+- **Detecção de pockets (Programa 06)** via API oficial DoGSiteScorer/ProteinsPlus.
+- **Comparação de 2 a 4 proteínas** (estatísticas, aminoácidos e pockets cross-protein, com viewers 3D lado a lado).
+- **Exportação** PDF / Markdown (seções selecionáveis) e **CSV** (aminoácidos, estatísticas, pockets).
+- **Card de metadados** ("Sobre a estrutura") via RCSB Data API + parse do PDB.
+- **Link compartilhável** por ID (`?pdb=`, `?compare=`).
 
 ### Fora do escopo (por enquanto)
-- Docking molecular real (apenas sugestão de pocket, como hoje).
-- Contas de usuário / histórico persistente (avaliar na v2).
+- Docking molecular real (apenas sugestão de pocket por *drugScore*).
+- Contas de usuário / histórico persistente.
 - Edição/mutação de estruturas.
-- Comparação simultânea de muitas proteínas (batch grande).
+- Comparação em lote grande (> 4 proteínas).
 
 ---
 
-## 6. Funcionalidades (mapeando os programas atuais)
+## 6. Funcionalidades (mapeando os programas)
 
-| Programa atual | Feature web | Visualização |
+| Programa / recurso | Feature web entregue | Visualização |
 |---|---|---|
-| 01/02 — Separação de cadeias | Lista de cadeias detectadas; download individual | Cadeias coloridas no viewer 3D; toggle por cadeia |
-| 03 — Estatísticas | Tabela interativa (ordenável/filtrável) | Cards-resumo + destaque maior/menor cadeia |
-| 04 — Frequência de aminoácidos | Gráfico de barras interativo por cadeia | Hover com %; opção empilhar cadeias |
+| 01/02 — Separação de cadeias | Lista de cadeias; download PDB e **FASTA** por cadeia (e "FASTA todas") | Cadeias coloridas no viewer 3D |
+| 03 — Estatísticas | Tabela + cards; maior/menor; **CSV** | Destaque da maior cadeia |
+| 04 — Frequência de aminoácidos | Gráfico por cadeia, **ordenável** (alfabética/percentual/contagem); **CSV** | Hover com % |
 | 05 — Busca de motivos | Campo de busca (ex.: `GLY-LYS-SER`) | Resíduos do motivo destacados na 3D |
-| 06 — Pockets (DoGSite3) | Tabela de pockets + ranking | Pockets renderizados como superfície/esferas na 3D |
-| **Comparação (novo)** | Comparar 2–4 PDBs: estatísticas, aminoácidos e pockets | Tabelas e gráficos comparativos; 5 perguntas cross-protein |
-| Relatório PDF | Botão "Exportar relatório" | PDF gerado on-demand com os resultados da sessão |
+| 06 — Pockets (DoGSiteScorer) | Tabela de descritores **ordenável** + tooltips/legenda; 5 respostas analíticas; gráficos; **CSV**; cache por sessão | Resíduos destacados + **superfície da cavidade** na 3D |
+| **Comparação** | 2–4 PDBs: estatísticas, aminoácidos e pockets cross-protein; **CSV** | **Viewers 3D por proteína** (tamanho ajustável) + gráficos |
+| **Metadados** | Card "Sobre a estrutura" (título, método, resolução, organismo, ligantes, peso, depósito) | Link "Ver no RCSB" |
+| Relatório | **Exportar PDF/Markdown** (seções selecionáveis, imagens incluídas) | Modal com escolha de formato e conteúdo |
 
 ---
 
-## 7. Requisitos funcionais
+## 7. Requisitos funcionais (status)
 
-- **RF1** Entrada: upload de arquivo `.pdb`/`.cif` (até ~20 MB) **ou** campo "ID do PDB" que busca em `https://files.rcsb.org/download/{ID}.pdb`.
-- **RF2** Validação do arquivo PDB (registros mínimos, mensagem de erro amigável).
-- **RF3** Detecção e separação de cadeias; permitir download de cada cadeia.
-- **RF4** Estatísticas por cadeia (átomos, resíduos, aminoácidos diferentes; maior/menor).
-- **RF5** Frequência e porcentagem dos 20 aminoácidos por cadeia, com gráfico.
-- **RF6** Busca de motivo informado pelo usuário → proteína, cadeia, posição; destaque na 3D.
-- **RF7** Detecção de pockets com descritores (volume, superfície, profundidade, hidrofobicidade, aceptores, doadores) + respostas analíticas e ranking.
-- **RF8** Viewer 3D com: rotação/zoom, cor por cadeia, destaque de motivo e de pockets.
-- **RF9** Exportação: CSV (estatísticas/pockets), PNG (gráficos) e PDF (relatório).
-- **RF10** Processamento assíncrono para tarefas longas (pockets), com indicador de progresso.
-- **RF11** Comparação de 2 a 4 proteínas (por ID do PDB) lado a lado:
-  - **Estatísticas comparadas:** cadeias, átomos, resíduos e aminoácidos diferentes por proteína, em tabela e gráfico.
-  - **Aminoácidos comparados:** porcentagem dos 20 aminoácidos por proteína, em gráfico de barras agrupado.
-  - **Pockets cross-protein:** pocket principal de cada proteína (volume, profundidade, hidrofobicidade, drugScore) e respostas às 5 perguntas do enunciado entre as proteínas (maior volume, mais profundo, relação volume×profundidade, mais hidrofóbicas, escolha para docking), com gráficos de volume/profundidade/hidrofobicidade do pocket principal por proteína.
-
----
-
-## 8. Decisão crítica — DoGSite3 online
-
-DoGSite3 é um binário com **registro acadêmico/licença** e custo de processamento. Não pode simplesmente ser empacotado num servidor público. Opções:
-
-| Opção | Prós | Contras | Recomendação |
-|---|---|---|---|
-| **A. Server-side em container** (binário no backend, fila de jobs) | UX integrada | Verificar licença para uso em servidor; custo de CPU | Boa se a licença permitir e o deploy for restrito |
-| **B. Integração com API ProteinsPlus/DoGSiteScorer** (serviço oficial ZBH) | Sem hospedar o binário; mantido pelos autores | Depende de API externa, limites de uso | **Recomendada para v1** |
-| **C. Pocket opcional / "traga seu DoGSite"** | Sem risco de licença | Recurso só local; perde valor online | Fallback |
-
-**Recomendação:** MVP entrega os Programas 01–05 (puro Python, sem dependência externa); o Programa 06 entra na **v1** via Opção B (API oficial) com fallback para A em deploy privado.
+- **RF1** ✅ Entrada por upload `.pdb` **ou** ID do PDB (`files.rcsb.org`).
+- **RF2** ✅ Validação do PDB com mensagem de erro amigável.
+- **RF3** ✅ Detecção/separação de cadeias; download de cada cadeia (PDB e FASTA).
+- **RF4** ✅ Estatísticas por cadeia (átomos, resíduos, aminoácidos diferentes; maior/menor).
+- **RF5** ✅ Frequência/porcentagem dos 20 aminoácidos por cadeia, com gráfico (ordenável) e CSV.
+- **RF6** ✅ Busca de motivo → cadeia, posição, resíduos; destaque na 3D.
+- **RF7** ✅ Pockets com descritores (volume, superfície, profundidade, hidrofobicidade, aceptores, doadores, *drugScore*) + respostas analíticas e ranking.
+- **RF8** ✅ Viewer 3D: rotação/zoom, cor por cadeia, ligantes, superfície, destaque de motivo e de pocket; tamanho ajustável.
+- **RF9** ✅ Exportação: **PDF e Markdown** (com tabelas, imagens do viewer e gráficos) + **CSV** (aminoácidos/estatísticas/pockets). *Obs.: gráficos vão embutidos no PDF/MD em vez de PNGs avulsos.*
+- **RF10** ✅ Pockets assíncronos (submit + polling) com indicador de progresso.
+- **RF11** ✅ Comparação de 2 a 4 proteínas (estatísticas, aminoácidos agrupados, pockets cross-protein com as 5 perguntas do enunciado, viewers 3D lado a lado, CSV).
+- **RF12** ✅ Card "Sobre a estrutura" (parse do PDB + RCSB Data API); aviso de NMR multi-modelo.
+- **RF13** ✅ Link compartilhável (`?pdb=ID`, `?compare=ID1,ID2`); tema claro/escuro lembrado.
 
 ---
 
-## 9. Arquitetura técnica proposta
+## 8. Decisão — DoGSite3 online (RESOLVIDA)
 
-```
-[Navegador]
-  React + Mol* (viewer 3D) + Plotly/Recharts (gráficos)
-        │  REST/JSON
-        ▼
-[Backend FastAPI (Python)]  ← reaproveita a lógica dos Programas 01–06
-  ├── /chains   (separação)
-  ├── /stats    (estatísticas)
-  ├── /aafreq   (frequência)
-  ├── /motif    (busca)
-  ├── /pockets  (DoGSite3 — assíncrono)
-  └── /report   (PDF on-demand)
-        │
-        ├── Fila de jobs (Redis + RQ/Celery) para tarefas longas
-        └── Armazenamento temporário de uploads/resultados
-        │
-        ▼
-[Fonte externa] RCSB (download por ID) | API DoGSiteScorer (pockets)
-```
+**Decisão tomada: Opção B — API oficial ProteinsPlus / DoGSiteScorer**, chamada **direto do navegador**.
 
-**Stack recomendada (justificativa: reaproveitar o Python já escrito):**
-- **Backend:** FastAPI — refatorar os scripts em módulos importáveis (`separador.py` já é um bom começo) expostos como endpoints.
-- **Frontend:** React + **Mol\*** ou **NGL Viewer** (visualização molecular padrão da área) + Plotly para gráficos interativos.
-- **Async:** Redis + RQ para os jobs de pocket.
-- **Deploy:** Docker; hospedagem em Render / Railway / Fly.io / Hugging Face Spaces (opções gratuitas/baratas para projeto acadêmico).
-
----
-
-## 10. Fluxo de UX (telas)
-
-1. **Home / Entrada** — campo "ID do PDB" + área de upload (drag-and-drop). Exemplos clicáveis (ex.: 1A00).
-2. **Workspace** — layout em duas colunas:
-   - Esquerda: **viewer 3D** (Mol*), controles de cor/cadeia/destaque.
-   - Direita: **abas** → Cadeias | Estatísticas | Aminoácidos | Motivos | Pockets.
-3. **Cada aba** mostra tabela/gráfico interativo e botão de exportar.
-4. **Barra superior** — botão "Exportar relatório PDF" e indicador de jobs em andamento.
-
-Princípios de UX: feedback imediato (loading/skeleton), mensagens de erro claras, mobile-friendly, tema claro/escuro.
-
----
-
-## 11. Requisitos não-funcionais
-
-- **Desempenho:** análises 01–05 em < 3 s para um PDB típico; pockets assíncronos com progresso.
-- **Limites:** tamanho máx. de upload; rate-limit por IP.
-- **Segurança:** sanitizar uploads, isolar execução, não persistir dados sensíveis por padrão.
-- **Observabilidade:** logs de erro e de jobs.
-- **Acessibilidade:** contraste, navegação por teclado, textos alternativos nos gráficos.
-
----
-
-## 12. Roadmap por fases
-
-### Fase 0 — Refatoração (base)
-Transformar os scripts em módulos limpos e testáveis (separar I/O da lógica). Aproveita o que já existe.
-
-### Fase 1 — MVP (Programas 01–05 online)
-- Upload + busca por ID RCSB.
-- Backend FastAPI com endpoints 01–05.
-- Frontend com viewer 3D + abas + gráficos interativos.
-- Exportar CSV/PNG/PDF.
-- Deploy público inicial.
-
-### Fase 2 — v1 (Pockets + polimento)
-- Integração DoGSite (Opção B) com jobs assíncronos.
-- Pockets visualizados na 3D + ranking e respostas analíticas.
-- Melhorias de UX e responsividade.
-
-### Fase 3 — v2 (extras, se desejado)
-- Contas/histórico de análises.
-- Comparação entre proteínas.
-- Compartilhar link de resultado.
-
----
-
-## 13. Riscos
-
-| Risco | Mitigação |
+| Opção | Resultado |
 |---|---|
-| Licença do DoGSite3 para uso online | Usar API oficial (Opção B) ou deploy privado |
-| Custo de hospedagem | Tier gratuito acadêmico; análises 01–05 são leves |
-| PDBs grandes/atípicos (NMR multi-modelo como 1a0n) | Tratar múltiplos modelos; limites e validação |
-| Tempo de processamento de pockets | Fila assíncrona + feedback de progresso |
-| Complexidade do viewer 3D | Usar biblioteca pronta (Mol*/NGL), não reinventar |
+| A. Binário server-side | Descartada (exigiria backend, licença e custo) |
+| **B. API oficial ProteinsPlus/DoGSiteScorer** | ✅ **Adotada** — CORS liberado, sem hospedar binário |
+| C. Pocket opcional/local | Não necessária |
+
+**Fluxo da API (validado):**
+1. `POST https://proteins.plus/api/dogsite_rest` com `{"dogsite":{"pdbCode":"1a00","analysisDetail":"0","bindingSitePredictionGranularity":"1","ligand":"","chain":""}}` → `202` com a URL do job **no corpo JSON** (`location`).
+2. *Polling* `GET {location}` até `200` com `result_table` (TSV de descritores), `residues` (PDBs por pocket) e `pockets`.
+3. *Rate limit:* `429` → mensagem amigável. **Pockets só por ID** (a API não aceita upload).
 
 ---
 
-## 14. Decisões em aberto (preciso da sua escolha)
+## 9. Arquitetura técnica (entregue — 100% estática)
 
-1. **Público:** uso pessoal/acadêmico (deploy simples, sem login) **ou** ferramenta pública (precisa rate-limit, talvez login)?
-2. **DoGSite3:** seguir com a API oficial (Opção B) ou você tem licença que permita rodar o binário no servidor (Opção A)?
-3. **Hospedagem:** preferência de plataforma/orçamento (gratuito vs. pago)?
-4. **Identidade visual:** nome do produto e estilo (cores, logo)?
-5. **Prioridade do MVP:** focar primeiro em "visualização 3D + análises 01–05" e deixar pockets para a fase 2 (recomendado)?
+```
+[ Navegador ]  — sem backend, sem build —
+  index.html
+  ├── pdb-analysis.js   (porta JS dos Programas 01–05; análise local)
+  ├── app.js            (UI, viewer, gráficos, exportação, comparação)
+  └── style.css
+        │  fetch (CORS)
+        ├──► RCSB  files.rcsb.org/download/{ID}.pdb     (coordenadas)
+        ├──► RCSB  data.rcsb.org/rest/v1/core/entry/{ID} (metadados)
+        └──► ProteinsPlus  /api/dogsite_rest             (pockets)
+
+  Bibliotecas via CDN: 3Dmol.js (viewer 3D) · Plotly (gráficos) ·
+                       jsPDF + autoTable (exportação PDF)
+  Publicação: GitHub Pages (pasta docs/) — gratuito, sem servidor.
+```
+
+**Por que estático:** toda a lógica dos Programas 01–05 roda no navegador (`pdb-analysis.js`); pockets e metadados vêm de APIs públicas com CORS. Isso eliminou backend, fila de jobs, custo de hospedagem e infraestrutura — mantendo as mesmas funcionalidades.
+
+> A variante backend **FastAPI (`webapp/`)** chegou a ser criada como alternativa, mas foi **removida** por ser redundante diante da abordagem estática.
+
+---
+
+## 10. Fluxo de UX (telas entregues)
+
+1. **Home / Entrada** — campo "ID do PDB" + upload (drag-and-drop), exemplos clicáveis (1A00, 4HHB, 1CRN), bloco "Comparar proteínas" e seção recolhível **"Como usar"**.
+2. **Workspace (análise única)** — cabeçalho com nome/resumo + **Exportar** e **Nova análise**; **card "Sobre a estrutura"**; layout em duas colunas:
+   - Esquerda: **viewer 3D** (estilo, girar, ligantes, superfície, tamanho).
+   - Direita: **abas** → Cadeias | Estatísticas | Aminoácidos | Motivos | Pockets.
+3. **Workspace (comparação)** — **viewers 3D por proteína** (tamanho ajustável) + abas Estatísticas | Aminoácidos | Pockets.
+4. **Exportação** — modal com formato (PDF/Markdown) e seleção de seções/imagens ("Tudo" ou atalho "Só pockets").
+
+**Princípios de UX aplicados:** feedback imediato (spinner/status), mensagens de erro claras, **tema claro/escuro lembrado**, identidade visual PEKI Fold (logo, ícone, favicon), créditos no rodapé.
+
+---
+
+## 11. Requisitos não-funcionais (status)
+
+- **Desempenho:** análises 01–05 praticamente instantâneas (no cliente); pockets em segundos no servidor da ProteinsPlus, com progresso e **cache por sessão**.
+- **Custo/infra:** zero — app estático no GitHub Pages.
+- **Privacidade:** upload é lido com `FileReader` e **não sai do computador**; nada é persistido em servidor.
+- **Limites:** sem limite de upload local; pockets sujeitos ao *rate limit* da API externa.
+- **Acessibilidade:** contraste, tooltips e textos auxiliares — navegação por teclado/mobile ainda podem ser aprimorados (ver seção 15).
+
+---
+
+## 12. Roadmap (executado)
+
+- **Fase 0 — Base:** ✅ Programas 01–06 (CLI) + relatório PDF concluídos.
+- **Fase 1 — MVP (01–05 web):** ✅ entrada por ID/upload, viewer 3D, abas, gráficos, deploy público.
+- **Fase 2 — v1 (pockets + polimento):** ✅ pockets via DoGSiteScorer, comparação, exportação PDF/MD/CSV, metadados, FASTA, superfície, ligantes, ordenação, cache, rebrand PEKI Fold.
+- **Fase 3 — extras:** ✅ link compartilhável de resultado (deep-link). ⏳ contas/histórico (não previstos para o trabalho).
+
+---
+
+## 13. Riscos (como foram tratados)
+
+| Risco | Tratamento aplicado |
+|---|---|
+| Licença do DoGSite3 online | Resolvido com a **API oficial** (sem hospedar binário) |
+| Custo de hospedagem | Eliminado — app **estático** no GitHub Pages |
+| PDBs NMR multi-modelo (ex.: 1A0N, 25 modelos) | App usa **apenas o 1º MODEL** (contagens corretas) + aviso "modelo 1 de N" |
+| Tempo/limite da API de pockets | Polling com progresso, tratamento de `429` e **cache por sessão** |
+| Complexidade do viewer 3D | Uso de biblioteca pronta (**3Dmol.js**), sem reinventar |
+| Dependência de serviço externo (pockets) | Degradação amigável; demais análises funcionam offline no cliente |
+
+---
+
+## 14. Decisões (RESOLVIDAS)
+
+1. **Público:** uso **pessoal/acadêmico** — deploy simples, sem login.
+2. **DoGSite3:** **API oficial (Opção B)**, do navegador.
+3. **Hospedagem:** **GitHub Pages**, 100% estático, gratuito.
+4. **Identidade visual:** **PEKI Fold** (verde-escuro/dourado), com logo, ícone e favicon.
+5. **Prioridade:** 01–05 primeiro; pockets na sequência — ambos entregues.
+
+---
+
+## 15. Limitações conhecidas e ideias futuras
+
+**Limitações atuais**
+- Pockets dependem de um **serviço externo** (rate limit/disponibilidade) e **só funcionam por ID** (não por upload).
+- Markdown exportado usa imagens em **base64**, que **não renderizam no preview do GitHub** (o PDF cobre esse caso).
+- Acessibilidade/mobile em nível básico.
+
+**Ideias para v2 (se desejado)**
+- Acessibilidade e responsividade mobile mais completas.
+- Superfície do pocket mais sofisticada (malha real da cavidade).
+- Contas/histórico e compartilhamento de resultados salvos.
+- Comparação em lote maior.
+
+---
+
+## 16. Aprendizados técnicos (consolidado)
+
+- **Pivô para "static-first":** a arquitetura proposta (FastAPI + Redis + fila) foi substituída por um app **100% estático** após confirmar que **RCSB e ProteinsPlus liberam CORS**. Menos infra, custo zero, mesma funcionalidade.
+- **API DoGSiteScorer:** a URL do job vem **no corpo JSON** (`location`), porque o header `Location` não é exposto via CORS; o `result_table` é um **TSV** de descritores; há `residues` (PDBs por pocket) usados para destacar a cavidade na 3D; **`429`** indica *rate limit*; submissão é **por `pdbCode`** (sem upload).
+- **RCSB Data API** (`data.rcsb.org`): fornece metadados limpos (título, método, resolução, peso, depósito, classificação) com CORS — complementa o que se extrai do cabeçalho do próprio PDB.
+- **NMR multi-modelo:** estruturas como **1A0N têm 25 modelos**; contar todos infla átomos/resíduos. Solução: usar só o **1º `MODEL`**.
+- **Bugs corrigidos:**
+  - atributo HTML `hidden` era anulado por regras `display:flex` → fix global `[hidden]{display:none!important}`.
+  - colisão de seletores de abas entre os dois workspaces → escopar `#workspace .aba` vs `#comparacao .aba`.
+  - gráfico de eixo duplo escondia uma série → simplificado para barras de resíduos por proteína.
+- **Exportação:** `jsPDF` + `autoTable` para PDF; imagens do viewer via `pngURI()` e gráficos via `Plotly.toImage(spec)` (a partir de specs, independente de a aba estar visível).
+- **Performance/robustez:** **cache de pockets por sessão** (por ID) evita re-chamar a API; superfícies 3D são opcionais (geração sob demanda).
+
+---
+
+## 17. Estado atual — resumo
+
+PEKI Fold está **publicado e funcional** em https://allisonbraz.github.io/PEKI-Fold/, cobrindo os Programas 01–06 na web, comparação de proteínas, metadados do RCSB, exportação (PDF/Markdown/CSV) e visualização 3D rica (cadeias, ligantes, superfície, pockets), com identidade visual própria e créditos. A parte CLI (Programas 01–06 + `gerar_relatorio.py` + `Relatorio_Final.pdf`) permanece como base do trabalho.
