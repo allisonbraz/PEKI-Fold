@@ -42,7 +42,7 @@ code { background: rgba(127,127,127,.15); padding: 1px 5px; border-radius: 4px; 
   padding: 14px 24px; background: var(--card);
   border-bottom: 1px solid var(--border); box-shadow: var(--shadow);
 }
-.brand { display: flex; align-items: center; gap: 14px; }
+.brand { display: flex; align-items: center; gap: 14px; cursor: pointer; }
 .logo { width: 44px; height: 44px; border-radius: 10px; object-fit: contain; display: block; }
 .topbar h1 { font-size: 1.3rem; color: var(--primary-dark); }
 .tagline { margin: 0; font-size: .85rem; color: var(--muted); }

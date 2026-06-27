@@ -28,6 +28,19 @@ const estado = {
   pocketSort: null,   // {col, dir} de ordenacao da tabela de pockets
 };
 
+// Volta para a tela inicial (home), limpando a análise e a URL.
+function irParaHome() {
+  $("#workspace").hidden = true;
+  $("#comparacao").hidden = true;
+  $("#entrada").hidden = false;
+  $("#pdb-id").value = "";
+  $("#file-input").value = "";
+  $("#cmp-ids").value = "";
+  limparErro();
+  atualizarURL();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
 // Atualiza a query string para permitir compartilhar/recarregar a análise por link.
 function atualizarURL(chave, valor) {
   const u = new URL(location.href);
@@ -1462,24 +1475,14 @@ function init() {
     if (e.dataTransfer.files.length) analisar({ file: e.dataTransfer.files[0] });
   });
 
-  $("#btn-novo").addEventListener("click", () => {
-    $("#workspace").hidden = true;
-    $("#entrada").hidden = false;
-    $("#pdb-id").value = "";
-    $("#file-input").value = "";
-    atualizarURL();
-  });
+  $("#brand-home").addEventListener("click", irParaHome);
+  $("#btn-novo").addEventListener("click", irParaHome);
 
   // comparação
   $("#btn-cmp").addEventListener("click", () => compararProteinas($("#cmp-ids").value));
   $("#cmp-ids").addEventListener("keydown", (e) => { if (e.key === "Enter") $("#btn-cmp").click(); });
   $("#btn-cmp-pockets").addEventListener("click", detectarPocketsComparacao);
-  $("#btn-cmp-novo").addEventListener("click", () => {
-    $("#comparacao").hidden = true;
-    $("#entrada").hidden = false;
-    $("#cmp-ids").value = "";
-    atualizarURL();
-  });
+  $("#btn-cmp-novo").addEventListener("click", irParaHome);
   $$("#comparacao .aba").forEach((a) => a.addEventListener("click", () => trocarAbaCmp(a.dataset.ctab)));
   $$("#workspace .aba").forEach((a) => a.addEventListener("click", () => trocarAba(a.dataset.tab)));
   $("#estilo-3d").addEventListener("change", aplicarEstilo);
