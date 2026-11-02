@@ -30,6 +30,9 @@ const estado = {
 
 // Volta para a tela inicial (home), limpando a análise e a URL.
 function irParaHome() {
+  if (typeof EnsembleUI !== "undefined" && EnsembleUI.aoFechar) EnsembleUI.aoFechar();
+  const ens = $("#ensemble");
+  if (ens) ens.hidden = true;
   $("#workspace").hidden = true;
   $("#comparacao").hidden = true;
   $("#entrada").hidden = false;
@@ -526,11 +529,11 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 // ao reanalisar a mesma proteína ou ao usá-la na comparação.
 const POCKETS_CACHE = {};
 
-async function obterPockets(id, onTick) {
-  const chave = id.toUpperCase();
+async function obterPockets(id, onTick, deveParar) {
+  const chave = String(id).toUpperCase();
   if (POCKETS_CACHE[chave]) return POCKETS_CACHE[chave];
   const location = await dogsiteSubmit(id);
-  const resultado = await dogsitePoll(location, onTick);
+  const resultado = await dogsitePoll(location, onTick, deveParar);
   const txt = await (await fetch(resultado.result_table)).text();
   const pockets = parseTabelaPockets(txt);
   pockets.forEach((p, i) => { p.residuosUrl = (resultado.residues || [])[i] || null; });
@@ -598,7 +601,8 @@ async function detectarPockets() {
   }
 }
 
-async function dogsiteSubmit(pdbId) {
+async function dogsiteSubmit(pdbId, opcoes) {
+  const codigo = opcoes && opcoes.preservarCaixa ? String(pdbId) : String(pdbId).toLowerCase();
   let resp;
   try {
     resp = await fetch(DOGSITE_API, {
@@ -606,7 +610,7 @@ async function dogsiteSubmit(pdbId) {
       headers: { "Content-Type": "application/json", Accept: "application/json" },
       body: JSON.stringify({
         dogsite: {
-          pdbCode: pdbId.toLowerCase(),
+          pdbCode: codigo,
           analysisDetail: "0",                  // 0 = pockets (sem subpockets)
           bindingSitePredictionGranularity: "1", // 1 = propriedades + druggability
           ligand: "", chain: "",
@@ -625,8 +629,10 @@ async function dogsiteSubmit(pdbId) {
   return data.location;
 }
 
-async function dogsitePoll(location, onTick) {
+async function dogsitePoll(location, onTick, deveParar) {
+  const parar = () => typeof deveParar === "function" && deveParar();
   for (let i = 0; i < 45; i++) { // ~3 min no maximo (45 x 4s)
+    if (parar()) throw new Error("Cálculo cancelado.");
     let r;
     try { r = await fetch(location, { headers: { Accept: "application/json" } }); }
     catch (e) { throw new Error("Conexão perdida durante o cálculo dos pockets."); }
@@ -636,7 +642,10 @@ async function dogsitePoll(location, onTick) {
       if (d.result_table) return d;
     }
     if (onTick) onTick(i + 1);
-    await sleep(4000);
+    for (let s = 0; s < 4; s++) {
+      if (parar()) throw new Error("Cálculo cancelado.");
+      await sleep(1000);
+    }
   }
   throw new Error("Tempo esgotado aguardando o DoGSiteScorer.");
 }
@@ -1599,9 +1608,11 @@ function init() {
 
   // deep-link: abre direto a análise a partir da URL (?pdb=1A00 ou ?compare=1A00,4HHB)
   const params = new URLSearchParams(location.search);
+  const ensParam = params.get("ensemble");
   const cmpParam = params.get("compare");
   const pdbParam = params.get("pdb");
-  if (cmpParam) compararProteinas(cmpParam);
+  if (ensParam && typeof EnsembleUI !== "undefined" && EnsembleUI.ativo()) EnsembleUI.abrirPorUrl(ensParam);
+  else if (cmpParam) compararProteinas(cmpParam);
   else if (pdbParam) analisar({ pdbId: pdbParam });
 }
 
