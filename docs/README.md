@@ -15,7 +15,11 @@ em **3D** e explore:
 - **Motivos** — busca de padrões (ex.: `GLY-LYS-SER`) com destaque na 3D (Programa 05)
 - **Pockets** — detecção de cavidades com descritores (volume, superfície, profundidade,
   hidrofobicidade, aceptores, doadores, drugScore), respostas analíticas, gráficos e
-  destaque dos resíduos na 3D (Programa 06, via API DoGSiteScorer/ProteinsPlus)
+  destaque dos resíduos na 3D (Programa 06, via API DoGSiteScorer/ProteinsPlus).
+  O drugScore é descritor geométrico, não afinidade.
+- **Preparo** — ficha geométrica auxiliar (inventário, PDB limpo, íons e LINK,
+  dissulfetos e SSBOND, Asn–açúcar, rascunho de `bond` do tleap e caixa editável
+  para o Vina). Explicação, limites e como desligar: [`preparo.md`](preparo.md).
 - **Comparação** — compare de 2 a 4 PDBs lado a lado: estatísticas, composição de
   aminoácidos (gráfico agrupado) e pockets cross-protein, respondendo às 5 perguntas
   do trabalho entre as proteínas (maior volume, mais profundo, relação volume×profundidade,
@@ -24,11 +28,14 @@ em **3D** e explore:
 ## Arquivos
 
 ```
-web/
-├── index.html        # interface
-├── style.css         # visual (tema claro/escuro)
-├── pdb-analysis.js   # lógica de análise (porta JS de pdb_analysis.py)
-└── app.js            # interface + viewer 3D (3Dmol.js) + gráficos (Plotly)
+docs/
+├── index.html         # interface
+├── style.css          # visual (tema claro/escuro)
+├── pdb-analysis.js    # cadeias, estatísticas, motivos
+├── prep-analysis.js   # ficha de preparo (funções puras)
+├── prep-ui.js         # aba Preparo
+├── app.js             # interface, viewer 3D e exportação
+└── preparo.md         # o que a ficha faz, o que não faz e como desligá-la
 ```
 
 As bibliotecas 3Dmol.js e Plotly são carregadas via CDN — não há build nem dependências.
@@ -38,7 +45,7 @@ As bibliotecas 3Dmol.js e Plotly são carregadas via CDN — não há build nem 
 Abra com um servidor simples (recomendado, evita restrições do `file://`):
 
 ```bash
-cd web
+cd docs
 python -m http.server 8080
 ```
 
