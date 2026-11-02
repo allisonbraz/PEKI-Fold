@@ -240,3 +240,11 @@ O **PEKI Fold** transforma esses scripts numa **aplicação web** onde qualquer 
 ## 17. Estado atual — resumo
 
 PEKI Fold está **publicado e funcional** em https://allisonbraz.github.io/PEKI-Fold/, cobrindo os Programas 01–06 na web, comparação de proteínas, metadados do RCSB, exportação (PDF/Markdown/CSV) e visualização 3D rica (cadeias, ligantes, superfície, pockets), com identidade visual própria e créditos. A parte CLI (Programas 01–06 + `gerar_relatorio.py` + `Relatorio_Final.pdf`) permanece como base do trabalho.
+
+---
+
+## 18. Módulo de preparo (ficha geométrica)
+
+Em revisão nesta branch. A ficha roda no navegador (`docs/prep-analysis.js`, aba Preparo). A detecção DoGSite e o viewer seguem iguais; o módulo só acrescenta destaque opcional e, se o usuário pedir, uma caixa desenhada com o 3Dmol.js.
+
+Ela inventaria a estrutura, exporta um PDB filtrado e um arquivo por íon ou HET escolhido, compara vizinhos de metal com LINK, pares SG–SG com SSBOND e ND2–C1 com LINK, e sugere uma caixa editável no formato de configuração do Vina a partir de um pocket já calculado. Não faz docking, dinâmica, protonação nem cálculo de afinidade. Contato geométrico não é contribuição energética. O texto completo, inclusive como desligar a aba (`ATIVO = false` em `docs/prep-ui.js`), está em `docs/preparo.md`.

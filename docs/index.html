@@ -31,6 +31,10 @@
       <img class="hero-logo" src="peki-fold.png" alt="PEKI Fold — Protein Exploration Kit for Insights" />
       <h2>Comece por aqui</h2>
       <p class="muted">Cole um ID do PDB ou envie um arquivo <code>.pdb</code>. Tudo é processado no seu navegador.</p>
+      <div class="escopo">
+        <p><strong>O que o PEKI Fold faz:</strong> mostra a estrutura, separa cadeias, conta estatísticas, busca motivos, detecta cavidades com o DoGSiteScorer e monta uma ficha geométrica de preparo.</p>
+        <p><strong>O que não faz:</strong> docking, dinâmica molecular, minimização, protonação e cálculo de afinidade. Contato geométrico não é contribuição energética. Escore de docking não é afinidade.</p>
+      </div>
 
       <div class="entrada-row">
         <input id="pdb-id" type="text" maxlength="4" placeholder="ID do PDB (ex.: 1A00)" />
@@ -65,7 +69,8 @@
           <li><strong>ID do PDB</strong> (ex.: <code>1A00</code>): busca a estrutura no RCSB — habilita metadados e pockets.</li>
           <li><strong>Upload</strong> de <code>.pdb</code>: análise local, sem sair do navegador (sem pockets).</li>
           <li><strong>Comparar</strong>: 2 a 4 IDs para ver estatísticas, aminoácidos e pockets lado a lado.</li>
-          <li>No workspace: <strong>abas</strong> (cadeias, estatísticas, aminoácidos, motivos, pockets), <strong>viewer 3D</strong> e botão <strong>Exportar</strong> (PDF/Markdown/CSV).</li>
+          <li>No workspace: <strong>abas</strong> (cadeias, estatísticas, aminoácidos, motivos, pockets, preparo), <strong>viewer 3D</strong> e botão <strong>Exportar</strong> (PDF/Markdown/CSV).</li>
+          <li><strong>Preparo</strong> é uma ficha auxiliar. Ela não valida a estrutura e não substitui a conferência humana.</li>
         </ul>
       </details>
 
@@ -122,6 +127,7 @@
           <button class="aba" data-tab="aa">Aminoácidos</button>
           <button class="aba" data-tab="motivos">Motivos</button>
           <button class="aba" data-tab="pockets">Pockets</button>
+          <button class="aba" data-tab="preparo">Preparo</button>
         </nav>
 
         <div class="aba-conteudo" id="tab-cadeias"></div>
@@ -157,10 +163,12 @@
             <strong>ID do PDB</strong> e conexão com a internet; o cálculo roda
             no servidor da ProteinsPlus e leva alguns segundos.
           </p>
+          <p class="rotulo-fixo">O drugScore e o volume são descritores geométricos da cavidade, não previsão de ligação. Escore de docking não é afinidade. Contato geométrico não é contribuição energética.</p>
           <button id="btn-pockets" class="primary-btn">🔍 Detectar pockets</button>
           <div id="pockets-status" class="muted small" style="margin-top:10px"></div>
           <div id="pockets-resultado"></div>
         </div>
+        <div class="aba-conteudo" id="tab-preparo" hidden></div>
       </div>
     </div>
   </main>
@@ -207,6 +215,7 @@
           e compara entre elas, respondendo às 5 perguntas do trabalho. Roda no
           servidor da ProteinsPlus — leva alguns segundos por proteína.
         </p>
+        <p class="rotulo-fixo">O drugScore e o volume são descritores geométricos da cavidade, não previsão de ligação. Escore de docking não é afinidade.</p>
         <button id="btn-cmp-pockets" class="primary-btn">🔍 Detectar pockets (todas)</button>
         <div id="cmp-pockets-status" class="muted small" style="margin-top:10px"></div>
         <div id="cmp-pockets-resultado"></div>
@@ -247,10 +256,12 @@
       Desenvolvido por <strong>Allison Braz</strong> · Universidade Federal de Jataí (UFJ)<br />
       sob orientação do <strong>Prof. Dr. Roosevelt Alves da Silva</strong>
     </p>
-    <p class="muted small">PEKI Fold · App estático · Programas 01–06 · dados do RCSB PDB · pockets via ProteinsPlus/DoGSiteScorer</p>
+    <p class="muted small">PEKI Fold · App estático · Programas 01–06 · dados do RCSB PDB · pockets via ProteinsPlus/DoGSiteScorer · a ficha de preparo é auxiliar e não faz docking</p>
   </footer>
 
   <script src="pdb-analysis.js"></script>
+  <script src="prep-analysis.js"></script>
+  <script src="prep-ui.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

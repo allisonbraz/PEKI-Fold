@@ -110,7 +110,7 @@ button { font: inherit; cursor: pointer; border-radius: 8px; border: none; }
 .legenda .swatch { width: 14px; height: 14px; border-radius: 3px; display: inline-block; }
 
 /* Painel / abas */
-.abas { display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin: -18px -18px 16px; padding: 0 10px; }
+.abas { display: flex; flex-wrap: wrap; gap: 4px; border-bottom: 1px solid var(--border); margin: -18px -18px 16px; padding: 0 10px; }
 .aba { background: none; color: var(--muted); padding: 14px 16px; border-bottom: 2px solid transparent; font-weight: 600; }
 .aba.ativa { color: var(--primary); border-bottom-color: var(--primary); }
 .aba:hover { color: var(--text); }
@@ -186,6 +186,37 @@ tr.destaque-menor td { background: rgba(232,81,58,.10); }
 .exp-preset { margin-top: 10px; font-size: .85rem; }
 .modal-acoes { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; }
 #exp-status { margin-top: 10px; text-align: right; }
+
+.escopo { text-align: left; margin: 16px 0 4px; padding: 12px 14px; background: var(--bg); border-radius: 10px; }
+.escopo p { margin: 0 0 8px; font-size: .9rem; }
+.escopo p:last-child { margin-bottom: 0; }
+.rotulo-fixo, .aviso-predita, .prep-aviso {
+  margin: 8px 0; padding: 8px 10px; border-radius: 8px; font-size: .85rem; line-height: 1.45;
+}
+.rotulo-fixo { background: rgba(42, 85, 153, .08); border-left: 3px solid var(--primary); }
+.aviso-predita { background: rgba(224, 168, 0, .12); border-left: 3px solid #c49200; }
+.prep-aviso { background: var(--bg); border: 1px solid var(--border); }
+.prep-secao { margin-top: 18px; padding-top: 8px; border-top: 1px solid var(--border); }
+.prep-secao h3 { font-size: 1.02rem; color: var(--primary-dark); }
+.prep-secao h4 { margin: 12px 0 6px; font-size: .95rem; }
+.prep-controles, .prep-linha { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; margin: 8px 0; }
+.prep-controles input[type="number"], .prep-linha input[type="number"], .prep-linha select {
+  width: 88px; padding: 5px 8px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg); color: var(--text);
+}
+.prep-linha select { width: auto; }
+.prep-check { font-size: .88rem; display: flex; gap: 6px; align-items: flex-start; margin: 4px 0; }
+.prep-decisao-lbl { display: block; margin-top: 8px; font-size: .85rem; color: var(--muted); }
+.prep-decisao-lbl textarea, .prep-cfg {
+  width: 100%; margin-top: 4px; padding: 8px; border: 1px solid var(--border); border-radius: 8px;
+  background: var(--bg); color: var(--text); font: inherit;
+}
+.prep-cfg, .prep-bonds {
+  font-family: ui-monospace, "Cascadia Code", monospace; font-size: .8rem; white-space: pre-wrap;
+}
+.prep-bonds { background: var(--bg); padding: 10px; border-radius: 8px; border: 1px solid var(--border); overflow: auto; }
+.prep-scroll { overflow-x: auto; }
+.prep-tabela { font-size: .82rem; }
+.het-grupo { margin: 6px 0; }
 
 .rodape { text-align: center; padding: 20px; color: var(--muted); font-size: .85rem; }
 .rodape .creditos { margin: 0 0 8px; color: var(--text); font-size: .92rem; line-height: 1.6; }

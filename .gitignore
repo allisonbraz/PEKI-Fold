@@ -5,6 +5,9 @@ __pycache__/
 .venv/
 venv/
 
+# PDBs baixados só para o teste do módulo de preparo
+tests/fixtures/*.pdb
+
 # Saidas geradas pelos programas (reproduziveis ao executar)
 chainsproteins/
 graphs/

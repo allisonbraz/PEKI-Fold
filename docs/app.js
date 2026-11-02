@@ -142,12 +142,20 @@ function iniciarWorkspace(dados) {
   $("#ws-resumo").textContent = `${dados.cadeias.length} cadeia(s) · ${totalRes} resíduos no total`;
 
   renderMeta();
+  if (typeof PrepUI !== "undefined") PrepUI.reiniciar();
   renderViewer();
   renderCadeias();
   renderStats();
   renderAA();
   renderPockets();
   $("#motivo-resultado").innerHTML = "";
+  if (typeof PrepUI !== "undefined" && PrepUI.ativo()) {
+    try { PrepUI.aoCarregar(estado); }
+    catch (e) {
+      const el = document.getElementById("tab-preparo");
+      if (el) el.textContent = "Não foi possível montar a ficha de preparo.";
+    }
+  }
 
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
@@ -182,7 +190,9 @@ async function enriquecerMetaRCSB(id) {
 function renderMeta() {
   const m = estado.meta;
   const el = $("#ws-meta");
-  if (!m || !(m.titulo || m.classificacao || m.organismos?.length || m.ligantes?.length)) { el.hidden = true; return; }
+  const avisoPrevTopo = (typeof PrepAnalysis !== "undefined" && estado.pdbText)
+    ? PrepAnalysis.avisoPredita(estado.pdbText, m) : null;
+  if (!m || !(m.titulo || m.classificacao || m.organismos?.length || m.ligantes?.length || avisoPrevTopo)) { el.hidden = true; return; }
 
   const tags = [];
   if (m.metodo) tags.push(m.metodo);
@@ -194,12 +204,15 @@ function renderMeta() {
   if (m.rcsbId) tags.push(`<a href="https://www.rcsb.org/structure/${m.rcsbId}" target="_blank" rel="noopener">Ver no RCSB ↗</a>`);
 
   const ligs = (m.ligantes || []).map((l) => `${l.id}${l.count > 1 ? ` ×${l.count}` : ""}`).join(", ");
+  const avisoPrev = (typeof PrepAnalysis !== "undefined" && estado.pdbText)
+    ? PrepAnalysis.avisoPredita(estado.pdbText, m) : null;
 
   el.innerHTML =
     `<div class="meta-titulo">${m.titulo || m.classificacao || estado.nome}</div>` +
     (m.classificacao && m.titulo ? `<div class="muted small">${m.classificacao}</div>` : "") +
     (tags.length ? `<div class="meta-tags">${tags.map((t) => `<span class="meta-tag">${t}</span>`).join("")}</div>` : "") +
-    (ligs ? `<div class="muted small">Ligantes: ${ligs}</div>` : "");
+    (ligs ? `<div class="muted small">Ligantes: ${ligs}</div>` : "") +
+    (avisoPrev ? `<p class="aviso-predita">${avisoPrev}</p>` : "");
   el.hidden = false;
 }
 
@@ -233,6 +246,7 @@ function aplicarEstilo() {
     v.setStyle({ resn: ligs }, { stick: { radius: 0.18 }, sphere: { scale: 0.28 } });
   }
   v.render();
+  if (typeof PrepUI !== "undefined") PrepUI.aposEstilo(estado);
 }
 
 function ajustarTamViewer() {
@@ -638,15 +652,17 @@ function maxPor(pockets, chave) {
 }
 
 // Colunas da tabela de pockets (ordenáveis ao clicar no cabeçalho).
+const AVISO_DESCRITOR = "O drugScore e o volume são descritores geométricos da cavidade, não previsão de ligação. Escore de docking não é afinidade. Contato geométrico não é contribuição energética.";
+
 const POCKET_TABELA = [
   { key: "name", label: "Pocket", dica: "Identificador do pocket (P_0 é o de maior volume)" },
   { key: "volume", label: "Volume (Å³)", dica: "Volume da cavidade, em Å³ — quanto maior, mais espaço para um ligante" },
   { key: "surface", label: "Superfície (Å²)", dica: "Área da superfície do pocket, em Å²" },
-  { key: "depth", label: "Profundidade", dica: "Quão fundo é a cavidade — bolsos mais profundos tendem a ligar melhor" },
-  { key: "hydrophobicity", label: "Hidrofob.", dica: "Hidrofobicidade (0–1) — afinidade por grupos apolares" },
+  { key: "depth", label: "Profundidade", dica: "Quão fundo é a cavidade, em uma escala do DoGSiteScorer" },
+  { key: "hydrophobicity", label: "Hidrofob.", dica: "Hidrofobicidade (0–1) — caráter apolar da cavidade" },
   { key: "accept", label: "Aceptores", dica: "Número de aceptores de ligação de hidrogênio" },
   { key: "donor", label: "Doadores", dica: "Número de doadores de ligação de hidrogênio" },
-  { key: "drugScore", label: "DrugScore", dica: "Drugabilidade estimada (0–1) — potencial do bolso para ligar fármacos" },
+  { key: "drugScore", label: "DrugScore", dica: "Descritor geométrico do DoGSiteScorer (0–1). Não é afinidade nem previsão de ligação" },
 ];
 
 // Aplica a ordenação atual (estado.pocketSort) preservando o índice original.
@@ -708,20 +724,21 @@ function renderTabelaPockets(pockets) {
       <li><strong>Mais profundo:</strong> ${maisProf ? `${maisProf.name} (profundidade ${fmt(maisProf.depth)})` : "—"}</li>
       <li><strong>Volume × profundidade:</strong> ${corrTxt}</li>
       <li><strong>Mais hidrofóbico:</strong> ${maisHidro ? `${maisHidro.name} (hidrofobicidade ${fmt(maisHidro.hydrophobicity)})` : "—"}</li>
-      <li><strong>Sugestão para docking:</strong> ${melhorDrug
-        ? `${melhorDrug.name} — maior <em>drugScore</em> (${fmt(melhorDrug.drugScore, 3)}), indicando melhor "drugabilidade"; volume ${fmt(melhorDrug.volume)} Å³ e profundidade ${fmt(melhorDrug.depth)} favorecem o encaixe de um ligante.`
+      <li><strong>Maior drugScore:</strong> ${melhorDrug
+        ? `${melhorDrug.name} — maior <em>drugScore</em> (${fmt(melhorDrug.drugScore, 3)}), que é um descritor geométrico; volume ${fmt(melhorDrug.volume)} Å³ e profundidade ${fmt(melhorDrug.depth)}.`
         : "—"}</li>
     </ol>
     <details class="legenda-desc">
       <summary>O que significam os descritores?</summary>
       <ul>
         <li><strong>Volume / Superfície:</strong> tamanho da cavidade (Å³) e área da sua superfície (Å²).</li>
-        <li><strong>Profundidade:</strong> quão fundo é o bolso — bolsos mais profundos tendem a ligar melhor.</li>
-        <li><strong>Hidrofobicidade (0–1):</strong> afinidade da cavidade por grupos apolares.</li>
+        <li><strong>Profundidade:</strong> quão fundo é a cavidade, na escala do DoGSiteScorer.</li>
+        <li><strong>Hidrofobicidade (0–1):</strong> caráter apolar da cavidade.</li>
         <li><strong>Aceptores / Doadores:</strong> nº de aceptores e doadores de ligação de hidrogênio.</li>
-        <li><strong>DrugScore (0–1):</strong> drugabilidade estimada — potencial do bolso para ligar um fármaco.</li>
+        <li><strong>DrugScore (0–1):</strong> descritor geométrico do DoGSiteScorer. Não é afinidade nem previsão de ligação.</li>
       </ul>
     </details>
+    <p class="rotulo-fixo">${AVISO_DESCRITOR}</p>
   </div>
   <div id="pockets-graf-volume" class="grafico"></div>
   <div id="pockets-graf-depth" class="grafico"></div>`;
@@ -740,6 +757,7 @@ function renderTabelaPockets(pockets) {
     });
   });
   $("#btn-pockets-csv").addEventListener("click", baixarCsvPockets);
+  if (typeof PrepUI !== "undefined") PrepUI.aoMostrar();
 
   plotPockets(pockets);
 }
@@ -1034,10 +1052,11 @@ function renderCmpPockets(resultado) {
       <li><strong>Proteína com pocket mais profundo:</strong> ${maisProf ? `${maisProf.prot} — ${maisProf.name} (profundidade ${fmt(maisProf.depth)})` : "—"}</li>
       <li><strong>Relação volume × profundidade:</strong> ${corrTxt}</li>
       <li><strong>Proteínas com pockets mais hidrofóbicos:</strong> ${topHidro || "—"}</li>
-      <li><strong>Pocket sugerido para docking:</strong> ${melhorDrug
-        ? `${melhorDrug.prot} — ${melhorDrug.name}, maior <em>drugScore</em> (${fmt(melhorDrug.drugScore, 3)}); volume ${fmt(melhorDrug.volume)} Å³ e profundidade ${fmt(melhorDrug.depth)} favorecem o encaixe de um ligante.`
+      <li><strong>Maior drugScore:</strong> ${melhorDrug
+        ? `${melhorDrug.prot} — ${melhorDrug.name} (${fmt(melhorDrug.drugScore, 3)}). O drugScore é um descritor geométrico; volume ${fmt(melhorDrug.volume)} Å³ e profundidade ${fmt(melhorDrug.depth)}.`
         : "—"}</li>
     </ol>
+    <p class="rotulo-fixo">${AVISO_DESCRITOR}</p>
   </div>
   <div id="cmp-graf-pvol" class="grafico"></div>
   <div id="cmp-graf-pdepth" class="grafico"></div>
@@ -1093,6 +1112,7 @@ const EXPORT_SECOES = {
     { id: "sequencias", label: "Sequências (FASTA)", on: () => !!estado.dados },
     { id: "motivos", label: "Motivos", on: () => !!estado.ultimoMotivo },
     { id: "pockets", label: "Pockets", on: () => !!estado.pockets },
+    { id: "preparo", label: "Ficha de preparo", on: () => typeof PrepUI !== "undefined" && PrepUI.ativo() && PrepUI.temFicha() },
   ],
   cmp: () => [
     { id: "stats", label: "Estatísticas", on: () => !!estado.comparacao },
@@ -1239,7 +1259,7 @@ function textoAnalisePocketsSingle(pk) {
     `Mais profundo: ${mp ? `${mp.name} (${fmt(mp.depth)})` : "—"}`,
     `Volume × profundidade: ${corrTexto(pearson(pk.map((p) => p.volume), pk.map((p) => p.depth)))}`,
     `Mais hidrofóbico: ${mh ? `${mh.name} (${fmt(mh.hydrophobicity)})` : "—"}`,
-    `Sugestão para docking: ${md ? `${md.name} (drugScore ${fmt(md.drugScore, 3)})` : "—"}`,
+    `Maior drugScore (descritor geométrico, não é afinidade): ${md ? `${md.name} (${fmt(md.drugScore, 3)})` : "—"}`,
   ];
 }
 function textoAnalisePocketsCmp(resultado) {
@@ -1257,7 +1277,7 @@ function textoAnalisePocketsCmp(resultado) {
     `Proteína com pocket mais profundo: ${mp ? `${mp.prot} — ${mp.name} (${fmt(mp.depth)})` : "—"}`,
     `Volume × profundidade: ${corrTexto(pearson(principais.map((p) => p.volume), principais.map((p) => p.depth)))}`,
     `Proteínas mais hidrofóbicas: ${rh || "—"}`,
-    `Pocket sugerido para docking: ${md ? `${md.prot} — ${md.name} (drugScore ${fmt(md.drugScore, 3)})` : "—"}`,
+    `Maior drugScore (descritor geométrico, não é afinidade): ${md ? `${md.prot} — ${md.name} (${fmt(md.drugScore, 3)})` : "—"}`,
   ] };
 }
 
@@ -1293,7 +1313,9 @@ async function exportarMdSingle(secoes) {
     md += `**Análise:**\n\n` + textoAnalisePocketsSingle(pk).map((s) => `- ${s}`).join("\n") + `\n\n`;
     md += `![Volume por pocket](${await imgPlotly(specPocketBar(pk, "volume", "Volume por pocket", "Volume (Å³)", "#2a5599"))})\n\n`;
     md += `![Profundidade por pocket](${await imgPlotly(specPocketBar(pk, "depth", "Profundidade por pocket", "Profundidade", "#e8513a"))})\n\n`;
+    md += `> ${AVISO_DESCRITOR}\n\n`;
   }
+  if (secoes.includes("preparo") && typeof PrepUI !== "undefined" && PrepUI.temFicha()) md += PrepUI.markdown();
   md += `---\n${CREDITO}\n`;
   baixarTexto(exportBase() + ".md", md, "text/markdown;charset=utf-8");
 }
@@ -1312,6 +1334,7 @@ async function exportarMdCmp(secoes) {
     md += `## Pockets\n\n### Pocket principal por proteína\n\n` + mdTabela(["Proteína", "Pocket", "Volume (Å³)", "Profundidade", "Hidrofob.", "DrugScore"],
       an.principais.map((p) => [p.prot, p.name, fmt(p.volume), fmt(p.depth), fmt(p.hydrophobicity), fmt(p.drugScore, 3)]));
     md += `**Comparação (perguntas do trabalho):**\n\n` + an.linhas.map((s) => `- ${s}`).join("\n") + `\n\n`;
+    md += `> ${AVISO_DESCRITOR}\n\n`;
     md += `![Volume](${await imgPlotly(specCmpPocketBar(an.principais, "volume", "Volume do pocket principal", "Volume (Å³)", "#2a5599"))})\n\n`;
     md += `![Profundidade](${await imgPlotly(specCmpPocketBar(an.principais, "depth", "Profundidade do pocket principal", "Profundidade", "#e8513a"))})\n\n`;
     md += `![Hidrofobicidade](${await imgPlotly(specCmpPocketBar(an.principais, "hydrophobicity", "Hidrofobicidade do pocket principal", "Hidrofobicidade", "#9b59b6"))})\n\n`;
@@ -1385,9 +1408,11 @@ async function exportarPdfSingle(secoes) {
     h.tabela(["Pocket", "Vol (Å³)", "Sup (Å²)", "Prof", "Hidr.", "Acc", "Don", "Drug"],
       pk.map((p) => [p.name, fmt(p.volume), fmt(p.surface), fmt(p.depth), fmt(p.hydrophobicity), p.accept ?? "—", p.donor ?? "—", fmt(p.drugScore, 3)]));
     textoAnalisePocketsSingle(pk).forEach((s) => h.par("• " + s));
+    h.par(AVISO_DESCRITOR);
     h.img(await imgPlotly(specPocketBar(pk, "volume", "Volume por pocket", "Volume (Å³)", "#2a5599")));
     h.img(await imgPlotly(specPocketBar(pk, "depth", "Profundidade por pocket", "Profundidade", "#e8513a")));
   }
+  if (secoes.includes("preparo") && typeof PrepUI !== "undefined" && PrepUI.temFicha()) PrepUI.anexarPdf(h);
   h.espaco(6); doc.setFontSize(8); doc.setTextColor(120); h.par(CREDITO);
   doc.save(exportBase() + ".pdf");
 }
@@ -1410,6 +1435,7 @@ async function exportarPdfCmp(secoes) {
     h.tabela(["Proteína", "Pocket", "Volume (Å³)", "Profundidade", "Hidrofob.", "DrugScore"],
       an.principais.map((p) => [p.prot, p.name, fmt(p.volume), fmt(p.depth), fmt(p.hydrophobicity), fmt(p.drugScore, 3)]));
     an.linhas.forEach((s) => h.par("• " + s));
+    h.par(AVISO_DESCRITOR);
     h.img(await imgPlotly(specCmpPocketBar(an.principais, "volume", "Volume do pocket principal", "Volume (Å³)", "#2a5599")));
     h.img(await imgPlotly(specCmpPocketBar(an.principais, "depth", "Profundidade do pocket principal", "Profundidade", "#e8513a")));
     h.img(await imgPlotly(specCmpPocketBar(an.principais, "hydrophobicity", "Hidrofobicidade do pocket principal", "Hidrofobicidade", "#9b59b6")));
@@ -1423,6 +1449,7 @@ function trocarAba(nome) {
   $$("#workspace .aba").forEach((a) => a.classList.toggle("ativa", a.dataset.tab === nome));
   $$("#workspace .aba-conteudo").forEach((c) => (c.hidden = c.id !== `tab-${nome}`));
   if (nome === "aa") setTimeout(() => Plotly.Plots.resize("aa-grafico"), 50);
+  if (nome === "preparo" && typeof PrepUI !== "undefined") PrepUI.aoMostrar();
   if (nome === "pockets" && estado.pockets) {
     setTimeout(() => {
       Plotly.Plots.resize("pockets-graf-volume");
@@ -1446,7 +1473,14 @@ function alternarTema() {
 }
 
 // ----- init -----
+function syncAbaPreparo() {
+  const ligada = typeof PrepUI !== "undefined" && PrepUI.ativo();
+  const botao = document.querySelector('#workspace .aba[data-tab="preparo"]');
+  if (botao) botao.hidden = !ligada;
+}
+
 function init() {
+  syncAbaPreparo();
   // restaura o tema salvo
   try {
     if (localStorage.getItem("peki-tema") === "dark") {
