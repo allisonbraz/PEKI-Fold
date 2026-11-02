@@ -58,6 +58,21 @@
       </div>
       <p class="muted small">De 2 a 4 PDBs. Compara estatísticas, aminoácidos e pockets.</p>
 
+      <div id="ens-entrada" class="ens-entrada">
+        <div class="ou">— ou analise um ensemble —</div>
+        <p class="ens-nota">Vários IDs da mesma proteína, ou um PDB com MODEL/ENDMDL. A fila chama o DoGSiteScorer uma estrutura por vez.</p>
+        <label for="ens-ids" class="ens-lbl">IDs da mesma proteína</label>
+        <textarea id="ens-ids" class="ens-ids" rows="2" placeholder="ex.: 4EYL 1GZM"></textarea>
+        <div class="ens-home-acoes">
+          <button id="ens-abrir" class="primary-btn" type="button">Abrir ensemble</button>
+          <label class="ghost-btn ens-file-lbl">Arquivo multimodelo
+            <input id="ens-file" type="file" accept=".pdb,.ent" hidden>
+          </label>
+          <button id="ens-exemplo-home" class="ghost-btn" type="button">Exemplo sintético</button>
+        </div>
+        <p id="ens-erro-home" class="erro" hidden></p>
+      </div>
+
       <details class="ajuda">
         <summary>Como usar</summary>
         <ul>
@@ -218,6 +233,101 @@
     </div>
   </main>
 
+  <main id="ensemble" class="workspace" hidden>
+    <div class="ws-header">
+      <div>
+        <h2>Ensemble</h2>
+        <p class="ens-nota" id="ens-resumo">Estruturas da mesma proteína, bolsões do DoGSiteScorer.</p>
+      </div>
+      <div class="ws-acoes">
+        <button id="ens-novo" class="ghost-btn" type="button">↻ Nova análise</button>
+      </div>
+    </div>
+
+    <section class="card ens-painel">
+      <div class="ens-frases">
+        <p class="rotulo-fixo ens-rel">Trabalho relacionado: PockFlex (Rahali et al., Nucleic Acids Research 2026, 54(W1), W295–W300, https://doi.org/10.1093/nar/gkag453). Também analisa bolsões num conjunto de estruturas. Esta aba é a leitura do PEKI Fold, no navegador e em português, com a ficha de preparo e uma caixa editável. Não há comparação de desempenho com o PockFlex.</p>
+        <p class="ens-nota"><a href="https://doi.org/10.1093/nar/gkag453">DOI 10.1093/nar/gkag453</a></p>
+        <p class="rotulo-fixo">Persistência indica recorrência do bolsão no conjunto, não druggability nem ligação de composto.</p>
+        <p class="rotulo-fixo">N efetivo é o número de estruturas que de fato entraram no agrupamento. A recorrência aparece como k de N efetivo.</p>
+        <p class="rotulo-fixo">Estruturas redundantes inflam a contagem. Entradas quase iguais aumentam n sem informação nova, e esta aba não remove essa redundância.</p>
+        <p class="rotulo-fixo">Resultados de motores diferentes não devem ser misturados. Esta aba usa somente o DoGSiteScorer. O drugScore daqui não entra na mesma conta que o escore de outro programa.</p>
+        <p class="rotulo-fixo">Ensemble de estruturas cristalográficas não representa dinâmica real.</p>
+        <p class="rotulo-fixo">Resultado exploratório: é hipótese, não conclusão.</p>
+        <p class="rotulo-fixo">PEKI Fold não é ferramenta de docking.</p>
+        <p class="rotulo-fixo">Evidência: dado medido no arquivo ou descritor vindo do DoGSiteScorer.</p>
+        <p class="rotulo-fixo">Hipótese: interpretação que esses dados não provam.</p>
+        <p class="rotulo-fixo">O drugScore e o volume são descritores do DoGSiteScorer. Não são afinidade nem previsão de ligação.</p>
+        <p class="rotulo-fixo">O alinhamento é por número de resíduo e cadeia, ou por sequência simples. Não há sobreposição estrutural.</p>
+        <p class="rotulo-fixo">A distância entre centroides só entra se as estruturas já compartilham o referencial. Este app não sobrepõe coordenadas.</p>
+        <p class="rotulo-fixo">Apo ou holo é um indício pela presença de HETATM de ligante. Não confirma o estado biológico.</p>
+        <p class="rotulo-fixo">O app não confere se os IDs são a mesma proteína.</p>
+        <p class="rotulo-fixo">Sugestão editável de caixa. Não é uma caixa validada e não é resultado de docking.</p>
+        <p class="rotulo-fixo">O texto da caixa segue o mesmo formato da ficha de preparo. Continua sendo sugestão editável e não substitui a conferência daquela ficha.</p>
+      </div>
+
+      <div class="ens-form">
+        <label>Limite de estruturas (máx. 20)
+          <input id="ens-limite" type="number" min="1" max="20" step="1" value="8">
+        </label>
+        <label>Pausa entre chamadas (s)
+          <input id="ens-pausa" type="number" min="0" max="30" step="0.5" value="2">
+        </label>
+        <label>Alinhamento
+          <select id="ens-modo">
+            <option value="numero" selected>Número de resíduo e cadeia</option>
+            <option value="sequencia">Sequência simples</option>
+          </select>
+        </label>
+        <label>Jaccard mínimo de resíduos
+          <input id="ens-jaccard" type="number" min="0" max="1" step="0.05" value="0.5">
+        </label>
+        <label class="ens-check"><input id="ens-centroide" type="checkbox"> Também exigir distância entre centroides</label>
+        <label>Distância máxima (Å)
+          <input id="ens-distancia" type="number" min="0" max="100" step="0.5" value="6">
+        </label>
+        <label>Faixa da caixa do ensemble
+          <select id="ens-faixa">
+            <option value="25">≥ 25%</option>
+            <option value="50" selected>≥ 50%</option>
+            <option value="75">≥ 75%</option>
+          </select>
+        </label>
+        <label>Margem da caixa (Å)
+          <input id="ens-margem" type="number" min="0" max="50" step="0.5" value="4">
+        </label>
+        <label class="ens-decisao-lbl">Decisão do pesquisador
+          <textarea id="ens-decisao" class="ens-decisao" rows="3" placeholder="O que você aceita, descarta ou quer conferir. Entra na exportação."></textarea>
+        </label>
+      </div>
+
+      <div class="ens-acoes">
+        <button id="ens-calcular" class="primary-btn" type="button">Obter bolsões (DoGSite)</button>
+        <button id="ens-exemplo" class="ghost-btn" type="button">Carregar exemplo sintético</button>
+        <button id="ens-atualizar" class="ghost-btn" type="button">Atualizar grupos</button>
+        <button id="ens-cancelar" class="ghost-btn" type="button" hidden>Cancelar</button>
+        <button id="ens-csv" class="ghost-btn" type="button">CSV dos grupos</button>
+        <button id="ens-csv-matriz" class="ghost-btn" type="button">CSV estrutura × bolsão</button>
+        <button id="ens-json" class="ghost-btn" type="button">JSON</button>
+      </div>
+
+      <div id="ens-progresso" class="ens-progresso" hidden>
+        <div id="ens-trilho" class="ens-progresso-trilho" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+          <div id="ens-progresso-fill" class="ens-progresso-fill"></div>
+        </div>
+        <p id="ens-progresso-txt" aria-live="polite"></p>
+      </div>
+      <p id="ens-status" class="ens-status" aria-live="polite"></p>
+      <div id="ens-lista"></div>
+      <div id="ens-resultado"></div>
+
+      <div class="ens-viewer-bloco">
+        <div id="ens-viewer" class="ens-viewer"></div>
+        <p id="ens-viewer-nota" class="ens-nota">O ponto, quando pedido, é o centroide nesta estrutura de referência. Não é o centroide de outra estrutura colado aqui.</p>
+      </div>
+    </section>
+  </main>
+
   <!-- Modal de exportação -->
   <div id="export-modal" class="modal-overlay" hidden>
     <div class="modal">
@@ -256,7 +366,9 @@
 
   <script src="pdb-analysis.js"></script>
   <script src="prep-analysis.js"></script>
+  <script src="ensemble-analysis.js"></script>
   <script src="prep-ui.js"></script>
   <script src="app.js"></script>
+  <script src="ensemble-ui.js"></script>
 </body>
 </html>

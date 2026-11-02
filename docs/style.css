@@ -288,3 +288,86 @@ tr.destaque-menor td { background: rgba(232,81,58,.10); }
 
 .rodape { text-align: center; padding: 20px; color: var(--muted); font-size: .85rem; }
 .rodape .creditos { margin: 0 0 8px; color: var(--text); font-size: .92rem; line-height: 1.6; }
+
+/* Ensemble (prefixo ens-). Não altera o viewer principal. */
+#ensemble { min-width: 0; }
+.ens-entrada { margin-top: 8px; text-align: left; }
+.ens-lbl, .ens-nota, .ens-status, .ens-decisao-lbl { color: var(--text); }
+.ens-lbl { display: block; font-size: .85rem; font-weight: 600; text-align: left; }
+.ens-nota { font-size: .85rem; line-height: 1.45; margin: 8px 0; }
+.ens-ids, .ens-decisao, .ens-cfg {
+  width: 100%; max-width: 100%; min-width: 0; box-sizing: border-box;
+  margin: 8px 0; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px;
+  background: var(--bg); color: var(--text); font: inherit;
+}
+.ens-ids { resize: vertical; }
+.ens-home-acoes, .ens-acoes, .ens-viewer-controles, .ens-form {
+  display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center;
+}
+.ens-home-acoes { margin-top: 8px; }
+.ens-home-acoes .primary-btn, .ens-home-acoes .ghost-btn,
+.ens-acoes .primary-btn, .ens-acoes .ghost-btn { white-space: normal; }
+.ens-file-lbl { display: inline-flex; align-items: center; }
+.ens-painel { min-width: 0; max-width: 100%; overflow-x: clip; }
+.ens-form { align-items: flex-end; margin: 12px 0; }
+.ens-form label {
+  display: flex; flex-direction: column; gap: 4px; font-size: .85rem;
+  flex: 1 1 9rem; min-width: 0; color: var(--text);
+}
+.ens-form label.ens-check { flex-direction: row; align-items: flex-start; flex: 1 1 100%; }
+.ens-form label.ens-decisao-lbl { flex: 1 1 100%; }
+.ens-form input[type="checkbox"] { width: auto; flex: 0 0 auto; }
+.ens-form input, .ens-form select, .ens-viewer-controles select, .ens-caixas select {
+  width: 100%; max-width: 100%; min-width: 0; padding: 6px 8px;
+  border: 1px solid var(--border); border-radius: 6px; background: var(--bg); color: var(--text); font: inherit;
+}
+.ens-frases, .ens-rel, .ens-nota, .ens-painel p, .ens-status { overflow-wrap: anywhere; }
+.ens-status { min-height: 1.2em; }
+.ens-erro { color: #7a1f12; }
+[data-theme="dark"] .ens-erro { color: #ffd0c8; }
+.ens-progresso { margin: 10px 0; }
+.ens-progresso-trilho { height: 10px; background: var(--border); border-radius: 99px; overflow: hidden; }
+.ens-progresso-fill { height: 100%; width: 0; background: #1a3d6d; }
+[data-theme="dark"] .ens-progresso-fill { background: #9ec5ff; }
+.ens-itens { margin: 8px 0; padding-left: 18px; }
+.ens-scroll { display: block; width: 100%; overflow-x: auto; max-width: 100%; min-width: 0; }
+.ens-tabela { border-collapse: collapse; width: max-content; min-width: 100%; font-size: .82rem; color: var(--text); }
+.ens-tabela th, .ens-tabela td {
+  text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--border);
+  vertical-align: top; color: var(--text);
+}
+.ens-tabela td.ens-wrap, .ens-grupo p { white-space: normal; }
+.ens-tabela th { white-space: nowrap; }
+.ens-faixa {
+  display: inline-block; padding: 1px 6px; border-radius: 999px;
+  font-size: .78rem; font-weight: 700; line-height: 1.4;
+}
+.ens-faixa-75 { background: #d8f3dc; color: #1b4332; }
+.ens-faixa-50 { background: #fff3cd; color: #1c2433; }
+.ens-faixa-25 { background: #fde8d8; color: #6b2d12; }
+.ens-faixa-0 { background: #e7edf5; color: #1c2433; }
+[data-theme="dark"] .ens-faixa-75 { background: #1b4332; color: #d8f3dc; }
+[data-theme="dark"] .ens-faixa-50 { background: #5c4a12; color: #fff8e1; }
+[data-theme="dark"] .ens-faixa-25 { background: #6b2d12; color: #ffe8d6; }
+[data-theme="dark"] .ens-faixa-0 { background: #243044; color: #e7edf7; }
+.ens-n { font-weight: 600; }
+.ens-grupo { margin-top: 12px; }
+.ens-grupo h3, .ens-caixas h3, .ens-leitura h3 { font-size: 1rem; color: var(--text); }
+.ens-caixas { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 16px; }
+.ens-caixas > section { flex: 1 1 16rem; min-width: 0; max-width: 100%; }
+.ens-grade { display: flex; flex-wrap: wrap; gap: 8px; min-width: 0; max-width: 100%; }
+.ens-grade label { flex: 1 1 7rem; min-width: 0; font-size: .8rem; color: var(--text); }
+.ens-grade input { width: 100%; min-width: 0; max-width: 100%; box-sizing: border-box; }
+.ens-cfg { min-height: 8rem; }
+.ens-viewer-bloco { margin-top: 16px; min-width: 0; max-width: 100%; }
+.ens-viewer { width: 100%; height: 320px; background: #0b1020; position: relative; }
+.ens-exemplo-aviso {
+  background: #fff3cd; color: #1c2433; border-left: 4px solid #7a5b00;
+  padding: 8px 10px; border-radius: 8px; font-weight: 700;
+}
+[data-theme="dark"] .ens-exemplo-aviso { background: #3d3414; color: #fff8e1; }
+.ens-rel a, .ens-nota a { color: inherit; text-decoration: underline; }
+.ens-leitura ul { margin: 6px 0 12px; padding-left: 18px; }
+@media (max-width: 700px) {
+  .ens-viewer { height: 220px; }
+}
