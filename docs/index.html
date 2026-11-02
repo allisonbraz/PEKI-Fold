@@ -6,12 +6,7 @@
   <title>PEKI Fold — Protein Exploration Kit for Insights</title>
   <link rel="icon" type="image/jpeg" href="favicon_peki.jpeg" />
   <link rel="stylesheet" href="style.css" />
-  <!-- Bibliotecas via CDN: 3Dmol.js (viewer molecular) e Plotly (gráficos) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/3Dmol/2.4.0/3Dmol-min.js"></script>
-  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
-  <!-- Exportação em PDF: jsPDF + autotable -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+  <!-- 3Dmol, Plotly e jsPDF são pedidos na primeira vez que o viewer, um gráfico ou o PDF precisam deles. -->
 </head>
 <body>
   <header class="topbar">
@@ -28,7 +23,7 @@
   <!-- Tela de entrada -->
   <section id="entrada" class="entrada">
     <div class="card entrada-card">
-      <img class="hero-logo" src="peki-fold.png" alt="PEKI Fold — Protein Exploration Kit for Insights" />
+      <img class="hero-logo" src="peki-fold.png" width="640" height="427" alt="PEKI Fold — Protein Exploration Kit for Insights" />
       <h2>Comece por aqui</h2>
       <p class="muted">Cole um ID do PDB ou envie um arquivo <code>.pdb</code>. Tudo é processado no seu navegador.</p>
       <div class="escopo">

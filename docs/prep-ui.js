@@ -711,7 +711,15 @@ const PrepUI = (() => {
     doc.rodape.forEach((l) => h.par(l));
   }
 
-  function baixarPdf() {
+  async function baixarPdf() {
+    if (typeof window.pekiCarregarPdf === "function") {
+      try { await window.pekiCarregarPdf(); }
+      catch (e) {
+        const st = document.getElementById("prep-vina-status");
+        if (st) st.textContent = "jsPDF não está disponível neste carregamento da página.";
+        return;
+      }
+    }
     if (!window.jspdf || !window.jspdf.jsPDF) {
       const st = document.getElementById("prep-vina-status");
       if (st) st.textContent = "jsPDF não está disponível neste carregamento da página.";

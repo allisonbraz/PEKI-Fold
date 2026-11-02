@@ -51,6 +51,44 @@ function atualizarURL(chave, valor) {
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => Array.from(document.querySelectorAll(sel));
 
+// Bibliotecas grandes só na hora do uso. O parser da entrada não espera por elas.
+const PEKI_LIBS = {
+  mol: "https://cdnjs.cloudflare.com/ajax/libs/3Dmol/2.4.0/3Dmol-min.js",
+  plotly: "https://cdn.plot.ly/plotly-2.35.2.min.js",
+  jspdf: "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js",
+  autotable: "https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js",
+};
+const pekiScript = new Map();
+function carregarScript(src) {
+  if (pekiScript.has(src)) return pekiScript.get(src);
+  const prom = new Promise((resolve, reject) => {
+    const s = document.createElement("script");
+    s.src = src;
+    s.onload = () => resolve();
+    s.onerror = () => {
+      pekiScript.delete(src);
+      reject(new Error("Não foi possível carregar uma biblioteca externa. Verifique a conexão e tente de novo."));
+    };
+    document.head.appendChild(s);
+  });
+  pekiScript.set(src, prom);
+  return prom;
+}
+function lib3D() {
+  if (window.$3Dmol) return Promise.resolve();
+  return carregarScript(PEKI_LIBS.mol);
+}
+function libPlotly() {
+  if (window.Plotly) return Promise.resolve();
+  return carregarScript(PEKI_LIBS.plotly);
+}
+function libPdf() {
+  const pronto = window.jspdf && window.jspdf.jsPDF && typeof window.jspdf.jsPDF.API.autoTable === "function";
+  if (pronto) return Promise.resolve();
+  return carregarScript(PEKI_LIBS.jspdf).then(() => carregarScript(PEKI_LIBS.autotable));
+}
+window.pekiCarregarPdf = libPdf;
+
 function mostrarErro(msg) { const el = $("#erro"); el.textContent = msg; el.hidden = false; }
 function limparErro() { $("#erro").hidden = true; }
 function setLoading(on) { $("#loading").hidden = !on; }
@@ -106,7 +144,7 @@ async function analisar({ pdbId, file }) {
     dados.pdb_text = texto;
     dados.pdb_id = id;
     dados.nModelos = nModelos;
-    iniciarWorkspace(dados);
+    await iniciarWorkspace(dados);
     if (id) { enriquecerMetaRCSB(id); atualizarURL("pdb", id); } // enriquece + URL compartilhável
   } catch (e) {
     mostrarErro(e.message);
@@ -116,7 +154,8 @@ async function analisar({ pdbId, file }) {
 }
 
 // ----- workspace -----
-function iniciarWorkspace(dados) {
+async function iniciarWorkspace(dados) {
+  await lib3D();
   estado.pdbText = dados.pdb_text;
   estado.nome = dados.nome;
   estado.pdbId = dados.pdb_id || null;
@@ -414,10 +453,11 @@ function itensAAOrdenados(freq) {
   return itens; // "alpha" = ordem natural (já alfabética)
 }
 
-function plotAA() {
+async function plotAA() {
   const cid = $("#aa-cadeia").value;
   const freq = estado.dados.frequencias[cid];
   if (!freq) return;
+  await libPlotly();
 
   const itens = itensAAOrdenados(freq);
   const x = itens.map((i) => i.aa);
@@ -762,7 +802,8 @@ function renderTabelaPockets(pockets) {
   plotPockets(pockets);
 }
 
-function plotPockets(pockets) {
+async function plotPockets(pockets) {
+  await libPlotly();
   const escuro = document.body.dataset.theme === "dark";
   const nomes = pockets.map((p) => p.name);
   const layoutBase = (titulo, ytitulo) => ({
@@ -838,7 +879,7 @@ async function compararProteinas(idsRaw) {
     }
     estado.comparacao = proteinas;
     estado.cmpPockets = null;
-    iniciarComparacao();
+    await iniciarComparacao();
     atualizarURL("compare", ids.join(","));
   } catch (e) {
     mostrarErro(e.message);
@@ -847,7 +888,8 @@ async function compararProteinas(idsRaw) {
   }
 }
 
-function iniciarComparacao() {
+async function iniciarComparacao() {
+  await lib3D();
   const ps = estado.comparacao;
   $("#entrada").hidden = true;
   $("#workspace").hidden = true;
@@ -913,7 +955,7 @@ function ajustarTamCmp() {
   }
 }
 
-function renderCmpStats() {
+async function renderCmpStats() {
   const cont = $("#ctab-stats");
   const resumos = estado.comparacao.map(resumoProteina);
   const maxRes = Math.max(...resumos.map((r) => r.residuos));
@@ -930,6 +972,7 @@ function renderCmpStats() {
   cont.innerHTML = html;
   $("#btn-cmp-stats-csv").addEventListener("click", baixarCsvCmpStats);
 
+  await libPlotly();
   const escuro = document.body.dataset.theme === "dark";
   Plotly.newPlot("cmp-graf-stats", [
     { x: resumos.map((r) => r.id), y: resumos.map((r) => r.residuos), type: "bar",
@@ -952,7 +995,8 @@ function renderCmpAA() {
   plotCmpAA();
 }
 
-function plotCmpAA() {
+async function plotCmpAA() {
+  await libPlotly();
   const escuro = document.body.dataset.theme === "dark";
   const aas = ProtAnalysis.AMINOACIDOS_PADRAO;
   const traces = estado.comparacao.map((p, i) => {
@@ -1067,7 +1111,8 @@ function renderCmpPockets(resultado) {
   plotCmpPockets(principais);
 }
 
-function plotCmpPockets(principais) {
+async function plotCmpPockets(principais) {
+  await libPlotly();
   const escuro = document.body.dataset.theme === "dark";
   const ids = principais.map((p) => p.prot);
   const barra = (div, ys, titulo, ytit, cor, hint) => Plotly.newPlot(div, [{
@@ -1088,6 +1133,7 @@ function trocarAbaCmp(nome) {
   $$("#comparacao .aba").forEach((a) => a.classList.toggle("ativa", a.dataset.ctab === nome));
   $$("#comparacao .aba-conteudo").forEach((c) => (c.hidden = c.id !== `ctab-${nome}`));
   setTimeout(() => {
+    if (!window.Plotly) return;
     if (nome === "stats") Plotly.Plots.resize("cmp-graf-stats");
     if (nome === "aa") Plotly.Plots.resize("cmp-graf-aa");
     if (nome === "pockets" && estado.cmpPockets) {
@@ -1158,6 +1204,7 @@ function imgViewer() {
   try { return estado.viewer ? estado.viewer.pngURI() : null; } catch (e) { return null; }
 }
 async function imgPlotly(spec, w = 760, h = 400) {
+  await libPlotly();
   return await Plotly.toImage(spec, { format: "png", width: w, height: h });
 }
 function baixarTexto(nome, conteudo, mime) {
@@ -1370,6 +1417,7 @@ function pdfHelper(doc) {
 }
 
 async function exportarPdfSingle(secoes) {
+  await libPdf();
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ unit: "pt", format: "a4" });
   const h = pdfHelper(doc);
@@ -1418,6 +1466,7 @@ async function exportarPdfSingle(secoes) {
 }
 
 async function exportarPdfCmp(secoes) {
+  await libPdf();
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ unit: "pt", format: "a4" });
   const h = pdfHelper(doc);
@@ -1448,9 +1497,9 @@ async function exportarPdfCmp(secoes) {
 function trocarAba(nome) {
   $$("#workspace .aba").forEach((a) => a.classList.toggle("ativa", a.dataset.tab === nome));
   $$("#workspace .aba-conteudo").forEach((c) => (c.hidden = c.id !== `tab-${nome}`));
-  if (nome === "aa") setTimeout(() => Plotly.Plots.resize("aa-grafico"), 50);
+  if (nome === "aa" && window.Plotly) setTimeout(() => Plotly.Plots.resize("aa-grafico"), 50);
   if (nome === "preparo" && typeof PrepUI !== "undefined") PrepUI.aoMostrar();
-  if (nome === "pockets" && estado.pockets) {
+  if (nome === "pockets" && estado.pockets && window.Plotly) {
     setTimeout(() => {
       Plotly.Plots.resize("pockets-graf-volume");
       Plotly.Plots.resize("pockets-graf-depth");
