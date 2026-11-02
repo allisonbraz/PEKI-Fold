@@ -184,6 +184,7 @@ async function iniciarWorkspace(dados) {
   if (typeof PrepUI !== "undefined") PrepUI.reiniciar();
   renderViewer();
   renderCadeias();
+  if (estado.viewer) { estado.viewer.resize(); estado.viewer.render(); }
   renderStats();
   renderAA();
   renderPockets();
@@ -257,6 +258,7 @@ function renderMeta() {
 
 // ----- viewer 3D -----
 function renderViewer() {
+  syncTamViewer();
   const div = $("#viewer");
   div.innerHTML = "";
   estado.viewer = $3Dmol.createViewer(div, { backgroundColor: "#0b1020" });
@@ -288,9 +290,23 @@ function aplicarEstilo() {
   if (typeof PrepUI !== "undefined") PrepUI.aposEstilo(estado);
 }
 
+function syncTamViewer() {
+  const px = parseInt($("#viewer-tam").value, 10) || 460;
+  const viewer = $("#viewer");
+  viewer.style.height = `${px}px`;
+  viewer.dataset.tam = px >= 620 ? "g" : px <= 360 ? "p" : "m";
+  const grid = $("#workspace .ws-grid");
+  if (grid) grid.classList.toggle("viewer-largo", viewer.dataset.tam === "g");
+}
+
 function ajustarTamViewer() {
-  $("#viewer").style.height = `${parseInt($("#viewer-tam").value, 10)}px`;
+  syncTamViewer();
   if (estado.viewer) { estado.viewer.resize(); estado.viewer.render(); }
+}
+
+function marcarTamCmp(px) {
+  const card = document.querySelector(".cmp-estruturas");
+  if (card) card.dataset.tam = px >= 380 ? "g" : px <= 180 ? "p" : "m";
 }
 
 // Superfície molecular: estado.superficie = null | { sels:[...], color, opacity }.
@@ -928,6 +944,7 @@ function renderCmpViewers() {
   cont.innerHTML = "";
   estado.cmpViewers = [];
   const h = parseInt($("#cmp-tam").value, 10);
+  marcarTamCmp(h);
   for (const p of estado.comparacao) {
     const card = document.createElement("div");
     card.className = "cmp-viewer-item";
@@ -948,6 +965,7 @@ function renderCmpViewers() {
 
 function ajustarTamCmp() {
   const h = parseInt($("#cmp-tam").value, 10);
+  marcarTamCmp(h);
   for (const { v, div } of estado.cmpViewers || []) {
     div.style.height = `${h}px`;
     v.resize();
@@ -1577,6 +1595,21 @@ function init() {
   });
   $("#viewer-tam").addEventListener("change", ajustarTamViewer);
   $("#cmp-tam").addEventListener("change", ajustarTamCmp);
+  let timerTam = 0;
+  window.addEventListener("resize", () => {
+    clearTimeout(timerTam);
+    timerTam = setTimeout(() => {
+      if (!$("#workspace").hidden && estado.viewer && $("#viewer").clientHeight) {
+        estado.viewer.resize();
+        estado.viewer.render();
+      }
+      if (!$("#comparacao").hidden) {
+        for (const { v, div } of estado.cmpViewers || []) {
+          if (div.isConnected && div.clientHeight) { v.resize(); v.render(); }
+        }
+      }
+    }, 120);
+  });
   $("#aa-ordem").addEventListener("change", plotAA);
   $("#btn-aa-csv").addEventListener("click", baixarCsvAA);
   $("#btn-motivo").addEventListener("click", buscarMotivo);
