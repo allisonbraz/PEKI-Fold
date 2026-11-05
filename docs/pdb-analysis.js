@@ -228,3 +228,5 @@ const ProtAnalysis = (() => {
     primeiroModelo, contarModelos,
   };
 })();
+
+if (typeof module !== "undefined" && module.exports) module.exports = ProtAnalysis;

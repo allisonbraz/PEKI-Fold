@@ -102,6 +102,24 @@ button { font: inherit; cursor: pointer; border-radius: 8px; border: none; }
 .ws-meta .meta-tags { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0; }
 .ws-meta .meta-tag { background: rgba(42,85,153,.12); color: var(--primary); padding: 3px 10px; border-radius: 20px; font-size: .82rem; }
 .ws-meta a { color: var(--primary); font-weight: 600; }
+.ov-resumo { margin: 8px 0 0; }
+.ov { min-width: 0; max-width: 100%; overflow-wrap: anywhere; }
+.ov h3 { font-size: 1rem; margin: 16px 0 6px; }
+.ov-dl { display: grid; grid-template-columns: minmax(7.5rem, 12rem) minmax(0, 1fr); gap: 4px 12px; margin: 0; }
+.ov-dl dt { color: var(--muted); margin: 0; }
+.ov-dl dd { margin: 0; min-width: 0; }
+.ov-lista { margin: 6px 0 0; padding-left: 1.1rem; }
+.ov-lista li { margin: 4px 0; }
+.ov-nav { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.ov-detalhe { margin-top: 12px; }
+.aviso-ov { background: rgba(224, 168, 0, .15); border-left: 4px solid #a37b00; padding: 8px 10px; border-radius: 8px; margin: 8px 0; }
+.dl-btn:disabled { opacity: .55; cursor: not-allowed; }
+.painel, .aba-conteudo, .ws-grid { min-width: 0; max-width: 100%; }
+@media (max-width: 420px) {
+  .ov-dl { grid-template-columns: minmax(0, 1fr); }
+  .ov-dl dd { margin-bottom: 8px; }
+  .workspace { padding-left: 12px; padding-right: 12px; }
+}
 
 /* Ações de cadeias (FASTA) */
 .cadeias-acoes { display: flex; justify-content: flex-end; margin-bottom: 10px; }
