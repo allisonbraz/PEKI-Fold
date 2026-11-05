@@ -517,6 +517,14 @@ const EnsembleUI = (() => {
     let texto;
     try { texto = await file.text(); }
     catch (e) { erroHome("Não foi possível ler o arquivo."); return; }
+    if (typeof StructureModel !== "undefined" && StructureModel.pareceMmcif(texto)) {
+      erroHome("O ensemble desta versão lê PDB com MODEL/ENDMDL. Este mmCIF não foi interpretado como colunas PDB nem enviado ao DoGSite.");
+      return;
+    }
+    if (typeof StructureModel !== "undefined" && !StructureModel.pareceCoordenadaPdb(texto)) {
+      erroHome("O ensemble desta versão lê coordenadas PDB. O arquivo não foi passado ao leitor de colunas.");
+      return;
+    }
     const mods = EnsembleAnalysis.separarModelos(texto).filter((m) => /^(ATOM|HETATM)/m.test(m.texto));
     if (!mods.length) { erroHome("Nenhum bloco com ATOM ou HETATM."); return; }
     const cap = EnsembleAnalysis.aplicarLimite(mods, 20);
@@ -631,6 +639,9 @@ const EnsembleUI = (() => {
     if (item.origem === "pdb" && !item.texto) {
       onMsg(item.rotulo + " — baixando coordenadas no RCSB");
       item.texto = await baixarRCSB(item.id);
+      if (typeof StructureModel !== "undefined" && !StructureModel.pareceCoordenadaPdb(item.texto)) {
+        throw new Error("O PDB baixado para o ensemble não tem coordenadas em colunas PDB. O texto não foi lido como PDB.");
+      }
     }
     if (parar(g)) throw new Error("Cálculo cancelado.");
     const chave = chaveDoItem(item);
@@ -642,6 +653,9 @@ const EnsembleUI = (() => {
     }
     let codigo = item.id;
     if (item.origem === "modelo") {
+      if (typeof StructureModel !== "undefined" && !StructureModel.pareceCoordenadaPdb(item.texto)) {
+        throw new Error("O ensemble não envia mmCIF ao DoGSite como se fosse PDB.");
+      }
       onMsg(item.rotulo + " — enviando o modelo à ProteinsPlus");
       codigo = await enviarModelo(item.texto, () => parar(g));
     }

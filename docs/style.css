@@ -112,7 +112,8 @@ button { font: inherit; cursor: pointer; border-radius: 8px; border: none; }
 .ov-lista li { margin: 4px 0; }
 .ov-nav { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
 .ov-detalhe { margin-top: 12px; }
-.aviso-ov { background: rgba(224, 168, 0, .15); border-left: 4px solid #a37b00; padding: 8px 10px; border-radius: 8px; margin: 8px 0; }
+.aviso-ov { background: rgba(224, 168, 0, .15); border-left: 4px solid #a37b00; padding: 8px 10px; border-radius: 8px; margin: 8px 0; color: #1c2433; }
+[data-theme="dark"] .aviso-ov { background: #3d3414; color: #fff8e1; border-left-color: #e0a800; }
 .dl-btn:disabled { opacity: .55; cursor: not-allowed; }
 .painel, .aba-conteudo, .ws-grid { min-width: 0; max-width: 100%; }
 @media (max-width: 420px) {

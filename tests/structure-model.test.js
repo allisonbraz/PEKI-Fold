@@ -177,8 +177,41 @@ function testeLacunasPdb() {
     atomo({ res: "SER", seq: 3, x: 4 }),
   ].join("\n");
   const q = StructureModel.ler(declarada);
-  const g = porNumero(q.estrutura.lacunas.naoResolvidos, "A", 2, "");
-  assert(q.estrutura.lacunas.determinado && g.length === 1 && g[0].resname === "GLY" && g[0].origem.includes("seqres"), "SEQRES única numera GLY 2: " + JSON.stringify(q.estrutura.lacunas.naoResolvidos));
+  const g = q.estrutura.lacunas.naoResolvidos.filter((r) => r.resname === "GLY" && r.origem.includes("seqres"));
+  assert(q.estrutura.lacunas.determinado && g.length === 1 && g[0].seqIndex === 2 && g[0].authSeq == null && g[0].numeracaoAuthor === "nao_depositada", "SEQRES cita GLY na posição 2 sem inventar authSeq: " + JSON.stringify(g));
+  assert(!q.estrutura.lacunas.naoResolvidos.some((r) => r.authSeq === 2), "o inteiro 2 não vira número depositado");
+
+  const repetida = [seqres("A", ["ALA", "ALA"]), atomo({ res: "ALA", seq: 4 })].join("\n");
+  const rep = StructureModel.ler(repetida);
+  assert(rep.estrutura.lacunas.determinado === false && rep.estrutura.lacunas.naoResolvidos.length === 0, "ALA repetido não escolhe qual falta");
+  assert(rep.estrutura.lacunas.resumo.startsWith("Não determinado"), "repetição ambígua não vira zero lacunas");
+
+  const modificado = [
+    seqres("A", ["MET", "ALA"]),
+    atomo({ rec: "HETATM", nome: " CA ", res: "MSE", seq: 1, x: 0 }),
+    atomo({ res: "ALA", seq: 2, x: 1 }),
+  ].join("\n");
+  const mod = StructureModel.ler(modificado);
+  assert(mod.estrutura.lacunas.determinado === false, "MSE fora da SEQRES impede o alinhamento");
+  assert(!mod.estrutura.lacunas.naoResolvidos.some((r) => r.resname === "MET"), "MET da SEQRES não ganha número no lugar do MSE");
+  assert(mod.estrutura.componentes.proteinas.modificadas === 1, "MSE entra como aminoácido modificado");
+  assert(!mod.estrutura.componentes.hetero.some((h) => h.codigo === "MSE"), "MSE não é heterocomponente incerto");
+
+  const nTerm = [seqres("A", ["ALA", "GLY", "SER"]), atomo({ res: "SER", seq: 50, x: 1 })].join("\n");
+  const nt = StructureModel.ler(nTerm);
+  const extremos = nt.estrutura.lacunas.naoResolvidos.filter((r) => r.origem.includes("seqres"));
+  assert(extremos.length === 2 && extremos.every((r) => r.authSeq == null && r.numeracaoAuthor === "nao_depositada"), "extremos ausentes na SEQRES não recebem authSeq: " + JSON.stringify(extremos));
+  assert(extremos.map((r) => r.seqIndex).join(",") === "1,2", "posições 1 e 2 da SEQRES");
+
+  const cTerm = [seqres("A", ["ALA", "GLY", "SER"]), atomo({ res: "ALA", seq: 7, x: 1 })].join("\n");
+  const ct = StructureModel.ler(cTerm);
+  const fim = ct.estrutura.lacunas.naoResolvidos.filter((r) => r.origem.includes("seqres"));
+  assert(fim.length === 2 && fim.every((r) => r.authSeq == null) && fim.map((r) => r.seqIndex).join(",") === "2,3", "C-terminal ausente fica sem número depositado");
+
+  const continuo = [atomo({ res: "ALA", seq: 1 }), atomo({ res: "GLY", seq: 2 }), atomo({ res: "SER", seq: 3 })].join("\n");
+  const sem = StructureModel.ler(continuo);
+  assert(sem.estrutura.lacunas.determinado === false && sem.estrutura.lacunas.naoResolvidos.length === 0, "numeração contínua sem metadado não é zero lacunas");
+  assert(!/Nenhum resíduo não resolvido/.test(StructureModel.textoVisao(sem.estrutura)), "o texto não declara completude sem fonte");
 
   const ambigua = [seqres("A", ["ALA", "ALA"]), atomo({ res: "ALA", seq: 1 })].join("\n");
   const a = StructureModel.ler(ambigua);
@@ -356,6 +389,66 @@ function testeMmcif() {
   const semMeta = StructureModel.ler(cifMinimo("", "ATOM C CA . ALA A 1 1 ? 0 0 0 1 1 ALA A CA 1"));
   assert(semMeta.ok && semMeta.estrutura.identidade.resolucao == null, "mmCIF sem resolução não vira 0");
   assert(semMeta.estrutura.lacunas.determinado === false, "sem esquema nem SEQRES o diagnóstico não fecha");
+  assert(/não significa ausência de água/.test(semMeta.estrutura.componentes.aguas.nota), "zero HOH não é ausência biológica");
+
+  const quoted = [
+    "data_Q",
+    "_struct.title",
+    ";",
+    "Titulo com # e 'aspas' na segunda linha",
+    ";",
+    "_exptl.method 'X-RAY DIFFRACTION' # comentario que nao entra",
+    "loop_",
+    "_atom_site.group_PDB",
+    "_atom_site.type_symbol",
+    "_atom_site.auth_atom_id",
+    "_atom_site.label_alt_id",
+    "_atom_site.auth_comp_id",
+    "_atom_site.label_asym_id",
+    "_atom_site.label_seq_id",
+    "_atom_site.pdbx_PDB_ins_code",
+    "_atom_site.Cartn_x",
+    "_atom_site.Cartn_y",
+    "_atom_site.Cartn_z",
+    "_atom_site.auth_seq_id",
+    "_atom_site.auth_asym_id",
+    "_atom_site.pdbx_PDB_model_num",
+    "ATOM C CA . ALA A . A 0.0 1.0 2.0 7 AA 1",
+    "HETATM C CA . MSE A 2 . 3.0 0.0 0.0 2 AA 1",
+    "HETATM C CA A LIG B . ? 4.0 0.0 0.0 1 BB 1",
+    "HETATM C CA B LIG B . ? 4.2 0.0 0.0 1 BB 1",
+    "HETATM O O . HOH B . ? 9.0 0.0 0.0 9 BB 2",
+  ].join("\n");
+  const qt = StructureModel.ler(quoted);
+  assert(qt.ok, "CIF com aspas, ponto-e-vírgula e comentário lê: " + (qt.erro && qt.erro.mensagem));
+  assert(/aspas/.test(qt.estrutura.identidade.titulo) && qt.estrutura.identidade.titulo.includes("#"), "título multiline preserva # e aspas");
+  assert(qt.estrutura.identidade.metodo === "X-RAY DIFFRACTION", "comentário não entra no método");
+  assert(qt.analise.residuosPorCadeia.AA[0][1] === "7A", "código de inserção 7A preservado: " + JSON.stringify(qt.analise.residuosPorCadeia.AA));
+  assert(qt.analise.sequencias.AA === "A", "MSE é HETATM e não entra na sequência ATOM: " + qt.analise.sequencias.AA);
+  const mse = qt.estrutura.componentes;
+  assert(mse.proteinas.modificadas === 1 && !mse.hetero.some((h) => h.codigo === "MSE"), "HETATM MSE é modificação, não ligante");
+  assert(mse.hetero.filter((h) => h.codigo === "LIG").every((h) => h.instancias === 1), "altLoc do LIG conta uma instância");
+  assert(mse.aguas.instancias === 0, "HOH do modelo 2 não entra na contagem");
+  assert(!qt.textoViewer.includes("HOH"), "viewer não mistura o segundo modelo");
+
+  const curto = quoted.replace("7 AA 1", "7 AA");
+  const ruim = StructureModel.ler(curto);
+  assert(!ruim.ok && /parou|incompleto|inválido|não numérica/i.test(ruim.erro.mensagem), "loop incompleto é rejeitado: " + (ruim.erro && ruim.erro.mensagem));
+  const deslocado = [
+    "data_BAD",
+    "loop_",
+    "_atom_site.group_PDB",
+    "_atom_site.Cartn_x",
+    "_atom_site.Cartn_y",
+    "_atom_site.Cartn_z",
+    "_atom_site.auth_comp_id",
+    "_atom_site.auth_asym_id",
+    "_atom_site.auth_seq_id",
+    "ATOM 0.0 0.0 ALA A 1",
+    "ATOM 1.0 0.0 0.0 SER A 2",
+  ].join("\n");
+  const dz = StructureModel.ler(deslocado);
+  assert(!dz.ok, "linha deslocada não é aceita: " + (dz.ok && dz.analise.sequencias.A));
 }
 
 function testeArquivosReais() {

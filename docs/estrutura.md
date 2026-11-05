@@ -24,11 +24,13 @@ Um resíduo só entra como não resolvido quando uma fonte explícita o nomeia e
 | `REMARK 465` com a seção `MISSING RESIDUES` | Lista exaustiva do depósito para o modelo coberto, inclusive a linha `MODELS` |
 | `_pdbx_unobs_or_zero_occ_residues` | Flag 1: não observado. Flag 0: ocupação zero, fica fora da lista de ausentes |
 | `_pdbx_poly_seq_scheme` | `pdb_mon_id` vazio: não observado. O número author é o do arquivo |
-| `SEQRES` | Só se o alinhamento com as coordenadas é único e a numeração author acompanha a sequência por um deslocamento único, sem código de inserção |
+| `SEQRES` | Só se o alinhamento com as coordenadas é único. A posição citada é a da SEQRES. O número author não é calculado por deslocamento. Resíduo modificado cujo nome não está na SEQRES torna o alinhamento inutilizável |
 
 Se nenhuma dessas fontes cobre a cadeia, o estado é **não determinado**. Um salto de numeração sem essa fonte não vira resíduo ausente e não aparece como zero. Se a fonte é exaustiva e não cita aqueles inteiros, o salto fica marcado como salto de numeração.
 
-A distância, quando os dois flancos têm coordenadas, é a distância entre um átomo de cada flanco (de preferência CA sem altLoc). O rótulo diz que isso não é distância do resíduo ausente. Nenhuma coordenada é reconstruída.
+A distância só é calculada para resíduo ausente que já tem número author depositado e dois flanqueadores com coordenadas. É a distância entre um átomo de cada flanco (de preferência CA sem altLoc). O rótulo diz que isso não é distância do resíduo ausente. Nenhuma coordenada é reconstruída. Ausência de `REMARK 465`, de SEQRES e das categorias mmCIF não é lida como zero lacunas.
+
+Um loop `_atom_site` com `group_PDB` inválido, coordenada não numérica ou linha incompleta rejeita o arquivo. `.` e `?` continuam nulos. altLoc não duplica componente nem resíduo. Água conta só os códigos HOH, WAT, H2O e DOD presentes no modelo selecionado; zero registros não significa amostra sem água.
 
 `DBREF` e `_struct_ref_seq` são guardados como intervalo declarado. `uniprot.correspondenciaResiduo` fica `nao_estabelecida`. Resíduo fora do constructo fica `nao_avaliado`: a sequência completa do UniProt não é consultada e o intervalo não é expandido.
 

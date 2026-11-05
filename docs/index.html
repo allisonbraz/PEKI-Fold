@@ -70,7 +70,7 @@
           </label>
           <button id="ens-exemplo-home" class="ghost-btn" type="button">Exemplo sintético</button>
         </div>
-        <p id="ens-erro-home" class="erro" hidden></p>
+        <p id="ens-erro-home" class="erro" role="alert" hidden></p>
       </div>
 
       <details class="ajuda">
@@ -84,7 +84,7 @@
         </ul>
       </details>
 
-      <div id="erro" class="erro" hidden></div>
+      <div id="erro" class="erro" role="alert" hidden></div>
       <div id="loading" class="loading" hidden><span class="spinner"></span> Processando…</div>
     </div>
   </section>
@@ -131,14 +131,14 @@
       </div>
 
       <div class="card painel">
-        <nav class="abas" aria-label="Seções da estrutura">
-          <button class="aba ativa" type="button" data-tab="visao">Visão geral</button>
-          <button class="aba" type="button" data-tab="cadeias">Cadeias</button>
-          <button class="aba" type="button" data-tab="stats">Estatísticas</button>
-          <button class="aba" type="button" data-tab="aa">Aminoácidos</button>
-          <button class="aba" type="button" data-tab="motivos">Motivos</button>
-          <button class="aba" type="button" data-tab="pockets">Pockets</button>
-          <button class="aba" type="button" data-tab="preparo">Preparo</button>
+        <nav class="abas" role="tablist" aria-label="Seções da estrutura">
+          <button class="aba ativa" type="button" role="tab" aria-selected="true" data-tab="visao">Visão geral</button>
+          <button class="aba" type="button" role="tab" aria-selected="false" data-tab="cadeias">Cadeias</button>
+          <button class="aba" type="button" role="tab" aria-selected="false" data-tab="stats">Estatísticas</button>
+          <button class="aba" type="button" role="tab" aria-selected="false" data-tab="aa">Aminoácidos</button>
+          <button class="aba" type="button" role="tab" aria-selected="false" data-tab="motivos">Motivos</button>
+          <button class="aba" type="button" role="tab" aria-selected="false" data-tab="pockets">Pockets</button>
+          <button class="aba" type="button" role="tab" aria-selected="false" data-tab="preparo">Preparo</button>
         </nav>
 
         <div class="aba-conteudo" id="tab-visao"></div>

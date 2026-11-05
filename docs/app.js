@@ -482,9 +482,12 @@ function renderVisao() {
 
   const lac = est.lacunas;
   const comp = est.componentes;
-  const faltam = lac.naoResolvidos.slice(0, 12).map((r) =>
-    `<li>${esc(r.resname)} ${esc(r.cadeiaAuth)} ${esc(r.authSeq)}${esc(r.icode || "")} <span class="muted">(${esc(r.origem.join(", "))})</span></li>`
-  ).join("");
+  const faltam = lac.naoResolvidos.slice(0, 12).map((r) => {
+    const num = r.numeracaoAuthor === "nao_depositada"
+      ? `posição ${r.seqIndex} na SEQRES, numeração author não depositada`
+      : `${r.authSeq}${r.icode || ""}`;
+    return `<li>${esc(r.resname)} ${esc(r.cadeiaAuth)} ${esc(num)} <span class="muted">(${esc(r.origem.join(", "))})</span></li>`;
+  }).join("");
   const resto = lac.naoResolvidos.length > 12 ? `<p class="muted small">E mais ${lac.naoResolvidos.length - 12} resíduo(s) na mesma lista.</p>` : "";
   const saltos = lac.saltosNumeracao.slice(0, 6).map((s) =>
     `<li>Cadeia ${esc(s.cadeia)}, entre ${esc(s.de.seq)} e ${esc(s.para.seq)}: ${esc(s.interpretacao === "salto_de_numeracao" ? "salto de numeração" : "não determinado")} (${esc(s.inteirosSemResiduoDeclarado.join(", "))})</li>`
@@ -526,7 +529,7 @@ function renderVisao() {
       <ul class="ov-lista">
         <li>Proteína: ${conta(comp.proteinas.posicoes, "posição", "posições")} com coordenadas${comp.proteinas.cadeias.length ? ` nas cadeias ${esc(comp.proteinas.cadeias.join(", "))}` : ""}. ${esc(comp.proteinas.criterio)}.</li>
         <li>Outros polímeros: ${esc(outros)}.</li>
-        <li>Águas registradas no modelo: ${comp.aguas.instancias}.</li>
+        <li>Águas registradas no modelo: ${comp.aguas.instancias}. ${esc(comp.aguas.nota)}</li>
         <li>Íons: ${esc(ions)}.</li>
         <li>Outros HETATM: ${esc(hetero)}. Classificação biológica incerta.</li>
       </ul>
@@ -571,7 +574,7 @@ function renderCadeias() {
 
     const item = document.createElement("span");
     item.className = "item";
-    item.innerHTML = `<span class="swatch" style="background:${cor}"></span> Cadeia ${c.cadeia}`;
+    item.innerHTML = `<span class="swatch" style="background:${cor}"></span> Cadeia ${esc(c.cadeia)}`;
     leg.appendChild(item);
 
     const div = document.createElement("div");
@@ -580,14 +583,14 @@ function renderCadeias() {
       <div class="info">
         <span class="swatch" style="background:${cor}"></span>
         <div>
-          <strong>Cadeia ${c.cadeia}</strong>
+          <strong>Cadeia ${esc(c.cadeia)}</strong>
           <div class="muted small">${c.residuos} resíduos · ${c.atomos} átomos</div>
         </div>
       </div>
       <div class="cadeia-btns">
         ${estado.estrutura && estado.estrutura.recursos.cadeiaPdb === "bloqueado"
-          ? `<button type="button" class="dl-btn" disabled title="${esc(estado.estrutura.recursos.cadeiaPdbMotivo)}">PDB indisponível</button>`
-          : `<button type="button" class="dl-btn" data-chain="${c.cadeia}">⬇ PDB</button>`}
+          ? `<button type="button" class="dl-btn" disabled aria-disabled="true" aria-label="${esc(estado.estrutura.recursos.cadeiaPdbMotivo)}">PDB indisponível</button>`
+          : `<button type="button" class="dl-btn" data-chain="${esc(c.cadeia)}">⬇ PDB</button>`}
         <button type="button" class="fasta-btn" data-chain="${c.cadeia}">⬇ FASTA</button>
       </div>`;
     cont.appendChild(div);
@@ -613,6 +616,10 @@ function seqFasta(cid) {
 }
 
 function baixarCadeia(chain) {
+  if (!estado.pdbText || (estado.estrutura && estado.estrutura.recursos.cadeiaPdb === "bloqueado")) {
+    alert((estado.estrutura && estado.estrutura.recursos.cadeiaPdbMotivo) || "Esta versão não grava a cadeia em PDB para este formato.");
+    return;
+  }
   const cadeias = ProtAnalysis.separarCadeias(estado.pdbText);
   const texto = cadeias[chain];
   if (!texto) { alert("Cadeia não encontrada."); return; }
@@ -636,7 +643,11 @@ function renderStats() {
   const totalAt = st.cadeias.reduce((s, c) => s + c.atomos, 0);
   const totalRes = st.cadeias.reduce((s, c) => s + c.residuos, 0);
 
+  const notaFormato = estado.estrutura && estado.estrutura.formato === "mmcif"
+    ? `<p class="muted small">Contagens do modelo selecionado na leitura mmCIF. O texto CIF não passou pelo leitor de colunas PDB.</p>`
+    : "";
   let html = `
+    ${notaFormato}
     <div class="resumo-cards">
       <div class="resumo-card"><div class="num">${st.cadeias.length}</div><div class="lbl">cadeias</div></div>
       <div class="resumo-card"><div class="num">${totalAt}</div><div class="lbl">átomos</div></div>
@@ -650,14 +661,14 @@ function renderStats() {
     let cls = "";
     if (st.maior && c.cadeia === st.maior.cadeia) cls = "destaque-maior";
     if (st.menor && c.cadeia === st.menor.cadeia && st.maior.cadeia !== st.menor.cadeia) cls = "destaque-menor";
-    html += `<tr class="${cls}"><td><strong>${c.cadeia}</strong></td><td>${c.atomos}</td><td>${c.residuos}</td><td>${c.aminoacidos_diferentes}</td></tr>`;
+    html += `<tr class="${cls}"><td><strong>${esc(c.cadeia)}</strong></td><td>${c.atomos}</td><td>${c.residuos}</td><td>${c.aminoacidos_diferentes}</td></tr>`;
   }
   html += `</tbody></table>`;
 
   if (st.maior && st.menor) {
     html += `<p class="muted small" style="margin-top:10px">
-      🟢 Maior: cadeia ${st.maior.cadeia} (${st.maior.residuos} resíduos) ·
-      🔴 Menor: cadeia ${st.menor.cadeia} (${st.menor.residuos} resíduos)</p>`;
+      🟢 Maior: cadeia ${esc(st.maior.cadeia)} (${st.maior.residuos} resíduos) ·
+      🔴 Menor: cadeia ${esc(st.menor.cadeia)} (${st.menor.residuos} resíduos)</p>`;
   }
   html += `<div class="tab-acoes"><button id="btn-stats-csv" class="dl-btn">⬇ CSV</button></div>`;
   cont.innerHTML = html;
@@ -734,20 +745,22 @@ function buscarMotivo() {
     ? ProtAnalysis.buscarMotivo(estado.pdbText, lista)
     : StructureModel.buscarMotivo(estado.dados.residuosPorCadeia, lista);
 
+  const motivoTxt = esc(motivo.join("-"));
   if (!ocorrencias.length) {
     estado.ultimoMotivo = null;
-    cont.innerHTML = `<p class="muted">Nenhuma ocorrência de <code>${motivo.join("-")}</code>.</p>`;
+    cont.innerHTML = `<p class="muted">Nenhuma ocorrência de <code>${motivoTxt}</code>.</p>`;
     aplicarEstilo();
     return;
   }
 
   estado.ultimoMotivo = { motivo: motivo.join("-"), ocorrencias };
 
-  let html = `<p><strong>${ocorrencias.length}</strong> ocorrência(s) de <code>${motivo.join("-")}</code>:</p>`;
+  let html = `<p><strong>${ocorrencias.length}</strong> ocorrência(s) de <code>${motivoTxt}</code>:</p>`;
+  if (!estado.pdbText) html += `<p class="muted small">Busca na sequência lida do mmCIF. O texto CIF não passou pelo leitor de colunas PDB.</p>`;
   for (const oc of ocorrencias) {
-    html += `<div class="ocorrencia">Cadeia <strong>${oc.cadeia}</strong> · posição <strong>${oc.posicao}</strong> (resíduos ${oc.residuos.join(", ")})</div>`;
+    html += `<div class="ocorrencia">Cadeia <strong>${esc(oc.cadeia)}</strong> · posição <strong>${esc(oc.posicao)}</strong> (resíduos ${esc(oc.residuos.join(", "))})</div>`;
   }
-  html += `<p class="muted small">Resíduos destacados em amarelo no viewer 3D.</p>`;
+  html += `<p class="muted small">Resíduos com coordenadas podem ser destacados em amarelo no viewer 3D. Resíduo sem coordenada não é desenhado.</p>`;
   cont.innerHTML = html;
 
   destacarMotivo(ocorrencias);
@@ -1116,6 +1129,9 @@ async function compararProteinas(idsRaw) {
     const proteinas = [];
     for (const id of ids) {
       const texto = await baixarRCSB(id);
+      if (typeof StructureModel !== "undefined" && !StructureModel.pareceCoordenadaPdb(texto)) {
+        throw new Error(`A comparação desta versão só lê PDB. O arquivo de ${id} não foi interpretado como colunas PDB.`);
+      }
       ProtAnalysis.validar(texto);
       proteinas.push({ id, pdbText: texto, dados: ProtAnalysis.analisarCompleto(texto) });
     }
@@ -1745,7 +1761,11 @@ async function exportarPdfCmp(secoes) {
 
 // ----- abas / tema -----
 function trocarAba(nome) {
-  $$("#workspace .aba").forEach((a) => a.classList.toggle("ativa", a.dataset.tab === nome));
+  $$("#workspace .aba").forEach((a) => {
+    const on = a.dataset.tab === nome;
+    a.classList.toggle("ativa", on);
+    a.setAttribute("aria-selected", on ? "true" : "false");
+  });
   $$("#workspace .aba-conteudo").forEach((c) => (c.hidden = c.id !== `tab-${nome}`));
   if (nome === "aa" && window.Plotly) setTimeout(() => Plotly.Plots.resize("aa-grafico"), 50);
   if (nome === "preparo" && typeof PrepUI !== "undefined") PrepUI.aoMostrar();

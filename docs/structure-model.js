@@ -403,12 +403,28 @@ const StructureModel = (() => {
     if (!tem("auth_seq_id") && !tem("label_seq_id")) {
       return { erro: "mmCIF _atom_site sem auth_seq_id nem label_seq_id." };
     }
+    if (!tem("group_pdb")) {
+      return { erro: "mmCIF _atom_site sem group_PDB. A leitura parou para não tratar toda linha como ATOM." };
+    }
     const todos = [];
     const modelos = new Set();
-    let temColunaModelo = tem("pdbx_pdb_model_num");
-    for (const row of rows) {
-      const group = (limpo(campo(row, "group_pdb")) || "ATOM").toUpperCase();
-      if (group !== "ATOM" && group !== "HETATM") continue;
+    const temColunaModelo = tem("pdbx_pdb_model_num");
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i];
+      const groupRaw = limpo(campo(row, "group_pdb"));
+      const group = groupRaw ? groupRaw.toUpperCase() : "";
+      if (group !== "ATOM" && group !== "HETATM" && group !== "TER") {
+        return { erro: "mmCIF _atom_site com group_PDB inválido na linha " + (i + 1) + (group ? " (" + group + ")" : "") + ". A leitura parou para não deslocar colunas." };
+      }
+      if (group !== "TER") {
+        const x = numero(campo(row, "cartn_x"));
+        const y = numero(campo(row, "cartn_y"));
+        const z = numero(campo(row, "cartn_z"));
+        if (x == null || y == null || z == null) {
+          return { erro: "mmCIF _atom_site com coordenada não numérica na linha " + (i + 1) + ". A leitura parou para não aceitar um loop deslocado." };
+        }
+      }
+      if (group === "TER") continue;
       const modeloLido = inteiro(campo(row, "pdbx_pdb_model_num"));
       const modelo = modeloLido == null ? 1 : modeloLido;
       modelos.add(modelo);
@@ -417,7 +433,6 @@ const StructureModel = (() => {
     if (!todos.length) return { erro: "mmCIF _atom_site não tem ATOM nem HETATM." };
     const selecionado = Math.min(...modelos);
     const registros = [];
-    let semCoord = 0;
     let semSeq = 0;
     for (const item of todos) {
       if (item.modelo !== selecionado) continue;
@@ -434,7 +449,6 @@ const StructureModel = (() => {
       const x = numero(campo(row, "cartn_x"));
       const y = numero(campo(row, "cartn_y"));
       const z = numero(campo(row, "cartn_z"));
-      if (x == null || y == null || z == null) semCoord += 1;
       if (seq == null) semSeq += 1;
       const nome = (limpo(campo(row, "auth_atom_id")) || limpo(campo(row, "label_atom_id")) || "").toUpperCase();
       registros.push(registroBase({
@@ -457,7 +471,6 @@ const StructureModel = (() => {
         modelo: item.modelo,
       }));
     }
-    if (semCoord) diagnosticos.push({ nivel: "aviso", codigo: "cif_sem_coord", mensagem: semCoord + " átomo(s) do modelo selecionado estão sem Cartn numérico. Não inventei coordenada." });
     if (semSeq) diagnosticos.push({ nivel: "aviso", codigo: "cif_sem_seq", mensagem: semSeq + " átomo(s) sem auth_seq_id e sem label_seq_id inteiros. Não numerei esses átomos." });
     return {
       registros,
@@ -938,7 +951,16 @@ const StructureModel = (() => {
     const vistos = new Set();
     const obs = [];
     for (const p of posicoes) {
-      if (p.chain !== seqres.chain || !p.coords || p.seq == null || !nomes.has(p.resname)) continue;
+      if (p.chain !== seqres.chain || !p.coords || p.seq == null) continue;
+      const polimerico = p.classe === "proteina" || p.classe === "proteina-modificada" || p.classe === "terminal" || nomes.has(p.resname);
+      if (!polimerico) continue;
+      if (!nomes.has(p.resname)) {
+        return {
+          usavel: false,
+          detalhe: "Há resíduo com coordenadas (" + p.resname + ") que não está na SEQRES. Possível modificação ou incompatibilidade; a SEQRES não foi usada para nomear ausências nem para inventar numeração.",
+          faltantes: [],
+        };
+      }
       if (vistos.has(p.key)) continue;
       vistos.add(p.key);
       obs.push(p);
@@ -948,21 +970,16 @@ const StructureModel = (() => {
     if (ways !== 1) return { usavel: false, detalhe: "Há mais de um alinhamento possível com a SEQRES.", faltantes: [] };
     const match = reconstruirSeqres(obs, seqres.seq);
     if (!match) return { usavel: false, detalhe: "O alinhamento único não pôde ser reconstruído.", faltantes: [] };
-    let offset = null;
-    for (let i = 0; i < match.length; i++) {
-      if (!match[i]) continue;
-      if (match[i].icode) return { usavel: false, detalhe: "Código de inserção impede numerar a SEQRES sem inventar números.", faltantes: [] };
-      const o = match[i].seq - i;
-      if (offset == null) offset = o;
-      else if (offset !== o) return { usavel: false, detalhe: "A numeração author não acompanha a SEQRES por um deslocamento único.", faltantes: [] };
-    }
-    if (offset == null) return { usavel: false, detalhe: "SEQRES sem resíduo com coordenadas para ancorar a numeração.", faltantes: [] };
     const faltantes = [];
     for (let i = 0; i < match.length; i++) {
       if (match[i]) continue;
-      faltantes.push({ chain: seqres.chain, seq: i + offset, icode: "", resname: seqres.seq[i], seqIndex: i + 1 });
+      faltantes.push({ chain: seqres.chain, resname: seqres.seq[i], seqIndex: i + 1 });
     }
-    return { usavel: true, detalhe: "Alinhamento único e numeração author consistente com a SEQRES.", faltantes };
+    return {
+      usavel: true,
+      detalhe: "Alinhamento único com a SEQRES. Posições ausentes não recebem numeração author calculada.",
+      faltantes,
+    };
   }
 
   function cmpPos(a, b) {
@@ -995,13 +1012,19 @@ const StructureModel = (() => {
     const divergencias = [];
     const ocupacaoZero = [];
 
+    function chaveItem(item) {
+      if (item.seq == null) return item.chain + "|seqres|" + item.seqIndex + "|" + item.resname;
+      return chavePos(item.chain, item.seq, item.icode);
+    }
+
     function adicionar(item) {
-      const k = chavePos(item.chain, item.seq, item.icode);
-      if (presentes.has(k)) {
-        divergencias.push(item.avisoCoordenada);
+      if (item.seq == null && item.seqIndex == null) return null;
+      const k = chaveItem(item);
+      if (item.seq != null && presentes.has(chavePos(item.chain, item.seq, item.icode))) {
+        if (item.avisoCoordenada) divergencias.push(item.avisoCoordenada);
         return null;
       }
-      const ex = candidatos.find((c) => chavePos(c.chain, c.seq, c.icode) === k && c.resname === item.resname);
+      const ex = candidatos.find((c) => chaveItem(c) === k && c.resname === item.resname);
       if (ex) { item.origem.forEach((o) => ex.origem.add(o)); return ex; }
       candidatos.push(item);
       return item;
@@ -1088,13 +1111,32 @@ const StructureModel = (() => {
       const aval = avaliarSeqres(sq, posicoes);
       seqresInfo.set(sq.chain, aval);
       if (!aval.usavel) continue;
+      const remarkChain = candidatos
+        .filter((c) => c.chain === sq.chain && c.origem.has("remark465") && c.seq != null)
+        .sort(cmpPos);
+      const mesmosNomes = remarkChain.map((c) => c.resname).join(",") === aval.faltantes.map((f) => f.resname).join(",");
+      if (fontes.remark.exaustivo && remarkChain.length && mesmosNomes) {
+        remarkChain.forEach((c, i) => {
+          c.origem.add("seqres");
+          c.seqIndex = aval.faltantes[i].seqIndex;
+        });
+        continue;
+      }
+      if (fontes.remark.exaustivo && remarkChain.length && !mesmosNomes) {
+        divergencias.push("Cadeia " + sq.chain + ": a SEQRES e o REMARK 465 não listam os mesmos nomes na mesma ordem. A SEQRES não recebeu numeração author.");
+      }
       for (const f of aval.faltantes) {
         adicionar({
-          chain: f.chain, seq: f.seq, icode: "", resname: f.resname,
-          labelChain: null, labelSeq: f.seqIndex,
+          chain: f.chain,
+          seq: null,
+          seqIndex: f.seqIndex,
+          icode: "",
+          resname: f.resname,
+          labelChain: null,
+          labelSeq: null,
           origem: new Set(["seqres"]),
           tipo: "nao_observado",
-          avisoCoordenada: "A SEQRES indica " + f.resname + " " + f.chain + " " + f.seq + ", mas há coordenadas nesse número.",
+          avisoCoordenada: "",
         });
       }
     }
@@ -1145,15 +1187,23 @@ const StructureModel = (() => {
 
     const determinado = porCadeia.length > 0 && porCadeia.every((c) => c.coberto);
     const naoResolvidos = candidatos
-      .filter((c) => c.seq != null)
-      .sort(cmpPos)
+      .slice()
+      .sort((a, b) => {
+        if (a.chain !== b.chain) return a.chain < b.chain ? -1 : 1;
+        if (a.seq != null && b.seq != null) return cmpPos(a, b);
+        if (a.seq != null) return -1;
+        if (b.seq != null) return 1;
+        return (a.seqIndex || 0) - (b.seqIndex || 0);
+      })
       .map((c) => ({
         cadeiaAuth: c.chain,
         cadeiaLabel: c.labelChain,
         resname: c.resname,
-        authSeq: c.seq,
+        authSeq: c.seq == null ? null : c.seq,
+        numeracaoAuthor: c.seq == null ? "nao_depositada" : "depositada",
+        seqIndex: c.seqIndex == null ? null : c.seqIndex,
         icode: c.icode || "",
-        labelSeq: c.labelSeq,
+        labelSeq: c.labelSeq == null ? null : c.labelSeq,
         origem: [...c.origem].sort(),
         tipo: c.tipo,
       }));
@@ -1162,6 +1212,7 @@ const StructureModel = (() => {
     const obsPol = posicoes.filter((p) => p.coords && classesPolimero.has(p.classe) && p.seq != null);
     const porChain = new Map();
     for (const c of candidatos) {
+      if (c.seq == null) continue;
       if (!porChain.has(c.chain)) porChain.set(c.chain, []);
       porChain.get(c.chain).push(c);
     }
@@ -1290,7 +1341,11 @@ const StructureModel = (() => {
         criterio: "classificação pelo nome do componente ou por _entity_poly.type; não é uma atribuição biológica fechada",
       }] : [],
       terminais: { posicoes: terminais.length, codigos: agrupaCodigo(terminais), criterio: "lista parcial de grupos terminais (ACE, NH2, NME, FOR)" },
-      aguas: { instancias: aguas.length, codigos: agrupaCodigo(aguas) },
+      aguas: {
+        instancias: aguas.length,
+        codigos: agrupaCodigo(aguas),
+        nota: "Contagem de registros HOH, WAT, H2O ou DOD no modelo selecionado. Ausência de registro não significa ausência de água na amostra.",
+      },
       ions: agrupaCodigo(ions).map((i) => ({ ...i, criterio: "lista parcial de códigos de íon; HETATM não prova estado holo" })),
       hetero: agrupaCodigo(hetero.concat(incertos)).map((h) => ({
         ...h,
@@ -1418,7 +1473,7 @@ const StructureModel = (() => {
     if (comp.outrosPolimeros.length) {
       for (const o of comp.outrosPolimeros) L.push("Outro polímero: " + o.posicoes + " posição(ões). " + o.criterio + ".");
     }
-    L.push("Águas no modelo: " + comp.aguas.instancias + ".");
+    L.push("Águas registradas no modelo: " + comp.aguas.instancias + ". " + comp.aguas.nota);
     if (comp.ions.length) L.push("Íons: " + comp.ions.map((i) => i.codigo + " ×" + i.instancias).join(", ") + ". " + comp.ions[0].criterio);
     else L.push("Nenhum íon da lista parcial foi encontrado no modelo selecionado.");
     if (comp.hetero.length) L.push("Heterocomponentes de classificação biológica incerta: " + comp.hetero.map((h) => h.codigo + " ×" + h.instancias).join(", ") + ".");
@@ -1427,7 +1482,9 @@ const StructureModel = (() => {
     if (est.lacunas.naoResolvidos.length) {
       L.push("Resíduos não resolvidos:");
       for (const r of est.lacunas.naoResolvidos) {
-        L.push("- " + r.resname + " cadeia " + r.cadeiaAuth + " " + r.authSeq + (r.icode || "") + " (" + r.origem.join(", ") + ")");
+        L.push("- " + r.resname + " cadeia " + r.cadeiaAuth + " " + (r.numeracaoAuthor === "nao_depositada"
+          ? "posição " + r.seqIndex + " na SEQRES, numeração author não depositada"
+          : r.authSeq + (r.icode || "")) + " (" + r.origem.join(", ") + ")");
       }
     }
     if (est.lacunas.saltosNumeracao.length) {
