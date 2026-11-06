@@ -6,7 +6,7 @@ Aplicação web **100% estática** para análise estrutural de proteínas (forma
 Toda a análise roda **no navegador** — não há servidor, banco de dados nem limite de
 tamanho de arquivo. Versão visual dos Programas 01–05 do Trabalho Final de Algoritmos.
 
-Cole um **ID do PDB** (ex.: `1A00`) ou faça **upload** de um `.pdb` ou `.cif`. Pelo ID, o app usa o PDB quando o RCSB publica coordenadas; o mmCIF entra só se o PDB não tiver. A leitura do mmCIF usa a categoria `_atom_site` e não as colunas do PDB. A visão geral, os limites e o contrato `peki-estrutura-1` estão em [`estrutura.md`](estrutura.md). A aba **Qualidade** (relatório wwPDB e dicionário químico) está em [`qualidade.md`](qualidade.md). Veja a estrutura em **3D** e explore:
+Cole um **código PDB** (ex.: `1A00`), o **nome da proteína** (ex.: `NLRP3`) ou faça **upload** de um `.pdb` ou `.cif`. O nome não vira código: o RCSB devolve uma lista de depósitos experimentais e a estrutura só abre depois da escolha. Pelo código, o app usa o PDB quando o RCSB publica coordenadas; o mmCIF entra só se o PDB não tiver. A leitura do mmCIF usa a categoria `_atom_site` e não as colunas do PDB. A visão geral, os limites e o contrato `peki-estrutura-1` estão em [`estrutura.md`](estrutura.md). A aba **Qualidade** (relatório wwPDB e dicionário químico) está em [`qualidade.md`](qualidade.md). Veja a estrutura em **3D** e explore:
 
 - **Cadeias** — detecção e download de cada cadeia (Programas 01/02)
 - **Estatísticas** — átomos, resíduos e aminoácidos diferentes; maior/menor (Programa 03)
@@ -68,8 +68,14 @@ Acesse: http://localhost:8080
 
 ## Notas técnicas
 
-- A busca por ID baixa o PDB direto do **RCSB** (`files.rcsb.org`, com CORS).
+- A busca por código baixa o PDB direto do **RCSB** (`files.rcsb.org`, com CORS).
   Precisa de internet; estruturas que não existem retornam erro amigável.
+- A busca por nome usa a Search API oficial (`search.rcsb.org/rcsbsearch/v2/query`, CORS) restrita a
+  `structure_determination_methodology = experimental`, no máximo 12 entradas. Os metadados da lista
+  vêm do GraphQL oficial (`data.rcsb.org/graphql`, CORS): título, método, resolução combinada e
+  componentes quando a resposta os traz. Campo ausente não é preenchido. HTTP 429, tempo esgotado,
+  falha de rede e lista vazia têm mensagem própria. O código escolhido segue o mesmo download de
+  PDB/mmCIF. Comparação, ensemble e pockets continuam por código.
 - O upload é lido com `FileReader` — o arquivo **não sai do computador** do usuário.
 - Estruturas NMR multi-modelo (ex.: 1A0N) podem inflar a contagem de átomos.
 - A detecção de pockets chama a API do **DoGSiteScorer** (`proteins.plus`) direto do

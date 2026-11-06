@@ -45,6 +45,8 @@ function irParaHome() {
   $("#pdb-id").value = "";
   $("#file-input").value = "";
   $("#cmp-ids").value = "";
+  limparPainelBusca();
+  atualizarRotuloEntrada();
   limparErro();
   atualizarURL();
   window.scrollTo({ top: 0, behavior: "smooth" });
@@ -1996,6 +1998,119 @@ function alternarTema() {
   }
 }
 
+// ----- código PDB ou nome da proteína -----
+let buscaNomeSeq = 0;
+let buscaNomeAtual = null;
+
+function limparPainelBusca() {
+  buscaNomeSeq += 1;
+  buscaNomeAtual = null;
+  const btn = $("#btn-id");
+  if (btn) btn.disabled = false;
+  const painel = $("#busca-nome");
+  if (!painel) return;
+  painel.hidden = true;
+  painel.innerHTML = "";
+}
+
+function campoAindaBusca(nome) {
+  const campo = $("#pdb-id");
+  if (!campo || typeof BuscaNome === "undefined") return false;
+  const d = BuscaNome.decidir(campo.value);
+  return d.acao === "listar" && d.nome === nome;
+}
+
+function atualizarRotuloEntrada() {
+  const btn = $("#btn-id");
+  const campo = $("#pdb-id");
+  if (!btn || !campo) return;
+  if (typeof BuscaNome === "undefined") {
+    btn.textContent = "Analisar código";
+    return;
+  }
+  const d = BuscaNome.decidir(campo.value);
+  btn.textContent = d.acao === "listar" ? "Buscar nome" : "Analisar código";
+}
+
+function acaoCampo(valor) {
+  if (typeof BuscaNome === "undefined") {
+    const id = String(valor || "").trim().toUpperCase();
+    if (/^[0-9][A-Z0-9]{3}$/.test(id)) {
+      limparPainelBusca();
+      analisar({ pdbId: id });
+      return;
+    }
+    mostrarErro("Informe um código PDB de 4 caracteres (ex.: 1A00).");
+    return;
+  }
+  const d = BuscaNome.decidir(valor);
+  if (d.acao === "erro") {
+    mostrarErro(d.mensagem);
+    return;
+  }
+  if (d.acao === "carregar") {
+    limparPainelBusca();
+    analisar({ pdbId: d.id });
+    return;
+  }
+  listarPorNome(d.nome);
+}
+
+async function listarPorNome(nome) {
+  const seq = ++buscaNomeSeq;
+  limparErro();
+  const painel = $("#busca-nome");
+  const btn = $("#btn-id");
+  if (painel) {
+    painel.hidden = false;
+    painel.innerHTML = `<p class="busca-status"><span class="spinner"></span> Consultando depósitos experimentais no RCSB para “${esc(nome)}”…</p>`;
+  }
+  if (btn) btn.disabled = true;
+  let resp;
+  try {
+    resp = await BuscaNome.pesquisar(nome);
+  } catch (e) {
+    resp = { ok: false, mensagem: "Sem conexão com o RCSB (ou bloqueio de rede)." };
+  } finally {
+    if (btn && seq === buscaNomeSeq) btn.disabled = false;
+  }
+  if (seq !== buscaNomeSeq) return;
+  if (!campoAindaBusca(nome)) {
+    buscaNomeAtual = null;
+    if (painel) {
+      painel.hidden = true;
+      painel.innerHTML = "";
+    }
+    return;
+  }
+  if (!resp || !resp.ok) {
+    buscaNomeAtual = null;
+    if (painel) {
+      painel.hidden = true;
+      painel.innerHTML = "";
+    }
+    mostrarErro((resp && resp.mensagem) || "A busca no RCSB não completou.");
+    return;
+  }
+  buscaNomeAtual = resp;
+  if (painel) {
+    painel.hidden = false;
+    painel.innerHTML = BuscaNome.htmlResultados(resp);
+  }
+}
+
+function aoClicarResultadoBusca(ev) {
+  const alvo = ev.target && ev.target.closest ? ev.target.closest("[data-busca-id]") : null;
+  if (!alvo) return;
+  const lista = buscaNomeAtual && buscaNomeAtual.resultados;
+  const item = typeof BuscaNome !== "undefined" ? BuscaNome.selecionar(lista, alvo.getAttribute("data-busca-id")) : null;
+  if (!item) {
+    mostrarErro("Esse código não está na lista atual. Busque de novo e escolha um resultado.");
+    return;
+  }
+  analisar({ pdbId: item.id });
+}
+
 // ----- init -----
 function syncAbaPreparo() {
   const ligada = typeof PrepUI !== "undefined" && PrepUI.ativo();
@@ -2013,12 +2128,12 @@ function init() {
     }
   } catch (e) { /* modo privado */ }
 
-  $("#btn-id").addEventListener("click", () => {
-    const id = $("#pdb-id").value.trim();
-    if (!id) { mostrarErro("Informe um ID de PDB."); return; }
-    analisar({ pdbId: id });
-  });
+  $("#btn-id").addEventListener("click", () => acaoCampo($("#pdb-id").value));
   $("#pdb-id").addEventListener("keydown", (e) => { if (e.key === "Enter") $("#btn-id").click(); });
+  $("#pdb-id").addEventListener("input", atualizarRotuloEntrada);
+  const painelBusca = $("#busca-nome");
+  if (painelBusca) painelBusca.addEventListener("click", aoClicarResultadoBusca);
+  atualizarRotuloEntrada();
 
   $$(".chip").forEach((c) => c.addEventListener("click", () => analisar({ pdbId: c.dataset.id })));
 
@@ -2104,7 +2219,11 @@ function init() {
   const pdbParam = params.get("pdb");
   if (ensParam && typeof EnsembleUI !== "undefined" && EnsembleUI.ativo()) EnsembleUI.abrirPorUrl(ensParam);
   else if (cmpParam) compararProteinas(cmpParam);
-  else if (pdbParam) analisar({ pdbId: pdbParam });
+  else if (pdbParam) {
+    if ($("#pdb-id")) $("#pdb-id").value = pdbParam;
+    atualizarRotuloEntrada();
+    acaoCampo(pdbParam);
+  }
 }
 
 document.addEventListener("DOMContentLoaded", init);
