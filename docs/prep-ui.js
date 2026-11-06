@@ -903,6 +903,20 @@ const PrepUI = (() => {
     raios.glic = PrepAnalysis.RAIOS_PADRAO.glicosilacao;
     raios.his = PrepAnalysis.RAIOS_PADRAO.histidina;
     for (const k of Object.keys(decisoes)) delete decisoes[k];
+    if (est && est.estrutura && est.estrutura.recursos && est.estrutura.recursos.preparo === "bloqueado") {
+      resultado = null;
+      const cont = document.getElementById("tab-preparo");
+      if (cont) {
+        cont.innerHTML = `<p class="prep-aviso">${esc(est.estrutura.recursos.preparoMotivo || "A ficha de preparo não lê este formato.")}</p>`;
+      }
+      return;
+    }
+    if (est && !est.pdbText) {
+      resultado = null;
+      const cont = document.getElementById("tab-preparo");
+      if (cont) cont.innerHTML = `<p class="prep-aviso">A ficha de preparo precisa do texto PDB do modelo selecionado.</p>`;
+      return;
+    }
     garantirOuvintes();
     try {
       recalcular();

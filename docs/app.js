@@ -26,6 +26,9 @@ const estado = {
   ultimoMotivo: null, // {motivo, ocorrencias} da ultima busca (para exportacao)
   superficie: null,   // estado da superficie 3D: null | {sel, color, opacity}
   pocketSort: null,   // {col, dir} de ordenacao da tabela de pockets
+  textoViewer: null,
+  viewerFormato: "pdb",
+  estrutura: null,    // contrato peki-estrutura-1
 };
 
 // Volta para a tela inicial (home), limpando a análise e a URL.
@@ -92,6 +95,11 @@ function libPdf() {
 }
 window.pekiCarregarPdf = libPdf;
 
+function esc(s) {
+  return String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+  }[c]));
+}
 function mostrarErro(msg) { const el = $("#erro"); el.textContent = msg; el.hidden = false; }
 function limparErro() { $("#erro").hidden = true; }
 function setLoading(on) { $("#loading").hidden = !on; }
@@ -123,6 +131,40 @@ async function baixarRCSB(pdbId) {
   return await resp.text();
 }
 
+// A análise individual prefere o PDB. O mmCIF só entra quando o PDB não traz
+// coordenadas. Comparação e Ensemble continuam em baixarRCSB, que devolve PDB.
+async function baixarEntrada(pdbId) {
+  pdbId = pdbId.trim().toUpperCase();
+  if (typeof StructureModel === "undefined" || !StructureModel.idClassico(pdbId)) {
+    throw new Error("ID de PDB inválido (ex.: 1A00). Esta versão não aceita ID estendido.");
+  }
+  let pdbTexto = "";
+  let pdbStatus = 0;
+  try {
+    const resp = await fetch(`https://files.rcsb.org/download/${pdbId}.pdb`);
+    pdbStatus = resp.status;
+    if (resp.ok) pdbTexto = await resp.text();
+  } catch (e) {
+    throw new Error("Sem conexão com o RCSB (ou bloqueio de rede).");
+  }
+  if (StructureModel.pareceCoordenadaPdb(pdbTexto)) return { texto: pdbTexto, nome: `${pdbId}.pdb` };
+  let cifTexto = "";
+  let cifStatus = 0;
+  try {
+    const resp = await fetch(`https://files.rcsb.org/download/${pdbId}.cif`);
+    cifStatus = resp.status;
+    if (resp.ok) cifTexto = await resp.text();
+  } catch (e) {
+    throw new Error("Sem conexão com o RCSB (ou bloqueio de rede).");
+  }
+  const escolha = StructureModel.escolherEntrada("", cifTexto);
+  if (!escolha) {
+    if (pdbStatus === 404 && cifStatus === 404) throw new Error(`PDB '${pdbId}' não encontrado no RCSB.`);
+    throw new Error(`O RCSB não devolveu coordenadas PDB nem mmCIF para '${pdbId}'.`);
+  }
+  return { texto: escolha.texto, nome: `${pdbId}.cif` };
+}
+
 async function analisar({ pdbId, file }) {
   limparErro();
   setLoading(true);
@@ -133,20 +175,24 @@ async function analisar({ pdbId, file }) {
       nome = file.name || "estrutura.pdb";
     } else if (pdbId) {
       id = pdbId.trim().toUpperCase();
-      texto = await baixarRCSB(pdbId);
-      nome = `${id}.pdb`;
+      const baixado = await baixarEntrada(id);
+      texto = baixado.texto;
+      nome = baixado.nome;
     } else {
       throw new Error("Envie um arquivo ou informe um ID.");
     }
 
-    ProtAnalysis.validar(texto);
-    const nModelos = ProtAnalysis.contarModelos(texto);
-    texto = ProtAnalysis.primeiroModelo(texto); // NMR: usa só o 1º modelo
-    const dados = ProtAnalysis.analisarCompleto(texto);
+    if (typeof StructureModel === "undefined") throw new Error("Leitor de estrutura indisponível.");
+    const lido = StructureModel.ler(texto);
+    if (!lido.ok) throw new Error(lido.erro.mensagem);
+    const dados = lido.analise;
     dados.nome = nome;
-    dados.pdb_text = texto;
+    dados.pdb_text = lido.textoPdb;
     dados.pdb_id = id;
-    dados.nModelos = nModelos;
+    dados.nModelos = lido.estrutura.modelo.total;
+    dados.estrutura = lido.estrutura;
+    dados.textoViewer = lido.textoViewer;
+    dados.viewerFormato = lido.viewerFormato;
     await iniciarWorkspace(dados);
     if (id) { enriquecerMetaRCSB(id); atualizarURL("pdb", id); } // enriquece + URL compartilhável
   } catch (e) {
@@ -160,6 +206,9 @@ async function analisar({ pdbId, file }) {
 async function iniciarWorkspace(dados) {
   await lib3D();
   estado.pdbText = dados.pdb_text;
+  estado.textoViewer = dados.textoViewer || dados.pdb_text;
+  estado.viewerFormato = dados.viewerFormato || "pdb";
+  estado.estrutura = dados.estrutura || null;
   estado.nome = dados.nome;
   estado.pdbId = dados.pdb_id || null;
   estado.dados = dados;
@@ -168,8 +217,9 @@ async function iniciarWorkspace(dados) {
   estado.ultimoMotivo = null;
   estado.superficie = null;
   estado.pocketSort = null;
-  estado.meta = ProtAnalysis.extrairMetadados(dados.pdb_text);
+  estado.meta = dados.pdb_text ? ProtAnalysis.extrairMetadados(dados.pdb_text) : metaVazio();
   if (dados.nModelos > 1) estado.meta.modelos = dados.nModelos;
+  completarMeta(estado.meta, estado.estrutura);
 
   estado.corPorCadeia = {};
   dados.cadeias.forEach((cid, i) => {
@@ -181,9 +231,10 @@ async function iniciarWorkspace(dados) {
   $("#ws-nome").textContent = dados.nome;
 
   const totalRes = dados.estatisticas.cadeias.reduce((s, c) => s + c.residuos, 0);
-  $("#ws-resumo").textContent = `${dados.cadeias.length} cadeia(s) · ${totalRes} resíduos no total`;
+  $("#ws-resumo").textContent = resumoCabecalho(dados, totalRes);
 
   renderMeta();
+  renderVisao();
   if (typeof PrepUI !== "undefined") PrepUI.reiniciar();
   renderViewer();
   renderCadeias();
@@ -200,7 +251,61 @@ async function iniciarWorkspace(dados) {
     }
   }
 
+  trocarAba("visao");
   window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function metaVazio() {
+  return {
+    id: null, classificacao: null, data: null, titulo: null, metodo: null,
+    resolucao: null, organismos: [], moleculas: [], ligantes: [],
+  };
+}
+
+function completarMeta(meta, est) {
+  if (!est) return meta;
+  const idn = est.identidade || {};
+  if (!meta.titulo && idn.titulo) meta.titulo = idn.titulo;
+  if (!meta.metodo && idn.metodo) meta.metodo = idn.metodo;
+  if (meta.resolucao == null && idn.resolucao != null) meta.resolucao = idn.resolucao;
+  if (!meta.classificacao && idn.classificacao) meta.classificacao = idn.classificacao;
+  if (!meta.id && idn.id) meta.id = idn.id;
+  if ((!meta.organismos || !meta.organismos.length) && idn.organismos && idn.organismos.length) {
+    meta.organismos = idn.organismos.slice();
+  }
+  if (!meta.ligantes || !meta.ligantes.length) {
+    const ligs = [];
+    for (const h of (est.componentes && est.componentes.hetero) || []) {
+      ligs.push({ id: h.codigo, count: h.instancias, nome: h.nome || null });
+    }
+    for (const ion of (est.componentes && est.componentes.ions) || []) {
+      ligs.push({ id: ion.codigo, count: ion.instancias, nome: null });
+    }
+    meta.ligantes = ligs;
+  }
+  return meta;
+}
+
+function conta(n, singular, plural) {
+  return `${n} ${n === 1 ? singular : plural}`;
+}
+
+function rotuloFormato(fmt) {
+  if (fmt === "mmcif") return "mmCIF";
+  if (fmt === "pdb") return "PDB";
+  return fmt || "";
+}
+
+function resumoCabecalho(dados, totalRes) {
+  const est = dados.estrutura;
+  const base = `${dados.cadeias.length} cadeia(s) · ${totalRes} resíduos ATOM no modelo`;
+  if (!est) return base;
+  const lac = est.lacunas;
+  let extra = lac.determinado
+    ? (lac.naoResolvidos.length ? `${lac.naoResolvidos.length} não resolvido(s)` : "sem resíduo não resolvido na fonte lida")
+    : "resíduos ausentes não determinados";
+  if (lac.saltosNumeracao.length) extra += " · há salto de numeração";
+  return `${rotuloFormato(est.formato)} · ${base} · ${extra}`;
 }
 
 // ----- metadados (card "Sobre a estrutura") -----
@@ -235,13 +340,14 @@ function renderMeta() {
   const el = $("#ws-meta");
   const avisoPrevTopo = (typeof PrepAnalysis !== "undefined" && estado.pdbText)
     ? PrepAnalysis.avisoPredita(estado.pdbText, m) : null;
-  if (!m || !(m.titulo || m.classificacao || m.organismos?.length || m.ligantes?.length || avisoPrevTopo)) { el.hidden = true; return; }
+  const temClassico = !!(m && (m.titulo || m.classificacao || m.organismos?.length || m.ligantes?.length || avisoPrevTopo));
+  if (!temClassico && !estado.estrutura) { el.hidden = true; return; }
 
   const tags = [];
-  if (m.metodo) tags.push(m.metodo);
-  if (m.resolucao) tags.push(`${m.resolucao} Å`);
+  if (m.metodo) tags.push(esc(m.metodo));
+  if (m.resolucao) tags.push(`${esc(m.resolucao)} Å`);
   if (m.modelos > 1) tags.push(`modelo 1 de ${m.modelos}`);
-  if (m.organismos?.length) tags.push(`<em>${m.organismos.join(", ")}</em>`);
+  if (m.organismos?.length) tags.push(`<em>${esc(m.organismos.join(", "))}</em>`);
   if (m.peso) tags.push(`${Math.round(m.peso)} kDa`);
   if (m.data) tags.push(m.data);
   if (m.rcsbId) tags.push(`<a href="https://www.rcsb.org/structure/${m.rcsbId}" target="_blank" rel="noopener">Ver no RCSB ↗</a>`);
@@ -250,12 +356,17 @@ function renderMeta() {
   const avisoPrev = (typeof PrepAnalysis !== "undefined" && estado.pdbText)
     ? PrepAnalysis.avisoPredita(estado.pdbText, m) : null;
 
+  const est = estado.estrutura;
+  const leitura = est
+    ? `<p class="ov-resumo">${esc(est.lacunas.resumo)}</p><p class="muted small">${esc(est.componentes.holo.motivo)} Formato lido: ${esc(rotuloFormato(est.formato))}. Contrato ${esc(est.schema)}.</p>`
+    : "";
   el.innerHTML =
-    `<div class="meta-titulo">${m.titulo || m.classificacao || estado.nome}</div>` +
-    (m.classificacao && m.titulo ? `<div class="muted small">${m.classificacao}</div>` : "") +
+    `<div class="meta-titulo">${esc(m.titulo || m.classificacao || estado.nome)}</div>` +
+    (m.classificacao && m.titulo ? `<div class="muted small">${esc(m.classificacao)}</div>` : "") +
     (tags.length ? `<div class="meta-tags">${tags.map((t) => `<span class="meta-tag">${t}</span>`).join("")}</div>` : "") +
-    (ligs ? `<div class="muted small">Ligantes: ${ligs}</div>` : "") +
-    (avisoPrev ? `<p class="aviso-predita">${avisoPrev}</p>` : "");
+    (ligs ? `<div class="muted small">Heterocomponentes no modelo: ${esc(ligs)}. A presença deles não estabelece estado holo.</div>` : "") +
+    (avisoPrev ? `<p class="aviso-predita">${esc(avisoPrev)}</p>` : "") +
+    leitura;
   el.hidden = false;
 }
 
@@ -265,7 +376,7 @@ function renderViewer() {
   const div = $("#viewer");
   div.innerHTML = "";
   estado.viewer = $3Dmol.createViewer(div, { backgroundColor: "#0b1020" });
-  estado.viewer.addModel(estado.pdbText, "pdb");
+  estado.viewer.addModel(estado.textoViewer || estado.pdbText, estado.viewerFormato || "pdb");
   $("#lig-controle").hidden = !(estado.meta?.ligantes?.length);
   $("#surf-toggle").checked = false;
   aplicarEstilo();
@@ -341,6 +452,111 @@ function destacarMotivo(ocorrencias) {
   v.render();
 }
 
+function rotuloCadeiaVisao(c) {
+  if (c.label && c.auth && c.label !== c.auth) return `author ${c.auth} · label ${c.label}`;
+  return c.auth || c.id;
+}
+
+function irAba(nome) {
+  const botao = document.querySelector(`#workspace .aba[data-tab="${nome}"]`);
+  if (botao && !botao.hidden) botao.click();
+}
+
+function renderVisao() {
+  const cont = $("#tab-visao");
+  const est = estado.estrutura;
+  if (!cont) return;
+  if (!est) {
+    cont.innerHTML = `<p class="muted">A visão geral não está disponível para esta leitura.</p>`;
+    return;
+  }
+  const idn = est.identidade || {};
+  const linhas = [];
+  if (idn.id) linhas.push(["Identificador no arquivo", idn.id]);
+  if (idn.titulo) linhas.push(["Título", idn.titulo]);
+  if (idn.metodo) linhas.push(["Método", idn.metodo]);
+  if (idn.resolucao != null) linhas.push(["Resolução", `${idn.resolucao} Å (${idn.resolucaoOrigem})`]);
+  if (idn.classificacao) linhas.push(["Classificação do arquivo", idn.classificacao]);
+  if (idn.organismos && idn.organismos.length) linhas.push(["Organismo citado no arquivo", idn.organismos.join("; ")]);
+  linhas.push(["Modelo", `${est.modelo.selecionado} de ${est.modelo.total}. ${est.modelo.criterio}`]);
+
+  const lac = est.lacunas;
+  const comp = est.componentes;
+  const faltam = lac.naoResolvidos.slice(0, 12).map((r) => {
+    const num = r.numeracaoAuthor === "nao_depositada"
+      ? `posição ${r.seqIndex} na SEQRES, numeração author não depositada`
+      : `${r.authSeq}${r.icode || ""}`;
+    return `<li>${esc(r.resname)} ${esc(r.cadeiaAuth)} ${esc(num)} <span class="muted">(${esc(r.origem.join(", "))})</span></li>`;
+  }).join("");
+  const resto = lac.naoResolvidos.length > 12 ? `<p class="muted small">E mais ${lac.naoResolvidos.length - 12} resíduo(s) na mesma lista.</p>` : "";
+  const saltos = lac.saltosNumeracao.slice(0, 6).map((s) =>
+    `<li>Cadeia ${esc(s.cadeia)}, entre ${esc(s.de.seq)} e ${esc(s.para.seq)}: ${esc(s.interpretacao === "salto_de_numeracao" ? "salto de numeração" : "não determinado")} (${esc(s.inteirosSemResiduoDeclarado.join(", "))})</li>`
+  ).join("");
+  const prox = lac.proximidadeFlanqueadores.slice(0, 4).map((p) =>
+    `<li>${esc(p.distanciaA)} Å entre ${esc(p.flanqueadorAnterior.atomo)} de ${esc(p.flanqueadorAnterior.resname)} ${esc(p.flanqueadorAnterior.authSeq)} e ${esc(p.flanqueadorPosterior.atomo)} de ${esc(p.flanqueadorPosterior.resname)} ${esc(p.flanqueadorPosterior.authSeq)}. ${esc(p.rotulo)}</li>`
+  ).join("");
+  const cadeias = est.cadeias.map((c) =>
+    `<li><strong>Cadeia ${esc(rotuloCadeiaVisao(c))}</strong> — ${conta(c.posicoesPolimero, "posição", "posições")} de polímero com coordenadas, ${c.atomosAtom} átomos ATOM, ${c.atomosHet} HETATM${c.posicoesComAltLoc ? `, ${c.posicoesComAltLoc} com altLoc` : ""}.</li>`
+  ).join("");
+  const ions = comp.ions.length ? comp.ions.map((i) => `${i.codigo} ×${i.instancias}`).join(", ") : "nenhum código da lista parcial";
+  const hetero = comp.hetero.length ? comp.hetero.map((h) => `${h.codigo} ×${h.instancias}`).join(", ") : "nenhum além de polímero, água, íon da lista parcial e grupo terminal";
+  const outros = comp.outrosPolimeros.length
+    ? comp.outrosPolimeros.map((o) => `${o.posicoes} posição(ões). ${o.criterio}`).join(" ")
+    : "nenhum nucleotídeo ou outro polímero identificado";
+  const decls = est.uniprot.declaracoes.length
+    ? est.uniprot.declaracoes.map((d) => `<li>${esc(d.fonte)}: ${esc(d.db || "banco")} ${esc(d.accession || "sem acesso")}, cadeia ${esc(d.cadeiaAuth || "não indicada")}, PDB ${esc(d.pdbInicio)}–${esc(d.pdbFim)}, banco ${esc(d.dbInicio)}–${esc(d.dbFim)}. ${d.nota ? esc(d.nota) : ""}</li>`).join("")
+    : `<li>Nenhuma declaração DBREF ou _struct_ref neste arquivo.</li>`;
+  const avisos = (est.diagnosticos || []).map((d) => `<li>${esc(d.mensagem)}</li>`).join("");
+  const prep = est.recursos.preparo === "bloqueado" ? `<p class="aviso-ov">${esc(est.recursos.preparoMotivo)}</p>` : "";
+
+  cont.innerHTML = `
+    <section class="ov" aria-labelledby="ov-titulo">
+      <h3 id="ov-titulo">Visão geral do modelo lido</h3>
+      <p class="muted small">Contrato ${esc(est.schema)}. Os números abaixo saem do arquivo; campo ausente não aparece como zero.</p>
+      <dl class="ov-dl">
+        ${linhas.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("")}
+      </dl>
+      <h3>Cadeias</h3>
+      <ul class="ov-lista">${cadeias || "<li>Nenhuma cadeia no modelo selecionado.</li>"}</ul>
+      <h3>Resíduos sem coordenadas</h3>
+      <p>${esc(lac.resumo)}</p>
+      <p class="muted small">${esc(lac.foraDoConstructo.motivo)}</p>
+      ${faltam ? `<ul class="ov-lista">${faltam}</ul>${resto}` : ""}
+      ${saltos ? `<h3>Saltos de numeração</h3><ul class="ov-lista">${saltos}</ul>` : ""}
+      ${prox ? `<h3>Proxies dos flanqueadores</h3><ul class="ov-lista">${prox}</ul>` : `<p class="muted small">Não há distância de flanqueadores: ou não existe resíduo não resolvido entre dois resíduos com coordenadas, ou a fonte não fechou esse diagnóstico.</p>`}
+      ${lac.ocupacaoZero && lac.ocupacaoZero.length ? `<p class="muted small">${lac.ocupacaoZero.length} resíduo(s) com ocupação zero na categoria mmCIF. Eles não entram na lista de ausentes.</p>` : ""}
+      <h3>Componentes no modelo selecionado</h3>
+      <ul class="ov-lista">
+        <li>Proteína: ${conta(comp.proteinas.posicoes, "posição", "posições")} com coordenadas${comp.proteinas.cadeias.length ? ` nas cadeias ${esc(comp.proteinas.cadeias.join(", "))}` : ""}. ${esc(comp.proteinas.criterio)}.</li>
+        <li>Outros polímeros: ${esc(outros)}.</li>
+        <li>Águas registradas no modelo: ${comp.aguas.instancias}. ${esc(comp.aguas.nota)}</li>
+        <li>Íons: ${esc(ions)}.</li>
+        <li>Outros HETATM: ${esc(hetero)}. Classificação biológica incerta.</li>
+      </ul>
+      <p class="aviso-ov">${esc(comp.holo.motivo)}</p>
+      <h3>PDB e UniProt</h3>
+      <p>Correspondência resíduo a resíduo: não estabelecida.</p>
+      <p>${esc(est.uniprot.motivo)}</p>
+      <ul class="ov-lista">${decls}</ul>
+      ${prep}
+      <p class="muted small">Resíduos sem coordenadas não são destacados no viewer. Eles não têm átomos para selecionar.</p>
+      ${avisos ? `<h3>Avisos desta leitura</h3><ul class="ov-lista">${avisos}</ul>` : ""}
+      <details class="ov-detalhe">
+        <summary>Limites desta versão</summary>
+        <ul class="ov-lista">${est.limitacoes.map((t) => `<li>${esc(t)}</li>`).join("")}</ul>
+      </details>
+      <div class="ov-nav">
+        <button type="button" class="ghost-btn" data-ir="cadeias">Abrir cadeias</button>
+        <button type="button" class="ghost-btn" data-ir="stats">Estatísticas</button>
+        <button type="button" class="ghost-btn" data-ir="aa">Aminoácidos</button>
+        <button type="button" class="ghost-btn" data-ir="motivos">Motivos</button>
+        <button type="button" class="ghost-btn" data-ir="pockets">Pockets</button>
+        <button type="button" class="ghost-btn" data-ir="preparo">Preparo</button>
+      </div>
+    </section>`;
+  cont.querySelectorAll("[data-ir]").forEach((b) => b.addEventListener("click", () => irAba(b.dataset.ir)));
+}
+
 // ----- aba: cadeias -----
 function renderCadeias() {
   const cont = $("#tab-cadeias");
@@ -358,7 +574,7 @@ function renderCadeias() {
 
     const item = document.createElement("span");
     item.className = "item";
-    item.innerHTML = `<span class="swatch" style="background:${cor}"></span> Cadeia ${c.cadeia}`;
+    item.innerHTML = `<span class="swatch" style="background:${cor}"></span> Cadeia ${esc(c.cadeia)}`;
     leg.appendChild(item);
 
     const div = document.createElement("div");
@@ -367,13 +583,15 @@ function renderCadeias() {
       <div class="info">
         <span class="swatch" style="background:${cor}"></span>
         <div>
-          <strong>Cadeia ${c.cadeia}</strong>
+          <strong>Cadeia ${esc(c.cadeia)}</strong>
           <div class="muted small">${c.residuos} resíduos · ${c.atomos} átomos</div>
         </div>
       </div>
       <div class="cadeia-btns">
-        <button class="dl-btn" data-chain="${c.cadeia}">⬇ PDB</button>
-        <button class="fasta-btn" data-chain="${c.cadeia}">⬇ FASTA</button>
+        ${estado.estrutura && estado.estrutura.recursos.cadeiaPdb === "bloqueado"
+          ? `<button type="button" class="dl-btn" disabled aria-disabled="true" aria-label="${esc(estado.estrutura.recursos.cadeiaPdbMotivo)}">PDB indisponível</button>`
+          : `<button type="button" class="dl-btn" data-chain="${esc(c.cadeia)}">⬇ PDB</button>`}
+        <button type="button" class="fasta-btn" data-chain="${c.cadeia}">⬇ FASTA</button>
       </div>`;
     cont.appendChild(div);
   }
@@ -398,6 +616,10 @@ function seqFasta(cid) {
 }
 
 function baixarCadeia(chain) {
+  if (!estado.pdbText || (estado.estrutura && estado.estrutura.recursos.cadeiaPdb === "bloqueado")) {
+    alert((estado.estrutura && estado.estrutura.recursos.cadeiaPdbMotivo) || "Esta versão não grava a cadeia em PDB para este formato.");
+    return;
+  }
   const cadeias = ProtAnalysis.separarCadeias(estado.pdbText);
   const texto = cadeias[chain];
   if (!texto) { alert("Cadeia não encontrada."); return; }
@@ -421,7 +643,11 @@ function renderStats() {
   const totalAt = st.cadeias.reduce((s, c) => s + c.atomos, 0);
   const totalRes = st.cadeias.reduce((s, c) => s + c.residuos, 0);
 
+  const notaFormato = estado.estrutura && estado.estrutura.formato === "mmcif"
+    ? `<p class="muted small">Contagens do modelo selecionado na leitura mmCIF. O texto CIF não passou pelo leitor de colunas PDB.</p>`
+    : "";
   let html = `
+    ${notaFormato}
     <div class="resumo-cards">
       <div class="resumo-card"><div class="num">${st.cadeias.length}</div><div class="lbl">cadeias</div></div>
       <div class="resumo-card"><div class="num">${totalAt}</div><div class="lbl">átomos</div></div>
@@ -435,14 +661,14 @@ function renderStats() {
     let cls = "";
     if (st.maior && c.cadeia === st.maior.cadeia) cls = "destaque-maior";
     if (st.menor && c.cadeia === st.menor.cadeia && st.maior.cadeia !== st.menor.cadeia) cls = "destaque-menor";
-    html += `<tr class="${cls}"><td><strong>${c.cadeia}</strong></td><td>${c.atomos}</td><td>${c.residuos}</td><td>${c.aminoacidos_diferentes}</td></tr>`;
+    html += `<tr class="${cls}"><td><strong>${esc(c.cadeia)}</strong></td><td>${c.atomos}</td><td>${c.residuos}</td><td>${c.aminoacidos_diferentes}</td></tr>`;
   }
   html += `</tbody></table>`;
 
   if (st.maior && st.menor) {
     html += `<p class="muted small" style="margin-top:10px">
-      🟢 Maior: cadeia ${st.maior.cadeia} (${st.maior.residuos} resíduos) ·
-      🔴 Menor: cadeia ${st.menor.cadeia} (${st.menor.residuos} resíduos)</p>`;
+      🟢 Maior: cadeia ${esc(st.maior.cadeia)} (${st.maior.residuos} resíduos) ·
+      🔴 Menor: cadeia ${esc(st.menor.cadeia)} (${st.menor.residuos} resíduos)</p>`;
   }
   html += `<div class="tab-acoes"><button id="btn-stats-csv" class="dl-btn">⬇ CSV</button></div>`;
   cont.innerHTML = html;
@@ -515,22 +741,26 @@ function buscarMotivo() {
 
   const lista = valor.split(/[-,\s]+/).filter(Boolean);
   const motivo = lista.map((m) => m.toUpperCase());
-  const ocorrencias = ProtAnalysis.buscarMotivo(estado.pdbText, lista);
+  const ocorrencias = estado.pdbText
+    ? ProtAnalysis.buscarMotivo(estado.pdbText, lista)
+    : StructureModel.buscarMotivo(estado.dados.residuosPorCadeia, lista);
 
+  const motivoTxt = esc(motivo.join("-"));
   if (!ocorrencias.length) {
     estado.ultimoMotivo = null;
-    cont.innerHTML = `<p class="muted">Nenhuma ocorrência de <code>${motivo.join("-")}</code>.</p>`;
+    cont.innerHTML = `<p class="muted">Nenhuma ocorrência de <code>${motivoTxt}</code>.</p>`;
     aplicarEstilo();
     return;
   }
 
   estado.ultimoMotivo = { motivo: motivo.join("-"), ocorrencias };
 
-  let html = `<p><strong>${ocorrencias.length}</strong> ocorrência(s) de <code>${motivo.join("-")}</code>:</p>`;
+  let html = `<p><strong>${ocorrencias.length}</strong> ocorrência(s) de <code>${motivoTxt}</code>:</p>`;
+  if (!estado.pdbText) html += `<p class="muted small">Busca na sequência lida do mmCIF. O texto CIF não passou pelo leitor de colunas PDB.</p>`;
   for (const oc of ocorrencias) {
-    html += `<div class="ocorrencia">Cadeia <strong>${oc.cadeia}</strong> · posição <strong>${oc.posicao}</strong> (resíduos ${oc.residuos.join(", ")})</div>`;
+    html += `<div class="ocorrencia">Cadeia <strong>${esc(oc.cadeia)}</strong> · posição <strong>${esc(oc.posicao)}</strong> (resíduos ${esc(oc.residuos.join(", "))})</div>`;
   }
-  html += `<p class="muted small">Resíduos destacados em amarelo no viewer 3D.</p>`;
+  html += `<p class="muted small">Resíduos com coordenadas podem ser destacados em amarelo no viewer 3D. Resíduo sem coordenada não é desenhado.</p>`;
   cont.innerHTML = html;
 
   destacarMotivo(ocorrencias);
@@ -899,6 +1129,9 @@ async function compararProteinas(idsRaw) {
     const proteinas = [];
     for (const id of ids) {
       const texto = await baixarRCSB(id);
+      if (typeof StructureModel !== "undefined" && !StructureModel.pareceCoordenadaPdb(texto)) {
+        throw new Error(`A comparação desta versão só lê PDB. O arquivo de ${id} não foi interpretado como colunas PDB.`);
+      }
       ProtAnalysis.validar(texto);
       proteinas.push({ id, pdbText: texto, dados: ProtAnalysis.analisarCompleto(texto) });
     }
@@ -1177,6 +1410,7 @@ let exportContexto = "single";
 
 const EXPORT_SECOES = {
   single: () => [
+    { id: "visao", label: "Visão geral", on: () => !!estado.estrutura },
     { id: "meta", label: "Sobre a estrutura", on: () => !!(estado.meta && (estado.meta.titulo || estado.meta.classificacao || estado.meta.organismos?.length)) },
     { id: "viewer", label: "Estrutura 3D (imagem)", on: () => !!estado.viewer },
     { id: "cadeias", label: "Cadeias", on: () => !!estado.dados },
@@ -1361,7 +1595,8 @@ async function exportarMdSingle(secoes) {
   const totalAt = st.cadeias.reduce((s, c) => s + c.atomos, 0);
   const totalRes = st.cadeias.reduce((s, c) => s + c.residuos, 0);
   let md = `# PEKI Fold — Análise de ${estado.nome}\n\n*Protein Exploration Kit for Insights*\n\n`;
-  md += `Gerado em ${new Date().toLocaleString("pt-BR")} · ${d.cadeias.length} cadeia(s) · ${totalRes} resíduos · ${totalAt} átomos.\n\n`;
+  md += `Gerado em ${new Date().toLocaleString("pt-BR")} · ${d.cadeias.length} cadeia(s) · ${totalRes} resíduos ATOM · ${totalAt} átomos ATOM.\n\n`;
+  if (secoes.includes("visao") && estado.estrutura) md += `## Visão geral\n\n${StructureModel.textoVisao(estado.estrutura)}\n\n`;
   if (secoes.includes("meta") && estado.meta) {
     md += `## Sobre a estrutura\n\n`;
     if (estado.meta.titulo) md += `**${estado.meta.titulo}**\n\n`;
@@ -1453,7 +1688,11 @@ async function exportarPdfSingle(secoes) {
   const totalRes = st.cadeias.reduce((s, c) => s + c.residuos, 0);
   h.titulo(`PEKI Fold — ${estado.nome}`);
   h.par(`Protein Exploration Kit for Insights · gerado em ${new Date().toLocaleString("pt-BR")}`);
-  h.par(`${d.cadeias.length} cadeia(s) · ${totalRes} resíduos · ${totalAt} átomos.`);
+  h.par(`${d.cadeias.length} cadeia(s) · ${totalRes} resíduos ATOM · ${totalAt} átomos ATOM.`);
+  if (secoes.includes("visao") && estado.estrutura) {
+    h.sub("Visão geral");
+    StructureModel.textoVisao(estado.estrutura).split("\n").forEach((linha) => { if (linha.trim()) h.par(linha); });
+  }
   if (secoes.includes("meta") && estado.meta) {
     h.sub("Sobre a estrutura");
     if (estado.meta.titulo) h.par(estado.meta.titulo);
@@ -1522,7 +1761,11 @@ async function exportarPdfCmp(secoes) {
 
 // ----- abas / tema -----
 function trocarAba(nome) {
-  $$("#workspace .aba").forEach((a) => a.classList.toggle("ativa", a.dataset.tab === nome));
+  $$("#workspace .aba").forEach((a) => {
+    const on = a.dataset.tab === nome;
+    a.classList.toggle("ativa", on);
+    a.setAttribute("aria-selected", on ? "true" : "false");
+  });
   $$("#workspace .aba-conteudo").forEach((c) => (c.hidden = c.id !== `tab-${nome}`));
   if (nome === "aa" && window.Plotly) setTimeout(() => Plotly.Plots.resize("aa-grafico"), 50);
   if (nome === "preparo" && typeof PrepUI !== "undefined") PrepUI.aoMostrar();

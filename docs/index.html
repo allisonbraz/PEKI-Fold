@@ -25,7 +25,7 @@
     <div class="card entrada-card">
       <img class="hero-logo" src="peki-fold.png" width="640" height="427" alt="PEKI Fold — Protein Exploration Kit for Insights" />
       <h2>Comece por aqui</h2>
-      <p class="muted">Cole um ID do PDB ou envie um arquivo <code>.pdb</code>. Tudo é processado no seu navegador.</p>
+      <p class="muted">Cole um ID do PDB ou envie um arquivo <code>.pdb</code> ou <code>.cif</code>. A leitura acontece no seu navegador.</p>
       <div class="escopo">
         <p><strong>O que o PEKI Fold faz:</strong> mostra a estrutura, separa cadeias, conta estatísticas, busca motivos, detecta cavidades com o DoGSiteScorer e monta uma ficha geométrica de preparo.</p>
         <p><strong>O que não faz:</strong> docking, dinâmica molecular, minimização, protonação e cálculo de afinidade. Contato geométrico não é contribuição energética. Escore de docking não é afinidade.</p>
@@ -39,9 +39,9 @@
       <div class="ou">— ou —</div>
 
       <div id="dropzone" class="dropzone">
-        <input id="file-input" type="file" accept=".pdb,.ent,.cif" hidden />
-        <p>📁 Arraste um arquivo aqui ou <button id="btn-file" class="link-btn">selecione</button></p>
-        <p class="muted small">Sem limite de tamanho — o arquivo não sai do seu computador.</p>
+        <input id="file-input" type="file" accept=".pdb,.ent,.cif,.mmcif" hidden />
+        <p>📁 Arraste um arquivo aqui ou <button id="btn-file" class="link-btn" type="button">selecione</button></p>
+        <p class="muted small">Sem limite de tamanho — o arquivo não sai do seu computador. mmCIF é lido pela categoria <code>_atom_site</code>, não como colunas de PDB.</p>
       </div>
 
       <div class="exemplos">
@@ -70,21 +70,21 @@
           </label>
           <button id="ens-exemplo-home" class="ghost-btn" type="button">Exemplo sintético</button>
         </div>
-        <p id="ens-erro-home" class="erro" hidden></p>
+        <p id="ens-erro-home" class="erro" role="alert" hidden></p>
       </div>
 
       <details class="ajuda">
         <summary>Como usar</summary>
         <ul>
-          <li><strong>ID do PDB</strong> (ex.: <code>1A00</code>): busca a estrutura no RCSB — habilita metadados e pockets.</li>
-          <li><strong>Upload</strong> de <code>.pdb</code>: análise local, sem sair do navegador (sem pockets).</li>
+          <li><strong>ID do PDB</strong> (ex.: <code>1A00</code>): busca o PDB no RCSB e, se ele não tiver coordenadas, o mmCIF. O ID clássico tem 4 caracteres. Pockets seguem por ID.</li>
+          <li><strong>Upload</strong> de <code>.pdb</code> ou <code>.cif</code>: leitura local. A ficha de preparo e o download de cadeia em PDB continuam só no PDB.</li>
           <li><strong>Comparar</strong>: 2 a 4 IDs para ver estatísticas, aminoácidos e pockets lado a lado.</li>
           <li>No workspace: <strong>abas</strong> (cadeias, estatísticas, aminoácidos, motivos, pockets, preparo), <strong>viewer 3D</strong> e botão <strong>Exportar</strong> (PDF/Markdown/CSV).</li>
           <li><strong>Preparo</strong> é uma ficha auxiliar. Ela não valida a estrutura e não substitui a conferência humana.</li>
         </ul>
       </details>
 
-      <div id="erro" class="erro" hidden></div>
+      <div id="erro" class="erro" role="alert" hidden></div>
       <div id="loading" class="loading" hidden><span class="spinner"></span> Processando…</div>
     </div>
   </section>
@@ -131,16 +131,18 @@
       </div>
 
       <div class="card painel">
-        <nav class="abas">
-          <button class="aba ativa" data-tab="cadeias">Cadeias</button>
-          <button class="aba" data-tab="stats">Estatísticas</button>
-          <button class="aba" data-tab="aa">Aminoácidos</button>
-          <button class="aba" data-tab="motivos">Motivos</button>
-          <button class="aba" data-tab="pockets">Pockets</button>
-          <button class="aba" data-tab="preparo">Preparo</button>
+        <nav class="abas" role="tablist" aria-label="Seções da estrutura">
+          <button class="aba ativa" type="button" role="tab" aria-selected="true" data-tab="visao">Visão geral</button>
+          <button class="aba" type="button" role="tab" aria-selected="false" data-tab="cadeias">Cadeias</button>
+          <button class="aba" type="button" role="tab" aria-selected="false" data-tab="stats">Estatísticas</button>
+          <button class="aba" type="button" role="tab" aria-selected="false" data-tab="aa">Aminoácidos</button>
+          <button class="aba" type="button" role="tab" aria-selected="false" data-tab="motivos">Motivos</button>
+          <button class="aba" type="button" role="tab" aria-selected="false" data-tab="pockets">Pockets</button>
+          <button class="aba" type="button" role="tab" aria-selected="false" data-tab="preparo">Preparo</button>
         </nav>
 
-        <div class="aba-conteudo" id="tab-cadeias"></div>
+        <div class="aba-conteudo" id="tab-visao"></div>
+        <div class="aba-conteudo" id="tab-cadeias" hidden></div>
         <div class="aba-conteudo" id="tab-stats" hidden></div>
         <div class="aba-conteudo" id="tab-aa" hidden>
           <div class="aa-controls">
@@ -366,6 +368,7 @@
   </footer>
 
   <script src="pdb-analysis.js"></script>
+  <script src="structure-model.js"></script>
   <script src="prep-analysis.js"></script>
   <script src="ensemble-analysis.js"></script>
   <script src="prep-ui.js"></script>
