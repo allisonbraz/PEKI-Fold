@@ -1,0 +1,42 @@
+{
+  "rcsb_entry_info": {
+    "experimental_method": "NMR"
+  },
+  "rcsb_entry_container_identifiers": {
+    "entry_id": "1A0N"
+  },
+  "exptl": [
+    {
+      "method": "SOLUTION NMR"
+    }
+  ],
+  "pdbx_vrpt_summary": {
+    "attempted_validation_steps": "molprobity,validation-pack,coreclust,chemicalshiftanalysis,validation_schema,percentiles,writepdf,writexml,writecif",
+    "ligands_for_buster_report": "N",
+    "report_creation_date": "2026-03-05T02:42:00.000+00:00"
+  },
+  "pdbx_vrpt_summary_geometry": [
+    {
+      "angles_RMSZ": 1.27,
+      "bonds_RMSZ": 1.37,
+      "clashscore": 36.51,
+      "percent_ramachandran_outliers": 1.85,
+      "percent_rotamer_outliers": 25.5,
+      "clashscore_full_length": 35.91,
+      "percent_ramachandran_outliers_full_length": 4.65,
+      "percent_rotamer_outliers_full_length": 26.13
+    }
+  ],
+  "pdbx_vrpt_summary_nmr": [
+    {
+      "cyrange_number_of_domains": 1,
+      "exp_method": "nmr",
+      "medoid_model": 5,
+      "nmr_models_consistency_flag": "True",
+      "nmrclust_number_of_clusters": 6,
+      "nmrclust_number_of_models": 25,
+      "nmrclust_number_of_outliers": 2,
+      "nmrclust_representative_model": 8
+    }
+  ]
+}

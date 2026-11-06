@@ -1,0 +1,36 @@
+{
+  "rcsb_entry_info": {
+    "experimental_method": "X-ray",
+    "resolution_combined": [
+      1.5
+    ]
+  },
+  "rcsb_entry_container_identifiers": {
+    "entry_id": "1CRN"
+  },
+  "exptl": [
+    {
+      "method": "X-RAY DIFFRACTION"
+    }
+  ],
+  "pdbx_vrpt_summary": {
+    "attempted_validation_steps": "molprobity,validation-pack,validation_schema,percentiles,writexml,writecif,writepdf",
+    "ligands_for_buster_report": "N",
+    "report_creation_date": "2026-03-05T18:54:00.000+00:00"
+  },
+  "pdbx_vrpt_summary_geometry": [
+    {
+      "angles_RMSZ": 1.55,
+      "bonds_RMSZ": 1.5,
+      "clashscore": 0.0,
+      "percent_ramachandran_outliers": 0.0,
+      "percent_rotamer_outliers": 0.0
+    }
+  ],
+  "refine": [
+    {
+      "ls_d_res_high": 1.5,
+      "pdbx_refine_id": "X-RAY DIFFRACTION"
+    }
+  ]
+}

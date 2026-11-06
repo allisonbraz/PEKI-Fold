@@ -1,0 +1,52 @@
+{
+  "rcsb_entry_info": {
+    "experimental_method": "X-ray",
+    "resolution_combined": [
+      2.0
+    ]
+  },
+  "rcsb_entry_container_identifiers": {
+    "entry_id": "1A00"
+  },
+  "exptl": [
+    {
+      "crystals_number": 1,
+      "method": "X-RAY DIFFRACTION"
+    }
+  ],
+  "pdbx_vrpt_summary": {
+    "attempted_validation_steps": "molprobity,validation-pack,xtriage,eds,mogul,buster-report,validation_schema,percentiles,writexml,writecif,writepdf",
+    "ligands_for_buster_report": "Y",
+    "report_creation_date": "2026-03-06T08:34:00.000+00:00"
+  },
+  "pdbx_vrpt_summary_geometry": [
+    {
+      "angles_RMSZ": 1.83,
+      "bonds_RMSZ": 1.05,
+      "clashscore": 5.74,
+      "percent_ramachandran_outliers": 0.0,
+      "percent_rotamer_outliers": 8.44
+    }
+  ],
+  "pdbx_vrpt_summary_diffraction": [
+    {
+      "EDS_R": 0.5267,
+      "DCC_R": 0.5314,
+      "data_completeness": 90.73,
+      "percent_RSRZ_outliers": 89.72,
+      "Fo_Fc_correlation": 0.371,
+      "EDS_R_warning": "The R factor obtained from EDS is 0.5267, which does not match the depositor's R factor of 0.169. Please interpret the results in this section carefully.",
+      "exp_method": "x-ray",
+      "number_reflns_R_free": 0,
+      "percent_free_reflections": 0.0
+    }
+  ],
+  "refine": [
+    {
+      "ls_R_factor_R_work": 0.169,
+      "ls_R_factor_R_free": 0.223,
+      "ls_d_res_high": 2.0,
+      "pdbx_refine_id": "X-RAY DIFFRACTION"
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+<?xml version="1.0" ?>
+<wwPDB-validation-information xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://wwpdb.org/validation/schema/wwpdb_validation_v6.06.xsd">
+	<Entry percentilebins="all,1.5,xray" attemptedValidationSteps="molprobity,validation-pack,mogul,buster-report,percentiles,writexml" PDB-deposition-date="1981-04-30" PDB-revision-date="2024-10-30" PDB-revision-number="6" protein-DNA-RNA-entities="1" PDB-resolution="1.50" PDB-resolution-low="NotAvailable" PDB-R="NotAvailable" PDB-Rfree="NotAvailable" pdbid="1CRN" extended_pdbid="1CRN" num-H-reduce="315" clashscore="0.00" percent-rama-outliers="0.00" percent-rota-outliers="0.00" bonds_rmsz="1.50" num_bonds_rmsz="334" angles_rmsz="1.55" num_angles_rmsz="458" no-ligands-for-buster-report="yes" no-ligands-for-mogul="yes" absolute-percentile-clashscore="100.0" numPDBids-absolute-percentile-clashscore="190562" relative-percentile-clashscore="100.0" numPDBids-relative-percentile-clashscore="4235" low-resol-relative-percentile-clashscore="1.5" high-resol-relative-percentile-clashscore="1.5" absolute-percentile-percent-rama-outliers="100.0" numPDBids-absolute-percentile-percent-rama-outliers="187476" relative-percentile-percent-rama-outliers="100.0" numPDBids-relative-percentile-percent-rama-outliers="4153" low-resol-relative-percentile-percent-rama-outliers="1.5" high-resol-relative-percentile-percent-rama-outliers="1.5" absolute-percentile-percent-rota-outliers="100.0" numPDBids-absolute-percentile-percent-rota-outliers="187428" relative-percentile-percent-rota-outliers="100.0" numPDBids-relative-percentile-percent-rota-outliers="4150" low-resol-relative-percentile-percent-rota-outliers="1.5" high-resol-relative-percentile-percent-rota-outliers="1.5" XMLcreationDate="Mar  5, 2026 -- 06:54 PM UTC"/>
+	<ModelledSubgroup num-H-reduce="9" rota="m" model="1" chain="A" resnum="1" said="A" ent="1" seq="1" icode=" " resname="THR" altcode=" "/>
+	<ModelledSubgroup num-H-reduce="7" phi="-107.8" psi="144.3" rama="Favored" rota="p" model="1" chain="A" resnum="2" said="A" ent="1" seq="2" icode=" " resname="THR" altcode=" "/>
+	<ModelledSubgroup num-H-reduce="4" phi="-131.2" psi="133.3" rama="Favored" rota="m" model="1" chain="A" resnum="3" said="A" ent="1" seq="3" icode=" " resname="CYS" altcode=" "/>
+	<ModelledSubgroup num-H-reduce="4" phi="-118.9" psi="151.2" rama="Favored" rota="m" model="1" chain="A" resnum="4" said="A" ent="1" seq="4" icode=" " resname="CYS" altcode=" "/>
+	<ModelledSubgroup num-H-reduce="7" phi="-76.2" psi="-19.0" rama="Favored" rota="Cg_endo" model="1" chain="A" resnum="5" said="A" ent="1" seq="5" icode=" " resname="PRO" altcode=" "/>
+	<ModelledSubgroup num-H-reduce="5" phi="-157.9" psi="166.0" rama="Favored" rota="p" model="1" chain="A" resnum="6" said="A" ent="1" seq="6" icode=" " resname="SER" altcode=" "/>
+	<ModelledSubgroup num-H-reduce="11" phi="-63.6" psi="-42.1" rama="Favored" rota="mt" model="1" chain="A" resnum="7" said="A" ent="1" seq="7" icode=" " resname="ILE" altcode=" ">
+		<angle-outlier atom0="CA" atom1="C" atom2="O" obs="115.385" z="-5.35" mean="120.950" stdev="1.040"/>
+	</ModelledSubgroup>
+	<ModelledSubgroup num-H-reduce="9" phi="-55.9" psi="-44.6" rama="Favored" rota="t" model="1" chain="A" resnum="8" said="A" ent="1" seq="8" icode=" " resname="VAL" altcode=" "/>
+	<ModelledSubgroup num-H-reduce="5" phi="-61.4" psi="-43.8" rama="Favored" model="1" chain="A" resnum="9" said="A" ent="1" seq="9" icode=" " resname="ALA" altcode=" "/>
+	<ModelledSubgroup num-H-reduce="13" phi="-63.2" psi="-43.3" rama="Favored" rota="tpp-160" model="1" chain="A" resnum="10" said="A" ent="1" seq="10" icode=" " resname="ARG" altcode=" "/>
+	<ModelledSubgroup num-H-reduce="5" phi="-61.2" psi="-42.4" rama="Favored" rota="m" model="1" chain="A" resnum="11" said="A" ent="1" seq="11" icode=" " resname="SER" altcode=" "/>
+	<ModelledSubgroup num-H-reduce="6" phi="-64.9" psi="-39.5" rama="Favored" rota="m-40" model="1" chain="A" resnum="12" said="A" ent="1" seq="12" icode=" " resname="ASN" altcode=" ">
+		<angle-outlier atom0="OD1" atom1="CG" atom2="ND2" obs="127.608" z="5.01" mean="122.600" stdev="1.000"/>
+	</ModelledSubgroup>
+	<ModelledSubgroup num-H-reduce="9" phi="-59.1" psi="-47.2" rama="Favored" rota="t80" model="1" chain="A" resnum="13" said="A" ent="1" seq="13" icode=" " resname="PHE" altcode=" "/>
+	<ModelledSubgroup num-H-reduce="6" phi="-62.8" psi="-35.2" rama="Favored" rota="m-40" model="1" chain="A" resnum="14" said="A" ent="1" seq="14" icode=" " resname="ASN" altcode=" ">
+		<angle-outlier atom0="OD1" atom1="CG" atom2="ND2" obs="128.625" z="6.03" mean="122.600" stdev="1.000"/>
+	</ModelledSubgroup>
+	<ModelledSubgroup num-H-reduce="9" phi="-69.2" psi="-41.2" rama="Favored" rota="t" model="1" chain="A" resnum="15" said="A" ent="1" seq="15" icode=" " resname="VAL" altcode=" "/>
+	<ModelledSubgroup num-H-reduce="4" phi="-56.7" psi="-36.0" rama="Favored" rota="t" model="1" chain="A" resnum="16" said="A" ent="1" seq="16" icode=" " resname="CYS" altcode=" "/>
+	<ModelledSubgroup num-H-reduce="13" phi="-77.1" psi="-16.1" rama="Favored" rota="mmm160" model="1" chain="A" resnum="17" said="A" ent="1" seq="17" icode=" " resname="ARG" altcode=" "/>
+	<ModelledSubgroup num-H-reduce="11" phi="-53.2" psi="-46.2" rama="Favored" rota="mt" model="1" chain="A" resnum="18" said="A" ent="1" seq="18" icode=" " resname="LEU" altcode=" "/>
+	<ModelledSubgroup num-H-reduce="7" phi="-77.2" psi="-7.6" rama="Favored" rota="Cg_endo" model="1" chain="A" resnum="19" said="A" ent="1" seq="19" icode=" " resname="PRO" altcode=" "/>
+	<ModelledSubgroup num-H-reduce="3" phi="106.3" psi="7.3" rama="Favored" model="1" chain="A" resnum="20" said="A" ent="1" seq="20" icode=" " resname="GLY" altcode=" "/>
+	<ModelledSubgroup num-H-reduce="7" phi="-52.7" psi="136.3" rama="Favored" rota="m" model="1" chain="A" resnum="21" said="A" ent="1" seq="21" icode=" " resname="THR" altcode=" "/>
+	<ModelledSubgroup num-H-reduce="7" phi="-57.0" psi="146.6" rama="Favored" rota="Cg_exo" model="1" chain="A" resnum="22" said="A" ent="1" seq="22" icode=" " resname="PRO" altcode=" "/>
+	<ModelledSubgroup num-H-reduce="6" phi="-56.4" psi="-36.2" rama="Favored" rota="mt-10" model="1" chain="A" resnum="23" said="A" ent="1" seq="23" icode=" " resname="GLU" altcode=" "/>
+	<ModelledSubgroup num-H-reduce="5" phi="-63.4" psi="-34.9" rama="Favored" model="1" chain="A" resnum="24" said="A" ent="1" seq="24" icode=" " resname="ALA" altcode=" "/>
+	<ModelledSubgroup num-H-reduce="11" phi="-74.8" psi="-37.9" rama="Favored" rota="mm" model="1" chain="A" resnum="25" said="A" ent="1" seq="25" icode=" " resname="ILE" altcode=" "/>
+	<ModelledSubgroup num-H-reduce="4" phi="-65.0" psi="-31.7" rama="Favored" rota="m" model="1" chain="A" resnum="26" said="A" ent="1" seq="26" icode=" " resname="CYS" altcode=" "/>
+	<ModelledSubgroup num-H-reduce="5" phi="-62.0" psi="-54.0" rama="Favored" model="1" chain="A" resnum="27" said="A" ent="1" seq="27" icode=" " resname="ALA" altcode=" "/>
+	<ModelledSubgroup num-H-reduce="7" phi="-68.8" psi="-25.5" rama="Favored" rota="p" model="1" chain="A" resnum="28" said="A" ent="1" seq="28" icode=" " resname="THR" altcode=" "/>
+	<ModelledSubgroup num-H-reduce="9" phi="-67.6" psi="-36.3" rama="Favored" rota="t80" model="1" chain="A" resnum="29" said="A" ent="1" seq="29" icode=" " resname="TYR" altcode=" "/>
+	<ModelledSubgroup num-H-reduce="7" phi="-109.0" psi="-18.5" rama="Favored" rota="p" model="1" chain="A" resnum="30" said="A" ent="1" seq="30" icode=" " resname="THR" altcode=" "/>
+	<ModelledSubgroup num-H-reduce="3" phi="91.8" psi="-3.1" rama="Favored" model="1" chain="A" resnum="31" said="A" ent="1" seq="31" icode=" " resname="GLY" altcode=" "/>
+	<ModelledSubgroup num-H-reduce="4" phi="-69.5" psi="164.4" rama="Favored" rota="m" model="1" chain="A" resnum="32" said="A" ent="1" seq="32" icode=" " resname="CYS" altcode=" "/>
+	<ModelledSubgroup num-H-reduce="11" phi="-129.8" psi="157.0" rama="Favored" rota="pt" model="1" chain="A" resnum="33" said="A" ent="1" seq="33" icode=" " resname="ILE" altcode=" "/>
+	<ModelledSubgroup num-H-reduce="11" phi="-111.6" psi="129.6" rama="Favored" rota="mt" model="1" chain="A" resnum="34" said="A" ent="1" seq="34" icode=" " resname="ILE" altcode=" "/>
+	<ModelledSubgroup num-H-reduce="11" phi="-124.1" psi="158.1" rama="Favored" rota="pt" model="1" chain="A" resnum="35" said="A" ent="1" seq="35" icode=" " resname="ILE" altcode=" "/>
+	<ModelledSubgroup num-H-reduce="7" phi="-78.2" psi="-24.4" rama="Favored" rota="Cg_endo" model="1" chain="A" resnum="36" said="A" ent="1" seq="36" icode=" " resname="PRO" altcode=" "/>
+	<ModelledSubgroup num-H-reduce="3" phi="-89.7" psi="-161.7" rama="Favored" model="1" chain="A" resnum="37" said="A" ent="1" seq="37" icode=" " resname="GLY" altcode=" ">
+		<bond-outlier atom0="N" atom1="CA" obs="1.518" z="5.78" mean="1.447" stdev="0.012"/>
+	</ModelledSubgroup>
+	<ModelledSubgroup num-H-reduce="5" phi="-120.8" psi="1.2" rama="Favored" model="1" chain="A" resnum="38" said="A" ent="1" seq="38" icode=" " resname="ALA" altcode=" "/>
+	<ModelledSubgroup num-H-reduce="7" phi="-114.6" psi="104.5" rama="Favored" rota="m" model="1" chain="A" resnum="39" said="A" ent="1" seq="39" icode=" " resname="THR" altcode=" "/>
+	<ModelledSubgroup num-H-reduce="4" phi="-75.5" psi="145.4" rama="Favored" rota="m" model="1" chain="A" resnum="40" said="A" ent="1" seq="40" icode=" " resname="CYS" altcode=" "/>
+	<ModelledSubgroup num-H-reduce="7" phi="-71.2" psi="162.8" rama="Favored" rota="Cg_endo" model="1" chain="A" resnum="41" said="A" ent="1" seq="41" icode=" " resname="PRO" altcode=" "/>
+	<ModelledSubgroup num-H-reduce="3" phi="-61.9" psi="-23.1" rama="Favored" model="1" chain="A" resnum="42" said="A" ent="1" seq="42" icode=" " resname="GLY" altcode=" "/>
+	<ModelledSubgroup num-H-reduce="4" phi="-89.7" psi="-2.0" rama="Favored" rota="p0" model="1" chain="A" resnum="43" said="A" ent="1" seq="43" icode=" " resname="ASP" altcode=" "/>
+	<ModelledSubgroup num-H-reduce="9" phi="-130.3" psi="60.0" rama="Allowed" rota="m-80" model="1" chain="A" resnum="44" said="A" ent="1" seq="44" icode=" " resname="TYR" altcode=" "/>
+	<ModelledSubgroup num-H-reduce="5" phi="-88.8" psi="-2.5" rama="Favored" model="1" chain="A" resnum="45" said="A" ent="1" seq="45" icode=" " resname="ALA" altcode=" "/>
+	<ModelledSubgroup num-H-reduce="6" rota="m110" model="1" chain="A" resnum="46" said="A" ent="1" seq="46" icode=" " resname="ASN" altcode=" "/>
+	<ModelledEntityInstance bonds_rmsz="1.50" num_bonds_rmsz="334" angles_rmsz="1.55" num_angles_rmsz="458" absolute_sidechain_percentile="100.00" relative_sidechain_percentile="100.00" absolute_rama_percentile="100.00" relative_rama_percentile="100.00" said="A" model="1" chain="A" ent="1"/>
+	<programs>
+		<program name="validation-pipeline" version="2.49" properties="extended_pdbid,attemptedValidationSteps,PDB-R,protein-DNA-RNA-entities,pdbid,XMLcreationDate,percentilebins,PDB-Rfree,PDB-revision-date,PDB-deposition-date,PDB-revision-number,PDB-resolution-low,PDB-resolution"/>
+		<program name="molprobity" version="4-5-2 with Phenix2.0" properties="bond-outlier,absolute_sidechain_percentile,num-H-reduce,clashscore,phi,rota,bonds_rmsz,angles_rmsz,relative_rama_percentile,psi,absolute_rama_percentile,rama,percent-rama-outliers,relative_sidechain_percentile,percent-rota-outliers,num_bonds_rmsz,num_angles_rmsz,angle-outlier"/>
+		<program name="buster-report" version="unknown" properties="no-ligands-for-buster-report"/>
+		<program name="mogul" version="unknown" properties="no-ligands-for-mogul"/>
+		<program name="percentiles" version="20250101.v01 (using entries in the PDB archive January 1st 2025)" properties="numPDBids-absolute-percentile-percent-rama-outliers,absolute-percentile-percent-rota-outliers,absolute-percentile-clashscore,high-resol-relative-percentile-percent-rota-outliers,low-resol-relative-percentile-percent-rota-outliers,numPDBids-relative-percentile-clashscore,relative-percentile-clashscore,numPDBids-absolute-percentile-clashscore,high-resol-relative-percentile-clashscore,numPDBids-relative-percentile-percent-rota-outliers,low-resol-relative-percentile-percent-rama-outliers,high-resol-relative-percentile-percent-rama-outliers,numPDBids-relative-percentile-percent-rama-outliers,relative-percentile-percent-rota-outliers,low-resol-relative-percentile-clashscore,absolute-percentile-percent-rama-outliers,numPDBids-absolute-percentile-percent-rota-outliers,relative-percentile-percent-rama-outliers"/>
+	</programs>
+</wwPDB-validation-information>

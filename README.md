@@ -53,7 +53,7 @@ upload. Cole um ID do PDB (ex.: `1A00`) ou envie um `.pdb` ou `.cif`, veja a est
 íons, dissulfetos, Asn–açúcar e uma caixa editável para o Vina). A detecção de
 pockets usa a API oficial do **DoGSiteScorer** (ProteinsPlus/ZBH) chamada direto
 do navegador — só requer um ID do PDB. A ficha não faz docking e não calcula
-afinidade. O que entra e o que fica de fora da ficha está em [`docs/preparo.md`](docs/preparo.md). A leitura de PDB e mmCIF, as lacunas e a visão geral estão em [`docs/estrutura.md`](docs/estrutura.md).
+afinidade. O que entra e o que fica de fora da ficha está em [`docs/preparo.md`](docs/preparo.md). A leitura de PDB e mmCIF, as lacunas e a visão geral estão em [`docs/estrutura.md`](docs/estrutura.md). A aba Qualidade e a anotação de componentes estão em [`docs/qualidade.md`](docs/qualidade.md).
 
 Também é possível **comparar de 2 a 4 proteínas** lado a lado (estatísticas,
 aminoácidos e pockets cross-protein, com as 5 perguntas do trabalho respondidas

@@ -1,0 +1,22 @@
+{
+  "chem_comp": {
+    "id": "MSE",
+    "name": "SELENOMETHIONINE",
+    "type": "L-peptide linking",
+    "formula": "C5 H11 N O2 Se",
+    "formula_weight": 196.106
+  },
+  "rcsb_chem_comp_related": [
+    {
+      "comp_id": "MSE",
+      "resource_name": "ChEBI",
+      "resource_accession_code": "CHEBI:62621"
+    },
+    {
+      "comp_id": "MSE",
+      "resource_name": "ChEBI",
+      "resource_accession_code": "CHEBI:30021"
+    }
+  ],
+  "rcsb_id": "MSE"
+}

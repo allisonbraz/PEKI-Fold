@@ -199,6 +199,10 @@ button { font: inherit; cursor: pointer; border-radius: 8px; border: none; }
 .aba { background: none; color: var(--muted); padding: 14px 16px; border-bottom: 2px solid transparent; font-weight: 600; }
 .aba.ativa { color: var(--primary); border-bottom-color: var(--primary); }
 .aba:hover { color: var(--text); }
+.aba:focus-visible, .ghost-btn:focus-visible, .primary-btn:focus-visible, a:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
 
 /* Tabelas */
 table { width: 100%; border-collapse: collapse; font-size: .9rem; }
@@ -389,4 +393,22 @@ tr.destaque-menor td { background: rgba(232,81,58,.10); }
 .ens-leitura ul { margin: 6px 0 12px; padding-left: 18px; }
 @media (max-width: 700px) {
   .ens-viewer { height: 220px; }
+}
+
+.ql { min-width: 0; max-width: 100%; overflow-wrap: anywhere; }
+.ql h3 { font-size: 1rem; margin: 16px 0 6px; }
+.ql h4 { font-size: .95rem; margin: 12px 0 4px; }
+.ql-grade { display: grid; grid-template-columns: minmax(8rem, 16rem) minmax(0, 1fr); gap: 4px 12px; margin: 0 0 8px; }
+.ql-grade dt { color: var(--muted); margin: 0; }
+.ql-grade dd { margin: 0; min-width: 0; }
+.ql-controles { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; margin: 8px 0; }
+.ql-controles select { max-width: 100%; padding: 6px 8px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg); color: var(--text); }
+.ql-scroll { overflow: auto; max-width: 100%; max-height: 22rem; border: 1px solid var(--border); border-radius: 8px; }
+.ql-scroll table { min-width: 36rem; }
+.ql-comp { border-top: 1px solid var(--border); padding-top: 8px; margin-top: 8px; }
+.ql a { color: var(--primary); font-weight: 600; }
+@media (max-width: 420px) {
+  .ql-grade { grid-template-columns: minmax(0, 1fr); }
+  .ql-grade dd { margin-bottom: 8px; }
+  .abas { margin-left: -12px; margin-right: -12px; }
 }

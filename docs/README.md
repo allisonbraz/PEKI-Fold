@@ -6,7 +6,7 @@ Aplicação web **100% estática** para análise estrutural de proteínas (forma
 Toda a análise roda **no navegador** — não há servidor, banco de dados nem limite de
 tamanho de arquivo. Versão visual dos Programas 01–05 do Trabalho Final de Algoritmos.
 
-Cole um **ID do PDB** (ex.: `1A00`) ou faça **upload** de um `.pdb` ou `.cif`. Pelo ID, o app usa o PDB quando o RCSB publica coordenadas; o mmCIF entra só se o PDB não tiver. A leitura do mmCIF usa a categoria `_atom_site` e não as colunas do PDB. A visão geral, os limites e o contrato `peki-estrutura-1` estão em [`estrutura.md`](estrutura.md). Veja a estrutura em **3D** e explore:
+Cole um **ID do PDB** (ex.: `1A00`) ou faça **upload** de um `.pdb` ou `.cif`. Pelo ID, o app usa o PDB quando o RCSB publica coordenadas; o mmCIF entra só se o PDB não tiver. A leitura do mmCIF usa a categoria `_atom_site` e não as colunas do PDB. A visão geral, os limites e o contrato `peki-estrutura-1` estão em [`estrutura.md`](estrutura.md). A aba **Qualidade** (relatório wwPDB e dicionário químico) está em [`qualidade.md`](qualidade.md). Veja a estrutura em **3D** e explore:
 
 - **Cadeias** — detecção e download de cada cadeia (Programas 01/02)
 - **Estatísticas** — átomos, resíduos e aminoácidos diferentes; maior/menor (Programa 03)
@@ -31,6 +31,8 @@ docs/
 ├── index.html         # interface
 ├── style.css          # visual (tema claro/escuro)
 ├── structure-model.js # PDB e mmCIF, lacunas e visão geral (peki-estrutura-1)
+├── quality-model.js   # relatório wwPDB e CCD (peki-qualidade-1)
+├── quality-ui.js      # aba Qualidade
 ├── pdb-analysis.js    # cadeias, estatísticas, motivos
 ├── prep-analysis.js   # ficha de preparo (funções puras)
 ├── prep-ui.js         # aba Preparo

@@ -29,10 +29,12 @@ const estado = {
   textoViewer: null,
   viewerFormato: "pdb",
   estrutura: null,    // contrato peki-estrutura-1
+  qualidade: null,    // contrato peki-qualidade-1, preenchido pela aba Qualidade
 };
 
 // Volta para a tela inicial (home), limpando a análise e a URL.
 function irParaHome() {
+  if (typeof QualityUI !== "undefined") QualityUI.invalidar();
   if (typeof EnsembleUI !== "undefined" && EnsembleUI.aoFechar) EnsembleUI.aoFechar();
   const ens = $("#ensemble");
   if (ens) ens.hidden = true;
@@ -209,6 +211,7 @@ async function iniciarWorkspace(dados) {
   estado.textoViewer = dados.textoViewer || dados.pdb_text;
   estado.viewerFormato = dados.viewerFormato || "pdb";
   estado.estrutura = dados.estrutura || null;
+  estado.qualidade = null;
   estado.nome = dados.nome;
   estado.pdbId = dados.pdb_id || null;
   estado.dados = dados;
@@ -252,6 +255,13 @@ async function iniciarWorkspace(dados) {
   }
 
   trocarAba("visao");
+  if (typeof QualityUI !== "undefined") {
+    try {
+      QualityUI.aoCarregar(estado, () => {
+        if (!$("#workspace").hidden && estado.estrutura) renderVisao();
+      });
+    } catch (e) { /* a aba Qualidade permanece utilizável nas outras seções */ }
+  }
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
@@ -452,6 +462,17 @@ function destacarMotivo(ocorrencias) {
   v.render();
 }
 
+function resumoQualidade() {
+  if (!estado.pdbId) return "Sem ID de depósito, o relatório wwPDB não é consultado. Nenhum indicador remoto foi preenchido com zero.";
+  const q = estado.qualidade && estado.qualidade.relatorio;
+  if (!q) return "A consulta ao relatório wwPDB segue em paralelo e não trava o viewer. Os números, quando a fonte responder, ficam na aba Qualidade.";
+  if (q.estado === "ok" || q.estado === "parcial") {
+    const data = q.fonte && q.fonte.data ? q.fonte.data : "data não informada";
+    return `Relatório consultado para ${q.id}. Fonte: ${q.fonte && q.fonte.nome ? q.fonte.nome : "wwPDB"}. Data: ${data}. Os números ficam na aba Qualidade e não são repetidos aqui.`;
+  }
+  return q.mensagem || "A consulta ao relatório não devolveu indicadores. Nada foi preenchido com zero.";
+}
+
 function rotuloCadeiaVisao(c) {
   if (c.label && c.auth && c.label !== c.auth) return `author ${c.auth} · label ${c.label}`;
   return c.auth || c.id;
@@ -498,6 +519,9 @@ function renderVisao() {
   const cadeias = est.cadeias.map((c) =>
     `<li><strong>Cadeia ${esc(rotuloCadeiaVisao(c))}</strong> — ${conta(c.posicoesPolimero, "posição", "posições")} de polímero com coordenadas, ${c.atomosAtom} átomos ATOM, ${c.atomosHet} HETATM${c.posicoesComAltLoc ? `, ${c.posicoesComAltLoc} com altLoc` : ""}.</li>`
   ).join("");
+  const modsTxt = comp.proteinas.modificadas
+    ? ` Inclui ${comp.proteinas.modificadas} resíduo(s) modificado(s) na cadeia${comp.modificados && comp.modificados.length ? ` (${comp.modificados.map((m) => `${m.codigo} ×${m.instancias}`).join(", ")})` : ""}, que não são ligantes livres.`
+    : "";
   const ions = comp.ions.length ? comp.ions.map((i) => `${i.codigo} ×${i.instancias}`).join(", ") : "nenhum código da lista parcial";
   const hetero = comp.hetero.length ? comp.hetero.map((h) => `${h.codigo} ×${h.instancias}`).join(", ") : "nenhum além de polímero, água, íon da lista parcial e grupo terminal";
   const outros = comp.outrosPolimeros.length
@@ -527,13 +551,15 @@ function renderVisao() {
       ${lac.ocupacaoZero && lac.ocupacaoZero.length ? `<p class="muted small">${lac.ocupacaoZero.length} resíduo(s) com ocupação zero na categoria mmCIF. Eles não entram na lista de ausentes.</p>` : ""}
       <h3>Componentes no modelo selecionado</h3>
       <ul class="ov-lista">
-        <li>Proteína: ${conta(comp.proteinas.posicoes, "posição", "posições")} com coordenadas${comp.proteinas.cadeias.length ? ` nas cadeias ${esc(comp.proteinas.cadeias.join(", "))}` : ""}. ${esc(comp.proteinas.criterio)}.</li>
+        <li>Proteína: ${conta(comp.proteinas.posicoes, "posição", "posições")} com coordenadas${comp.proteinas.cadeias.length ? ` nas cadeias ${esc(comp.proteinas.cadeias.join(", "))}` : ""}. ${esc(comp.proteinas.criterio)}.${esc(modsTxt)}</li>
         <li>Outros polímeros: ${esc(outros)}.</li>
         <li>Águas registradas no modelo: ${comp.aguas.instancias}. ${esc(comp.aguas.nota)}</li>
         <li>Íons: ${esc(ions)}.</li>
         <li>Outros HETATM: ${esc(hetero)}. Classificação biológica incerta.</li>
       </ul>
       <p class="aviso-ov">${esc(comp.holo.motivo)}</p>
+      <h3>Qualidade</h3>
+      <p>${esc(resumoQualidade())}</p>
       <h3>PDB e UniProt</h3>
       <p>Correspondência resíduo a resíduo: não estabelecida.</p>
       <p>${esc(est.uniprot.motivo)}</p>
@@ -546,6 +572,7 @@ function renderVisao() {
         <ul class="ov-lista">${est.limitacoes.map((t) => `<li>${esc(t)}</li>`).join("")}</ul>
       </details>
       <div class="ov-nav">
+        <button type="button" class="ghost-btn" data-ir="qualidade">Qualidade</button>
         <button type="button" class="ghost-btn" data-ir="cadeias">Abrir cadeias</button>
         <button type="button" class="ghost-btn" data-ir="stats">Estatísticas</button>
         <button type="button" class="ghost-btn" data-ir="aa">Aminoácidos</button>
@@ -1411,6 +1438,7 @@ let exportContexto = "single";
 const EXPORT_SECOES = {
   single: () => [
     { id: "visao", label: "Visão geral", on: () => !!estado.estrutura },
+    { id: "qualidade", label: "Qualidade e componentes", on: () => !!estado.estrutura },
     { id: "meta", label: "Sobre a estrutura", on: () => !!(estado.meta && (estado.meta.titulo || estado.meta.classificacao || estado.meta.organismos?.length)) },
     { id: "viewer", label: "Estrutura 3D (imagem)", on: () => !!estado.viewer },
     { id: "cadeias", label: "Cadeias", on: () => !!estado.dados },
@@ -1597,6 +1625,10 @@ async function exportarMdSingle(secoes) {
   let md = `# PEKI Fold — Análise de ${estado.nome}\n\n*Protein Exploration Kit for Insights*\n\n`;
   md += `Gerado em ${new Date().toLocaleString("pt-BR")} · ${d.cadeias.length} cadeia(s) · ${totalRes} resíduos ATOM · ${totalAt} átomos ATOM.\n\n`;
   if (secoes.includes("visao") && estado.estrutura) md += `## Visão geral\n\n${StructureModel.textoVisao(estado.estrutura)}\n\n`;
+  if (secoes.includes("qualidade") && estado.estrutura) {
+    const texto = typeof QualityModel !== "undefined" ? QualityModel.textoDossie(estado.qualidade) : "Módulo de qualidade indisponível.";
+    md += `## Qualidade e componentes\n\n${texto}\n\n`;
+  }
   if (secoes.includes("meta") && estado.meta) {
     md += `## Sobre a estrutura\n\n`;
     if (estado.meta.titulo) md += `**${estado.meta.titulo}**\n\n`;
@@ -1692,6 +1724,11 @@ async function exportarPdfSingle(secoes) {
   if (secoes.includes("visao") && estado.estrutura) {
     h.sub("Visão geral");
     StructureModel.textoVisao(estado.estrutura).split("\n").forEach((linha) => { if (linha.trim()) h.par(linha); });
+  }
+  if (secoes.includes("qualidade") && estado.estrutura) {
+    h.sub("Qualidade e componentes");
+    const texto = typeof QualityModel !== "undefined" ? QualityModel.textoDossie(estado.qualidade) : "Módulo de qualidade indisponível.";
+    texto.split("\n").forEach((linha) => { if (linha.trim()) h.par(linha); });
   }
   if (secoes.includes("meta") && estado.meta) {
     h.sub("Sobre a estrutura");
@@ -1838,6 +1875,19 @@ function init() {
   $("#btn-cmp-novo").addEventListener("click", irParaHome);
   $$("#comparacao .aba").forEach((a) => a.addEventListener("click", () => trocarAbaCmp(a.dataset.ctab)));
   $$("#workspace .aba").forEach((a) => a.addEventListener("click", () => trocarAba(a.dataset.tab)));
+  const listaAbas = document.querySelector("#workspace .abas");
+  if (listaAbas) {
+    listaAbas.addEventListener("keydown", (ev) => {
+      if (ev.key !== "ArrowRight" && ev.key !== "ArrowLeft") return;
+      const abas = $$("#workspace .aba").filter((a) => !a.hidden);
+      const i = abas.indexOf(document.activeElement);
+      if (i < 0) return;
+      ev.preventDefault();
+      const n = ev.key === "ArrowRight" ? (i + 1) % abas.length : (i - 1 + abas.length) % abas.length;
+      abas[n].focus();
+      abas[n].click();
+    });
+  }
   $("#estilo-3d").addEventListener("change", aplicarEstilo);
   $("#spin").addEventListener("change", (e) => { if (estado.viewer) estado.viewer.spin(e.target.checked ? "y" : false); });
   $("#lig-toggle").addEventListener("change", aplicarEstilo);
