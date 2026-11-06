@@ -84,6 +84,9 @@
           <li><strong>Upload</strong> de <code>.pdb</code> ou <code>.cif</code>: leitura local. A ficha de preparo e o download de cadeia em PDB continuam só no PDB.</li>
           <li><strong>Comparar</strong>: 2 a 4 IDs para ver estatísticas, aminoácidos e pockets lado a lado.</li>
           <li>No workspace: <strong>abas</strong> (visão geral, qualidade, cadeias, estatísticas, aminoácidos, motivos, pockets, preparo), <strong>viewer 3D</strong> e botão <strong>Exportar</strong> (PDF/Markdown/CSV).</li>
+          <li><strong>Cadeias</strong>: ver ou ocultar muda só o desenho 3D. Contagens, FASTA, PDB e exportação continuam com a cadeia. O arquivo não é regravado.</li>
+          <li><strong>Aminoácidos</strong>: “Todas as cadeias” soma os resíduos modelados dos 20 aminoácidos padrão. Uma cadeia deixa as outras de fora. Resíduo ausente não entra.</li>
+          <li><strong>Motivos</strong>: sequência curta e contígua, montada pelos resíduos do modelo. Não é motivo estrutural, sítio funcional nem pocket.</li>
           <li><strong>Qualidade</strong> lê o relatório wwPDB quando há ID do PDB. Métrica ausente não vira zero. O relatório global não garante o sítio. Sem ID, a consulta remota não roda.</li>
           <li><strong>Preparo</strong> é uma ficha auxiliar. Ela não valida a estrutura e não substitui a conferência humana. O drugScore dos pockets continua descritor geométrico, não afinidade.</li>
         </ul>
@@ -151,10 +154,11 @@
         <div class="aba-conteudo" id="tab-qualidade" role="tabpanel" aria-labelledby="aba-qualidade" hidden></div>
         <div class="aba-conteudo" id="tab-cadeias" hidden></div>
         <div class="aba-conteudo" id="tab-stats" hidden></div>
-        <div class="aba-conteudo" id="tab-aa" hidden>
+        <div class="aba-conteudo" id="tab-aa" hidden data-escopo="todas">
+          <p id="aa-escopo" class="aa-escopo" data-escopo="todas" aria-live="polite"></p>
           <div class="aa-controls">
-            <label>Cadeia:
-              <select id="aa-cadeia"></select>
+            <label for="aa-cadeia">Escopo
+              <select id="aa-cadeia" aria-describedby="aa-escopo"></select>
             </label>
             <label>Ordenar:
               <select id="aa-ordem">
@@ -163,16 +167,28 @@
                 <option value="cont">Contagem ↓</option>
               </select>
             </label>
-            <button id="btn-aa-csv" class="dl-btn">⬇ CSV</button>
+            <button id="btn-aa-csv" class="dl-btn" type="button">⬇ CSV</button>
           </div>
           <div id="aa-grafico" class="grafico"></div>
+          <p id="aa-atalho-nota" class="muted small"></p>
+          <div id="aa-atalho" class="motivo-chips" role="group" aria-label="Adicionar aminoácido do escopo selecionado ao motivo"></div>
         </div>
         <div class="aba-conteudo" id="tab-motivos" hidden>
+          <p class="motivo-def">Um motivo aqui é uma <strong>sequência curta de resíduos</strong>, na ordem em que eles se seguem no modelo. Não é um aminoácido isolado.</p>
+          <p class="motivo-def">A busca exige correspondência <strong>exata e contígua</strong>: os códigos precisam aparecer juntos, nessa ordem. Três resíduos iguais espalhados pela cadeia não contam.</p>
+          <p class="muted small">Isto é motivo de sequência local. Não é motivo estrutural (hélice ou folha), não é sítio funcional e não é pocket.</p>
+          <p id="motivo-escopo" class="muted small"></p>
+          <div id="motivo-chips" class="motivo-chips" role="group" aria-label="Resíduos com coordenadas neste modelo, para montar o motivo na ordem"></div>
+          <p id="motivo-formacao" class="motivo-formacao" aria-live="polite"></p>
           <div class="motivo-row">
-            <input id="motivo-input" type="text" placeholder="ex.: GLY-LYS-SER" />
-            <button id="btn-motivo" class="primary-btn">Buscar</button>
+            <label class="motivo-campo" for="motivo-input">Motivo na ordem</label>
+            <input id="motivo-input" type="text" placeholder="ex.: GLY-LYS-SER" aria-describedby="motivo-ajuda motivo-formacao" autocomplete="off" spellcheck="false" />
+            <button id="btn-motivo-ultimo" type="button" class="ghost-btn">Remover último</button>
+            <button id="btn-motivo-limpar" type="button" class="ghost-btn">Limpar</button>
+            <button id="btn-motivo" class="primary-btn" type="button">Buscar</button>
           </div>
-          <p class="muted small">Use códigos de 3 letras separados por hífen.</p>
+          <p id="motivo-ajuda" class="muted small">Os botões acrescentam o código de 3 letras na ordem dos cliques. Nada vem selecionado. Dá para apagar só o último, limpar o campo ou editar o texto.</p>
+          <p id="motivo-aviso" class="erro" role="alert" hidden></p>
           <div id="motivo-resultado"></div>
         </div>
         <div class="aba-conteudo" id="tab-pockets" hidden>

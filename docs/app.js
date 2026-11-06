@@ -24,6 +24,8 @@ const estado = {
   cmpPockets: null,   // [{id, pockets:[...]}] resultado dos pockets na comparacao
   cmpViewers: [],     // viewers 3D (um por proteina) no modo comparacao
   ultimoMotivo: null, // {motivo, ocorrencias} da ultima busca (para exportacao)
+  motivoNo3D: null,   // ocorrencias amarelas ainda desenhadas; o estilo zera este destaque
+  cadeiasOcultas: null, // Set de cadeias fora do desenho 3D; nao entra em contagem nem arquivo
   superficie: null,   // estado da superficie 3D: null | {sels, color, opacity, origem}
   vistaPocket: null,  // pocket no 3D: null | {idx, nome, visivel, sels, superficieAnterior}
   pocketSort: null,   // {col, dir} de ordenacao da tabela de pockets
@@ -221,6 +223,8 @@ async function iniciarWorkspace(dados) {
   estado.pockets = null;
   estado.pocketsRaw = null;
   estado.ultimoMotivo = null;
+  estado.motivoNo3D = null;
+  estado.cadeiasOcultas = new Set();
   estado.superficie = null;
   invalidarVistaPocket();
   estado.pocketSort = null;
@@ -249,7 +253,12 @@ async function iniciarWorkspace(dados) {
   renderStats();
   renderAA();
   renderPockets();
+  const campoMotivo = $("#motivo-input");
+  if (campoMotivo) campoMotivo.value = "";
+  const avisoMotivo = $("#motivo-aviso");
+  if (avisoMotivo) { avisoMotivo.hidden = true; avisoMotivo.textContent = ""; }
   $("#motivo-resultado").innerHTML = "";
+  renderMotivos();
   if (typeof PrepUI !== "undefined" && PrepUI.ativo()) {
     try { PrepUI.aoCarregar(estado); }
     catch (e) {
@@ -398,33 +407,110 @@ function renderViewer() {
   estado.viewer.render();
 }
 
-function aplicarEstilo() {
+function selCadeia(cid) {
+  return cid === "_" ? { chain: "" } : { chain: cid };
+}
+
+function idCadeiaSelecao(chain) {
+  return chain == null || chain === "" ? "_" : chain;
+}
+
+function cadeiaOcultaNo3D(cid) {
+  if (!estado.cadeiasOcultas || cid == null) return false;
+  return estado.cadeiasOcultas.has(idCadeiaSelecao(cid));
+}
+
+function algumaCadeiaOculta() {
+  return !!(estado.cadeiasOcultas && estado.cadeiasOcultas.size);
+}
+
+function copiarSel(sel) {
+  const copia = { ...sel };
+  if (Array.isArray(sel.resi)) copia.resi = sel.resi.slice();
+  return copia;
+}
+
+// Sem cadeia oculta, a seleção original segue intacta (superfície da proteína continua [{}]).
+function selsVisiveis(sels) {
+  if (!sels || !algumaCadeiaOculta()) return sels || [];
+  const out = [];
+  for (const sel of sels) {
+    if (!sel || Object.keys(sel).length === 0) {
+      for (const cid of estado.dados.cadeias) {
+        if (!cadeiaOcultaNo3D(cid)) out.push(selCadeia(cid));
+      }
+      continue;
+    }
+    if (!Object.prototype.hasOwnProperty.call(sel, "chain")) {
+      out.push(copiarSel(sel));
+      continue;
+    }
+    if (cadeiaOcultaNo3D(sel.chain)) continue;
+    out.push(copiarSel(sel));
+  }
+  return out;
+}
+
+function ocorrenciasVisiveis(ocorrencias) {
+  if (!ocorrencias || !algumaCadeiaOculta()) return ocorrencias || [];
+  return ocorrencias.filter((oc) => !cadeiaOcultaNo3D(oc.cadeia));
+}
+
+function pintarLigantes() {
   const v = estado.viewer;
   if (!v) return;
-  const estilo = $("#estilo-3d").value;
-  v.setStyle({}, {});
-  for (const cid of estado.dados.cadeias) {
-    const sel = cid === "_" ? { chain: "" } : { chain: cid };
-    const spec = {};
-    spec[estilo] = { color: estado.corPorCadeia[cid] };
-    v.setStyle(sel, spec);
-  }
-  // ligantes (HET) — exibidos como sticks/esferas com cores por elemento
   const ligs = (estado.meta?.ligantes || []).map((l) => l.id);
   if (ligs.length && $("#lig-toggle")?.checked) {
     v.setStyle({ resn: ligs }, { stick: { radius: 0.18 }, sphere: { scale: 0.28 } });
   }
+}
+
+function aplicarEstilo() {
+  const v = estado.viewer;
+  if (!v || !estado.dados) return;
+  const estilo = ($("#estilo-3d") && $("#estilo-3d").value) || "cartoon";
+  v.setStyle({}, {});
+  for (const cid of estado.dados.cadeias) {
+    if (cadeiaOcultaNo3D(cid)) continue;
+    const spec = {};
+    spec[estilo] = { color: estado.corPorCadeia[cid] };
+    v.setStyle(selCadeia(cid), spec);
+  }
+  pintarLigantes();
   v.render();
   if (typeof PrepUI !== "undefined") PrepUI.aposEstilo(estado);
+  // A ficha pode redesenhar átomo de cadeia oculta. O estilo vazio tira esse desenho;
+  // o controle de ligantes é reaplicado em seguida e não depende da cadeia.
+  let limpou = false;
+  for (const cid of estado.dados.cadeias) {
+    if (!cadeiaOcultaNo3D(cid)) continue;
+    v.setStyle(selCadeia(cid), {});
+    limpou = true;
+  }
+  if (limpou) {
+    pintarLigantes();
+    v.render();
+  }
 }
 
 // Estilo, ligantes e preparo continuam valendo com um pocket aberto.
+// Trocar o estilo tira o amarelo do motivo, como antes. Não mexe nas cadeias ocultas.
 function aplicarEstiloMantendoPocket() {
   const vista = estado.vistaPocket && estado.vistaPocket.visivel ? estado.vistaPocket : null;
   if (vista) vista.motivoPorCima = null;
+  estado.motivoNo3D = null;
   aplicarEstilo();
   if (!vista || estado.vistaPocket !== vista || !vista.sels) return;
   pintarResiduosPocket(vista.sels);
+}
+
+// Ocultar cadeia redesenha o que já estava ligado, sem apagar o estado dessas camadas.
+function aplicarVisaoCadeias() {
+  aplicarEstilo();
+  const vista = estado.vistaPocket && estado.vistaPocket.visivel ? estado.vistaPocket : null;
+  if (vista && vista.sels) pintarResiduosPocket(vista.sels);
+  if (estado.motivoNo3D && estado.motivoNo3D.length) pintarMotivo(estado.motivoNo3D);
+  aplicarSuperficie();
 }
 
 function syncTamViewer() {
@@ -454,7 +540,7 @@ function aplicarSuperficie() {
   v.removeAllSurfaces();
   const s = estado.superficie;
   if (s) {
-    for (const sel of s.sels) {
+    for (const sel of selsVisiveis(s.sels)) {
       try {
         const p = v.addSurface($3Dmol.SurfaceType.SAS, { opacity: s.opacity, color: s.color }, sel);
         if (p && p.then) p.then(() => v.render());
@@ -467,6 +553,7 @@ function aplicarSuperficie() {
 function destacarMotivo(ocorrencias) {
   const v = estado.viewer;
   if (!v) return;
+  estado.motivoNo3D = ocorrencias;
   if (estado.vistaPocket && estado.vistaPocket.visivel) estado.vistaPocket.motivoPorCima = ocorrencias;
   aplicarEstilo();
   pintarMotivo(ocorrencias);
@@ -475,7 +562,7 @@ function destacarMotivo(ocorrencias) {
 function pintarMotivo(ocorrencias) {
   const v = estado.viewer;
   if (!v || !ocorrencias) return;
-  for (const oc of ocorrencias) {
+  for (const oc of ocorrenciasVisiveis(ocorrencias)) {
     const sel = { chain: oc.cadeia === "_" ? "" : oc.cadeia, resi: oc.residuos.map(Number) };
     v.setStyle(sel, { stick: { color: "yellow" }, sphere: { color: "yellow", radius: 0.5 } });
   }
@@ -605,36 +692,60 @@ function renderVisao() {
 }
 
 // ----- aba: cadeias -----
+// O botão ver/ocultar segue o mesmo par do pocket: pressionado = desenhado.
+// Esconder a cadeia não a tira de estatisticas, FASTA, PDB nem da exportação.
 function renderCadeias() {
   const cont = $("#tab-cadeias");
   const leg = $("#cadeias-legenda");
   cont.innerHTML = "";
   leg.innerHTML = "";
+  if (!estado.cadeiasOcultas) estado.cadeiasOcultas = new Set();
+
+  const notas = document.createElement("div");
+  notas.className = "vis-notas";
+  const temSemId = estado.dados.cadeias.includes("_");
+  notas.innerHTML = `
+    <p class="vis-nota">Ocultar ou mostrar uma cadeia muda só o desenho 3D. A cadeia continua nas contagens, no FASTA, no download e na exportação. O arquivo lido não é alterado.</p>
+    <p class="vis-nota">Estilo, ligantes, superfície e motivo mantêm os próprios controles. O botão Ver/Ocultar do pocket não muda. Com a cadeia oculta, o cartoon, a superfície, o magenta do pocket e o amarelo do motivo não são desenhados nela; ao mostrar de novo, essas camadas voltam se ainda estiverem ligadas. Heteroátomos seguem o controle Ligantes, também numa cadeia oculta. Marca da ficha de preparo nessa cadeia sai do desenho e volta junto.</p>
+    ${temSemId ? `<p class="vis-nota">A cadeia _ é a que o arquivo não identificou na coluna de cadeia.</p>` : ""}`;
+  cont.appendChild(notas);
 
   const acoes = document.createElement("div");
   acoes.className = "cadeias-acoes";
-  acoes.innerHTML = `<button id="btn-fasta-todas" class="fasta-btn">⬇ FASTA (todas)</button>`;
+  acoes.innerHTML = `
+    <button type="button" id="btn-cadeias-mostrar" class="ghost-btn">Mostrar todas no 3D</button>
+    <button type="button" id="btn-fasta-todas" class="fasta-btn">⬇ FASTA (todas)</button>`;
   cont.appendChild(acoes);
+
+  const status = document.createElement("p");
+  status.id = "cadeias-vis-status";
+  status.className = "muted small";
+  status.setAttribute("aria-live", "polite");
+  cont.appendChild(status);
 
   for (const c of estado.dados.estatisticas.cadeias) {
     const cor = estado.corPorCadeia[c.cadeia] || "#888";
 
     const item = document.createElement("span");
     item.className = "item";
-    item.innerHTML = `<span class="swatch" style="background:${cor}"></span> Cadeia ${esc(c.cadeia)}`;
+    item.dataset.chain = c.cadeia;
+    item.innerHTML = `<span class="swatch" style="background:${cor}"></span> <span class="leg-txt">Cadeia ${esc(c.cadeia)}</span>`;
     leg.appendChild(item);
 
     const div = document.createElement("div");
     div.className = "cadeia-item";
+    div.dataset.chain = c.cadeia;
     div.innerHTML = `
       <div class="info">
         <span class="swatch" style="background:${cor}"></span>
         <div>
           <strong>Cadeia ${esc(c.cadeia)}</strong>
           <div class="muted small">${c.residuos} resíduos · ${c.atomos} átomos</div>
+          <div class="cadeia-vis-tag muted small"></div>
         </div>
       </div>
       <div class="cadeia-btns">
+        <button type="button" class="link-btn cadeia-3d" data-chain="${esc(c.cadeia)}"></button>
         ${estado.estrutura && estado.estrutura.recursos.cadeiaPdb === "bloqueado"
           ? `<button type="button" class="dl-btn" disabled aria-disabled="true" aria-label="${esc(estado.estrutura.recursos.cadeiaPdbMotivo)}">PDB indisponível</button>`
           : `<button type="button" class="dl-btn" data-chain="${esc(c.cadeia)}">⬇ PDB</button>`}
@@ -643,7 +754,11 @@ function renderCadeias() {
     cont.appendChild(div);
   }
 
+  $$("#tab-cadeias .cadeia-3d").forEach((btn) => {
+    btn.addEventListener("click", () => alternarVisibilidadeCadeia(btn.dataset.chain));
+  });
   $$("#tab-cadeias .dl-btn").forEach((btn) => {
+    if (btn.disabled) return;
     btn.addEventListener("click", () => baixarCadeia(btn.dataset.chain));
   });
   $$("#tab-cadeias .fasta-btn[data-chain]").forEach((btn) => {
@@ -651,6 +766,62 @@ function renderCadeias() {
   });
   $("#btn-fasta-todas").addEventListener("click", () =>
     baixarArquivo(`${baseNome()}.fasta`, estado.dados.cadeias.map(seqFasta).join("")));
+  $("#btn-cadeias-mostrar").addEventListener("click", mostrarTodasCadeias3D);
+  sincronizarVisibilidadeCadeias();
+}
+
+function sincronizarVisibilidadeCadeias() {
+  $$("#tab-cadeias .cadeia-3d").forEach((btn) => {
+    const cid = btn.dataset.chain;
+    const visivel = !cadeiaOcultaNo3D(cid);
+    btn.textContent = visivel ? "👁 ocultar" : "👁 ver";
+    btn.setAttribute("aria-pressed", visivel ? "true" : "false");
+    btn.setAttribute("aria-label", visivel ? `Ocultar cadeia ${cid} no 3D` : `Mostrar cadeia ${cid} no 3D`);
+    btn.classList.toggle("ativo", visivel);
+    const item = btn.closest(".cadeia-item");
+    if (item) {
+      item.classList.toggle("oculta", !visivel);
+      const tag = item.querySelector(".cadeia-vis-tag");
+      if (tag) tag.textContent = visivel ? "Visível no 3D. Os dados desta cadeia não mudam." : "Oculta no 3D. Os dados desta cadeia não mudam.";
+    }
+  });
+  $$("#cadeias-legenda .item").forEach((item) => {
+    const cid = item.dataset.chain;
+    const visivel = !cadeiaOcultaNo3D(cid);
+    item.classList.toggle("oculta", !visivel);
+    const txt = item.querySelector(".leg-txt");
+    if (txt) txt.textContent = visivel ? `Cadeia ${cid}` : `Cadeia ${cid} · oculta no 3D`;
+  });
+  const todas = $("#btn-cadeias-mostrar");
+  if (todas) {
+    const alguma = algumaCadeiaOculta();
+    todas.disabled = !alguma;
+    todas.setAttribute("aria-disabled", alguma ? "false" : "true");
+  }
+}
+
+function alternarVisibilidadeCadeia(cid) {
+  if (!estado.dados || !estado.dados.cadeias.includes(cid)) return;
+  if (!estado.cadeiasOcultas) estado.cadeiasOcultas = new Set();
+  if (estado.cadeiasOcultas.has(cid)) estado.cadeiasOcultas.delete(cid);
+  else estado.cadeiasOcultas.add(cid);
+  sincronizarVisibilidadeCadeias();
+  aplicarVisaoCadeias();
+  const status = $("#cadeias-vis-status");
+  if (status) {
+    status.textContent = cadeiaOcultaNo3D(cid)
+      ? `Cadeia ${cid} oculta no 3D. Contagens, FASTA, PDB e exportação não mudaram.`
+      : `Cadeia ${cid} visível no 3D.`;
+  }
+}
+
+function mostrarTodasCadeias3D() {
+  if (!algumaCadeiaOculta()) return;
+  estado.cadeiasOcultas.clear();
+  sincronizarVisibilidadeCadeias();
+  aplicarVisaoCadeias();
+  const status = $("#cadeias-vis-status");
+  if (status) status.textContent = "Todas as cadeias visíveis no 3D. Os dados não mudaram.";
 }
 
 function baseNome() { return (estado.nome || "protein").replace(/\.[^.]+$/, ""); }
@@ -723,15 +894,49 @@ function renderStats() {
 }
 
 // ----- aba: aminoacidos -----
+// "*" soma as contagens por cadeia e só então recalcula a porcentagem.
+function frequenciaDoEscopo(dados, escopo) {
+  if (!dados || !dados.frequencias) return null;
+  if (escopo === "*" || escopo === "todas") {
+    const freq = ProtAnalysis.frequenciaConsolidada(dados.frequencias, dados.cadeias);
+    return { escopo: "todas", cadeia: null, cadeias: freq.cadeias.slice(), total: freq.total, itens: freq.itens };
+  }
+  const freq = dados.frequencias[escopo];
+  if (!freq) return null;
+  return { escopo: "cadeia", cadeia: escopo, cadeias: [escopo], total: freq.total, itens: freq.itens };
+}
+
+function textoEscopoAA(freq) {
+  if (!freq) return "";
+  const regra = "Só entram resíduos modelados dos 20 aminoácidos padrão. Resíduo ausente, modificado ou fora dessa lista não é somado. A porcentagem sai dessa soma, não da média entre cadeias e não da SEQRES.";
+  if (freq.escopo === "todas") {
+    const ids = freq.cadeias.join(", ");
+    const uma = freq.cadeias.length === 1
+      ? `Há uma cadeia no modelo (${ids}); o consolidado coincide com ela.`
+      : `Cadeias somadas: ${ids}. ${freq.total} resíduos padrão com coordenadas.`;
+    return `Escopo: molécula inteira. ${regra} ${uma}`;
+  }
+  const nome = freq.cadeia === "_" ? "_ (sem identificador no arquivo)" : freq.cadeia;
+  return `Escopo: uma cadeia (${nome}). ${regra} ${freq.total} resíduos padrão com coordenadas nesta cadeia. As outras cadeias ficam de fora deste gráfico.`;
+}
+
 function renderAA() {
   const sel = $("#aa-cadeia");
+  if (!sel) return;
+  const anterior = sel.value;
   sel.innerHTML = "";
+  const optTodas = document.createElement("option");
+  optTodas.value = "*";
+  optTodas.textContent = "Todas as cadeias";
+  sel.appendChild(optTodas);
   for (const cid of estado.dados.cadeias) {
     const opt = document.createElement("option");
     opt.value = cid;
-    opt.textContent = `Cadeia ${cid}`;
+    opt.textContent = cid === "_" ? "Cadeia _" : `Cadeia ${cid}`;
     sel.appendChild(opt);
   }
+  const valores = ["*", ...estado.dados.cadeias];
+  sel.value = valores.includes(anterior) ? anterior : "*";
   sel.onchange = plotAA;
   plotAA();
 }
@@ -746,22 +951,34 @@ function itensAAOrdenados(freq) {
 }
 
 async function plotAA() {
-  const cid = $("#aa-cadeia").value;
-  const freq = estado.dados.frequencias[cid];
+  const sel = $("#aa-cadeia");
+  const escopo = sel ? sel.value : "*";
+  const freq = frequenciaDoEscopo(estado.dados, escopo);
+  const painel = $("#tab-aa");
+  const faixa = $("#aa-escopo");
+  if (painel) painel.dataset.escopo = freq && freq.escopo === "cadeia" ? "cadeia" : "todas";
+  if (faixa) {
+    faixa.dataset.escopo = painel ? painel.dataset.escopo : "todas";
+    faixa.textContent = textoEscopoAA(freq);
+  }
+  renderAtalhoMotivo(freq);
   if (!freq) return;
   await libPlotly();
 
   const itens = itensAAOrdenados(freq);
   const x = itens.map((i) => i.aa);
   const y = itens.map((i) => i.porcentagem);
-  const cor = estado.corPorCadeia[cid] || "#2a5599";
+  const cor = freq.escopo === "todas" ? "#5c6b82" : (estado.corPorCadeia[freq.cadeia] || "#2a5599");
   const escuro = document.body.dataset.theme === "dark";
+  const titulo = freq.escopo === "todas"
+    ? "Frequência de aminoácidos — todas as cadeias"
+    : `Frequência de aminoácidos — cadeia ${freq.cadeia}`;
 
-  Plotly.newPlot("aa-grafico", [{
-    x, y, type: "bar", marker: { color: cor },
-    hovertemplate: "%{x}: %{y}%<extra></extra>",
+  await Plotly.newPlot("aa-grafico", [{
+    x, y, customdata: itens.map((i) => i.contagem), type: "bar", marker: { color: cor },
+    hovertemplate: "%{x}: %{y}% (%{customdata} resíduos)<extra></extra>",
   }], {
-    title: `Frequência de aminoácidos — cadeia ${cid}`,
+    title: titulo,
     xaxis: { title: "Aminoácido" },
     yaxis: { title: "Porcentagem (%)" },
     margin: { t: 40, r: 10, b: 50, l: 50 },
@@ -769,49 +986,190 @@ async function plotAA() {
     plot_bgcolor: "transparent",
     font: { color: escuro ? "#e7edf7" : "#1c2433" },
   }, { responsive: true, displayModeBar: false });
+
+  const graf = document.getElementById("aa-grafico");
+  if (graf && graf.on && !graf._pekiAaClick) {
+    graf._pekiAaClick = true;
+    graf.on("plotly_click", (ev) => {
+      const aa = ev && ev.points && ev.points[0] && ev.points[0].x;
+      if (aa) adicionarAaAoMotivo(aa);
+    });
+  }
+}
+
+function renderAtalhoMotivo(freq) {
+  const box = $("#aa-atalho");
+  const nota = $("#aa-atalho-nota");
+  if (!box) return;
+  box.innerHTML = "";
+  if (!freq) return;
+  const presentes = freq.itens.filter((i) => i.contagem > 0);
+  for (const item of presentes) {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "motivo-chip aa-atalho";
+    btn.dataset.aa = item.aa;
+    const rotulo = ProtAnalysis.NOMES_AA[item.aa];
+    const letra = ProtAnalysis.TRES_PARA_UMA[item.aa] || "";
+    btn.textContent = letra ? `${letra} ${item.aa}` : item.aa;
+    btn.setAttribute("aria-label", rotulo
+      ? `Adicionar ${rotulo} ao motivo, código ${item.aa}, letra ${letra}`
+      : `Adicionar ${item.aa} ao motivo`);
+    btn.addEventListener("click", () => adicionarAaAoMotivo(item.aa));
+    box.appendChild(btn);
+  }
+  if (nota) {
+    nota.textContent = presentes.length
+      ? "Atalho: estes botões acrescentam um aminoácido do escopo ao motivo, na ordem dos cliques. A busca continua na aba Motivos e percorre todas as cadeias do modelo."
+      : "Neste escopo não há aminoácido padrão com coordenadas para acrescentar ao motivo.";
+  }
+}
+
+function adicionarAaAoMotivo(codigo) {
+  const freq = frequenciaDoEscopo(estado.dados, ($("#aa-cadeia") && $("#aa-cadeia").value) || "*");
+  const item = freq && freq.itens.find((i) => i.aa === codigo);
+  const nota = $("#aa-atalho-nota");
+  if (!item || item.contagem <= 0) {
+    if (nota) nota.textContent = `${codigo} não tem resíduo modelado neste escopo e não entra no motivo.`;
+    return;
+  }
+  acrescentarCodigoMotivo(codigo);
+  if (nota) nota.textContent = `${codigo} entrou no motivo, na ordem. A busca percorre todas as cadeias e fica na aba Motivos.`;
 }
 
 function baixarCsvAA() {
-  const cid = $("#aa-cadeia").value;
-  const freq = estado.dados.frequencias[cid];
+  const freq = frequenciaDoEscopo(estado.dados, $("#aa-cadeia").value);
   if (!freq) return;
   let csv = "Aminoacido,Contagem,Porcentagem\n";
   for (const i of itensAAOrdenados(freq)) csv += `${i.aa},${i.contagem},${i.porcentagem}\n`;
-  baixarTexto(`${baseNome()}_${cid}_aminoacidos.csv`, csv, "text/csv;charset=utf-8");
+  const sufixo = freq.escopo === "todas" ? "todas" : freq.cadeia;
+  baixarTexto(`${baseNome()}_${sufixo}_aminoacidos.csv`, csv, "text/csv;charset=utf-8");
 }
 
 // ----- aba: motivos -----
-function buscarMotivo() {
-  const valor = $("#motivo-input").value.trim();
-  const cont = $("#motivo-resultado");
-  if (!valor) { cont.innerHTML = `<p class="muted">Digite um motivo.</p>`; return; }
+// Motivo = janela contígua de resíduos, na ordem. Não é sítio, pocket nem elemento de estrutura secundária.
+function textoFormacaoMotivo(texto, temResultado) {
+  const tokens = ProtAnalysis.tokensMotivo(texto);
+  const guarda = temResultado ? " A lista da última busca permanece até a próxima busca válida." : "";
+  if (!tokens.length) return "Motivo em formação: vazio. Nenhum resíduo vem selecionado." + guarda;
+  const v = ProtAnalysis.validarMotivoTexto(texto);
+  if (!v.ok) return `Motivo em formação: ${tokens.join("-")}. ${v.erro}${guarda}`;
+  const janela = tokens.length === 1
+    ? "1 resíduo: a busca acha essa posição. Para um motivo, acrescente o próximo na ordem."
+    : `${tokens.length} resíduos nesta ordem, em janela contígua.`;
+  return `Motivo em formação: ${tokens.join("-")}. ${janela}${guarda}`;
+}
 
-  const lista = valor.split(/[-,\s]+/).filter(Boolean);
-  const motivo = lista.map((m) => m.toUpperCase());
+function temResultadoMotivo() {
+  const cont = $("#motivo-resultado");
+  return !!(cont && cont.innerHTML && cont.innerHTML.trim());
+}
+
+function atualizarFormacaoMotivo() {
+  const el = $("#motivo-formacao");
+  if (!el) return;
+  el.textContent = textoFormacaoMotivo(($("#motivo-input") && $("#motivo-input").value) || "", temResultadoMotivo());
+}
+
+function escreverMotivoCampo(texto) {
+  const el = $("#motivo-input");
+  if (el) el.value = texto;
+  atualizarFormacaoMotivo();
+}
+
+function acrescentarCodigoMotivo(codigo) {
+  const bruto = String(codigo || "").trim().toUpperCase();
+  if (!bruto) return;
+  const tokens = ProtAnalysis.tokensMotivo(($("#motivo-input") && $("#motivo-input").value) || "");
+  tokens.push(bruto);
+  escreverMotivoCampo(tokens.join("-"));
+}
+
+function removerUltimoMotivo() {
+  const tokens = ProtAnalysis.tokensMotivo(($("#motivo-input") && $("#motivo-input").value) || "");
+  tokens.pop();
+  escreverMotivoCampo(tokens.join("-"));
+}
+
+function limparMotivoCampo() {
+  escreverMotivoCampo("");
+}
+
+function mostrarAvisoMotivo(msg) {
+  const el = $("#motivo-aviso");
+  if (!el) return;
+  if (!msg) { el.hidden = true; el.textContent = ""; return; }
+  el.hidden = false;
+  el.textContent = msg;
+}
+
+function renderMotivos() {
+  const box = $("#motivo-chips");
+  const escopo = $("#motivo-escopo");
+  if (!box || !estado.dados) return;
+  const catalogo = ProtAnalysis.catalogoResiduos(estado.dados.residuosPorCadeia);
+  if (escopo) {
+    escopo.textContent = catalogo.length
+      ? "Os botões são os resíduos com coordenadas neste modelo. Resíduo ausente não aparece e não vem selecionado."
+      : "Este modelo não tem resíduos com coordenadas para montar um motivo.";
+  }
+  box.innerHTML = "";
+  for (const item of catalogo) {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "motivo-chip";
+    btn.dataset.aa = item.codigo;
+    if (item.padrao && item.nome) {
+      btn.innerHTML = `<span class="motivo-letra">${esc(item.letra)}</span><span class="motivo-cod">${esc(item.codigo)}</span><span class="motivo-nome">${esc(item.nome)}</span>`;
+      btn.setAttribute("aria-label", `Adicionar ${item.nome} ao motivo, código ${item.codigo}, letra ${item.letra}`);
+    } else {
+      btn.innerHTML = `<span class="motivo-cod">${esc(item.codigo)}</span><span class="motivo-nome">no modelo, fora dos 20</span>`;
+      btn.setAttribute("aria-label", `Adicionar ${item.codigo} ao motivo. Resíduo com coordenadas, fora da lista dos 20 aminoácidos padrão.`);
+    }
+    btn.addEventListener("click", () => acrescentarCodigoMotivo(item.codigo));
+    box.appendChild(btn);
+  }
+  atualizarFormacaoMotivo();
+}
+
+function buscarMotivo() {
+  const valor = ($("#motivo-input") && $("#motivo-input").value) || "";
+  const cont = $("#motivo-resultado");
+  const checagem = ProtAnalysis.validarMotivoTexto(valor);
+  if (!checagem.ok) {
+    mostrarAvisoMotivo(checagem.erro);
+    atualizarFormacaoMotivo();
+    return;
+  }
+  mostrarAvisoMotivo("");
+  const motivo = checagem.motivo;
   const ocorrencias = estado.pdbText
-    ? ProtAnalysis.buscarMotivo(estado.pdbText, lista)
-    : StructureModel.buscarMotivo(estado.dados.residuosPorCadeia, lista);
+    ? ProtAnalysis.buscarMotivo(estado.pdbText, motivo)
+    : StructureModel.buscarMotivo(estado.dados.residuosPorCadeia, motivo);
 
   const motivoTxt = esc(motivo.join("-"));
   if (!ocorrencias.length) {
     estado.ultimoMotivo = null;
+    estado.motivoNo3D = null;
     if (estado.vistaPocket) estado.vistaPocket.motivoPorCima = null;
-    cont.innerHTML = `<p class="muted">Nenhuma ocorrência de <code>${motivoTxt}</code>.</p>`;
+    cont.innerHTML = `<p class="muted">Nenhuma ocorrência contígua de <code>${motivoTxt}</code>, nessa ordem. Resíduos iguais em posições separadas não contam.</p>`;
     aplicarEstiloMantendoPocket();
+    atualizarFormacaoMotivo();
     return;
   }
 
   estado.ultimoMotivo = { motivo: motivo.join("-"), ocorrencias };
 
-  let html = `<p><strong>${ocorrencias.length}</strong> ocorrência(s) de <code>${motivoTxt}</code>:</p>`;
+  let html = `<p><strong>${ocorrencias.length}</strong> ocorrência(s) de <code>${motivoTxt}</code>, janela contígua nessa ordem:</p>`;
   if (!estado.pdbText) html += `<p class="muted small">Busca na sequência lida do mmCIF. O texto CIF não passou pelo leitor de colunas PDB.</p>`;
   for (const oc of ocorrencias) {
     html += `<div class="ocorrencia">Cadeia <strong>${esc(oc.cadeia)}</strong> · posição <strong>${esc(oc.posicao)}</strong> (resíduos ${esc(oc.residuos.join(", "))})</div>`;
   }
-  html += `<p class="muted small">Resíduos com coordenadas podem ser destacados em amarelo no viewer 3D. Resíduo sem coordenada não é desenhado.</p>`;
+  html += `<p class="muted small">O amarelo no 3D marca resíduos com coordenadas. Cadeia oculta no 3D continua nesta lista; o amarelo dela volta quando a cadeia é mostrada. Resíduo sem coordenada não é desenhado e não entrou na busca.</p>`;
   cont.innerHTML = html;
 
   destacarMotivo(ocorrencias);
+  atualizarFormacaoMotivo();
 }
 
 // ----- aba: pockets (DoGSiteScorer via ProteinsPlus) -----
@@ -1193,7 +1551,7 @@ function superficieAntesDaVista(anterior) {
 function pintarResiduosPocket(sels) {
   const v = estado.viewer;
   if (!v || !sels) return;
-  for (const sel of sels) {
+  for (const sel of selsVisiveis(sels)) {
     v.setStyle(sel, { stick: { color: "magenta" }, sphere: { color: "magenta", radius: 0.4 } });
   }
   v.render();
@@ -2196,6 +2554,11 @@ function init() {
   $("#btn-aa-csv").addEventListener("click", baixarCsvAA);
   $("#btn-motivo").addEventListener("click", buscarMotivo);
   $("#motivo-input").addEventListener("keydown", (e) => { if (e.key === "Enter") buscarMotivo(); });
+  $("#motivo-input").addEventListener("input", atualizarFormacaoMotivo);
+  const btnUltimo = $("#btn-motivo-ultimo");
+  const btnLimpar = $("#btn-motivo-limpar");
+  if (btnUltimo) btnUltimo.addEventListener("click", removerUltimoMotivo);
+  if (btnLimpar) btnLimpar.addEventListener("click", limparMotivoCampo);
   $("#btn-pockets").addEventListener("click", detectarPockets);
   $("#theme-toggle").addEventListener("click", alternarTema);
 
@@ -2235,10 +2598,29 @@ if (typeof module !== "undefined" && module.exports) {
     destacarPocket,
     aplicarEstilo,
     aplicarEstiloMantendoPocket,
+    aplicarVisaoCadeias,
+    aplicarSuperficie,
     aoAlternarSuperficie,
     renderCmpPockets,
     invalidarVistaPocket,
     sincronizarBotoesPocket,
     destacarMotivo,
+    renderCadeias,
+    alternarVisibilidadeCadeia,
+    mostrarTodasCadeias3D,
+    sincronizarVisibilidadeCadeias,
+    cadeiaOcultaNo3D,
+    frequenciaDoEscopo,
+    textoEscopoAA,
+    renderAA,
+    plotAA,
+    renderMotivos,
+    buscarMotivo,
+    acrescentarCodigoMotivo,
+    removerUltimoMotivo,
+    limparMotivoCampo,
+    adicionarAaAoMotivo,
+    textoFormacaoMotivo,
+    atualizarFormacaoMotivo,
   };
 }

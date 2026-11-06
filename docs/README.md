@@ -8,10 +8,10 @@ tamanho de arquivo. Versão visual dos Programas 01–05 do Trabalho Final de Al
 
 Cole um **código PDB** (ex.: `1A00`), o **nome da proteína** (ex.: `hemoglobin`) ou faça **upload** de um `.pdb` ou `.cif`. O nome não vira código: o RCSB busca em inglês e devolve uma lista de depósitos experimentais; a estrutura só abre depois da escolha. Pelo código, o app usa o PDB quando o RCSB publica coordenadas; o mmCIF entra só se o PDB não tiver. A leitura do mmCIF usa a categoria `_atom_site` e não as colunas do PDB. A visão geral, os limites e o contrato `peki-estrutura-1` estão em [`estrutura.md`](estrutura.md). A aba **Qualidade** (relatório wwPDB e dicionário químico) está em [`qualidade.md`](qualidade.md). Veja a estrutura em **3D** e explore:
 
-- **Cadeias** — detecção e download de cada cadeia (Programas 01/02)
+- **Cadeias** — detecção e download de cada cadeia (Programas 01/02). Ver ou ocultar uma cadeia muda só o desenho 3D; contagens, FASTA, PDB e exportação continuam com ela.
 - **Estatísticas** — átomos, resíduos e aminoácidos diferentes; maior/menor (Programa 03)
-- **Aminoácidos** — frequência e porcentagem dos 20 aminoácidos, em gráfico (Programa 04)
-- **Motivos** — busca de padrões (ex.: `GLY-LYS-SER`) com destaque na 3D (Programa 05)
+- **Aminoácidos** — frequência e porcentagem dos 20 aminoácidos padrão com coordenadas, numa cadeia ou na soma de todas (Programa 04). Resíduo ausente não entra.
+- **Motivos** — sequência curta e contígua (ex.: `GLY-LYS-SER`), montada pelos resíduos do modelo, com destaque na 3D (Programa 05). Não é motivo estrutural, sítio funcional nem pocket.
 - **Pockets** — detecção de cavidades com descritores (volume, superfície, profundidade,
   hidrofobicidade, aceptores, doadores, drugScore), respostas analíticas, gráficos e
   destaque dos resíduos na 3D (Programa 06, via API DoGSiteScorer/ProteinsPlus).
