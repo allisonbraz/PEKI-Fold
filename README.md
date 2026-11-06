@@ -47,7 +47,7 @@ Exemplos diretos: [1A00](https://allisonbraz.github.io/PEKI-Fold/?pdb=1A00) · [
 ## App web (recomendado)
 
 Aplicação **100% no navegador** — sem servidor, sem instalação, sem limite de
-upload. Cole um código PDB (ex.: `1A00`), o nome da proteína (ex.: `NLRP3`) ou envie um `.pdb` ou `.cif`, veja a estrutura em
+upload. Cole um código PDB (ex.: `1A00`), o nome da proteína (ex.: `hemoglobina`) ou envie um `.pdb` ou `.cif`, veja a estrutura em
 3D e explore a visão geral, cadeias, estatísticas, frequência de aminoácidos, motivos e
 **pockets** e uma **ficha de preparo** geométrica (inventário, limpeza do PDB,
 íons, dissulfetos, Asn–açúcar e uma caixa editável para o Vina). A detecção de

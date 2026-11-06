@@ -29,15 +29,20 @@ function decidirNome() {
 
   const misturado = BuscaNome.decidir("6NPY NLRP3");
   assert(misturado.acao === "listar" && misturado.nome === "6NPY NLRP3", "frase com código não é carregada sozinha");
-  assert(BuscaNome.decidir("").acao === "erro", "vazio é erro");
-  assert(/NLRP3/.test(BuscaNome.decidir("").mensagem), "erro vazio cita o exemplo de nome");
+  const vazio = BuscaNome.decidir("");
+  assert(vazio.acao === "erro", "vazio é erro");
+  assert(/hemoglobina/.test(vazio.mensagem) && !/NLRP3/.test(vazio.mensagem), "erro vazio cita hemoglobina");
   assert(BuscaNome.decidir("   ").acao === "erro", "espaço é vazio");
   assert(BuscaNome.decidir("A").acao === "erro", "uma letra não busca");
-  assert(BuscaNome.decidir("1A0").acao === "erro", "código curto não é truncado nem buscado");
+  const curtoCodigo = BuscaNome.decidir("1A0");
+  assert(curtoCodigo.acao === "erro", "código curto não é truncado nem buscado");
+  assert(/hemoglobina/.test(curtoCodigo.mensagem) && !/NLRP3/.test(curtoCodigo.mensagem), "código curto cita hemoglobina");
   assert(BuscaNome.decidir("12345").acao === "erro", "dígitos a mais não viram nome");
   const ext = BuscaNome.decidir("PDB_00001ABC");
   assert(ext.acao === "erro" && /estendido/.test(ext.mensagem), "ID estendido continua recusado");
-  assert(BuscaNome.decidir("***").acao === "erro", "símbolos não viram busca");
+  const simbolos = BuscaNome.decidir("***");
+  assert(simbolos.acao === "erro", "símbolos não viram busca");
+  assert(/hemoglobina/.test(simbolos.mensagem) && !/NLRP3/.test(simbolos.mensagem), "símbolos citam hemoglobina");
   assert(BuscaNome.decidir("hemoglobina").acao === "listar", "nome comum lista");
 }
 
@@ -262,10 +267,20 @@ function arquivosDaInterface() {
   const html = fs.readFileSync(path.join(__dirname, "../docs/index.html"), "utf8");
   const campo = html.slice(html.indexOf('id="pdb-id"'), html.indexOf('id="pdb-id"') + 280);
   assert(!/maxlength="4"/.test(campo), "o campo não corta em 4: " + campo);
-  assert(/maxlength="80"/.test(campo), "NLRP3 cabe no campo");
+  assert(/maxlength="80"/.test(campo), "o campo aceita nome com mais de 4 caracteres");
+  assert(/placeholder="ex\.: 1A00 ou hemoglobina"/.test(campo), "placeholder usa hemoglobina");
   assert(/Código PDB ou nome da proteína/.test(html), "rótulo separa código e nome");
-  assert(/id="entrada-dica"[\s\S]*NLRP3/.test(html), "ajuda do campo cita NLRP3");
+  assert(/id="entrada-dica"[\s\S]*hemoglobina/.test(html), "ajuda do campo cita hemoglobina");
+  assert(/<code>hemoglobina<\/code>/.test(html), "instruções citam hemoglobina");
+  assert(!/NLRP3/i.test(html), "a página pública não cita NLRP3");
   assert(/Nome da proteína/.test(html), "ajuda distingue o nome");
+  const busca = fs.readFileSync(path.join(__dirname, "../docs/busca-nome.js"), "utf8");
+  const leiaute = fs.readFileSync(path.join(__dirname, "../README.md"), "utf8");
+  const leiauteDocs = fs.readFileSync(path.join(__dirname, "../docs/README.md"), "utf8");
+  assert(!/NLRP3/i.test(busca), "mensagens do módulo não citam NLRP3");
+  assert(!/NLRP3/i.test(leiaute), "readme da raiz não cita NLRP3");
+  assert(!/NLRP3/i.test(leiauteDocs), "readme do app não cita NLRP3");
+  assert(/hemoglobina/.test(leiaute) && /hemoglobina/.test(leiauteDocs), "readmes citam hemoglobina");
   assert(/busca-nome\.js/.test(html) && html.indexOf("busca-nome.js") < html.indexOf("app.js"), "módulo entra antes do app");
   assert(/id="cmp-ids"/.test(html), "comparação por código permanece");
   assert(/id="file-input"/.test(html), "upload permanece");
