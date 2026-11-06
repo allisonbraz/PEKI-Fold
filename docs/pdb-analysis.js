@@ -18,6 +18,14 @@ const ProtAnalysis = (() => {
     GLY: "G", HIS: "H", ILE: "I", LEU: "L", LYS: "K", MET: "M", PHE: "F",
     PRO: "P", SER: "S", THR: "T", TRP: "W", TYR: "Y", VAL: "V",
   };
+  // Rótulos dos mesmos 20 códigos. Código de fora desta tabela não ganha nome inventado.
+  const NOMES_AA = {
+    ALA: "alanina", ARG: "arginina", ASN: "asparagina", ASP: "aspartato",
+    CYS: "cisteína", GLN: "glutamina", GLU: "glutamato", GLY: "glicina",
+    HIS: "histidina", ILE: "isoleucina", LEU: "leucina", LYS: "lisina",
+    MET: "metionina", PHE: "fenilalanina", PRO: "prolina", SER: "serina",
+    THR: "treonina", TRP: "triptofano", TYR: "tirosina", VAL: "valina",
+  };
 
   // Identificador da cadeia: coluna 22 (indice 21). Vazio -> "_".
   function idCadeia(linha) {
@@ -122,6 +130,82 @@ const ProtAnalysis = (() => {
       .join("");
   }
 
+  // Soma contagens já feitas por cadeia. Não relê a SEQRES e não tira média de porcentagem.
+  function frequenciaConsolidada(frequencias, cadeias) {
+    const contagem = {};
+    for (const aa of AMINOACIDOS_PADRAO) contagem[aa] = 0;
+    const usadas = [];
+    for (const cid of cadeias || []) {
+      const freq = frequencias && frequencias[cid];
+      if (!freq || !Array.isArray(freq.itens)) continue;
+      usadas.push(cid);
+      for (const item of freq.itens) {
+        if (Object.prototype.hasOwnProperty.call(contagem, item.aa)) contagem[item.aa] += item.contagem;
+      }
+    }
+    const total = AMINOACIDOS_PADRAO.reduce((s, aa) => s + contagem[aa], 0);
+    return {
+      cadeias: usadas,
+      total,
+      itens: AMINOACIDOS_PADRAO.map((aa) => ({
+        aa,
+        contagem: contagem[aa],
+        porcentagem: total ? Math.round((10000 * contagem[aa]) / total) / 100 : 0,
+      })),
+    };
+  }
+
+  // Resíduos com coordenadas, na ordem do código. Ausente no modelo não entra.
+  function catalogoResiduos(residuosPorCadeia) {
+    const cont = new Map();
+    for (const seq of Object.values(residuosPorCadeia || {})) {
+      for (const par of seq || []) {
+        const nome = String((par && par[0]) || "").trim().toUpperCase();
+        if (!nome) continue;
+        cont.set(nome, (cont.get(nome) || 0) + 1);
+      }
+    }
+    return [...cont.keys()].sort().map((codigo) => ({
+      codigo,
+      letra: TRES_PARA_UMA[codigo] || "",
+      nome: NOMES_AA[codigo] || null,
+      contagem: cont.get(codigo),
+      padrao: SET_AA.has(codigo),
+    }));
+  }
+
+  function tokensMotivo(texto) {
+    return String(texto || "").trim().split(/[-,\s]+/).filter(Boolean).map((t) => t.toUpperCase());
+  }
+
+  // Cada posição é um código de 3 letras. Letra isolada, número e símbolo não passam.
+  function validarMotivoTexto(texto) {
+    const motivo = tokensMotivo(texto);
+    if (!motivo.length) {
+      return {
+        ok: false,
+        motivo,
+        erro: "Monte um motivo com os resíduos do modelo, ou escreva os códigos de 3 letras na ordem. O campo não começa preenchido.",
+      };
+    }
+    const ruins = motivo.filter((t) => !/^[A-Z]{3}$/.test(t));
+    if (ruins.length) {
+      if (ruins.every((t) => /^[A-Z]$/.test(t))) {
+        return {
+          ok: false,
+          motivo,
+          erro: `Use o código de 3 letras na ordem (ALA-GLY), não a letra isolada (${ruins.join(", ")}). Um motivo é uma sequência curta, não um aminoácido sozinho.`,
+        };
+      }
+      return {
+        ok: false,
+        motivo,
+        erro: `Código inválido: ${ruins.join(", ")}. Cada posição precisa de exatamente 3 letras, como ALA. Números e símbolos não entram.`,
+      };
+    }
+    return { ok: true, motivo, erro: null };
+  }
+
   function buscarMotivo(texto, motivo) {
     motivo = motivo.map((m) => m.trim().toUpperCase()).filter(Boolean);
     const ocorrencias = [];
@@ -222,8 +306,9 @@ const ProtAnalysis = (() => {
   }
 
   return {
-    AMINOACIDOS_PADRAO,
+    AMINOACIDOS_PADRAO, TRES_PARA_UMA, NOMES_AA,
     listarCadeias, separarCadeias, estatisticas, frequenciaAminoacidos,
+    frequenciaConsolidada, catalogoResiduos, tokensMotivo, validarMotivoTexto,
     sequenciaUmaLetra, buscarMotivo, analisarCompleto, validar, extrairMetadados,
     primeiroModelo, contarModelos,
   };
