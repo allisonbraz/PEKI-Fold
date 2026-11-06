@@ -41,6 +41,9 @@ function irParaHome() {
   if (typeof EnsembleUI !== "undefined" && EnsembleUI.aoFechar) EnsembleUI.aoFechar();
   const ens = $("#ensemble");
   if (ens) ens.hidden = true;
+  const analises = $("#analises");
+  if (analises) analises.hidden = true;
+  if (typeof AnalysisUI !== "undefined" && AnalysisUI.aoFechar) AnalysisUI.aoFechar();
   $("#workspace").hidden = true;
   $("#comparacao").hidden = true;
   $("#entrada").hidden = false;
@@ -222,6 +225,7 @@ async function iniciarWorkspace(dados) {
   estado.dados = dados;
   estado.pockets = null;
   estado.pocketsRaw = null;
+  estado.pocketsInfo = null;
   estado.ultimoMotivo = null;
   estado.motivoNo3D = null;
   estado.cadeiasOcultas = new Set();
@@ -239,6 +243,8 @@ async function iniciarWorkspace(dados) {
 
   $("#entrada").hidden = true;
   $("#workspace").hidden = false;
+  const painelAnalises = $("#analises");
+  if (painelAnalises) painelAnalises.hidden = true;
   $("#ws-nome").textContent = dados.nome;
 
   const totalRes = dados.estatisticas.cadeias.reduce((s, c) => s + c.residuos, 0);
@@ -1222,6 +1228,7 @@ function renderPockets() {
     estado.pockets = POCKETS_CACHE[estado.pdbId.toUpperCase()].pockets;
   }
   if (estado.pockets) {
+    estado.pocketsInfo = { estado: "ok", motivo: null };
     status.textContent = `✓ ${estado.pockets.length} pocket(s) para ${estado.pdbId}.`;
     renderTabelaPockets(estado.pockets);
   }
@@ -1245,9 +1252,12 @@ async function detectarPockets() {
     if (!pockets.length) throw new Error("Nenhum pocket retornado pela API.");
 
     estado.pockets = pockets;
+    estado.pocketsInfo = { estado: "ok", motivo: null };
     status.textContent = `✓ ${pockets.length} pocket(s)${cacheado ? " (do cache)" : ""} para ${estado.pdbId}.`;
     renderTabelaPockets(pockets);
   } catch (e) {
+    estado.pockets = null;
+    estado.pocketsInfo = { estado: "erro", motivo: e.message };
     status.innerHTML = `❌ ${e.message}`;
     btn.disabled = false;
   }
@@ -1707,6 +1717,8 @@ async function iniciarComparacao() {
   $("#entrada").hidden = true;
   $("#workspace").hidden = true;
   $("#comparacao").hidden = false;
+  const painelAnalises = $("#analises");
+  if (painelAnalises) painelAnalises.hidden = true;
 
   $("#cmp-titulo").textContent = "Comparação: " + ps.map((p) => p.id).join(" · ");
   $("#cmp-resumo").textContent = `${ps.length} proteínas`;
@@ -2024,6 +2036,25 @@ async function imgPlotly(spec, w = 760, h = 400) {
   await libPlotly();
   return await Plotly.toImage(spec, { format: "png", width: w, height: h });
 }
+function guardarAnalise() {
+  const status = $("#guardar-status");
+  if (typeof AnalysisUI === "undefined" || typeof AnalysisSnapshot === "undefined") {
+    if (status) status.textContent = "O módulo de análise guardada não carregou.";
+    return;
+  }
+  try {
+    const preparo = typeof PrepUI !== "undefined" && PrepUI.resumoAnalise ? PrepUI.resumoAnalise() : null;
+    const salvo = AnalysisUI.guardarWorkspace(estado, (nome, texto) => {
+      baixarTexto(nome, texto, "application/json;charset=utf-8");
+    }, { preparo });
+    if (status) {
+      status.textContent = "Arquivo " + salvo.nome + " baixado neste computador. Ele não foi enviado a um servidor. Para comparar, reabra o JSON em Comparar análises guardadas.";
+    }
+  } catch (e) {
+    if (status) status.textContent = e.message;
+  }
+}
+
 function baixarTexto(nome, conteudo, mime) {
   const blob = new Blob([conteudo], { type: mime || "text/plain;charset=utf-8" });
   const url = URL.createObjectURL(blob);
@@ -2562,7 +2593,10 @@ function init() {
   $("#btn-pockets").addEventListener("click", detectarPockets);
   $("#theme-toggle").addEventListener("click", alternarTema);
 
-  // exportação
+  // exportação e análise guardada
+  $("#btn-guardar-analise").addEventListener("click", guardarAnalise);
+  const voltarAnalises = $("#btn-an-voltar");
+  if (voltarAnalises) voltarAnalises.addEventListener("click", irParaHome);
   $("#btn-export").addEventListener("click", () => abrirExport("single"));
   $("#btn-cmp-export").addEventListener("click", () => abrirExport("cmp"));
   $("#exp-cancelar").addEventListener("click", fecharExport);

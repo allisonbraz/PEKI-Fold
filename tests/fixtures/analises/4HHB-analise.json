@@ -1,0 +1,3629 @@
+{
+  "schema": "peki-analise-1",
+  "versaoApp": "peki-fold-web",
+  "geradoEm": "2026-11-06T16:00:00.000Z",
+  "id": "4HHB-20261106T160000000Z",
+  "rotulo": "4HHB",
+  "origem": {
+    "tipo": "rcsb",
+    "pdbId": "4HHB",
+    "nomeArquivo": "4HHB.pdb",
+    "formato": "pdb",
+    "fonte": "RCSB PDB",
+    "url": "https://files.rcsb.org/download/4HHB.pdb",
+    "titulo": "THE CRYSTAL STRUCTURE OF HUMAN DEOXYHAEMOGLOBIN AT 1.74 ANGSTROMS RESOLUTION",
+    "metodo": "X-RAY DIFFRACTION",
+    "resolucaoArquivo": {
+      "valor": 1.74,
+      "unidade": "Å",
+      "origem": "REMARK 2"
+    },
+    "sintetico": false,
+    "nota": "O PDB original não foi embutido. Este arquivo guarda a leitura usada na comparação e fica no computador de quem o baixou."
+  },
+  "modelo": {
+    "selecionado": 1,
+    "total": 1,
+    "criterio": "arquivo sem registro MODEL"
+  },
+  "cadeias": [
+    {
+      "id": "A",
+      "auth": "A",
+      "label": null,
+      "sequencia": "VLSPADKTNVKAAWGKVGAHAGEYGAEALERMFLSFPTTKTYFPHFDLSHGSAQVKGHGKKVADALTNAVAHVDDMPNALSALSDLHAHKLRVDPVNFKLLSHCLLVTLAAHLPAEFTPAVHASLDKFLASVSTVLTSKYR",
+      "residuos": [
+        {
+          "resname": "VAL",
+          "seq": 1,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 2,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "SER",
+          "seq": 3,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "PRO",
+          "seq": 4,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 5,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ASP",
+          "seq": 6,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LYS",
+          "seq": 7,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "THR",
+          "seq": 8,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ASN",
+          "seq": 9,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "VAL",
+          "seq": 10,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LYS",
+          "seq": 11,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 12,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 13,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "TRP",
+          "seq": 14,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLY",
+          "seq": 15,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LYS",
+          "seq": 16,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "VAL",
+          "seq": 17,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLY",
+          "seq": 18,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 19,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "HIS",
+          "seq": 20,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 21,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLY",
+          "seq": 22,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLU",
+          "seq": 23,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "TYR",
+          "seq": 24,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLY",
+          "seq": 25,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 26,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLU",
+          "seq": 27,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 28,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 29,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLU",
+          "seq": 30,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ARG",
+          "seq": 31,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "MET",
+          "seq": 32,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "PHE",
+          "seq": 33,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 34,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "SER",
+          "seq": 35,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "PHE",
+          "seq": 36,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "PRO",
+          "seq": 37,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "THR",
+          "seq": 38,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "THR",
+          "seq": 39,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LYS",
+          "seq": 40,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "THR",
+          "seq": 41,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "TYR",
+          "seq": 42,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "PHE",
+          "seq": 43,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "PRO",
+          "seq": 44,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "HIS",
+          "seq": 45,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "PHE",
+          "seq": 46,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ASP",
+          "seq": 47,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 48,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "SER",
+          "seq": 49,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "HIS",
+          "seq": 50,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLY",
+          "seq": 51,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "SER",
+          "seq": 52,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 53,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLN",
+          "seq": 54,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "VAL",
+          "seq": 55,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LYS",
+          "seq": 56,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLY",
+          "seq": 57,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "HIS",
+          "seq": 58,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLY",
+          "seq": 59,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LYS",
+          "seq": 60,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LYS",
+          "seq": 61,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "VAL",
+          "seq": 62,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 63,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ASP",
+          "seq": 64,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 65,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 66,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "THR",
+          "seq": 67,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ASN",
+          "seq": 68,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 69,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "VAL",
+          "seq": 70,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 71,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "HIS",
+          "seq": 72,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "VAL",
+          "seq": 73,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ASP",
+          "seq": 74,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ASP",
+          "seq": 75,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "MET",
+          "seq": 76,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "PRO",
+          "seq": 77,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ASN",
+          "seq": 78,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 79,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 80,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "SER",
+          "seq": 81,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 82,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 83,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "SER",
+          "seq": 84,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ASP",
+          "seq": 85,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 86,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "HIS",
+          "seq": 87,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 88,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "HIS",
+          "seq": 89,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LYS",
+          "seq": 90,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 91,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ARG",
+          "seq": 92,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "VAL",
+          "seq": 93,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ASP",
+          "seq": 94,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "PRO",
+          "seq": 95,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "VAL",
+          "seq": 96,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ASN",
+          "seq": 97,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "PHE",
+          "seq": 98,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LYS",
+          "seq": 99,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 100,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 101,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "SER",
+          "seq": 102,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "HIS",
+          "seq": 103,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "CYS",
+          "seq": 104,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 105,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 106,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "VAL",
+          "seq": 107,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "THR",
+          "seq": 108,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 109,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 110,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 111,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "HIS",
+          "seq": 112,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 113,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "PRO",
+          "seq": 114,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 115,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLU",
+          "seq": 116,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "PHE",
+          "seq": 117,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "THR",
+          "seq": 118,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "PRO",
+          "seq": 119,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 120,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "VAL",
+          "seq": 121,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "HIS",
+          "seq": 122,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 123,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "SER",
+          "seq": 124,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 125,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ASP",
+          "seq": 126,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LYS",
+          "seq": 127,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "PHE",
+          "seq": 128,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 129,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 130,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "SER",
+          "seq": 131,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "VAL",
+          "seq": 132,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "SER",
+          "seq": 133,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "THR",
+          "seq": 134,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "VAL",
+          "seq": 135,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 136,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "THR",
+          "seq": 137,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "SER",
+          "seq": 138,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LYS",
+          "seq": 139,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "TYR",
+          "seq": 140,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ARG",
+          "seq": 141,
+          "icode": "",
+          "classe": "proteina"
+        }
+      ]
+    },
+    {
+      "id": "B",
+      "auth": "B",
+      "label": null,
+      "sequencia": "VHLTPEEKSAVTALWGKVNVDEVGGEALGRLLVVYPWTQRFFESFGDLSTPDAVMGNPKVKAHGKKVLGAFSDGLAHLDNLKGTFATLSELHCDKLHVDPENFRLLGNVLVCVLAHHFGKEFTPPVQAAYQKVVAGVANALAHKYH",
+      "residuos": [
+        {
+          "resname": "VAL",
+          "seq": 1,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "HIS",
+          "seq": 2,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 3,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "THR",
+          "seq": 4,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "PRO",
+          "seq": 5,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLU",
+          "seq": 6,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLU",
+          "seq": 7,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LYS",
+          "seq": 8,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "SER",
+          "seq": 9,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 10,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "VAL",
+          "seq": 11,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "THR",
+          "seq": 12,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 13,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 14,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "TRP",
+          "seq": 15,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLY",
+          "seq": 16,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LYS",
+          "seq": 17,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "VAL",
+          "seq": 18,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ASN",
+          "seq": 19,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "VAL",
+          "seq": 20,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ASP",
+          "seq": 21,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLU",
+          "seq": 22,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "VAL",
+          "seq": 23,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLY",
+          "seq": 24,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLY",
+          "seq": 25,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLU",
+          "seq": 26,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 27,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 28,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLY",
+          "seq": 29,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ARG",
+          "seq": 30,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 31,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 32,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "VAL",
+          "seq": 33,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "VAL",
+          "seq": 34,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "TYR",
+          "seq": 35,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "PRO",
+          "seq": 36,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "TRP",
+          "seq": 37,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "THR",
+          "seq": 38,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLN",
+          "seq": 39,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ARG",
+          "seq": 40,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "PHE",
+          "seq": 41,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "PHE",
+          "seq": 42,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLU",
+          "seq": 43,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "SER",
+          "seq": 44,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "PHE",
+          "seq": 45,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLY",
+          "seq": 46,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ASP",
+          "seq": 47,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 48,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "SER",
+          "seq": 49,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "THR",
+          "seq": 50,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "PRO",
+          "seq": 51,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ASP",
+          "seq": 52,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 53,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "VAL",
+          "seq": 54,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "MET",
+          "seq": 55,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLY",
+          "seq": 56,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ASN",
+          "seq": 57,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "PRO",
+          "seq": 58,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LYS",
+          "seq": 59,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "VAL",
+          "seq": 60,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LYS",
+          "seq": 61,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 62,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "HIS",
+          "seq": 63,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLY",
+          "seq": 64,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LYS",
+          "seq": 65,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LYS",
+          "seq": 66,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "VAL",
+          "seq": 67,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 68,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLY",
+          "seq": 69,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 70,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "PHE",
+          "seq": 71,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "SER",
+          "seq": 72,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ASP",
+          "seq": 73,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLY",
+          "seq": 74,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 75,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 76,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "HIS",
+          "seq": 77,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 78,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ASP",
+          "seq": 79,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ASN",
+          "seq": 80,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 81,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LYS",
+          "seq": 82,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLY",
+          "seq": 83,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "THR",
+          "seq": 84,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "PHE",
+          "seq": 85,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 86,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "THR",
+          "seq": 87,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 88,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "SER",
+          "seq": 89,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLU",
+          "seq": 90,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 91,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "HIS",
+          "seq": 92,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "CYS",
+          "seq": 93,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ASP",
+          "seq": 94,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LYS",
+          "seq": 95,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 96,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "HIS",
+          "seq": 97,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "VAL",
+          "seq": 98,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ASP",
+          "seq": 99,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "PRO",
+          "seq": 100,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLU",
+          "seq": 101,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ASN",
+          "seq": 102,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "PHE",
+          "seq": 103,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ARG",
+          "seq": 104,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 105,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 106,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLY",
+          "seq": 107,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ASN",
+          "seq": 108,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "VAL",
+          "seq": 109,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 110,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "VAL",
+          "seq": 111,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "CYS",
+          "seq": 112,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "VAL",
+          "seq": 113,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 114,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 115,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "HIS",
+          "seq": 116,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "HIS",
+          "seq": 117,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "PHE",
+          "seq": 118,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLY",
+          "seq": 119,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LYS",
+          "seq": 120,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLU",
+          "seq": 121,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "PHE",
+          "seq": 122,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "THR",
+          "seq": 123,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "PRO",
+          "seq": 124,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "PRO",
+          "seq": 125,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "VAL",
+          "seq": 126,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLN",
+          "seq": 127,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 128,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 129,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "TYR",
+          "seq": 130,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLN",
+          "seq": 131,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LYS",
+          "seq": 132,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "VAL",
+          "seq": 133,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "VAL",
+          "seq": 134,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 135,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLY",
+          "seq": 136,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "VAL",
+          "seq": 137,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 138,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ASN",
+          "seq": 139,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 140,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 141,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 142,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "HIS",
+          "seq": 143,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LYS",
+          "seq": 144,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "TYR",
+          "seq": 145,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "HIS",
+          "seq": 146,
+          "icode": "",
+          "classe": "proteina"
+        }
+      ]
+    },
+    {
+      "id": "C",
+      "auth": "C",
+      "label": null,
+      "sequencia": "VLSPADKTNVKAAWGKVGAHAGEYGAEALERMFLSFPTTKTYFPHFDLSHGSAQVKGHGKKVADALTNAVAHVDDMPNALSALSDLHAHKLRVDPVNFKLLSHCLLVTLAAHLPAEFTPAVHASLDKFLASVSTVLTSKYR",
+      "residuos": [
+        {
+          "resname": "VAL",
+          "seq": 1,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 2,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "SER",
+          "seq": 3,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "PRO",
+          "seq": 4,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 5,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ASP",
+          "seq": 6,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LYS",
+          "seq": 7,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "THR",
+          "seq": 8,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ASN",
+          "seq": 9,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "VAL",
+          "seq": 10,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LYS",
+          "seq": 11,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 12,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 13,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "TRP",
+          "seq": 14,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLY",
+          "seq": 15,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LYS",
+          "seq": 16,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "VAL",
+          "seq": 17,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLY",
+          "seq": 18,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 19,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "HIS",
+          "seq": 20,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 21,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLY",
+          "seq": 22,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLU",
+          "seq": 23,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "TYR",
+          "seq": 24,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLY",
+          "seq": 25,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 26,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLU",
+          "seq": 27,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 28,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 29,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLU",
+          "seq": 30,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ARG",
+          "seq": 31,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "MET",
+          "seq": 32,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "PHE",
+          "seq": 33,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 34,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "SER",
+          "seq": 35,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "PHE",
+          "seq": 36,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "PRO",
+          "seq": 37,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "THR",
+          "seq": 38,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "THR",
+          "seq": 39,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LYS",
+          "seq": 40,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "THR",
+          "seq": 41,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "TYR",
+          "seq": 42,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "PHE",
+          "seq": 43,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "PRO",
+          "seq": 44,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "HIS",
+          "seq": 45,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "PHE",
+          "seq": 46,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ASP",
+          "seq": 47,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 48,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "SER",
+          "seq": 49,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "HIS",
+          "seq": 50,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLY",
+          "seq": 51,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "SER",
+          "seq": 52,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 53,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLN",
+          "seq": 54,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "VAL",
+          "seq": 55,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LYS",
+          "seq": 56,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLY",
+          "seq": 57,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "HIS",
+          "seq": 58,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLY",
+          "seq": 59,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LYS",
+          "seq": 60,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LYS",
+          "seq": 61,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "VAL",
+          "seq": 62,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 63,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ASP",
+          "seq": 64,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 65,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 66,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "THR",
+          "seq": 67,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ASN",
+          "seq": 68,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 69,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "VAL",
+          "seq": 70,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 71,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "HIS",
+          "seq": 72,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "VAL",
+          "seq": 73,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ASP",
+          "seq": 74,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ASP",
+          "seq": 75,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "MET",
+          "seq": 76,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "PRO",
+          "seq": 77,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ASN",
+          "seq": 78,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 79,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 80,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "SER",
+          "seq": 81,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 82,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 83,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "SER",
+          "seq": 84,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ASP",
+          "seq": 85,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 86,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "HIS",
+          "seq": 87,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 88,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "HIS",
+          "seq": 89,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LYS",
+          "seq": 90,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 91,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ARG",
+          "seq": 92,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "VAL",
+          "seq": 93,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ASP",
+          "seq": 94,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "PRO",
+          "seq": 95,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "VAL",
+          "seq": 96,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ASN",
+          "seq": 97,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "PHE",
+          "seq": 98,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LYS",
+          "seq": 99,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 100,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 101,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "SER",
+          "seq": 102,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "HIS",
+          "seq": 103,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "CYS",
+          "seq": 104,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 105,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 106,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "VAL",
+          "seq": 107,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "THR",
+          "seq": 108,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 109,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 110,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 111,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "HIS",
+          "seq": 112,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 113,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "PRO",
+          "seq": 114,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 115,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLU",
+          "seq": 116,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "PHE",
+          "seq": 117,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "THR",
+          "seq": 118,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "PRO",
+          "seq": 119,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 120,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "VAL",
+          "seq": 121,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "HIS",
+          "seq": 122,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 123,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "SER",
+          "seq": 124,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 125,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ASP",
+          "seq": 126,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LYS",
+          "seq": 127,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "PHE",
+          "seq": 128,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 129,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 130,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "SER",
+          "seq": 131,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "VAL",
+          "seq": 132,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "SER",
+          "seq": 133,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "THR",
+          "seq": 134,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "VAL",
+          "seq": 135,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 136,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "THR",
+          "seq": 137,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "SER",
+          "seq": 138,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LYS",
+          "seq": 139,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "TYR",
+          "seq": 140,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ARG",
+          "seq": 141,
+          "icode": "",
+          "classe": "proteina"
+        }
+      ]
+    },
+    {
+      "id": "D",
+      "auth": "D",
+      "label": null,
+      "sequencia": "VHLTPEEKSAVTALWGKVNVDEVGGEALGRLLVVYPWTQRFFESFGDLSTPDAVMGNPKVKAHGKKVLGAFSDGLAHLDNLKGTFATLSELHCDKLHVDPENFRLLGNVLVCVLAHHFGKEFTPPVQAAYQKVVAGVANALAHKYH",
+      "residuos": [
+        {
+          "resname": "VAL",
+          "seq": 1,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "HIS",
+          "seq": 2,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 3,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "THR",
+          "seq": 4,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "PRO",
+          "seq": 5,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLU",
+          "seq": 6,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLU",
+          "seq": 7,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LYS",
+          "seq": 8,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "SER",
+          "seq": 9,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 10,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "VAL",
+          "seq": 11,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "THR",
+          "seq": 12,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 13,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 14,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "TRP",
+          "seq": 15,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLY",
+          "seq": 16,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LYS",
+          "seq": 17,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "VAL",
+          "seq": 18,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ASN",
+          "seq": 19,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "VAL",
+          "seq": 20,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ASP",
+          "seq": 21,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLU",
+          "seq": 22,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "VAL",
+          "seq": 23,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLY",
+          "seq": 24,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLY",
+          "seq": 25,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLU",
+          "seq": 26,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 27,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 28,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLY",
+          "seq": 29,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ARG",
+          "seq": 30,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 31,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 32,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "VAL",
+          "seq": 33,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "VAL",
+          "seq": 34,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "TYR",
+          "seq": 35,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "PRO",
+          "seq": 36,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "TRP",
+          "seq": 37,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "THR",
+          "seq": 38,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLN",
+          "seq": 39,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ARG",
+          "seq": 40,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "PHE",
+          "seq": 41,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "PHE",
+          "seq": 42,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLU",
+          "seq": 43,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "SER",
+          "seq": 44,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "PHE",
+          "seq": 45,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLY",
+          "seq": 46,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ASP",
+          "seq": 47,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 48,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "SER",
+          "seq": 49,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "THR",
+          "seq": 50,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "PRO",
+          "seq": 51,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ASP",
+          "seq": 52,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 53,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "VAL",
+          "seq": 54,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "MET",
+          "seq": 55,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLY",
+          "seq": 56,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ASN",
+          "seq": 57,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "PRO",
+          "seq": 58,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LYS",
+          "seq": 59,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "VAL",
+          "seq": 60,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LYS",
+          "seq": 61,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 62,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "HIS",
+          "seq": 63,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLY",
+          "seq": 64,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LYS",
+          "seq": 65,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LYS",
+          "seq": 66,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "VAL",
+          "seq": 67,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 68,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLY",
+          "seq": 69,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 70,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "PHE",
+          "seq": 71,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "SER",
+          "seq": 72,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ASP",
+          "seq": 73,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLY",
+          "seq": 74,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 75,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 76,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "HIS",
+          "seq": 77,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 78,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ASP",
+          "seq": 79,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ASN",
+          "seq": 80,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 81,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LYS",
+          "seq": 82,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLY",
+          "seq": 83,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "THR",
+          "seq": 84,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "PHE",
+          "seq": 85,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 86,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "THR",
+          "seq": 87,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 88,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "SER",
+          "seq": 89,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLU",
+          "seq": 90,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 91,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "HIS",
+          "seq": 92,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "CYS",
+          "seq": 93,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ASP",
+          "seq": 94,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LYS",
+          "seq": 95,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 96,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "HIS",
+          "seq": 97,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "VAL",
+          "seq": 98,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ASP",
+          "seq": 99,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "PRO",
+          "seq": 100,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLU",
+          "seq": 101,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ASN",
+          "seq": 102,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "PHE",
+          "seq": 103,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ARG",
+          "seq": 104,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 105,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 106,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLY",
+          "seq": 107,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ASN",
+          "seq": 108,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "VAL",
+          "seq": 109,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 110,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "VAL",
+          "seq": 111,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "CYS",
+          "seq": 112,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "VAL",
+          "seq": 113,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 114,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 115,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "HIS",
+          "seq": 116,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "HIS",
+          "seq": 117,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "PHE",
+          "seq": 118,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLY",
+          "seq": 119,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LYS",
+          "seq": 120,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLU",
+          "seq": 121,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "PHE",
+          "seq": 122,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "THR",
+          "seq": 123,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "PRO",
+          "seq": 124,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "PRO",
+          "seq": 125,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "VAL",
+          "seq": 126,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLN",
+          "seq": 127,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 128,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 129,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "TYR",
+          "seq": 130,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLN",
+          "seq": 131,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LYS",
+          "seq": 132,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "VAL",
+          "seq": 133,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "VAL",
+          "seq": 134,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 135,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "GLY",
+          "seq": 136,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "VAL",
+          "seq": 137,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 138,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ASN",
+          "seq": 139,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 140,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LEU",
+          "seq": 141,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "ALA",
+          "seq": 142,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "HIS",
+          "seq": 143,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "LYS",
+          "seq": 144,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "TYR",
+          "seq": 145,
+          "icode": "",
+          "classe": "proteina"
+        },
+        {
+          "resname": "HIS",
+          "seq": 146,
+          "icode": "",
+          "classe": "proteina"
+        }
+      ]
+    }
+  ],
+  "cobertura": {
+    "polimerosModelados": 574
+  },
+  "lacunas": {
+    "determinado": true,
+    "resumo": "Nenhum resíduo não resolvido segundo a fonte explícita. Isso não avalia trechos fora do constructo e não afirma completude em relação ao UniProt.",
+    "naoResolvidos": [],
+    "saltosNumeracao": [],
+    "foraDoConstructo": "A sequência completa no UniProt não foi consultada. O intervalo citado em DBREF ou _struct_ref_seq não foi expandido em resíduos fora do constructo."
+  },
+  "componentes": {
+    "proteinas": {
+      "posicoes": 574,
+      "padrao": 574,
+      "modificadas": 0
+    },
+    "hetero": [
+      {
+        "codigo": "HEM",
+        "instancias": 4,
+        "nome": null
+      },
+      {
+        "codigo": "PO4",
+        "instancias": 2,
+        "nome": null
+      }
+    ],
+    "ions": [],
+    "modificados": [],
+    "aguas": {
+      "instancias": 221,
+      "nota": "Contagem de registros HOH, WAT, H2O ou DOD no modelo selecionado. Ausência de registro não significa ausência de água na amostra."
+    },
+    "holo": {
+      "estado": "nao_determinado",
+      "motivo": "HETATM e o inventário de componentes não estabelecem estado holo ou apo."
+    },
+    "anotacoesCcd": [],
+    "ccdEstado": "nao_consultado"
+  },
+  "qualidade": {
+    "estado": "pendente",
+    "motivo": "A consulta ao relatório wwPDB ainda não concluiu nesta análise. Os indicadores não foram inventados nem zerados.",
+    "classe": null,
+    "consulta": null,
+    "fonte": null,
+    "metricas": [],
+    "omitidos": [],
+    "local": {
+      "estado": "pendente",
+      "motivo": "A consulta ao relatório wwPDB ainda não concluiu nesta análise. Os indicadores não foram inventados nem zerados."
+    }
+  },
+  "pockets": {
+    "fonte": null,
+    "aviso": "O drugScore é descritor geométrico do DoGSiteScorer. Não é afinidade, não identifica sítio funcional e não corresponde a um pocket alinhado entre estruturas.",
+    "itens": [],
+    "estado": "nao_solicitado",
+    "motivo": "A detecção não foi executada nesta análise. Não há drugScore para converter em zero."
+  },
+  "preparo": {
+    "estado": "nao_calculado",
+    "motivo": "A ficha de preparo não foi registrada neste guardado.",
+    "versao": null,
+    "predita": null,
+    "contagens": null,
+    "selecao": null,
+    "anotacoes": null,
+    "caixaVina": null
+  },
+  "uniprot": {
+    "correspondenciaResiduo": "nao_estabelecida",
+    "motivo": "DBREF e _struct_ref_seq são intervalos declarados no arquivo. Esta versão não os expande em pares resíduo a resíduo e não consulta a sequência completa no UniProt.",
+    "declaracoes": [
+      {
+        "cadeia": "A",
+        "accession": "P69905",
+        "db": "UNP",
+        "pdbInicio": 1,
+        "pdbFim": 141
+      },
+      {
+        "cadeia": "B",
+        "accession": "P68871",
+        "db": "UNP",
+        "pdbInicio": 1,
+        "pdbFim": 146
+      },
+      {
+        "cadeia": "C",
+        "accession": "P69905",
+        "db": "UNP",
+        "pdbInicio": 1,
+        "pdbFim": 141
+      },
+      {
+        "cadeia": "D",
+        "accession": "P68871",
+        "db": "UNP",
+        "pdbInicio": 1,
+        "pdbFim": 146
+      }
+    ]
+  },
+  "anotacoes": {
+    "motivoSequencia": null
+  },
+  "limitacoes": [
+    "O PDB original não foi embutido. A comparação usa este snapshot, não uma nova leitura do depósito.",
+    "Não há mapa resíduo a resíduo com UniProt nem sobreposição estrutural.",
+    "Componente observado no snapshot não prova estado holo, apo nem função biológica.",
+    "O drugScore é descritor geométrico do DoGSiteScorer. Não é afinidade, não identifica sítio funcional e não corresponde a um pocket alinhado entre estruturas.",
+    "O relatório wwPDB global não garante a qualidade do sítio.",
+    "Resíduos sem coordenadas não são desenhados nem destacados no viewer.",
+    "A leitura peki-estrutura-1 não calcula R, Rfree, clashscore nem qualidade local. Com ID do PDB, a aba Qualidade consulta o relatório wwPDB à parte.",
+    "Reconstrução de coordenadas e SWISS-MODEL não entram nesta versão.",
+    "Mapa resíduo a resíduo PDB–UniProt fica pendente.",
+    "Regiões fora do constructo não foram separadas das ausências no experimento.",
+    "REMARK 470 e átomos faltando dentro de um resíduo resolvido não entram nesta versão.",
+    "O drugScore do DoGSite continua descritor geométrico, não afinidade."
+  ]
+}

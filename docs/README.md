@@ -23,6 +23,9 @@ Cole um **código PDB** (ex.: `1A00`), o **nome da proteína** (ex.: `hemoglobin
   aminoácidos (gráfico agrupado) e pockets cross-protein, respondendo às 5 perguntas
   do trabalho entre as proteínas (maior volume, mais profundo, relação volume×profundidade,
   mais hidrofóbicas, escolha para docking)
+- **Análise guardada** — baixe um JSON `peki-analise-1` (por exemplo `4HHB-analise.json`)
+  e reabra de 2 a 5 arquivos na comparação por pergunta. O ranking usa os pesos
+  informados e não é uma nota biológica. Contrato e limites: [`analise.md`](analise.md).
 
 ## Arquivos
 
@@ -36,7 +39,10 @@ docs/
 ├── pdb-analysis.js    # cadeias, estatísticas, motivos
 ├── prep-analysis.js   # ficha de preparo (funções puras)
 ├── prep-ui.js         # aba Preparo
+├── analysis-snapshot.js # análise guardada e ranking (peki-analise-1)
+├── analysis-ui.js     # comparação dos JSON no navegador
 ├── app.js             # interface, viewer 3D e exportação
+├── analise.md         # contrato da análise guardada
 └── preparo.md         # o que a ficha faz, o que não faz e como desligá-la
 ```
 

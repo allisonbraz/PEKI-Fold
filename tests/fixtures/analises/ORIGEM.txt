@@ -1,0 +1,1 @@
+4HHB-analise.json é um snapshot peki-analise-1 gerado localmente a partir do PDB público 4HHB (RCSB, hemoglobina desoxi). O arquivo de coordenadas não está embutido. Não é dado sintético e não contém alvo de pesquisa privada. Os testes comparam esse snapshot com a leitura local de pdbproteins/pdb1a00.pdb e de tests/fixtures/estrutura/1CRN.cif.

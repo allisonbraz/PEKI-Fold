@@ -130,6 +130,8 @@ const EnsembleUI = (() => {
     if (entrada) entrada.hidden = true;
     if (workspace) workspace.hidden = true;
     if (comparacao) comparacao.hidden = true;
+    const analises = $("analises");
+    if (analises) analises.hidden = true;
     if (main) main.hidden = false;
     erroHome("");
     window.scrollTo({ top: 0, behavior: "smooth" });

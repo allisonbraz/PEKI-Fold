@@ -981,7 +981,63 @@ const PrepUI = (() => {
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
   else init();
 
-  return { ativo, temFicha, reiniciar, aoCarregar, aposEstilo, aoMostrar, markdown, anexarPdf };
+  function resumoAnalise() {
+    if (!ATIVO) return { estado: "desligado", motivo: "A ficha de preparo está desligada." };
+    if (!resultado) return { estado: "nao_calculado", motivo: "A ficha de preparo não foi calculada para esta leitura." };
+    try { lerDecisoes(); } catch (e) { /* a ficha pode não estar no DOM durante o teste */ }
+    const inv = resultado.inventario || {};
+    const nota = (id) => {
+      const t = String(decisoes[id] || "").replace(/\s+/g, " ").trim();
+      return t ? t.slice(0, 500) : null;
+    };
+    const codigos = new Set();
+    if (selecao && selecao.hets) {
+      for (const chave of selecao.hets) {
+        const codigo = String(chave).split("|")[0];
+        if (codigo) codigos.add(codigo);
+      }
+    }
+    const caixa = vina.editada && Number.isFinite(Number(vina.editada.center_x)) ? {
+      editada: true,
+      center_x: Number(vina.editada.center_x),
+      center_y: Number(vina.editada.center_y),
+      center_z: Number(vina.editada.center_z),
+      size_x: Number(vina.editada.size_x),
+      size_y: Number(vina.editada.size_y),
+      size_z: Number(vina.editada.size_z),
+      aviso: "Sugestão editável no formato da ficha. Não é resultado de docking.",
+    } : null;
+    return {
+      estado: "ok",
+      versao: typeof PrepAnalysis !== "undefined" ? PrepAnalysis.VERSAO : null,
+      predita: resultado.predita || null,
+      contagens: {
+        dissulfetos: resultado.dissulfetos && resultado.dissulfetos.pares ? resultado.dissulfetos.pares.length : null,
+        glicosilacao: resultado.glicosilacao && resultado.glicosilacao.pares ? resultado.glicosilacao.pares.length : null,
+        ions: resultado.ions && resultado.ions.metais ? resultado.ions.metais.length : null,
+        histidinas: resultado.histidinas && resultado.histidinas.itens ? resultado.histidinas.itens.length : null,
+        aguas: inv.aguas == null ? null : inv.aguas,
+      },
+      selecao: selecao ? {
+        cadeias: [...selecao.cadeias],
+        removerAguas: !!selecao.removerAguas,
+        altloc: selecao.altloc || null,
+        codigosHetMantidos: [...codigos].sort(),
+      } : null,
+      anotacoes: {
+        inventario: nota("inventario"),
+        limpeza: nota("limpeza"),
+        ions: nota("ions"),
+        dissulfetos: nota("dissulfetos"),
+        glicosilacao: nota("glicosilacao"),
+        histidinas: nota("histidinas"),
+        vina: nota("vina"),
+      },
+      caixaVina: caixa,
+    };
+  }
+
+  return { ativo, temFicha, reiniciar, aoCarregar, aposEstilo, aoMostrar, markdown, anexarPdf, resumoAnalise };
 })();
 
 if (typeof globalThis !== "undefined") globalThis.PrepUI = PrepUI;
