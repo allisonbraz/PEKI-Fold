@@ -24,7 +24,8 @@ const estado = {
   cmpPockets: null,   // [{id, pockets:[...]}] resultado dos pockets na comparacao
   cmpViewers: [],     // viewers 3D (um por proteina) no modo comparacao
   ultimoMotivo: null, // {motivo, ocorrencias} da ultima busca (para exportacao)
-  superficie: null,   // estado da superficie 3D: null | {sel, color, opacity}
+  superficie: null,   // estado da superficie 3D: null | {sels, color, opacity, origem}
+  vistaPocket: null,  // pocket no 3D: null | {idx, nome, visivel, sels, superficieAnterior}
   pocketSort: null,   // {col, dir} de ordenacao da tabela de pockets
   textoViewer: null,
   viewerFormato: "pdb",
@@ -219,6 +220,7 @@ async function iniciarWorkspace(dados) {
   estado.pocketsRaw = null;
   estado.ultimoMotivo = null;
   estado.superficie = null;
+  invalidarVistaPocket();
   estado.pocketSort = null;
   estado.meta = dados.pdb_text ? ProtAnalysis.extrairMetadados(dados.pdb_text) : metaVazio();
   if (dados.nModelos > 1) estado.meta.modelos = dados.nModelos;
@@ -414,6 +416,15 @@ function aplicarEstilo() {
   if (typeof PrepUI !== "undefined") PrepUI.aposEstilo(estado);
 }
 
+// Estilo, ligantes e preparo continuam valendo com um pocket aberto.
+function aplicarEstiloMantendoPocket() {
+  const vista = estado.vistaPocket && estado.vistaPocket.visivel ? estado.vistaPocket : null;
+  if (vista) vista.motivoPorCima = null;
+  aplicarEstilo();
+  if (!vista || estado.vistaPocket !== vista || !vista.sels) return;
+  pintarResiduosPocket(vista.sels);
+}
+
 function syncTamViewer() {
   const px = parseInt($("#viewer-tam").value, 10) || 460;
   const viewer = $("#viewer");
@@ -454,7 +465,14 @@ function aplicarSuperficie() {
 function destacarMotivo(ocorrencias) {
   const v = estado.viewer;
   if (!v) return;
+  if (estado.vistaPocket && estado.vistaPocket.visivel) estado.vistaPocket.motivoPorCima = ocorrencias;
   aplicarEstilo();
+  pintarMotivo(ocorrencias);
+}
+
+function pintarMotivo(ocorrencias) {
+  const v = estado.viewer;
+  if (!v || !ocorrencias) return;
   for (const oc of ocorrencias) {
     const sel = { chain: oc.cadeia === "_" ? "" : oc.cadeia, resi: oc.residuos.map(Number) };
     v.setStyle(sel, { stick: { color: "yellow" }, sphere: { color: "yellow", radius: 0.5 } });
@@ -775,8 +793,9 @@ function buscarMotivo() {
   const motivoTxt = esc(motivo.join("-"));
   if (!ocorrencias.length) {
     estado.ultimoMotivo = null;
+    if (estado.vistaPocket) estado.vistaPocket.motivoPorCima = null;
     cont.innerHTML = `<p class="muted">Nenhuma ocorrência de <code>${motivoTxt}</code>.</p>`;
-    aplicarEstilo();
+    aplicarEstiloMantendoPocket();
     return;
   }
 
@@ -1018,13 +1037,16 @@ function renderTabelaPockets(pockets) {
   let html = `<div class="tab-acoes"><button id="btn-pockets-csv" class="dl-btn">⬇ CSV</button></div>`;
   html += `<table class="pockets-tabela"><thead><tr>${th}<th>3D</th></tr></thead><tbody>`;
   for (const { p, i } of pocketsOrdenados(pockets)) {
-    const cls = maiorVol && p.name === maiorVol.name ? "destaque-maior" : "";
-    html += `<tr class="${cls}">
+    const classes = [
+      maiorVol && p.name === maiorVol.name ? "destaque-maior" : "",
+      vistaPocketCobre(i) ? "pocket-visto" : "",
+    ].filter(Boolean).join(" ");
+    html += `<tr class="${classes}">
       <td><strong>${p.name}</strong></td>
       <td>${fmt(p.volume)}</td><td>${fmt(p.surface)}</td><td>${fmt(p.depth)}</td>
       <td>${fmt(p.hydrophobicity)}</td><td>${p.accept ?? "—"}</td><td>${p.donor ?? "—"}</td>
       <td>${fmt(p.drugScore, 3)}</td>
-      <td>${p.residuosUrl ? `<button class="link-btn pocket-3d" data-idx="${i}">👁 ver</button>` : "—"}</td>
+      <td>${htmlBotaoPocket3d(p, i)}</td>
     </tr>`;
   }
   html += `</tbody></table>`;
@@ -1107,35 +1129,181 @@ async function plotPockets(pockets) {
   }], layoutBase("Profundidade por pocket — " + estado.pdbId, "Profundidade"), { responsive: true, displayModeBar: false });
 }
 
-// Destaca, no viewer 3D, os residuos que revestem um pocket.
+// Um pocket por vez. O botão 3D alterna mostrar/ocultar; outro pocket substitui o atual.
+let geracaoVistaPocket = 0;
+
+function invalidarVistaPocket() {
+  geracaoVistaPocket += 1;
+  estado.vistaPocket = null;
+  sincronizarBotoesPocket();
+}
+
+function vistaPocketCobre(idx) {
+  return !!(estado.vistaPocket && estado.vistaPocket.idx === idx);
+}
+
+function htmlBotaoPocket3d(p, i) {
+  if (!p.residuosUrl) return "—";
+  const ativo = vistaPocketCobre(i);
+  const texto = ativo ? "👁 ocultar" : "👁 ver";
+  const label = esc(ativo ? `Ocultar ${p.name} no 3D` : `Mostrar ${p.name} no 3D`);
+  return `<button type="button" class="link-btn pocket-3d${ativo ? " ativo" : ""}" data-idx="${i}" aria-pressed="${ativo ? "true" : "false"}" aria-label="${label}">${texto}</button>`;
+}
+
+function sincronizarBotoesPocket() {
+  if (!$("#pockets-resultado")) return;
+  $$("#pockets-resultado .pocket-3d").forEach((btn) => {
+    const i = Number(btn.dataset.idx);
+    const p = estado.pockets && estado.pockets[i];
+    const ativo = vistaPocketCobre(i);
+    const nome = p && p.name ? p.name : "pocket";
+    btn.textContent = ativo ? "👁 ocultar" : "👁 ver";
+    btn.setAttribute("aria-pressed", ativo ? "true" : "false");
+    btn.setAttribute("aria-label", ativo ? `Ocultar ${nome} no 3D` : `Mostrar ${nome} no 3D`);
+    btn.classList.toggle("ativo", ativo);
+    const tr = btn.closest("tr");
+    if (tr) tr.classList.toggle("pocket-visto", ativo);
+  });
+}
+
+function clonarSuperficie(s) {
+  if (!s) return null;
+  return {
+    sels: (s.sels || []).map((sel) => {
+      const copia = { ...sel };
+      if (Array.isArray(sel.resi)) copia.resi = sel.resi.slice();
+      return copia;
+    }),
+    color: s.color,
+    opacity: s.opacity,
+    origem: s.origem || null,
+  };
+}
+
+function superficieAntesDaVista(anterior) {
+  if (anterior && !anterior.superficieUsuario) return clonarSuperficie(anterior.superficieAnterior);
+  if (estado.superficie && estado.superficie.origem === "pocket") {
+    return anterior ? clonarSuperficie(anterior.superficieAnterior) : null;
+  }
+  return clonarSuperficie(estado.superficie);
+}
+
+function pintarResiduosPocket(sels) {
+  const v = estado.viewer;
+  if (!v || !sels) return;
+  for (const sel of sels) {
+    v.setStyle(sel, { stick: { color: "magenta" }, sphere: { color: "magenta", radius: 0.4 } });
+  }
+  v.render();
+}
+
+function selecoesDosResiduos(txt) {
+  const selPorCadeia = {};
+  for (const linha of String(txt).split("\n")) {
+    if (!linha.startsWith("ATOM") && !linha.startsWith("HETATM")) continue;
+    const cadeia = linha[21].trim() || "";
+    const resi = parseInt(linha.slice(22, 26), 10);
+    if (Number.isNaN(resi)) continue;
+    (selPorCadeia[cadeia] = selPorCadeia[cadeia] || new Set()).add(resi);
+  }
+  return Object.entries(selPorCadeia).map(([cadeia, resis]) => ({ chain: cadeia, resi: [...resis] }));
+}
+
+function vistaAindaVale(geracao, idx) {
+  return geracao === geracaoVistaPocket && !!(estado.vistaPocket && estado.vistaPocket.idx === idx);
+}
+
+function restaurarSuperficieDaVista(vista) {
+  if (!vista || vista.superficieUsuario) return;
+  if (!estado.superficie || estado.superficie.origem !== "pocket") return;
+  estado.superficie = clonarSuperficie(vista.superficieAnterior);
+  const toggle = $("#surf-toggle");
+  if (toggle) toggle.checked = !!estado.superficie;
+  aplicarSuperficie();
+}
+
+function ocultarVistaPocket() {
+  const vista = estado.vistaPocket;
+  geracaoVistaPocket += 1;
+  estado.vistaPocket = null;
+  const status = $("#pockets-status");
+  if (!vista) {
+    sincronizarBotoesPocket();
+    return;
+  }
+  if (!vista.visivel) {
+    if (vista.anteriorVista && vista.anteriorVista.visivel) estado.vistaPocket = vista.anteriorVista;
+    if (status) {
+      status.textContent = estado.vistaPocket
+        ? `✓ ${estado.vistaPocket.nome}: resíduos destacados e superfície exibida no 3D.`
+        : "";
+    }
+    sincronizarBotoesPocket();
+    return;
+  }
+  if (estado.viewer) {
+    const motivo = vista.motivoPorCima;
+    aplicarEstilo();
+    if (motivo && motivo.length) pintarMotivo(motivo);
+    restaurarSuperficieDaVista(vista);
+  }
+  if (status) status.textContent = `✓ ${vista.nome} oculto no 3D.`;
+  sincronizarBotoesPocket();
+}
+
+function aoAlternarSuperficie(ligada) {
+  estado.superficie = ligada ? { sels: [{}], color: "#9ec5ff", opacity: 0.65, origem: "proteina" } : null;
+  if (estado.vistaPocket) estado.vistaPocket.superficieUsuario = true;
+  const toggle = $("#surf-toggle");
+  if (toggle) toggle.checked = !!ligada;
+  aplicarSuperficie();
+}
+
+// Mostra o pocket no 3D, ou oculta se o mesmo botão for clicado de novo.
 async function destacarPocket(idx) {
-  const p = estado.pockets[idx];
+  const p = estado.pockets && estado.pockets[idx];
   const status = $("#pockets-status");
   if (!p || !p.residuosUrl || !estado.viewer) return;
-  status.innerHTML = `<span class="spinner"></span> Carregando resíduos do ${p.name}…`;
+  if (vistaPocketCobre(idx)) {
+    ocultarVistaPocket();
+    return;
+  }
+
+  const geracao = ++geracaoVistaPocket;
+  const anterior = estado.vistaPocket;
+  estado.vistaPocket = {
+    idx,
+    nome: p.name,
+    visivel: false,
+    sels: null,
+    superficieAnterior: superficieAntesDaVista(anterior),
+    superficieUsuario: false,
+    motivoPorCima: null,
+    anteriorVista: anterior && anterior.visivel ? anterior : null,
+  };
+  sincronizarBotoesPocket();
+  if (status) status.innerHTML = `<span class="spinner"></span> Carregando resíduos do ${esc(p.name)}…`;
   try {
     const txt = await (await fetch(p.residuosUrl)).text();
-    const selPorCadeia = {};
-    for (const linha of txt.split("\n")) {
-      if (!linha.startsWith("ATOM") && !linha.startsWith("HETATM")) continue;
-      const cadeia = linha[21].trim() || "";
-      const resi = parseInt(linha.slice(22, 26), 10);
-      if (Number.isNaN(resi)) continue;
-      (selPorCadeia[cadeia] = selPorCadeia[cadeia] || new Set()).add(resi);
-    }
+    if (!vistaAindaVale(geracao, idx)) return;
+    const sels = selecoesDosResiduos(txt);
+    if (!vistaAindaVale(geracao, idx)) return;
     aplicarEstilo();
-    const sels = Object.entries(selPorCadeia).map(([cadeia, resis]) => ({ chain: cadeia, resi: [...resis] }));
-    for (const sel of sels) {
-      estado.viewer.setStyle(sel, { stick: { color: "magenta" }, sphere: { color: "magenta", radius: 0.4 } });
-    }
-    estado.viewer.render();
-    // superfície da cavidade (sobre os resíduos do pocket)
-    estado.superficie = { sels, color: "#ff5cd0", opacity: 0.8 };
-    $("#surf-toggle").checked = true;
+    estado.vistaPocket.sels = sels;
+    estado.vistaPocket.visivel = true;
+    pintarResiduosPocket(sels);
+    estado.superficie = { sels, color: "#ff5cd0", opacity: 0.8, origem: "pocket", idx };
+    const toggle = $("#surf-toggle");
+    if (toggle) toggle.checked = true;
     aplicarSuperficie();
-    status.textContent = `✓ ${p.name}: resíduos destacados e superfície exibida no 3D.`;
+    if (status) status.textContent = `✓ ${p.name}: resíduos destacados e superfície exibida no 3D.`;
+    sincronizarBotoesPocket();
   } catch (e) {
-    status.innerHTML = `❌ Falha ao destacar o pocket: ${e.message}`;
+    if (geracao !== geracaoVistaPocket) return;
+    const falha = estado.vistaPocket;
+    estado.vistaPocket = falha && falha.anteriorVista ? falha.anteriorVista : null;
+    sincronizarBotoesPocket();
+    if (status) status.innerHTML = `❌ Falha ao destacar o pocket: ${e.message}`;
   }
 }
 
@@ -1888,13 +2056,10 @@ function init() {
       abas[n].click();
     });
   }
-  $("#estilo-3d").addEventListener("change", aplicarEstilo);
+  $("#estilo-3d").addEventListener("change", aplicarEstiloMantendoPocket);
   $("#spin").addEventListener("change", (e) => { if (estado.viewer) estado.viewer.spin(e.target.checked ? "y" : false); });
-  $("#lig-toggle").addEventListener("change", aplicarEstilo);
-  $("#surf-toggle").addEventListener("change", (e) => {
-    estado.superficie = e.target.checked ? { sels: [{}], color: "#9ec5ff", opacity: 0.65 } : null;
-    aplicarSuperficie();
-  });
+  $("#lig-toggle").addEventListener("change", aplicarEstiloMantendoPocket);
+  $("#surf-toggle").addEventListener("change", (e) => aoAlternarSuperficie(e.target.checked));
   $("#viewer-tam").addEventListener("change", ajustarTamViewer);
   $("#cmp-tam").addEventListener("change", ajustarTamCmp);
   let timerTam = 0;
@@ -1943,3 +2108,18 @@ function init() {
 }
 
 document.addEventListener("DOMContentLoaded", init);
+
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = {
+    estado,
+    renderTabelaPockets,
+    destacarPocket,
+    aplicarEstilo,
+    aplicarEstiloMantendoPocket,
+    aoAlternarSuperficie,
+    renderCmpPockets,
+    invalidarVistaPocket,
+    sincronizarBotoesPocket,
+    destacarMotivo,
+  };
+}
