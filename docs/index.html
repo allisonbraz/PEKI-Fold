@@ -59,7 +59,13 @@
         <input id="cmp-ids" type="text" placeholder="IDs separados por espaço (ex.: 1A00 4HHB 1CRN)" />
         <button id="btn-cmp" class="primary-btn">Comparar</button>
       </div>
-      <p class="muted small">De 2 a 4 PDBs. Compara estatísticas, aminoácidos e pockets.</p>
+      <p class="muted small">De 2 a 4 PDBs, lidos na hora. Compara estatísticas, aminoácidos e pockets.</p>
+
+      <div class="ou">— ou compare análises guardadas —</div>
+      <p class="muted small">De 2 a 5 arquivos JSON baixados por Guardar análise. Eles ficam no seu computador; a comparação roda neste navegador e não envia os arquivos a um servidor.</p>
+      <div class="entrada-row">
+        <button id="btn-abrir-analises" class="primary-btn" type="button">Abrir comparação de análises</button>
+      </div>
 
       <div id="ens-entrada" class="ens-entrada">
         <div class="ou">— ou analise um ensemble —</div>
@@ -83,7 +89,8 @@
           <li><strong>Nome da proteína</strong> (ex.: <code>hemoglobin</code>): não é cortado para 4 letras e não é usado como código. O RCSB busca em inglês e lista depósitos experimentais, com título, método, resolução e componentes quando a API os devolve. A estrutura só abre depois que você escolhe um código da lista.</li>
           <li><strong>Upload</strong> de <code>.pdb</code> ou <code>.cif</code>: leitura local. A ficha de preparo e o download de cadeia em PDB continuam só no PDB.</li>
           <li><strong>Comparar</strong>: 2 a 4 IDs para ver estatísticas, aminoácidos e pockets lado a lado.</li>
-          <li>No workspace: <strong>abas</strong> (visão geral, qualidade, cadeias, estatísticas, aminoácidos, motivos, pockets, preparo), <strong>viewer 3D</strong> e botão <strong>Exportar</strong> (PDF/Markdown/CSV).</li>
+          <li>No workspace: <strong>abas</strong> (visão geral, qualidade, cadeias, estatísticas, aminoácidos, motivos, pockets, preparo), <strong>viewer 3D</strong>, <strong>Guardar análise</strong> (JSON no seu computador) e <strong>Exportar</strong> (PDF/Markdown/CSV).</li>
+          <li><strong>Comparar análises guardadas</strong>: reabra de 2 a 5 JSON. O ranking segue os critérios e pesos que você informa. É apoio, não uma nota biológica. Sem UniProt resíduo a resíduo e sem alinhamento estrutural.</li>
           <li><strong>Cadeias</strong>: ver ou ocultar muda só o desenho 3D. Contagens, FASTA, PDB e exportação continuam com a cadeia. O arquivo não é regravado.</li>
           <li><strong>Aminoácidos</strong>: “Todas as cadeias” soma os resíduos modelados dos 20 aminoácidos padrão. Uma cadeia deixa as outras de fora. Resíduo ausente não entra.</li>
           <li><strong>Motivos</strong>: sequência curta e contígua, montada pelos resíduos do modelo. Não é motivo estrutural, sítio funcional nem pocket.</li>
@@ -105,11 +112,13 @@
         <p class="muted small" id="ws-resumo">—</p>
       </div>
       <div class="ws-acoes">
+        <button id="btn-guardar-analise" class="ghost-btn" type="button">Guardar análise</button>
         <button id="btn-export" class="ghost-btn">⬇ Exportar</button>
         <button id="btn-novo" class="ghost-btn">↻ Nova análise</button>
       </div>
     </div>
 
+    <p id="guardar-status" class="muted small guardar-status" aria-live="polite"></p>
     <section id="ws-meta" class="ws-meta card" hidden></section>
 
     <div class="ws-grid">
@@ -258,6 +267,84 @@
     </div>
   </main>
 
+  <main id="analises" class="workspace" hidden>
+    <div class="ws-header">
+      <div>
+        <h2>Comparar análises guardadas</h2>
+        <p class="muted small" id="an-contagem">0 de 5 análises neste navegador.</p>
+      </div>
+      <div class="ws-acoes">
+        <button id="btn-an-voltar" class="ghost-btn" type="button">↻ Início</button>
+      </div>
+    </div>
+
+    <section class="card an-bloco">
+      <p class="an-nota">Os arquivos ficam no seu computador. Ao reabrir, o PEKI Fold lê o JSON neste navegador. Nada é enviado a um servidor e não há sincronização entre aparelhos.</p>
+      <p class="rotulo-fixo">O ranking é apoio calculado com os critérios e os pesos que você definir. Não é verdade biológica, não é nota universal de qualidade e não substitui a sua decisão.</p>
+      <p class="muted small">Não há mapa resíduo a resíduo com o UniProt nem sobreposição de estruturas. Um heterocomponente observado não prova estado holo. O drugScore não identifica sítio funcional nem pocket equivalente entre análises.</p>
+      <div class="an-importar">
+        <label class="primary-btn an-file" for="an-arquivo">Importar JSON
+          <input id="an-arquivo" type="file" accept="application/json,.json" multiple hidden>
+        </label>
+        <button id="an-limpar" class="ghost-btn" type="button">Limpar comparação</button>
+      </div>
+      <p id="an-erro" class="erro" role="alert" hidden></p>
+      <div id="an-lista"></div>
+      <div id="an-ficha"></div>
+    </section>
+
+    <section class="card an-bloco">
+      <h3>Pergunta</h3>
+      <p class="muted small">Peso zero exclui o critério. Dado pendente aparece como indisponível e não vira zero nem nota boa. Os pesos dos critérios que de fato têm dado são renormalizados.</p>
+      <div class="an-grade">
+        <label>Região de interesse, opcional
+          <input id="an-regiao" type="text" maxlength="120" placeholder="ex.: A:10-40 ou A:1-20,B:1-10" autocomplete="off" spellcheck="false">
+        </label>
+        <label class="an-check"><input id="an-regiao-essencial" type="checkbox"> A região é essencial para a pergunta</label>
+        <label>Componente, parceiro ou ligante, opcional
+          <input id="an-componente" type="text" maxlength="40" placeholder="código como no snapshot, ex.: HEM" autocomplete="off" spellcheck="false">
+        </label>
+        <label class="an-check"><input id="an-componente-elim" type="checkbox"> Eliminatório se esse componente não estiver no inventário</label>
+        <label>Peso da cobertura do modelo
+          <input id="an-peso-cobertura" type="number" min="0" max="100" step="0.5" value="1">
+        </label>
+        <label>Peso da qualidade e da confiabilidade
+          <input id="an-peso-qualidade" type="number" min="0" max="100" step="0.5" value="1">
+        </label>
+        <label>Peso da presença do componente
+          <input id="an-peso-componente" type="number" min="0" max="100" step="0.5" value="1">
+        </label>
+        <label>Peso do pocket e do drugScore
+          <input id="an-peso-pocket" type="number" min="0" max="100" step="0.5" value="1">
+        </label>
+        <label class="an-check"><input id="an-pocket-elim" type="checkbox"> Eliminatório se não houver drugScore utilizável</label>
+      </div>
+      <div class="an-acoes">
+        <button id="an-atualizar" class="primary-btn" type="button">Atualizar ranking</button>
+      </div>
+      <div id="an-resultado"></div>
+    </section>
+
+    <section class="card an-bloco">
+      <h3>Decisão final</h3>
+      <p class="muted small">Você pode ficar com outro candidato que não o primeiro colocado. Nesse caso, a justificativa entra no relatório. A escolha não reescreve o ranking.</p>
+      <div class="an-grade">
+        <label>Análise escolhida
+          <select id="an-escolha"></select>
+        </label>
+        <label>Justificativa
+          <textarea id="an-justificativa" rows="3" maxlength="2000" placeholder="Por que esta análise responde à pergunta."></textarea>
+        </label>
+      </div>
+      <div class="an-acoes">
+        <button id="an-registrar" class="ghost-btn" type="button">Registrar escolha</button>
+        <button id="an-md" class="ghost-btn" type="button">Baixar relatório Markdown</button>
+        <button id="an-json" class="ghost-btn" type="button">Baixar JSON da comparação</button>
+      </div>
+      <p id="an-escolha-status" class="muted small" aria-live="polite"></p>
+    </section>
+  </main>
+
   <main id="ensemble" class="workspace" hidden>
     <div class="ws-header">
       <div>
@@ -397,6 +484,8 @@
   <script src="prep-analysis.js"></script>
   <script src="ensemble-analysis.js"></script>
   <script src="prep-ui.js"></script>
+  <script src="analysis-snapshot.js"></script>
+  <script src="analysis-ui.js"></script>
   <script src="busca-nome.js"></script>
   <script src="app.js"></script>
   <script src="ensemble-ui.js"></script>

@@ -27,6 +27,7 @@ Exemplos diretos: [1A00](https://allisonbraz.github.io/PEKI-Fold/?pdb=1A00) · [
 | 05 | Busca de motivos estruturais | `programa05.py` | ✅ |
 | 06 | Detecção de pockets (DoGSite3) | `programa06.py` | ✅ (via API ProteinsPlus) |
 | — | Ficha de preparo geométrico | — | ✅ (no navegador; ver [`docs/preparo.md`](docs/preparo.md)) |
+| — | Análise guardada e ranking por pergunta | — | ✅ (JSON local; ver [`docs/analise.md`](docs/analise.md)) |
 
 ## Estrutura do repositório
 
@@ -57,7 +58,10 @@ afinidade. O que entra e o que fica de fora da ficha está em [`docs/preparo.md`
 
 Também é possível **comparar de 2 a 4 proteínas** lado a lado (estatísticas,
 aminoácidos e pockets cross-protein, com as 5 perguntas do trabalho respondidas
-entre as proteínas).
+entre as proteínas). **Guardar análise** baixa um JSON no computador. Com 2 a 5
+desses arquivos, a comparação por pergunta produz um ranking com os pesos
+escolhidos, diferenças ligadas a esses critérios e um relatório Markdown. O
+ranking não é uma nota biológica. O contrato está em [`docs/analise.md`](docs/analise.md).
 
 Testar localmente:
 ```bash
