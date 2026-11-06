@@ -1,0 +1,11 @@
+{
+  "chem_comp": {
+    "id": "ZN",
+    "name": "ZINC ION",
+    "type": "non-polymer",
+    "formula": "Zn",
+    "formula_weight": 65.409
+  },
+  "rcsb_chem_comp_related": [],
+  "rcsb_id": "ZN"
+}

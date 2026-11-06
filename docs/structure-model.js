@@ -1334,10 +1334,15 @@ const StructureModel = (() => {
         cadeias: cadeiasDe(proteinas.concat(modificadas)),
         criterio: criterioProteina,
       },
+      modificados: agrupaCodigo(modificadas).map((m) => ({
+        ...m,
+        leitura: "resíduo modificado na cadeia polimérica; não é ligante livre",
+      })),
       outrosPolimeros: outros.length ? [{
         tipo: "nucleotideo ou polímero não peptídico, pelo nome ou pela entidade",
         posicoes: outros.length,
         cadeias: cadeiasDe(outros),
+        codigos: agrupaCodigo(outros),
         criterio: "classificação pelo nome do componente ou por _entity_poly.type; não é uma atribuição biológica fechada",
       }] : [],
       terminais: { posicoes: terminais.length, codigos: agrupaCodigo(terminais), criterio: "lista parcial de grupos terminais (ACE, NH2, NME, FOR)" },
@@ -1349,7 +1354,7 @@ const StructureModel = (() => {
       ions: agrupaCodigo(ions).map((i) => ({ ...i, criterio: "lista parcial de códigos de íon; HETATM não prova estado holo" })),
       hetero: agrupaCodigo(hetero.concat(incertos)).map((h) => ({
         ...h,
-        leitura: "classificação biológica incerta; HETATM não estabelece ligante biológico nem estado holo",
+        leitura: "não classificado: HETATM não estabelece ligante, cofator, substrato, inibidor nem estado holo",
       })),
       holo: {
         estado: "nao_determinado",
@@ -1470,6 +1475,10 @@ const StructureModel = (() => {
     if (!est.uniprot.declaracoes.length) L.push("Nenhuma declaração DBREF ou _struct_ref neste arquivo. Mapa PDB–UniProt pendente.");
     const comp = est.componentes;
     L.push("Proteína: " + comp.proteinas.posicoes + " posição(ões) com coordenadas em " + (comp.proteinas.cadeias.join(", ") || "nenhuma cadeia") + ". " + comp.proteinas.criterio + ".");
+    if (comp.proteinas.modificadas) {
+      const mods = (comp.modificados || []).map((m) => m.codigo + " ×" + m.instancias).join(", ");
+      L.push("Resíduos modificados na cadeia: " + comp.proteinas.modificadas + (mods ? " (" + mods + ")" : "") + ". Não são ligantes livres.");
+    }
     if (comp.outrosPolimeros.length) {
       for (const o of comp.outrosPolimeros) L.push("Outro polímero: " + o.posicoes + " posição(ões). " + o.criterio + ".");
     }
@@ -1536,6 +1545,7 @@ const StructureModel = (() => {
         identidade,
         modelo: { selecionado: fatia.modelo, total: fatia.total, criterio: fatia.criterio },
         cadeias: cadeiasVisao(posicoes, analise),
+        residuos: residuosDe(posicoes, fatia.modelo),
         componentes,
         lacunas,
         uniprot: uniprotDe(decls),
@@ -1590,10 +1600,11 @@ const StructureModel = (() => {
       formato: "mmcif",
       identidade,
       modelo: lidos.modelo,
-      cadeias: cadeiasVisao(posicoes, analise),
-      componentes,
-      lacunas,
-      uniprot: uniprotDe(declaracoesCif(cif.block)),
+cadeias: cadeiasVisao(posicoes, analise),
+        residuos: residuosDe(posicoes, lidos.modelo.selecionado),
+        componentes,
+        lacunas,
+        uniprot: uniprotDe(declaracoesCif(cif.block)),
       diagnosticos,
       recursos: recursosDe("mmcif"),
       limitacoes: limitacoesDe("mmcif", posicoes),
@@ -1628,7 +1639,7 @@ const StructureModel = (() => {
   function limitacoesDe(formato, posicoes) {
     const lim = [
       "Resíduos sem coordenadas não são desenhados nem destacados no viewer.",
-      "Qualidade global (R, Rfree, clashscore, pLDDT agregado) não entra nesta versão.",
+      "A leitura peki-estrutura-1 não calcula R, Rfree, clashscore nem qualidade local. Com ID do PDB, a aba Qualidade consulta o relatório wwPDB à parte.",
       "Reconstrução de coordenadas e SWISS-MODEL não entram nesta versão.",
       "Mapa resíduo a resíduo PDB–UniProt fica pendente.",
       "Regiões fora do constructo não foram separadas das ausências no experimento.",
@@ -1643,6 +1654,27 @@ const StructureModel = (() => {
     return lim;
   }
 
+  function residuosDe(posicoes, modeloSelecionado) {
+    return posicoes.map((p) => {
+      const fontes = (p.atomos || []).map((a) => a.seqFonte).filter(Boolean);
+      const seqFonte = fontes.includes("auth") ? "auth" : (fontes.includes("label") ? "label" : "ausente");
+      return {
+        chain: p.chain,
+        authChain: p.authChain == null ? null : p.authChain,
+        labelChain: p.labelChain == null ? null : p.labelChain,
+        seq: p.seq,
+        seqFonte,
+        icode: p.icode || "",
+        labelSeq: p.labelSeq == null ? null : p.labelSeq,
+        resname: p.resname,
+        classe: p.classe,
+        altlocs: p.altlocs.slice(),
+        modelo: modeloSelecionado,
+        temCoordenadas: p.coords === true,
+      };
+    });
+  }
+
   function montarEstrutura(p) {
     return {
       schema: SCHEMA,
@@ -1650,6 +1682,7 @@ const StructureModel = (() => {
       identidade: p.identidade,
       modelo: p.modelo,
       cadeias: p.cadeias,
+      residuos: p.residuos || [],
       componentes: p.componentes,
       lacunas: p.lacunas,
       uniprot: p.uniprot,

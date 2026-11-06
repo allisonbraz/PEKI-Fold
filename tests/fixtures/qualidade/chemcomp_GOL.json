@@ -1,0 +1,22 @@
+{
+  "chem_comp": {
+    "id": "GOL",
+    "name": "GLYCEROL",
+    "type": "non-polymer",
+    "formula": "C3 H8 O3",
+    "formula_weight": 92.094
+  },
+  "rcsb_chem_comp_related": [
+    {
+      "comp_id": "GOL",
+      "resource_name": "ChEBI",
+      "resource_accession_code": "CHEBI:17754"
+    },
+    {
+      "comp_id": "GOL",
+      "resource_name": "ChEBI",
+      "resource_accession_code": "CHEBI:17522"
+    }
+  ],
+  "rcsb_id": "GOL"
+}

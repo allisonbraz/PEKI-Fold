@@ -1,0 +1,35 @@
+{
+  "rcsb_entry_info": {
+    "experimental_method": "EM",
+    "resolution_combined": [
+      12.6
+    ]
+  },
+  "rcsb_entry_container_identifiers": {
+    "entry_id": "3DWU"
+  },
+  "exptl": [
+    {
+      "method": "ELECTRON MICROSCOPY"
+    }
+  ],
+  "pdbx_vrpt_summary": {
+    "attempted_validation_steps": "visualanalysis,molprobity,validation-pack,validation_schema,percentiles,writexml,writecif,writepdf",
+    "ligands_for_buster_report": "N",
+    "report_creation_date": "2026-03-06T19:48:00.000+00:00"
+  },
+  "pdbx_vrpt_summary_geometry": [
+    {
+      "clashscore": 0.0
+    }
+  ],
+  "pdbx_vrpt_summary_em": [
+    {
+      "Q_score": -0.024,
+      "atom_inclusion_all_atoms": 0.457,
+      "atom_inclusion_backbone": 0.457,
+      "contour_level_primary_map": 5.67,
+      "exp_method": "electron microscopy"
+    }
+  ]
+}

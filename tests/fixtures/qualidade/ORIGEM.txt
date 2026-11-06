@@ -1,0 +1,31 @@
+Origem das respostas usadas nos testes de peki-qualidade-1.
+São trechos públicos, copiados em 2026-11-06. Não há dado pessoal.
+Nada foi anonimizado além do corte: o corpo grande do XML foi reduzido
+quando o Entry e poucos ModelledSubgroup bastavam.
+
+1CRN_validation.xml
+  Arquivo inteiro, 12564 bytes.
+  https://www.ebi.ac.uk/pdbe/entry-files/download/1crn_validation.xml
+  Elemento raiz wwPDB-validation-information.
+  Esquema citado no arquivo: http://wwpdb.org/validation/schema/wwpdb_validation_v6.06.xsd
+  O mesmo relatório em gzip no RCSB não envia CORS:
+  https://files.rcsb.org/pub/pdb/validation_reports/cr/1crn/1crn_validation.xml.gz
+
+1A00_excerpt.xml, 1A0N_excerpt.xml, 3DWU_excerpt.xml
+  Tag Entry real e, quando há, os primeiros ModelledSubgroup ou um de cada modelo.
+  Mesmo serviço PDBe: https://www.ebi.ac.uk/pdbe/entry-files/download/{id}_validation.xml
+  1A00 é raio X com Rwork/Rfree e EDS. 1A0N é NMR, 25 modelos. 3DWU é EM (EMD-5015).
+
+rcsb_*_entry.json
+  Recorte de https://data.rcsb.org/rest/v1/core/entry/{ID}
+  Só exptl, identificador, refine e pdbx_vrpt_summary*.
+  Documentação da categoria na Data API:
+  https://www.rcsb.org/news/feature/67edb6c196cbbd16fc52edb0
+
+chemcomp_HEM.json, MSE, ZN, HOH, GOL
+  Recorte de https://data.rcsb.org/rest/v1/core/chemcomp/{CCD}
+  Nome, tipo, fórmula, massa e, para GOL, acessos ChEBI devolvidos em
+  rcsb_chem_comp_related. Sem SMILES e sem papel biológico.
+
+O mapeamento sintético de altLoc e código de inserção está no teste,
+não neste diretório, e não é apresentado como depósito real.

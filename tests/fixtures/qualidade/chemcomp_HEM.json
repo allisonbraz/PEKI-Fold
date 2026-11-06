@@ -1,0 +1,11 @@
+{
+  "chem_comp": {
+    "id": "HEM",
+    "name": "PROTOPORPHYRIN IX CONTAINING FE",
+    "type": "non-polymer",
+    "formula": "C34 H32 Fe N4 O4",
+    "formula_weight": 616.487
+  },
+  "rcsb_chem_comp_related": [],
+  "rcsb_id": "HEM"
+}

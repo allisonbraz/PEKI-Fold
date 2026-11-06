@@ -79,8 +79,9 @@
           <li><strong>ID do PDB</strong> (ex.: <code>1A00</code>): busca o PDB no RCSB e, se ele não tiver coordenadas, o mmCIF. O ID clássico tem 4 caracteres. Pockets seguem por ID.</li>
           <li><strong>Upload</strong> de <code>.pdb</code> ou <code>.cif</code>: leitura local. A ficha de preparo e o download de cadeia em PDB continuam só no PDB.</li>
           <li><strong>Comparar</strong>: 2 a 4 IDs para ver estatísticas, aminoácidos e pockets lado a lado.</li>
-          <li>No workspace: <strong>abas</strong> (cadeias, estatísticas, aminoácidos, motivos, pockets, preparo), <strong>viewer 3D</strong> e botão <strong>Exportar</strong> (PDF/Markdown/CSV).</li>
-          <li><strong>Preparo</strong> é uma ficha auxiliar. Ela não valida a estrutura e não substitui a conferência humana.</li>
+          <li>No workspace: <strong>abas</strong> (visão geral, qualidade, cadeias, estatísticas, aminoácidos, motivos, pockets, preparo), <strong>viewer 3D</strong> e botão <strong>Exportar</strong> (PDF/Markdown/CSV).</li>
+          <li><strong>Qualidade</strong> lê o relatório wwPDB quando há ID do PDB. Métrica ausente não vira zero. O relatório global não garante o sítio. Sem ID, a consulta remota não roda.</li>
+          <li><strong>Preparo</strong> é uma ficha auxiliar. Ela não valida a estrutura e não substitui a conferência humana. O drugScore dos pockets continua descritor geométrico, não afinidade.</li>
         </ul>
       </details>
 
@@ -132,7 +133,8 @@
 
       <div class="card painel">
         <nav class="abas" role="tablist" aria-label="Seções da estrutura">
-          <button class="aba ativa" type="button" role="tab" aria-selected="true" data-tab="visao">Visão geral</button>
+          <button class="aba ativa" type="button" role="tab" aria-selected="true" id="aba-visao" aria-controls="tab-visao" data-tab="visao">Visão geral</button>
+          <button class="aba" type="button" role="tab" aria-selected="false" id="aba-qualidade" aria-controls="tab-qualidade" data-tab="qualidade">Qualidade</button>
           <button class="aba" type="button" role="tab" aria-selected="false" data-tab="cadeias">Cadeias</button>
           <button class="aba" type="button" role="tab" aria-selected="false" data-tab="stats">Estatísticas</button>
           <button class="aba" type="button" role="tab" aria-selected="false" data-tab="aa">Aminoácidos</button>
@@ -141,7 +143,8 @@
           <button class="aba" type="button" role="tab" aria-selected="false" data-tab="preparo">Preparo</button>
         </nav>
 
-        <div class="aba-conteudo" id="tab-visao"></div>
+        <div class="aba-conteudo" id="tab-visao" role="tabpanel" aria-labelledby="aba-visao"></div>
+        <div class="aba-conteudo" id="tab-qualidade" role="tabpanel" aria-labelledby="aba-qualidade" hidden></div>
         <div class="aba-conteudo" id="tab-cadeias" hidden></div>
         <div class="aba-conteudo" id="tab-stats" hidden></div>
         <div class="aba-conteudo" id="tab-aa" hidden>
@@ -364,11 +367,13 @@
       Universidade Federal de Jataí (UFJ) · Programa de Pós-Graduação em Ciências Aplicadas à Saúde (PPGCAS)<br />
       Ferramenta de pesquisa em desenvolvimento para análise exploratória de estruturas de proteínas; os resultados não substituem validação experimental.
     </p>
-    <p class="muted small">PEKI Fold · App estático · Programas 01–06 · dados do RCSB PDB · pockets via ProteinsPlus/DoGSiteScorer · a ficha de preparo é auxiliar e não faz docking</p>
+    <p class="muted small">PEKI Fold · App estático · Programas 01–06 · dados do RCSB PDB · qualidade pelo relatório wwPDB · pockets via ProteinsPlus/DoGSiteScorer · a ficha de preparo é auxiliar e não faz docking</p>
   </footer>
 
   <script src="pdb-analysis.js"></script>
   <script src="structure-model.js"></script>
+  <script src="quality-model.js"></script>
+  <script src="quality-ui.js"></script>
   <script src="prep-analysis.js"></script>
   <script src="ensemble-analysis.js"></script>
   <script src="prep-ui.js"></script>

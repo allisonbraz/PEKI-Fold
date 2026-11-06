@@ -1,0 +1,22 @@
+{
+  "chem_comp": {
+    "id": "HOH",
+    "name": "WATER",
+    "type": "non-polymer",
+    "formula": "H2 O",
+    "formula_weight": 18.015
+  },
+  "rcsb_chem_comp_related": [
+    {
+      "comp_id": "HOH",
+      "resource_name": "ChEBI",
+      "resource_accession_code": "CHEBI:25805"
+    },
+    {
+      "comp_id": "HOH",
+      "resource_name": "ChEBI",
+      "resource_accession_code": "CHEBI:15377"
+    }
+  ],
+  "rcsb_id": "HOH"
+}
