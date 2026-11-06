@@ -33,10 +33,10 @@
 
       <label for="pdb-id" class="entrada-lbl">Código PDB ou nome da proteína</label>
       <div class="entrada-row entrada-id">
-        <input id="pdb-id" type="text" maxlength="80" placeholder="ex.: 1A00 ou NLRP3" autocomplete="off" spellcheck="false" aria-describedby="entrada-dica" />
+        <input id="pdb-id" type="text" maxlength="80" placeholder="ex.: 1A00 ou hemoglobin" autocomplete="off" spellcheck="false" aria-describedby="entrada-dica" />
         <button id="btn-id" class="primary-btn" type="button">Analisar código</button>
       </div>
-      <p id="entrada-dica" class="muted small entrada-dica">Código de estrutura: 4 caracteres começando por número (1A00) abre direto. Nome de proteína (NLRP3) não é código e não é cortado: a busca lista depósitos experimentais do RCSB e só carrega o que você escolher.</p>
+      <p id="entrada-dica" class="muted small entrada-dica">Código de estrutura: 4 caracteres começando por número (1A00) abre direto. Nome de proteína (hemoglobin) não é código e não é cortado. O RCSB busca em inglês e lista depósitos experimentais; a estrutura só carrega o que você escolher.</p>
       <div id="busca-nome" class="busca-nome" hidden aria-live="polite"></div>
 
       <div class="ou">— ou —</div>
@@ -80,7 +80,7 @@
         <summary>Como usar</summary>
         <ul>
           <li><strong>Código PDB</strong> (ex.: <code>1A00</code>): 4 caracteres, começa com número. Abre o PDB no RCSB e, se ele não tiver coordenadas, o mmCIF. Não é um nome de proteína. Pockets, comparação e ensemble seguem por código.</li>
-          <li><strong>Nome da proteína</strong> (ex.: <code>NLRP3</code>): não é cortado para 4 letras e não é usado como código. A busca consulta o RCSB e lista depósitos experimentais, com título, método, resolução e componentes quando a API os devolve. A estrutura só abre depois que você escolhe um código da lista.</li>
+          <li><strong>Nome da proteína</strong> (ex.: <code>hemoglobin</code>): não é cortado para 4 letras e não é usado como código. O RCSB busca em inglês e lista depósitos experimentais, com título, método, resolução e componentes quando a API os devolve. A estrutura só abre depois que você escolhe um código da lista.</li>
           <li><strong>Upload</strong> de <code>.pdb</code> ou <code>.cif</code>: leitura local. A ficha de preparo e o download de cadeia em PDB continuam só no PDB.</li>
           <li><strong>Comparar</strong>: 2 a 4 IDs para ver estatísticas, aminoácidos e pockets lado a lado.</li>
           <li>No workspace: <strong>abas</strong> (visão geral, qualidade, cadeias, estatísticas, aminoácidos, motivos, pockets, preparo), <strong>viewer 3D</strong> e botão <strong>Exportar</strong> (PDF/Markdown/CSV).</li>

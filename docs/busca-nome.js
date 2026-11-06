@@ -36,7 +36,7 @@ const BuscaNome = (function () {
       return {
         tipo: "vazio",
         valor: "",
-        mensagem: "Informe um código PDB (ex.: 1A00) ou um nome de proteína (ex.: NLRP3).",
+        mensagem: "Informe um código PDB (ex.: 1A00) ou um nome de proteína (ex.: hemoglobin). O RCSB busca em inglês.",
       };
     }
     const token = !bruto.includes(" ");
@@ -72,7 +72,7 @@ const BuscaNome = (function () {
       return {
         tipo: "invalido",
         valor: bruto,
-        mensagem: "Use um código PDB de 4 caracteres começando com número (ex.: 1A00) ou um nome de proteína (ex.: NLRP3). O nome não é convertido em código.",
+        mensagem: "Use um código PDB de 4 caracteres começando com número (ex.: 1A00) ou um nome de proteína (ex.: hemoglobin). O nome não é convertido em código. O RCSB busca em inglês.",
       };
     }
     return { tipo: "nome", valor: bruto };
@@ -82,7 +82,7 @@ const BuscaNome = (function () {
     return {
       tipo: "invalido",
       valor: bruto,
-      mensagem: bruto + " não é um código PDB. O código tem 4 caracteres e começa com número (ex.: 1A00). Um nome como NLRP3 não é cortado nem usado como código.",
+      mensagem: bruto + " não é um código PDB. O código tem 4 caracteres e começa com número (ex.: 1A00). Um nome como hemoglobin não é cortado nem usado como código. O RCSB busca em inglês.",
     };
   }
 

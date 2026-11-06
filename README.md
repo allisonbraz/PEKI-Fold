@@ -47,12 +47,12 @@ Exemplos diretos: [1A00](https://allisonbraz.github.io/PEKI-Fold/?pdb=1A00) · [
 ## App web (recomendado)
 
 Aplicação **100% no navegador** — sem servidor, sem instalação, sem limite de
-upload. Cole um código PDB (ex.: `1A00`), o nome da proteína (ex.: `NLRP3`) ou envie um `.pdb` ou `.cif`, veja a estrutura em
+upload. Cole um código PDB (ex.: `1A00`), o nome da proteína (ex.: `hemoglobin`) ou envie um `.pdb` ou `.cif`, veja a estrutura em
 3D e explore a visão geral, cadeias, estatísticas, frequência de aminoácidos, motivos e
 **pockets** e uma **ficha de preparo** geométrica (inventário, limpeza do PDB,
 íons, dissulfetos, Asn–açúcar e uma caixa editável para o Vina). A detecção de
 pockets usa a API oficial do **DoGSiteScorer** (ProteinsPlus/ZBH) chamada direto
-do navegador — só requer um código PDB. O nome da proteína não é tratado como código: a busca lista depósitos experimentais do RCSB e a estrutura só abre depois da escolha. A ficha não faz docking e não calcula
+do navegador — só requer um código PDB. O nome da proteína não é tratado como código: o RCSB busca em inglês, lista depósitos experimentais e a estrutura só abre depois da escolha. A ficha não faz docking e não calcula
 afinidade. O que entra e o que fica de fora da ficha está em [`docs/preparo.md`](docs/preparo.md). A leitura de PDB e mmCIF, as lacunas e a visão geral estão em [`docs/estrutura.md`](docs/estrutura.md). A aba Qualidade e a anotação de componentes estão em [`docs/qualidade.md`](docs/qualidade.md).
 
 Também é possível **comparar de 2 a 4 proteínas** lado a lado (estatísticas,
