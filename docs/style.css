@@ -65,11 +65,35 @@ button { font: inherit; cursor: pointer; border-radius: 8px; border: none; }
 
 /* Entrada */
 .entrada { display: flex; justify-content: center; padding: 48px 20px; }
-.entrada-card { width: 100%; max-width: 560px; text-align: center; }
+.entrada-card { width: 100%; max-width: 680px; text-align: center; }
 .hero-logo { display: block; width: min(320px, 85%); height: auto; margin: 0 auto 18px; border-radius: 12px; }
+.entrada-lbl { display: block; text-align: left; font-weight: 600; margin: 16px 0 0; }
+.entrada-dica { text-align: left; margin: 0 0 4px; }
 .entrada-row { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 10px; }
+.entrada-id { margin-top: 8px; }
 .entrada-row input { flex: 1 1 8rem; min-width: 0; padding: 11px 14px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text); font-size: 1rem; text-transform: uppercase; }
+#pdb-id { text-transform: none; }
 .entrada-row .primary-btn { flex: 0 0 auto; white-space: nowrap; }
+.primary-btn:disabled { opacity: .65; cursor: wait; }
+.busca-nome { text-align: left; margin-top: 12px; }
+.busca-cabeca p { margin: 0 0 8px; }
+.busca-nota { color: var(--muted); font-size: .82rem; }
+.busca-aviso { background: rgba(224, 168, 0, .15); border-left: 4px solid #a37b00; padding: 8px 10px; border-radius: 8px; }
+.busca-lista { display: flex; flex-direction: column; gap: 10px; }
+.busca-item { border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; background: var(--bg); }
+.busca-item h3 { font-size: 1.05rem; letter-spacing: .04em; }
+.busca-item p { margin: 4px 0; overflow-wrap: anywhere; }
+.busca-rot { color: var(--muted); font-size: .82rem; }
+.busca-rot::after { content: ": "; }
+.busca-comp { margin: 6px 0; padding-left: 1.1rem; font-size: .88rem; }
+.busca-comp li { margin: 3px 0; overflow-wrap: anywhere; }
+.busca-acoes { margin-top: 8px; }
+.busca-item .primary-btn { margin-top: 8px; }
+.busca-status { display: flex; align-items: center; gap: 8px; }
+.busca-nome a { color: var(--primary); font-weight: 600; }
+@media (max-width: 520px) {
+  .busca-item .primary-btn { width: 100%; }
+}
 .ou { color: var(--muted); margin: 14px 0; font-size: .9rem; }
 .dropzone { border: 2px dashed var(--border); border-radius: 12px; padding: 26px; transition: .2s; }
 .dropzone.hover { border-color: var(--primary); background: rgba(42,85,153,.06); }
