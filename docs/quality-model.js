@@ -143,6 +143,25 @@ const QualityModel = (() => {
     return attrs;
   }
 
+  function attrsLocais(attrs) {
+    const out = {};
+    for (const chave of Object.keys(attrs || {})) {
+      const nome = chave.includes(":") ? chave.slice(chave.lastIndexOf(":") + 1) : chave;
+      if (out[nome] == null) out[nome] = attrs[chave];
+    }
+    return out;
+  }
+
+  function attr(attrs, nome) {
+    if (!attrs) return null;
+    if (attrs[nome] != null && attrs[nome] !== "") return attrs[nome];
+    const sufixo = ":" + nome;
+    for (const chave of Object.keys(attrs)) {
+      if (chave === nome || chave.endsWith(sufixo)) return attrs[chave];
+    }
+    return null;
+  }
+
   function lerNumero(bruto) {
     if (bruto == null) return { ausente: true, motivo: "não informado" };
     if (typeof bruto === "number") {
@@ -150,15 +169,15 @@ const QualityModel = (() => {
       return { ausente: false, valor: bruto, texto: String(bruto) };
     }
     const s = String(bruto).trim();
-    if (!s || /^notavailable$/i.test(s) || s === "." || s === "?" || /^n\/a$/i.test(s)) {
-      return { ausente: true, motivo: /^notavailable$/i.test(s) ? "o relatório marca NotAvailable" : "não informado", bruto: s || null };
+    if (!s || /^not\s*available$/i.test(s) || s === "." || s === "?" || /^n\/a$/i.test(s)) {
+      return { ausente: true, motivo: /^not\s*available$/i.test(s) ? "o relatório marca NotAvailable" : "não informado", bruto: s || null };
     }
     const n = Number(s);
     if (!Number.isFinite(n)) return { ausente: true, motivo: "não numérico", bruto: s };
     return { ausente: false, valor: n, texto: s };
   }
 
-  function rotuloDa(def, classe, consulta) {
+  function rotuloDa(def, classe, consulta, origemResolucao) {
     let rotulo = def.rotulo;
     if (def.id === "clashscore" && classe === "nmr") {
       rotulo = "Clashscore do núcleo bem definido do ensemble";
@@ -166,13 +185,17 @@ const QualityModel = (() => {
     if (consulta === "rcsb-json" && (def.id === "rwork" || def.id === "rfree")) {
       rotulo += ". Fonte desta consulta: categoria refine na Data API do RCSB; o XML do relatório não foi lido.";
     }
-    if (consulta === "rcsb-json" && def.id === "resolucao") {
-      rotulo += ". Fonte desta consulta: refinamento depositado na Data API.";
+    if (consulta === "rcsb-json" && (def.id === "resolucao" || def.id === "resolucao_reconstrucao" || def.id === "resolucao_emdb")) {
+      if (origemResolucao === "resolution_combined" && def.id !== "resolucao_emdb") {
+        rotulo = "Resolução combinada na Data API do RCSB (resolution_combined). Não é o campo PDB-resolution do XML.";
+      } else if (def.id === "resolucao") {
+        rotulo += ". Fonte desta consulta: refinamento depositado na Data API.";
+      }
     }
     return rotulo;
   }
 
-  function selecionarMetricas(brutos, efetivo, consulta) {
+  function selecionarMetricas(brutos, efetivo, consulta, origemResolucao) {
     const classe = efetivo.classe;
     const metricas = [];
     const omitidos = [];
@@ -208,7 +231,7 @@ const QualityModel = (() => {
       }
       metricas.push({
         id: def.id,
-        rotulo: rotuloDa(def, classe, consulta),
+        rotulo: rotuloDa(def, classe, consulta, origemResolucao),
         unidade: def.unidade || null,
         grupo: def.grupo,
         valor: achado.valor,
@@ -240,28 +263,29 @@ const QualityModel = (() => {
 
   function contarTag(inner, tag) {
     if (!inner) return 0;
-    const re = new RegExp("<" + tag + "\\b", "g");
+    const re = new RegExp("<(?:[\\w.-]+:)?" + tag + "\\b", "g");
     return (inner.match(re) || []).length;
   }
 
   function extrairSubgrupos(xml) {
     const itens = [];
-    const re = /<ModelledSubgroup\b([^>]*?)(?:\/>|>([\s\S]*?)<\/ModelledSubgroup>)/g;
+    const re = /<(?:[\w.-]+:)?ModelledSubgroup\b([^>]*?)(?:\/>|>([\s\S]*?)<\/(?:[\w.-]+:)?ModelledSubgroup>)/g;
     let m;
     while ((m = re.exec(xml))) {
       const attrs = parseAttrs(m[1]);
       const inner = m[2] || "";
       itens.push({
-        chain: normCadeia(attrs.chain),
-        resnum: inteiroOuNulo(attrs.resnum),
-        icode: normToken(attrs.icode),
-        resname: normToken(attrs.resname) || null,
-        model: inteiroOuNulo(attrs.model),
-        altcode: normToken(attrs.altcode),
-        said: normCadeia(attrs.said),
-        seqLabel: inteiroOuNulo(attrs.seq),
-        rama: attrs.rama ? String(attrs.rama).trim() : null,
-        rota: attrs.rota ? String(attrs.rota).trim() : null,
+        chain: normCadeia(attr(attrs, "chain")),
+        resnum: inteiroOuNulo(attr(attrs, "resnum")),
+        icode: normToken(attr(attrs, "icode")),
+        resname: normToken(attr(attrs, "resname")) || null,
+        model: inteiroOuNulo(attr(attrs, "model")),
+        altcode: normToken(attr(attrs, "altcode")),
+        said: normCadeia(attr(attrs, "said")),
+        ent: attr(attrs, "ent"),
+        seqLabel: inteiroOuNulo(attr(attrs, "seq")),
+        rama: attr(attrs, "rama") ? String(attr(attrs, "rama")).trim() : null,
+        rota: attr(attrs, "rota") ? String(attr(attrs, "rota")).trim() : null,
         bondOutliers: contarTag(inner, "bond-outlier"),
         angleOutliers: contarTag(inner, "angle-outlier"),
         clashes: contarTag(inner, "clash"),
@@ -282,14 +306,26 @@ const QualityModel = (() => {
     return chain + "|" + seq + "|" + (icode || "");
   }
 
+  // Só a identidade author entra no índice. Cadeia ou número label não substituem auth_asym_id / auth_seq_id.
+  function identidadeAuth(r) {
+    if (!r || r.seq == null) return null;
+    if (r.seqFonte === "label" || r.seqFonte === "ausente") return null;
+    let chain = null;
+    if (Object.prototype.hasOwnProperty.call(r, "authChain")) chain = r.authChain || null;
+    else chain = r.chain || null;
+    if (!chain || chain === "_") return null;
+    return { chain, seq: r.seq, icode: r.icode || "", resname: normToken(r.resname) };
+  }
+
   function mapearSubgrupos(subgrupos, contexto) {
     const modelo = contexto && contexto.modeloSelecionado != null ? contexto.modeloSelecionado : null;
     const residuos = (contexto && contexto.residuos) || [];
     const lacunas = (contexto && contexto.lacunas && contexto.lacunas.naoResolvidos) || [];
     const indice = new Map();
     for (const r of residuos) {
-      if (r.seq == null || !r.chain) continue;
-      const k = chaveResiduo(r.chain, r.seq, r.icode || "");
+      const idn = identidadeAuth(r);
+      if (!idn) continue;
+      const k = chaveResiduo(idn.chain, idn.seq, idn.icode);
       const arr = indice.get(k) || [];
       arr.push(r);
       indice.set(k, arr);
@@ -315,7 +351,9 @@ const QualityModel = (() => {
       else if (lista.length === 1) {
         const r = lista[0];
         temCoordenadas = r.temCoordenadas === true;
-        if (!temCoordenadas) mapeamento = "sem_coordenada";
+        const nomeModelo = normToken(r.resname);
+        if (sg.resname && nomeModelo && sg.resname !== nomeModelo) mapeamento = "resname_divergente";
+        else if (!temCoordenadas) mapeamento = "sem_coordenada";
         else if (sg.altcode && !(r.altlocs || []).includes(sg.altcode)) mapeamento = "altloc_ausente";
         else mapeamento = "modelo";
         if (sg.said && r.labelChain && sg.said !== r.labelChain) labelDivergente = true;
@@ -330,10 +368,17 @@ const QualityModel = (() => {
     }
     const porCadeia = {};
     const cadeias = new Set();
-    for (const r of residuos) if (r.chain) cadeias.add(r.chain);
+    for (const r of residuos) {
+      const idn = identidadeAuth(r);
+      if (idn) cadeias.add(idn.chain);
+    }
     for (const it of itens) if (it.chain && it.mapeamento !== "campo_ausente") cadeias.add(it.chain);
+    const semIdentidadeAuthor = residuos.filter((r) => r.temCoordenadas === true && !identidadeAuth(r)).length;
     for (const chain of cadeias) {
-      const doModelo = residuos.filter((r) => r.chain === chain);
+      const doModelo = residuos.filter((r) => {
+        const idn = identidadeAuth(r);
+        return idn && idn.chain === chain;
+      });
       const comCoord = doModelo.filter((r) => r.temCoordenadas === true);
       const chavesComIndicador = new Set();
       for (const it of itens) {
@@ -341,7 +386,11 @@ const QualityModel = (() => {
           chavesComIndicador.add(chaveResiduo(it.chain, it.resnum, it.icode));
         }
       }
-      const semIndicador = comCoord.filter((r) => !chavesComIndicador.has(chaveResiduo(r.chain, r.seq, r.icode || ""))).length;
+      const semIndicador = comCoord.filter((r) => {
+        const idn = identidadeAuth(r);
+        if (!idn || idn.chain !== chain) return true;
+        return !chavesComIndicador.has(chaveResiduo(idn.chain, idn.seq, idn.icode));
+      }).length;
       const lacunasCadeia = lacunas.filter((r) => (r.cadeiaAuth || r.chain) === chain);
       porCadeia[chain] = {
         residuosComCoordenadas: comCoord.length,
@@ -359,6 +408,7 @@ const QualityModel = (() => {
       subgruposLidos: subgrupos.length,
       subgruposOutroModelo: outroModelo,
       campoAusente,
+      semIdentidadeAuthor,
       porCadeia,
       itens,
       aviso: AVISO_LOCAL,
@@ -396,7 +446,7 @@ const QualityModel = (() => {
     const o = opts || {};
     const id = normalizarId(o.id || "");
     const texto = String(xml || "");
-    const tag = texto.match(/<Entry\b[^>]*>/);
+    const tag = texto.match(/<(?:[\w.-]+:)?Entry\b[^>]*>/);
     if (!tag) {
       return {
         schema: SCHEMA,
@@ -412,8 +462,8 @@ const QualityModel = (() => {
         avisoGlobal: AVISO_GLOBAL,
       };
     }
-    const attrs = parseAttrs(tag[0]);
-    const pdbid = normalizarId(attrs.pdbid || "");
+    const attrs = attrsLocais(parseAttrs(tag[0]));
+    const pdbid = normalizarId(attr(attrs, "pdbid") || "");
     if (!pdbid || (id && pdbid !== id)) {
       return {
         schema: SCHEMA,
@@ -429,8 +479,8 @@ const QualityModel = (() => {
         avisoGlobal: AVISO_GLOBAL,
       };
     }
-    const efetivo = classeEfetiva(classificarMetodo(o.metodoArquivo), classeDoRelatorio(attrs.percentilebins));
-    const selecionadas = selecionarMetricas(attrs, efetivo, "xml");
+    const efetivo = classeEfetiva(classificarMetodo(o.metodoArquivo), classeDoRelatorio(attr(attrs, "percentilebins")));
+    const selecionadas = selecionarMetricas(attrs, efetivo, "xml", null);
     let local;
     if (o.truncado) {
       local = {
@@ -447,17 +497,18 @@ const QualityModel = (() => {
       nome: "wwPDB validation report",
       distribuicao: "PDBe entry-files",
       url: urlsDe(pdbid).xml,
-      schemaXsd: attrs["xsi:noNamespaceSchemaLocation"] || XSD,
+      schemaXsd: attr(attrs, "noNamespaceSchemaLocation") || XSD,
       pdbid,
-      data: attrs.XMLcreationDate || null,
-      percentilebins: attrs.percentilebins || null,
+      data: attr(attrs, "XMLcreationDate") || null,
+      percentilebins: attr(attrs, "percentilebins") || null,
     };
     const avisos = avisoEds(attrs);
     if (efetivo.conflito) {
       avisos.push("O método no arquivo (" + (efetivo.arquivo || "ausente") + ") e a classe no relatório (" + efetivo.relatorio + ") não coincidem. Métricas cristalográficas só aparecem se a classe efetiva for raio X.");
     }
-    if (attrs.nmr_models_consistency_flag) {
-      avisos.push("Consistência dos modelos NMR no relatório: " + attrs.nmr_models_consistency_flag + ".");
+    const consistencia = attr(attrs, "nmr_models_consistency_flag");
+    if (consistencia) {
+      avisos.push("Consistência dos modelos NMR no relatório: " + consistencia + ".");
     }
     return baseResultado(pdbid, "xml", fonte, efetivo, selecionadas, {
       estado: o.truncado ? "parcial" : "ok",
@@ -475,6 +526,7 @@ const QualityModel = (() => {
 
   function brutosDeJson(entry) {
     const b = {};
+    let resolucaoFonte = null;
     const geom = (entry.pdbx_vrpt_summary_geometry || [])[0] || null;
     copiar(b, geom, {
       clashscore: "clashscore",
@@ -501,9 +553,11 @@ const QualityModel = (() => {
       ls_R_factor_R_free: "PDB-Rfree",
       ls_d_res_high: "PDB-resolution",
     });
+    if (b["PDB-resolution"] != null) resolucaoFonte = "refine";
     const info = entry.rcsb_entry_info || {};
     if (b["PDB-resolution"] == null && Array.isArray(info.resolution_combined) && info.resolution_combined[0] != null) {
       b["PDB-resolution"] = info.resolution_combined[0];
+      resolucaoFonte = "resolution_combined";
     }
     const em = (entry.pdbx_vrpt_summary_em || [])[0] || null;
     copiar(b, em, {
@@ -524,7 +578,7 @@ const QualityModel = (() => {
     if (nmr && nmr.nmr_models_consistency_flag != null) {
       aviso.push("Consistência dos modelos NMR no relatório: " + nmr.nmr_models_consistency_flag + ".");
     }
-    return { brutos: b, avisos: aviso, nmr, dif };
+    return { brutos: b, avisos: aviso, nmr, dif, resolucaoFonte };
   }
 
   function lerResumoRcsb(entry, opts) {
@@ -567,7 +621,7 @@ const QualityModel = (() => {
       || null;
     const efetivo = classeEfetiva(classificarMetodo(o.metodoArquivo) || classificarMetodo(metodoApi), classificarMetodo(metodoApi));
     const extraido = brutosDeJson(entry);
-    const selecionadas = selecionarMetricas(extraido.brutos, efetivo, "rcsb-json");
+    const selecionadas = selecionarMetricas(extraido.brutos, efetivo, "rcsb-json", extraido.resolucaoFonte);
     const resumo = entry.pdbx_vrpt_summary || {};
     const fonte = {
       nome: "wwPDB validation report via RCSB Data API (pdbx_vrpt_summary*)",
@@ -706,8 +760,30 @@ const QualityModel = (() => {
     const sinal = o.signal;
     const limite = o.limite || LIMITE_BYTES;
     const urls = urlsDe(up);
+    if (sinal && sinal.aborted) {
+      return erroConsulta(up, "cancelado", "A consulta ao relatório foi cancelada. Nenhum indicador foi preenchido.");
+    }
+    const childDe = (ms) => {
+      const child = new AbortController();
+      const timer = setTimeout(() => child.abort(), ms);
+      const cortar = () => child.abort();
+      if (sinal) sinal.addEventListener("abort", cortar, { once: true });
+      return {
+        signal: child.signal,
+        fim() {
+          clearTimeout(timer);
+          if (sinal) sinal.removeEventListener("abort", cortar);
+        },
+      };
+    };
     try {
-      const res = await fetchImpl(urls.xml, { signal: sinal, headers: { Accept: "application/xml,text/xml,*/*" } });
+      const child = childDe(12000);
+      let res;
+      try {
+        res = await fetchImpl(urls.xml, { signal: child.signal, headers: { Accept: "application/xml,text/xml,*/*" } });
+      } finally {
+        child.fim();
+      }
       const status = statusDe(res);
       tentativas.push({ fonte: "pdbe-xml", url: urls.xml, status });
       if (status === 200) {
@@ -727,13 +803,22 @@ const QualityModel = (() => {
         }
       }
     } catch (e) {
-      if (e && e.name === "AbortError") {
-        return erroConsulta(up, "cancelado", "A consulta ao relatório foi cancelada ou estourou o tempo. Nenhum indicador foi preenchido.");
+      if (sinal && sinal.aborted) {
+        return erroConsulta(up, "cancelado", "A consulta ao relatório foi cancelada. Nenhum indicador foi preenchido.", tentativas);
       }
-      tentativas.push({ fonte: "pdbe-xml", url: urls.xml, status: "rede" });
+      tentativas.push({ fonte: "pdbe-xml", url: urls.xml, status: e && e.name === "AbortError" ? "timeout" : "rede" });
+    }
+    if (sinal && sinal.aborted) {
+      return erroConsulta(up, "cancelado", "A consulta ao relatório foi cancelada. Nenhum indicador foi preenchido.", tentativas);
     }
     try {
-      const res = await fetchImpl(urls.json, { signal: sinal, headers: { Accept: "application/json" } });
+      const child = childDe(8000);
+      let res;
+      try {
+        res = await fetchImpl(urls.json, { signal: child.signal, headers: { Accept: "application/json" } });
+      } finally {
+        child.fim();
+      }
       const status = statusDe(res);
       tentativas.push({ fonte: "rcsb-json", url: urls.json, status });
       if (status === 429) {
@@ -754,10 +839,10 @@ const QualityModel = (() => {
       }
       return erroConsulta(up, "http_" + status, "A consulta ao relatório devolveu HTTP " + status + ". Nenhum indicador foi preenchido.", tentativas);
     } catch (e) {
-      if (e && e.name === "AbortError") {
-        return erroConsulta(up, "cancelado", "A consulta ao relatório foi cancelada ou estourou o tempo. Nenhum indicador foi preenchido.", tentativas);
+      if (sinal && sinal.aborted) {
+        return erroConsulta(up, "cancelado", "A consulta ao relatório foi cancelada. Nenhum indicador foi preenchido.", tentativas);
       }
-      tentativas.push({ fonte: "rcsb-json", url: urls.json, status: "rede" });
+      tentativas.push({ fonte: "rcsb-json", url: urls.json, status: e && e.name === "AbortError" ? "timeout" : "rede" });
       return erroConsulta(up, "rede", "A consulta não devolveu dados (rede ou CORS). Nenhum indicador foi preenchido. Os links oficiais continuam disponíveis para abrir no navegador.", tentativas);
     }
   }

@@ -82,7 +82,12 @@ function testeXml1CRN() {
   assert(ile && ile.angleOutliers >= 1 && ile.mapeamento === "modelo", "ILE 7 tem angle-outlier");
   assert(!rel.local.itens.some((it) => it.resnum === 99 && it.mapeamento === "modelo"), "lacuna inventada não ganha indicador");
   assert(rel.local.porCadeia.A.lacunasSemCoordenada === 1, "a lacuna entra na cobertura");
-  assert(rel.local.porCadeia.A.comIndicador === rel.local.porCadeia.A.residuosComCoordenadas, "toda posição com coordenada da crambina tem subgrupo: " + JSON.stringify(rel.local.porCadeia.A));
+  assert(rel.local.porCadeia.A.comIndicador === 46 && rel.local.porCadeia.A.residuosComCoordenadas === 46, "46 posições author com coordenada e 46 indicadores: " + JSON.stringify(rel.local.porCadeia.A));
+  const modelo = new Set(lido.estrutura.residuos.filter((r) => r.temCoordenadas && r.seqFonte === "auth").map((r) => r.authChain + ":" + r.seq + ":" + r.resname));
+  const relatorio = new Set(rel.local.itens.filter((it) => it.mapeamento === "modelo").map((it) => it.chain + ":" + it.resnum + ":" + it.resname));
+  assert(modelo.size === 46 && relatorio.size === 46, "o conjunto tem 46 identidades, não só a contagem");
+  for (const id of modelo) assert(relatorio.has(id), "posição modelada sem o mesmo nome no relatório: " + id);
+  assert(rel.local.itens.every((it) => it.said == null || it.chain === "A"), "said label não troca a cadeia author da crambina");
   const texto = QualityModel.textoDossie({ relatorio: rel });
   assert(texto.includes("peki-qualidade-1") && texto.includes(rel.fonte.url), "export traz contrato e URL");
   assert(!/Rwork citado pelo relatório \(refinamento depositado\):/.test(texto), "export não publica Rwork numérico");
@@ -236,12 +241,29 @@ function testeJsonEErros() {
     });
     assert(rede.estado === "rede" && rede.metricas.length === 0 && rede.links.pdf, "CORS/rede não zera e mantém o link do PDF");
 
+    const ctrl = new AbortController();
+    ctrl.abort();
+    let chamadasCanceladas = 0;
     const abortado = await QualityModel.consultarRelatorio("1CRN", {
-      fetch: async () => { const e = new Error("timeout"); e.name = "AbortError"; throw e; },
+      fetch: async () => { chamadasCanceladas += 1; const e = new Error("abort"); e.name = "AbortError"; throw e; },
       cache: QualityModel.criarCache(),
       forcar: true,
+      signal: ctrl.signal,
     });
-    assert(abortado.codigo === "cancelado" && abortado.metricas.length === 0, "timeout não vira zero");
+    assert(abortado.codigo === "cancelado" && abortado.metricas.length === 0 && chamadasCanceladas === 0, "sinal já cancelado não consulta e não zera");
+    const pedidosTimeout = [];
+    const aposTimeout = await QualityModel.consultarRelatorio("1CRN", {
+      fetch: async (url) => {
+        pedidosTimeout.push(url);
+        if (url.includes("validation.xml")) { const e = new Error("timeout"); e.name = "AbortError"; throw e; }
+        return respostaHttp(200, JSON.parse(ler("rcsb_1CRN_entry.json")));
+      },
+      cache: QualityModel.criarCache(),
+      forcar: true,
+      metodoArquivo: "X-RAY DIFFRACTION",
+    });
+    assert(aposTimeout.consulta === "rcsb-json" && metrica(aposTimeout, "rwork") == null && metrica(aposTimeout, "clashscore").valor === 0, "timeout do XML cai no JSON e não inventa Rwork");
+    assert(pedidosTimeout.some((u) => u.includes("data.rcsb.org")), "o fallback JSON foi chamado");
 
     const grande = await QualityModel.consultarRelatorio("1CRN", {
       fetch: async () => respostaHttp(200, xml1),
@@ -304,6 +326,127 @@ function testeComponentes() {
   assert(dossie.includes("C3 H8 O3") && dossie.includes("peki-qualidade-1") && /aditivo/.test(dossie), "export dos componentes cita fórmula e o limite do glicerol");
 }
 
+function testeAdversarial() {
+  const xmlNs = `<?xml version="1.0"?>
+<vrpt:wwPDB-validation-information>
+<vrpt:Entry vrpt:pdbid="9ZZZ" vrpt:percentilebins="all,xray" vrpt:PDB-resolution="Not Available" vrpt:PDB-R="NotAvailable" vrpt:clashscore="2.5"/>
+<vrpt:ModelledSubgroup vrpt:model="1" vrpt:chain="A" vrpt:resnum="4" vrpt:icode=" " vrpt:resname="ALA" vrpt:altcode=" " vrpt:rama="Favored">
+  <vrpt:angle-outlier atom0="N" atom1="CA" atom2="C"/>
+</vrpt:ModelledSubgroup>
+</vrpt:wwPDB-validation-information>`;
+  const ns = QualityModel.lerXml(xmlNs, {
+    id: "9ZZZ",
+    metodoArquivo: "X-RAY DIFFRACTION",
+    contexto: {
+      modeloSelecionado: 1,
+      residuos: [{ chain: "A", authChain: "A", seq: 4, seqFonte: "auth", icode: "", resname: "ALA", altlocs: [], temCoordenadas: true }],
+      lacunas: { naoResolvidos: [] },
+    },
+  });
+  assert(ns.estado === "ok" && metrica(ns, "resolucao") == null && metrica(ns, "rwork") == null, "prefixo de namespace não transforma NotAvailable em zero");
+  assert(metrica(ns, "clashscore").valor === 2.5, "clashscore prefixado continua número");
+  assert(ns.local.itens[0].mapeamento === "modelo" && ns.local.itens[0].angleOutliers === 1, "subgrupo prefixado mapeia e conta o outlier filho");
+
+  const cruzado = QualityModel.lerXml(`<Entry pdbid="1A00" percentilebins="all,2.0,xray" PDB-R="NotAvailable" PDB-Rfree="NotAvailable" PDB-resolution="2.00"/>
+<ModelledSubgroup model="1" chain="A" resnum="10" resname="VAL" icode=" " altcode=" " said="A" ent="1" seq="10" rama="Favored"/>
+<ModelledSubgroup model="1" chain="B" resnum="10" resname="ALA" icode=" " altcode=" " said="B" ent="2" seq="10" rama="Favored"/>
+<ModelledSubgroup model="1" chain="A" resnum="142" resname="HEM" icode=" " altcode=" " said="E" ent="3" seq="."/>
+<ModelledSubgroup model="1" chain="A" resnum="12" resname="MET" icode=" " altcode=" " said="A" ent="1" seq="12"/>`, {
+    id: "1A00",
+    metodoArquivo: "X-RAY DIFFRACTION",
+    contexto: {
+      modeloSelecionado: 1,
+      residuos: [
+        { chain: "A", authChain: "A", seq: 10, seqFonte: "auth", icode: "", resname: "VAL", altlocs: [], temCoordenadas: true, labelChain: "A" },
+        { chain: "B", authChain: "B", seq: 10, seqFonte: "auth", icode: "", resname: "ALA", altlocs: [], temCoordenadas: true, labelChain: "B" },
+        { chain: "A", authChain: "A", seq: 142, seqFonte: "auth", icode: "", resname: "HEM", altlocs: [], temCoordenadas: true, labelChain: null },
+        { chain: "A", authChain: "A", seq: 12, seqFonte: "auth", icode: "", resname: "MSE", altlocs: [], temCoordenadas: true, labelChain: "A" },
+        { chain: "A", authChain: null, seq: 10, seqFonte: "label", icode: "", resname: "TRP", altlocs: [], temCoordenadas: true, labelChain: "E" },
+      ],
+      lacunas: { naoResolvidos: [] },
+    },
+  });
+  const a10 = cruzado.local.itens.find((it) => it.chain === "A" && it.resnum === 10);
+  const b10 = cruzado.local.itens.find((it) => it.chain === "B" && it.resnum === 10);
+  const hem = cruzado.local.itens.find((it) => it.resname === "HEM");
+  const met = cruzado.local.itens.find((it) => it.resnum === 12);
+  assert(a10.mapeamento === "modelo" && a10.resname === "VAL", "VAL A 10 não recebe o ALA da cadeia B");
+  assert(b10.mapeamento === "modelo" && b10.resname === "ALA", "ALA B 10 fica na entidade 2");
+  assert(hem.mapeamento === "modelo" && hem.chain === "A" && hem.resnum === 142 && hem.seqLabel == null, "HEM usa auth 142; seq '.' não vira índice");
+  assert(!cruzado.local.itens.some((it) => it.chain === "E"), "said E do HEM não cria cadeia E");
+  assert(met.mapeamento === "resname_divergente", "MET do relatório não é colado no MSE do modelo");
+  assert(cruzado.local.porCadeia.A.comIndicador === 2, "só VAL 10 e HEM 142 contam como indicador na cadeia A");
+  assert(cruzado.local.semIdentidadeAuthor === 1, "resíduo só com número label fica fora das cadeias author");
+
+  const pdb = require("fs").readFileSync(require("path").join(__dirname, "..", "pdbproteins", "pdb1a00.pdb"), "utf8");
+  const real = StructureModel.ler(pdb);
+  const relReal = QualityModel.lerXml(`<Entry pdbid="1A00" percentilebins="all,xray" PDB-resolution="2.00" PDB-R="0.1690" PDB-Rfree="0.2230"/>
+<ModelledSubgroup model="1" chain="A" resnum="10" resname="VAL" icode=" " altcode=" " said="A" ent="1"/>
+<ModelledSubgroup model="1" chain="B" resnum="10" resname="ALA" icode=" " altcode=" " said="B" ent="2"/>
+<ModelledSubgroup model="1" chain="A" resnum="142" resname="HEM" icode=" " altcode=" " said="E" ent="3" seq="."/>`, {
+    id: "1A00",
+    metodoArquivo: real.estrutura.identidade.metodo,
+    contexto: { modeloSelecionado: real.estrutura.modelo.selecionado, residuos: real.estrutura.residuos, lacunas: real.estrutura.lacunas },
+  });
+  const hemReal = relReal.local.itens.find((it) => it.resname === "HEM");
+  const valReal = real.estrutura.residuos.find((r) => r.authChain === "A" && r.seq === 10);
+  const alaReal = real.estrutura.residuos.find((r) => r.authChain === "B" && r.seq === 10);
+  assert(valReal && valReal.resname === "VAL" && alaReal && alaReal.resname === "ALA", "1A00 real: A10 é VAL e B10 é ALA");
+  assert(relReal.local.itens.find((it) => it.chain === "A" && it.resnum === 10).mapeamento === "modelo", "VAL A 10 do arquivo real recebe o subgrupo A 10");
+  assert(relReal.local.itens.find((it) => it.chain === "B" && it.resnum === 10).mapeamento === "modelo", "ALA B 10 do arquivo real recebe o subgrupo B 10");
+  assert(hemReal && hemReal.mapeamento === "modelo", "HEM A 142 do arquivo real mapeia, said E não desvia");
+  assert(real.estrutura.componentes.hetero.find((h) => h.codigo === "HEM").instancias === 4, "quatro HEM no modelo, sem duplicar altLoc");
+
+  const em = QualityModel.lerResumoRcsb({
+    rcsb_entry_container_identifiers: { entry_id: "3DWU" },
+    exptl: [{ method: "ELECTRON MICROSCOPY" }],
+    rcsb_entry_info: { experimental_method: "EM", resolution_combined: [12.6] },
+    pdbx_vrpt_summary_geometry: [{ clashscore: 0 }],
+  }, { id: "3DWU" });
+  const rotulo = metrica(em, "resolucao_reconstrucao").rotulo;
+  assert(/resolution_combined/.test(rotulo) && /Não é o campo PDB-resolution do XML/.test(rotulo), "resolução combinada não é vendida como campo do XML: " + rotulo);
+  assert(metrica(em, "rwork") == null && metrica(em, "clashscore").valor === 0, "EM do JSON continua sem R e com clashscore presente");
+
+  assert(QualityUI.escapar('<img src=x onerror="alert(1)">') === "&lt;img src=x onerror=&quot;alert(1)&quot;&gt;", "escape de HTML");
+  const partes = {};
+  const raiz = {
+    _feito: false,
+    map: { click: [], change: [] },
+    addEventListener(tipo, fn) { this.map[tipo].push(fn); },
+    removeEventListener(tipo, fn) { this.map[tipo] = this.map[tipo].filter((f) => f !== fn); },
+    querySelector(sel) {
+      if (sel === ".ql") return this._feito ? { ok: true } : null;
+      return partes[sel] || null;
+    },
+    set innerHTML(v) {
+      this._feito = true;
+      partes["#ql-rel"] = { innerHTML: "" };
+      partes["#ql-loc"] = { innerHTML: "" };
+      partes["#ql-comp"] = { innerHTML: "" };
+    },
+  };
+  QualityUI.definirParaTeste({
+    raiz,
+    compEstado: "ok",
+    app: { pdbId: "1CRN", estrutura: { componentes: { proteinas: null, holo: { motivo: "HETATM não fecha holo." } }, residuos: [] } },
+    relatorio: {
+      estado: "ok",
+      id: "1CRN",
+      consulta: "xml",
+      fonte: { nome: "wwPDB", url: "https://www.ebi.ac.uk/pdbe/entry-files/download/1crn_validation.xml", data: "2026-03-05" },
+      metodo: { classe: "xray", conflito: false },
+      metricas: [{ id: "clashscore", grupo: "geometria", rotulo: "Clashscore", texto: "0.00", unidade: null }],
+      omitidos: [],
+      naoAplicaveis: [],
+      avisos: ['<script>alert("x")</script>'],
+      avisoGlobal: "aviso",
+      links: null,
+      local: { estado: "pendente", motivo: "sem painel", itens: [] },
+    },
+  });
+  assert(partes["#ql-rel"].innerHTML.includes("&lt;script&gt;") && !partes["#ql-rel"].innerHTML.includes("<script>"), "aviso do relatório não entra como HTML cru");
+}
+
 function testeOuvintes() {
   assert(QualityModel.respostaAtual({ geracao: 2, id: "1CRN" }, { geracao: 2, id: "1CRN" }), "mesma geração e mesmo ID");
   assert(!QualityModel.respostaAtual({ geracao: 2, id: "1CRN" }, { geracao: 3, id: "1CRN" }), "geração nova descarta resposta velha");
@@ -334,6 +477,7 @@ async function main() {
   testeMapeamentoSintetico();
   await testeJsonEErros();
   testeComponentes();
+  testeAdversarial();
   testeOuvintes();
   console.log(ok + " asserções ok, " + falhas + " falhas");
   if (falhas) process.exit(1);

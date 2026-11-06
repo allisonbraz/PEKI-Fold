@@ -1655,19 +1655,24 @@ cadeias: cadeiasVisao(posicoes, analise),
   }
 
   function residuosDe(posicoes, modeloSelecionado) {
-    return posicoes.map((p) => ({
-      chain: p.chain,
-      authChain: p.authChain,
-      labelChain: p.labelChain,
-      seq: p.seq,
-      icode: p.icode || "",
-      labelSeq: p.labelSeq == null ? null : p.labelSeq,
-      resname: p.resname,
-      classe: p.classe,
-      altlocs: p.altlocs.slice(),
-      modelo: modeloSelecionado,
-      temCoordenadas: p.coords === true,
-    }));
+    return posicoes.map((p) => {
+      const fontes = (p.atomos || []).map((a) => a.seqFonte).filter(Boolean);
+      const seqFonte = fontes.includes("auth") ? "auth" : (fontes.includes("label") ? "label" : "ausente");
+      return {
+        chain: p.chain,
+        authChain: p.authChain == null ? null : p.authChain,
+        labelChain: p.labelChain == null ? null : p.labelChain,
+        seq: p.seq,
+        seqFonte,
+        icode: p.icode || "",
+        labelSeq: p.labelSeq == null ? null : p.labelSeq,
+        resname: p.resname,
+        classe: p.classe,
+        altlocs: p.altlocs.slice(),
+        modelo: modeloSelecionado,
+        temCoordenadas: p.coords === true,
+      };
+    });
   }
 
   function montarEstrutura(p) {

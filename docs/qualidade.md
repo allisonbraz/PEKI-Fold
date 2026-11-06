@@ -32,7 +32,9 @@ O texto fixo da aba diz que o relatório e os indicadores globais não garantem 
 
 Ela só é montada com o XML completo, dentro do limite de 2 MB. Cada `ModelledSubgroup` precisa de `chain` (`_atom_site.auth_asym_id`), `resnum` (`auth_seq_id`) e `model`, como o esquema descreve. `icode` vem de `pdbx_PDB_ins_code`, `altcode` de `label_alt_id`, `said` de `label_asym_id`.
 
-O cruzamento usa o modelo selecionado pelo `peki-estrutura-1`. Subgrupo de outro modelo é contado e não vira nota deste modelo. Sem chain, resnum ou model, o subgrupo não é associado. Sem coordenada no modelo, não há qualidade local: lacuna não ganha nota. Resíduo com coordenada que não está no relatório também não ganha zero.
+O cruzamento usa o modelo selecionado pelo `peki-estrutura-1`, e só a identidade author: `chain` com `auth_asym_id`, `resnum` com `auth_seq_id` e o mesmo nome de resíduo. `said` / `label_asym_id` e o número label não substituem essa chave. Posição sem cadeia ou número author fica de fora e não é atribuída a outra cadeia. Nome divergente não conta como indicador. Subgrupo de outro modelo é contado e não vira nota deste modelo. Sem chain, resnum ou model, o subgrupo não é associado. Sem coordenada no modelo, não há qualidade local: lacuna não ganha nota. Resíduo com coordenada que não está no relatório também não ganha zero.
+
+Os arquivos conferidos na PDBe não prefixam os elementos. O leitor também aceita um prefixo de namespace no elemento ou no atributo, para não descartar o relatório nem cruzar a cadeia errada se a cópia vier prefixada. O esquema continua sem namespace padrão (`noNamespaceSchemaLocation`).
 
 A cobertura da cadeia diz quantas posições com coordenada têm indicador e quantas lacunas ficaram de fora. A tabela começa pelos outliers e pelas falhas de mapeamento.
 

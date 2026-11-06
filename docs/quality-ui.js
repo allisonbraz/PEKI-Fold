@@ -6,7 +6,8 @@
 const QualityUI = (() => {
   const cache = typeof QualityModel !== "undefined" ? QualityModel.criarCache() : null;
   let geracao = 0;
-  let ctrl = null;
+  let ctrlRel = null;
+  let ctrlComp = null;
   let raizAtual = null;
   let clickFn = null;
   let changeFn = null;
@@ -56,9 +57,13 @@ const QualityUI = (() => {
       if (t.id === "ql-cadeia") {
         cadeiaSel = t.value;
         render();
+        const deNovo = raizAtual && raizAtual.querySelector ? raizAtual.querySelector("#ql-cadeia") : null;
+        if (deNovo && deNovo.focus) deNovo.focus();
       } else if (t.id === "ql-todos") {
         mostrarTodos = !!t.checked;
         render();
+        const deNovo = raizAtual && raizAtual.querySelector ? raizAtual.querySelector("#ql-todos") : null;
+        if (deNovo && deNovo.focus) deNovo.focus();
       }
     };
     raiz.addEventListener("click", clickFn);
@@ -76,13 +81,30 @@ const QualityUI = (() => {
     changeFn = null;
   }
 
+  function abortar(ctrl) {
+    if (!ctrl) return;
+    try { ctrl.abort(); } catch (e) { /* já abortado */ }
+  }
+
   function invalidar() {
     geracao += 1;
-    if (ctrl) {
-      try { ctrl.abort(); } catch (e) { /* já abortado */ }
-    }
-    ctrl = null;
+    abortar(ctrlRel);
+    abortar(ctrlComp);
+    ctrlRel = null;
+    ctrlComp = null;
     desvincular();
+  }
+
+  function sinalDe(qual) {
+    const ctrl = new AbortController();
+    if (qual === "rel") {
+      abortar(ctrlRel);
+      ctrlRel = ctrl;
+    } else {
+      abortar(ctrlComp);
+      ctrlComp = ctrl;
+    }
+    return ctrl.signal;
   }
 
   function contagemOuvintes(raiz) {
@@ -128,7 +150,7 @@ const QualityUI = (() => {
     if (forcar && cache && id) cache.apagarRelatorio(id);
     relatorio = null;
     render();
-    const sinal = ctrl ? ctrl.signal : undefined;
+    const sinal = sinalDe("rel");
     const rel = await QualityModel.consultarRelatorio(id, {
       fetch: typeof fetch === "function" ? fetch : null,
       cache,
@@ -155,7 +177,7 @@ const QualityUI = (() => {
     compEstado = "carregando";
     compMensagem = "";
     render();
-    const sinal = ctrl ? ctrl.signal : undefined;
+    const sinal = sinalDe("comp");
     const fila = codigos.slice(0, 24);
     const resto = codigos.slice(24);
     const anotacoes = new Array(fila.length);
@@ -183,7 +205,12 @@ const QualityUI = (() => {
     if (!aindaVale(ticket) || seq !== seqComp) return;
     painel = QualityModel.montarPainelComponentes(appRef.estrutura, anotacoes.filter(Boolean));
     painel.naoConsultados = resto.map((c) => c.codigo);
-    compEstado = "ok";
+    if (sinal.aborted) {
+      compEstado = "erro";
+      compMensagem = "O tempo da consulta dos componentes acabou. As fichas já lidas foram mantidas; as demais não foram preenchidas com zero.";
+    } else {
+      compEstado = "ok";
+    }
     publicar();
   }
 
@@ -202,14 +229,9 @@ const QualityUI = (() => {
     }
     const raiz = typeof document !== "undefined" ? document.getElementById("tab-qualidade") : null;
     vincular(raiz);
-    ctrl = typeof AbortController !== "undefined" ? new AbortController() : null;
-    const timer = setTimeout(() => { if (ctrl) ctrl.abort(); }, 20000);
     render();
-    const espera = Promise.all([
-      consultarRelatorio(false),
-      consultarComponentes(false),
-    ]);
-    espera.then(() => clearTimeout(timer), () => clearTimeout(timer));
+    consultarRelatorio(false);
+    consultarComponentes(false);
   }
 
   function linksHtml(links) {
@@ -297,6 +319,7 @@ const QualityUI = (() => {
       modelo: "no modelo selecionado",
       sem_residuo: "sem posição correspondente",
       sem_coordenada: "sem coordenada no modelo",
+      resname_divergente: "nome do resíduo diferente do relatório",
       altloc_ausente: "altLoc ausente no modelo",
       ambiguo: "posição ambígua",
       campo_ausente: "falta chain, resnum ou model",
@@ -312,9 +335,13 @@ const QualityUI = (() => {
       <td>${esc(mapa[it.mapeamento] || it.mapeamento)}</td>
     </tr>`).join("");
     const cov = cobertura
-      ? `<p>Cadeia ${esc(cadeiaSel)}, modelo ${esc(local.modeloSelecionado)}: ${cobertura.comIndicador} de ${cobertura.residuosComCoordenadas} posições com coordenada têm indicador neste relatório. ${cobertura.semIndicador} posição(ões) com coordenada não aparecem no relatório e não recebem nota. Lacunas sem coordenada nesta cadeia: ${cobertura.lacunasSemCoordenada}. Elas não têm qualidade local.</p>`
-      : `<p>Não há cadeia para cruzar com o modelo.</p>`;
+      ? `<p>Cadeia author ${esc(cadeiaSel)}, modelo ${esc(local.modeloSelecionado)}: ${cobertura.comIndicador} de ${cobertura.residuosComCoordenadas} posições com coordenada e numeração author têm indicador neste relatório. ${cobertura.semIndicador} posição(ões) com coordenada não aparecem no relatório e não recebem nota. Lacunas sem coordenada nesta cadeia: ${cobertura.lacunasSemCoordenada}. Elas não têm qualidade local.</p>`
+      : `<p>Não há cadeia author para cruzar com o modelo.</p>`;
+    const semAuth = local.semIdentidadeAuthor
+      ? `<p class="muted small">${local.semIdentidadeAuthor} posição(ões) com coordenada não têm cadeia e número author. Elas não recebem indicador e não foram colocadas em outra cadeia.</p>`
+      : "";
     return `${cov}
+      ${semAuth}
       <p class="muted small">Subgrupos lidos: ${local.subgruposLidos}. Ignorados por serem de outro modelo: ${local.subgruposOutroModelo}. Sem chain, resnum ou model: ${local.campoAusente}.</p>
       <div class="ql-controles">
         <label>Cadeia <select id="ql-cadeia">${opcoes}</select></label>
@@ -425,6 +452,15 @@ const QualityUI = (() => {
     if (comp) comp.innerHTML = htmlComponentes();
   }
 
+  function definirParaTeste(estado) {
+    relatorio = estado.relatorio || null;
+    painel = estado.painel || null;
+    appRef = estado.app || null;
+    compEstado = estado.compEstado || "ok";
+    if (estado.raiz) vincular(estado.raiz);
+    render();
+  }
+
   return {
     aoCarregar,
     invalidar,
@@ -433,6 +469,8 @@ const QualityUI = (() => {
     contagemOuvintes,
     aindaVale,
     render,
+    escapar: esc,
+    definirParaTeste,
   };
 })();
 
