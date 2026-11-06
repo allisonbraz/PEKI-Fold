@@ -326,6 +326,54 @@ function teste4HHBLocal() {
   assert(/mesmo nome/.test(beta.numeracao.motivo), "o motivo cita o nome divergente: " + beta.numeracao.motivo);
 }
 
+function colunasTabela(linha) {
+  let n = 0;
+  for (let i = 0; i < linha.length; i++) {
+    if (linha[i] === "|" && linha[i - 1] !== "\\") n += 1;
+  }
+  return n;
+}
+
+function testeMarkdownHostil() {
+  const hostil = "HEM | coluna\n\n## Seção injetada\n`codigo`";
+  const a = base({
+    id: "SIN-HOSTIL",
+    rotulo: hostil,
+    origem: Object.assign({}, base().origem, { fonte: hostil, nomeArquivo: "hostil.json" }),
+  });
+  const b = base({ id: "SIN-B2", rotulo: "SIN-B2" });
+  const comparado = AnalysisSnapshot.comparar([a, b], Object.assign(pesos({ cobertura: 1, pocket: 1 }), {
+    componente: "HEM | x\n\n## Comp injetado",
+  }));
+  assert(comparado.ranqueado, "snapshot hostil ainda compara: " + comparado.motivo);
+  const pocket = porId(comparado, "SIN-HOSTIL").subscores.find((s) => s.id === "pocket");
+  assert(pocket && pocket.estado === "indisponivel" && pocket.subpontuacao == null, "peso de pocket sem drugScore fica indisponível");
+  const com = AnalysisSnapshot.comEscolha(comparado, {
+    id: "SIN-B2",
+    justificativa: "prefiro esta\n\n## Decisão falsa\n| esta | coluna `aberta`",
+  });
+  assert(com.ok, "justificativa hostil é aceita: " + (com.erro || ""));
+  const md = AnalysisSnapshot.relatorioMarkdown(com.resultado);
+  const linhas = md.split("\n");
+  const tabela = linhas.filter((l) => l.startsWith("|"));
+  const esperadas = colunasTabela(tabela[0]);
+  assert(esperadas === 6, "cabeçalho tem 5 colunas");
+  for (const linha of tabela) {
+    assert(colunasTabela(linha) === esperadas, "linha da tabela não ganha coluna: " + linha);
+  }
+  assert(!linhas.some((l) => /^#{1,6}\s+(Seção injetada|Decisão falsa|Comp injetado)\b/.test(l)), "texto importado não abre seção: " + linhas.filter((l) => /^#/.test(l)).join(" || "));
+  assert(!linhas.some((l) => /^```/.test(l) || /^\| esta \|/.test(l)), "não abre cerca nem linha de tabela solta");
+  assert(md.includes("Seção injetada") && md.includes("Decisão falsa") && md.includes("codigo"), "o conteúdo hostil continua legível");
+  assert(md.includes("\\|"), "a barra vertical do rótulo permanece escapada");
+  const soPocket = AnalysisSnapshot.comparar(
+    [base({ id: "SIN-P1", rotulo: "SIN-P1" }), base({ id: "SIN-P2", rotulo: "SIN-P2" })],
+    pesos({ pocket: 1 })
+  );
+  assert(!soPocket.ranqueado, "só pocket, sem drugScore, não ranqueia");
+  const sub = porId(soPocket, "SIN-P1").subscores.find((s) => s.id === "pocket");
+  assert(sub && sub.estado === "indisponivel" && sub.subpontuacao == null, "ausência de drugScore não vira zero");
+}
+
 function testeRelatorio() {
   const trio = [completo(), lacuna(), apo()];
   const r = AnalysisSnapshot.comparar(trio, Object.assign(pesos({ pocket: 5, qualidade: 1 }), { componente: "HEM", componenteEliminatorio: true }));
@@ -353,6 +401,7 @@ function main() {
   testeEmpateERegiao();
   testeReais();
   teste4HHBLocal();
+  testeMarkdownHostil();
   testeRelatorio();
   if (falhas) {
     console.error(falhas + " falha(s), " + ok + " ok");

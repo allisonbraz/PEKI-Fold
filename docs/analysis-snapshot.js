@@ -1224,6 +1224,26 @@ const AnalysisSnapshot = (() => {
     return JSON.stringify(resultado, null, 2) + "\n";
   }
 
+  // Texto livre no Markdown: a quebra de linha do conteúdo importado não pode
+  // abrir título, tabela, cerca ou item novo. O caractere em si permanece.
+  function mdLivre(v) {
+    return texto(v)
+      .replace(/\r\n/g, "\n")
+      .replace(/[\n\r\u2028\u2029]+/g, " ⏎ ")
+      .replace(/\\/g, "\\\\")
+      .replace(/`/g, "\\`")
+      .replace(/\*/g, "\\*");
+  }
+
+  // Célula de tabela: a barra vertical do texto continua visível e não abre coluna.
+  function mdCelula(v) {
+    return mdLivre(v).replace(/\|/g, "\\|");
+  }
+
+  function linhaTabela(celulas) {
+    return "| " + celulas.map((c) => mdCelula(c)).join(" | ") + " |";
+  }
+
   function relatorioMarkdown(resultado) {
     const r = resultado || {};
     const p = r.pergunta || { pesos: {} };
@@ -1236,8 +1256,8 @@ const AnalysisSnapshot = (() => {
     L.push("");
     L.push("## Pergunta e critérios");
     L.push("");
-    L.push("- Região: " + (p.regiao || "não informada") + (p.regiaoEssencial ? " (essencial)" : ""));
-    L.push("- Componente, parceiro ou ligante: " + (p.componente || "não informado") + (p.componenteEliminatorio ? " (eliminatório)" : ""));
+    L.push("- Região: " + mdLivre(p.regiao || "não informada") + (p.regiaoEssencial ? " (essencial)" : ""));
+    L.push("- Componente, parceiro ou ligante: " + mdLivre(p.componente || "não informado") + (p.componenteEliminatorio ? " (eliminatório)" : ""));
     L.push("- Pocket eliminatório: " + (p.pocketEliminatorio ? "sim" : "não"));
     L.push("- Pesos: cobertura " + (p.pesos ? p.pesos.cobertura : "—") + ", qualidade " + (p.pesos ? p.pesos.qualidade : "—") + ", componente " + (p.pesos ? p.pesos.componente : "—") + ", pocket " + (p.pesos ? p.pesos.pocket : "—") + ".");
     L.push("");
@@ -1248,39 +1268,45 @@ const AnalysisSnapshot = (() => {
     L.push("## Análises");
     L.push("");
     for (const a of r.analises || []) {
-      L.push("- " + a.rotulo + " (`" + a.id + "`), " + a.origem + ", guardada em " + a.geradoEm + (a.sintetico ? ", dados sintéticos de teste" : "") + ".");
+      L.push("- " + mdLivre(a.rotulo) + " (`" + a.id + "`), " + mdLivre(a.origem) + ", guardada em " + a.geradoEm + (a.sintetico ? ", dados sintéticos de teste" : "") + ".");
     }
     L.push("");
     L.push("## Ranking");
     L.push("");
-    L.push(r.ranqueado ? r.motivo : "Sem ranking. " + (r.motivo || ""));
+    L.push(mdLivre(r.ranqueado ? r.motivo : "Sem ranking. " + (r.motivo || "")));
     if (r.razao) L.push("");
-    if (r.razao) L.push(r.razao);
+    if (r.razao) L.push(mdLivre(r.razao));
     L.push("");
     L.push("| Posição | Análise | Situação | Pontuação | Fração dos pesos com dado |");
     L.push("| --- | --- | --- | --- | --- |");
     for (const c of r.candidatos || []) {
-      L.push("| " + (c.posicao == null ? "—" : c.posicao + (c.empate ? " empate" : "")) + " | " + c.rotulo + " | " + c.situacao + " | " + fmt(c.pontuacao) + " | " + (c.fracaoDados == null ? "—" : fmt(c.fracaoDados)) + " |");
+      L.push(linhaTabela([
+        c.posicao == null ? "—" : String(c.posicao) + (c.empate ? " empate" : ""),
+        c.rotulo,
+        c.situacao,
+        fmt(c.pontuacao),
+        c.fracaoDados == null ? "—" : fmt(c.fracaoDados),
+      ]));
     }
     L.push("");
     L.push("### Subpontuações");
     L.push("");
     for (const c of r.candidatos || []) {
-      L.push("**" + c.rotulo + "**");
-      if (!(c.subscores || []).length) L.push("- Sem subpontuação. " + (c.motivos || []).join(" "));
+      L.push("**" + mdLivre(c.rotulo) + "**");
+      if (!(c.subscores || []).length) L.push("- Sem subpontuação. " + mdLivre((c.motivos || []).join(" ")));
       for (const s of c.subscores || []) {
         const renorm = c.pesosRenormalizados && c.pesosRenormalizados[s.id] != null ? ", peso renormalizado " + fmt(c.pesosRenormalizados[s.id]) : "";
-        L.push("- " + s.rotulo + ": " + (s.estado === "indisponivel" ? "indisponível" : fmt(s.subpontuacao)) + " (peso " + s.peso + renorm + "). " + s.detalhe);
+        L.push("- " + mdLivre(s.rotulo) + ": " + (s.estado === "indisponivel" ? "indisponível" : fmt(s.subpontuacao)) + " (peso " + s.peso + renorm + "). " + mdLivre(s.detalhe));
       }
-      for (const m of c.motivos || []) L.push("- " + m);
+      for (const m of c.motivos || []) L.push("- " + mdLivre(m));
       L.push("");
     }
     L.push("## Fora da pontuação e alertas");
     L.push("");
     const fora = (r.candidatos || []).filter((c) => c.situacao !== "ranqueado");
     if (!fora.length) L.push("Nenhum candidato ficou de fora.");
-    for (const c of fora) L.push("- " + c.rotulo + " (" + c.situacao + "): " + (c.motivos || []).join(" "));
-    for (const a of r.alertas || []) L.push("- Alerta: " + a);
+    for (const c of fora) L.push("- " + mdLivre(c.rotulo) + " (" + c.situacao + "): " + mdLivre((c.motivos || []).join(" ")));
+    for (const a of r.alertas || []) L.push("- Alerta: " + mdLivre(a));
     L.push("");
     L.push("## Diferenças usadas nos critérios");
     L.push("");
@@ -1288,22 +1314,26 @@ const AnalysisSnapshot = (() => {
     L.push("");
     if (!(r.insights || []).length) L.push("Nenhuma diferença ligada aos critérios ativos.");
     for (const item of r.insights || []) {
-      L.push("### " + item.titulo);
+      L.push("### " + mdLivre(item.titulo));
       L.push("");
-      L.push(item.evidencia);
+      L.push(mdLivre(item.evidencia));
       L.push("");
-      if (item.limitacao) L.push("Limitação: " + item.limitacao);
+      if (item.limitacao) L.push("Limitação: " + mdLivre(item.limitacao));
       L.push("");
     }
     L.push("## Escolha final");
     L.push("");
     if (!r.escolha) L.push("Nenhuma decisão final registrada.");
-    else L.push((r.escolha.diferenteDoLider ? "Escolha diferente do primeiro colocado: " : "Escolha: ") + r.escolha.rotulo + " (`" + r.escolha.id + "`). " + (r.escolha.justificativa || "Sem justificativa adicional."));
+    else {
+      L.push((r.escolha.diferenteDoLider ? "Escolha diferente do primeiro colocado: " : "Escolha: ")
+        + mdLivre(r.escolha.rotulo) + " (`" + r.escolha.id + "`). "
+        + mdLivre(r.escolha.justificativa || "Sem justificativa adicional."));
+    }
     L.push("");
     L.push("## Limitações");
     L.push("");
-    for (const lim of r.limitacoes || []) L.push("- " + lim);
-    if (r.numeracao && r.numeracao.motivo) L.push("- Numeração: " + r.numeracao.motivo);
+    for (const lim of r.limitacoes || []) L.push("- " + mdLivre(lim));
+    if (r.numeracao && r.numeracao.motivo) L.push("- Numeração: " + mdLivre(r.numeracao.motivo));
     L.push("");
     return L.join("\n");
   }
