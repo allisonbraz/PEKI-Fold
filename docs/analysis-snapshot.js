@@ -57,6 +57,8 @@ const AnalysisSnapshot = (() => {
     return Math.trunc(v);
   }
   function decimal(v) {
+    if (v == null || (typeof v === "string" && !v.trim())) return null;
+    if (typeof v !== "number" && typeof v !== "string") return null;
     const n = typeof v === "number" ? v : Number(v);
     return Number.isFinite(n) ? n : null;
   }
@@ -472,15 +474,103 @@ const AnalysisSnapshot = (() => {
     return validarObjeto(valor);
   }
 
+  // Só verifica campos conhecidos: "!" exige presença e $nulo permite objetos nulos.
+  function validarTiposSnapshot(dado, esquema, caminho) {
+    const erro = (tipo) => "O campo " + caminho + " precisa ser " + tipo + ".";
+    if (esquema === "number|null") {
+      return dado === null || (typeof dado === "number" && Number.isFinite(dado)) ? null : erro("um número finito ou null");
+    }
+    if (esquema === "texto") return typeof dado === "string" && dado.trim() ? null : erro("uma string não vazia");
+    if (esquema === "string") return typeof dado === "string" ? null : erro("uma string");
+    if (esquema === "string|null") return dado === null || typeof dado === "string" ? null : erro("uma string ou null");
+    if (esquema === "boolean") return typeof dado === "boolean" ? null : erro("um booleano");
+    if (Array.isArray(esquema)) {
+      if (!Array.isArray(dado)) return erro("uma lista (array)");
+      for (let i = 0; i < dado.length; i++) {
+        const mensagem = validarTiposSnapshot(dado[i], esquema[0], caminho + "[" + i + "]");
+        if (mensagem) return mensagem;
+      }
+      return null;
+    }
+    if (dado === null && esquema.$nulo) return null;
+    if (!obj(dado)) return erro(esquema.$nulo ? "um objeto ou null" : "um objeto");
+    for (const [campo, tipo] of Object.entries(esquema)) {
+      if (campo === "$nulo") continue;
+      const obrigatorio = campo.endsWith("!");
+      const nome = obrigatorio ? campo.slice(0, -1) : campo;
+      const lugar = caminho ? caminho + "." + nome : nome;
+      if (!Object.prototype.hasOwnProperty.call(dado, nome)) {
+        if (obrigatorio) return "O campo " + lugar + " é obrigatório.";
+        continue;
+      }
+      const mensagem = validarTiposSnapshot(dado[nome], tipo, lugar);
+      if (mensagem) return mensagem;
+    }
+    return null;
+  }
+
   function validarObjeto(valor) {
     if (!obj(valor)) return falha("O JSON precisa ser um objeto de análise, não uma lista nem um valor solto.");
-    const schema = texto(valor.schema);
+    if (typeof valor.schema !== "string") return falha("O campo schema precisa ser uma string não vazia.");
+    const schema = valor.schema;
     const versao = schema.match(/^peki-analise-(\d+)$/);
     if (!versao) return falha("O arquivo não é uma análise PEKI (schema ausente ou desconhecido). A comparação atual foi mantida.");
     if (Number(versao[1]) > 1) {
       return falha("Versão futura incompatível (" + schema + "). Esta versão lê " + SCHEMA + ". A comparação atual foi mantida.");
     }
     if (schema !== SCHEMA) return falha("Schema " + schema + " não é lido por esta versão. A comparação atual foi mantida.");
+    const erroTipos = validarTiposSnapshot(valor, {
+      "schema!": "texto", versaoApp: "texto", "id!": "texto", "rotulo!": "texto", "geradoEm!": "texto",
+      "origem!": {
+        "tipo!": "texto", "formato!": "texto", pdbId: "string|null", nomeArquivo: "string|null",
+        fonte: "string|null", url: "string|null", titulo: "string|null", metodo: "string|null", nota: "string|null",
+        sintetico: "boolean", resolucaoArquivo: { $nulo: true, valor: "number|null", unidade: "string", origem: "string" },
+      },
+      modelo: { selecionado: "number|null", total: "number|null", criterio: "string|null" },
+      "cadeias!": [{
+        "id!": "texto", auth: "string|null", label: "string|null", "sequencia!": "string",
+        "residuos!": [{ "resname!": "texto", seq: "number|null", icode: "string", classe: "string" }],
+      }],
+      "cobertura!": { "polimerosModelados!": "number|null" },
+      "lacunas!": {
+        "determinado!": "boolean", resumo: "string", foraDoConstructo: "string",
+        "naoResolvidos!": [{ "cadeia!": "string", "resname!": "texto", seq: "number|null", icode: "string" }],
+        saltosNumeracao: [{ "cadeia!": "string", de: "number|null", para: "number|null", interpretacao: "string|null" }],
+      },
+      "componentes!": {
+        proteinas: { posicoes: "number|null", padrao: "number|null", modificadas: "number|null" },
+        "hetero!": [{ "codigo!": "texto", instancias: "number|null", nome: "string|null" }],
+        ions: [{ "codigo!": "texto", instancias: "number|null", nome: "string|null" }],
+        modificados: [{ "codigo!": "texto", instancias: "number|null", nome: "string|null" }],
+        anotacoesCcd: [{ "codigo!": "texto", instancias: "number|null", grupo: "string|null", nome: "string|null", tipo: "string|null", estado: "texto" }],
+        aguas: { instancias: "number|null", nota: "string" },
+        "holo!": { estado: "texto", motivo: "string" }, ccdEstado: "texto",
+      },
+      "qualidade!": {
+        "estado!": "texto", motivo: "string|null", classe: "string|null", consulta: "string|null",
+        fonte: { $nulo: true, nome: "string|null", url: "string|null", data: "string|null" },
+        metricas: [{ "id!": "texto", rotulo: "string", valor: "number|null", unidade: "string|null" }],
+        omitidos: [{ "id!": "texto", motivo: "string" }], local: { estado: "texto", motivo: "string|null" },
+      },
+      "pockets!": {
+        "estado!": "texto", motivo: "string|null", fonte: "string|null", aviso: "string",
+        "itens!": [{ "name!": "texto", volume: "number|null", surface: "number|null", depth: "number|null", hydrophobicity: "number|null", drugScore: "number|null" }],
+      },
+      "preparo!": {
+        "estado!": "texto", motivo: "string|null", versao: "string|null", predita: "string|null",
+        contagens: { $nulo: true, dissulfetos: "number|null", glicosilacao: "number|null", ions: "number|null", histidinas: "number|null", aguas: "number|null" },
+        selecao: { $nulo: true, cadeias: ["texto"], removerAguas: "boolean", altloc: "string|null", codigosHetMantidos: ["texto"] },
+        anotacoes: { $nulo: true, inventario: "string|null", limpeza: "string|null", ions: "string|null", dissulfetos: "string|null", glicosilacao: "string|null", histidinas: "string|null", vina: "string|null" },
+        caixaVina: { $nulo: true, editada: "boolean", center_x: "number|null", center_y: "number|null", center_z: "number|null", size_x: "number|null", size_y: "number|null", size_z: "number|null", aviso: "string" },
+      },
+      "uniprot!": {
+        "correspondenciaResiduo!": "texto", motivo: "string",
+        declaracoes: [{ cadeia: "string|null", accession: "string|null", db: "string|null", pdbInicio: "number|null", pdbFim: "number|null" }],
+      },
+      anotacoes: { motivoSequencia: { $nulo: true, consulta: "string|null", ocorrencias: "number|null" } },
+      limitacoes: ["texto"],
+    }, "");
+    if (erroTipos) return falha(erroTipos);
     if (!/^[A-Za-z0-9._-]{1,80}$/.test(texto(valor.id))) return falha("O identificador da análise está ausente ou usa caracteres não aceitos.");
     if (!corte(valor.rotulo, 80)) return falha("Falta o rótulo da análise.");
     if (!/^\d{4}-\d{2}-\d{2}T/.test(texto(valor.geradoEm))) return falha("A data do guardado não está em ISO 8601.");

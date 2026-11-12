@@ -175,8 +175,19 @@ function pintarMotivo(ocorrencias) {
   const v = estado.viewer;
   if (!v || !ocorrencias) return;
   for (const oc of ocorrenciasVisiveis(ocorrencias)) {
-    const sel = { chain: oc.cadeia === "_" ? "" : oc.cadeia, resi: oc.residuos.map(Number) };
-    v.setStyle(sel, { stick: { color: "yellow" }, sphere: { color: "yellow", radius: 0.5 } });
+    const porInsercao = new Map();
+    for (const residuo of oc.residuos) {
+      const match = String(residuo).match(/^(-?\d+)([^\d\s])$/);
+      const icode = match ? match[2] : " ";
+      if (!porInsercao.has(icode)) porInsercao.set(icode, []);
+      porInsercao.get(icode).push(match ? Number(match[1]) : Number(residuo));
+    }
+    for (const [icode, resi] of porInsercao) {
+      const sel = { chain: oc.cadeia === "_" ? "" : oc.cadeia, resi };
+      // O leitor mmCIF 2.4.0 não fornece icode; conserva a seleção sem inserção.
+      if (estado.viewerFormato !== "cif" || icode !== " ") sel.icode = icode;
+      v.setStyle(sel, { stick: { color: "yellow" }, sphere: { color: "yellow", radius: 0.5 } });
+    }
   }
   v.render();
 }
@@ -249,16 +260,22 @@ function pintarResiduosPocket(sels) {
   v.render();
 }
 
-function selecoesDosResiduos(txt) {
+function selecoesDosResiduos(txt, diagnostico) {
+  txt = filtrarResiduosPocket(txt, diagnostico);
   const selPorCadeia = {};
   for (const linha of String(txt).split("\n")) {
     if (!linha.startsWith("ATOM") && !linha.startsWith("HETATM")) continue;
     const cadeia = linha[21].trim() || "";
     const resi = parseInt(linha.slice(22, 26), 10);
     if (Number.isNaN(resi)) continue;
-    (selPorCadeia[cadeia] = selPorCadeia[cadeia] || new Set()).add(resi);
+    const icode = linha[26] || " ";
+    const grupos = selPorCadeia[cadeia] = selPorCadeia[cadeia] || new Map();
+    if (!grupos.has(icode)) grupos.set(icode, new Set());
+    grupos.get(icode).add(resi);
   }
-  return Object.entries(selPorCadeia).map(([cadeia, resis]) => ({ chain: cadeia, resi: [...resis] }));
+  return Object.entries(selPorCadeia).flatMap(([cadeia, grupos]) =>
+    [...grupos].map(([icode, resis]) => ({ chain: cadeia, resi: [...resis], icode }))
+  );
 }
 
 function vistaAindaVale(geracao, idx) {
@@ -336,9 +353,11 @@ async function destacarPocket(idx) {
   sincronizarBotoesPocket();
   if (status) status.innerHTML = `<span class="spinner"></span> Carregando resíduos do ${esc(p.name)}…`;
   try {
-    const txt = await (await fetch(p.residuosUrl)).text();
+    const txt = await (await PekiRede.fetch(p.residuosUrl)).text();
     if (!vistaAindaVale(geracao, idx)) return;
-    const sels = selecoesDosResiduos(txt);
+    const diagnostico = {};
+    const sels = selecoesDosResiduos(txt, diagnostico);
+    if (!sels.length && diagnostico.descartadas) throw new Error("Nenhum resíduo válido no arquivo do pocket." + avisoLinhasPocket(diagnostico.descartadas));
     if (!vistaAindaVale(geracao, idx)) return;
     aplicarEstilo();
     estado.vistaPocket.sels = sels;
@@ -348,14 +367,14 @@ async function destacarPocket(idx) {
     const toggle = $("#surf-toggle");
     if (toggle) toggle.checked = true;
     aplicarSuperficie();
-    if (status) status.textContent = `✓ ${p.name}: resíduos destacados e superfície exibida no 3D.`;
+    if (status) status.textContent = `✓ ${p.name}: resíduos destacados e superfície exibida no 3D.` + avisoLinhasPocket(diagnostico.descartadas);
     sincronizarBotoesPocket();
   } catch (e) {
     if (geracao !== geracaoVistaPocket) return;
     const falha = estado.vistaPocket;
     estado.vistaPocket = falha && falha.anteriorVista ? falha.anteriorVista : null;
     sincronizarBotoesPocket();
-    if (status) status.innerHTML = `❌ Falha ao destacar o pocket: ${e.message}`;
+    if (status) status.innerHTML = PekiRede.ehTimeout(e) ? `❌ ${e.message}` : `❌ Falha ao destacar o pocket: ${e.message}`;
   }
 }
 

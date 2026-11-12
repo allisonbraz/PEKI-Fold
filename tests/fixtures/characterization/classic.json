@@ -552,26 +552,26 @@
       "cadeias": [
         {
           "cadeia": "A",
-          "atomos": 5175,
+          "atomos": 207,
           "residuos": 14,
           "aminoacidos_diferentes": 9
         },
         {
           "cadeia": "B",
-          "atomos": 22525,
+          "atomos": 901,
           "residuos": 58,
           "aminoacidos_diferentes": 18
         }
       ],
       "maior": {
         "cadeia": "B",
-        "atomos": 22525,
+        "atomos": 901,
         "residuos": 58,
         "aminoacidos_diferentes": 18
       },
       "menor": {
         "cadeia": "A",
-        "atomos": 5175,
+        "atomos": 207,
         "residuos": 14,
         "aminoacidos_diferentes": 9
       }

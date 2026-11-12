@@ -9,14 +9,25 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const POCKETS_CACHE = {};
 
 async function obterPockets(id, onTick, deveParar) {
+  const verificar = () => {
+    if (typeof deveParar === "function" && deveParar()) throw new Error("Cálculo cancelado.");
+  };
   const chave = String(id).toUpperCase();
   if (POCKETS_CACHE[chave]) return POCKETS_CACHE[chave];
+  verificar();
   const location = await dogsiteSubmit(id);
+  verificar();
   const resultado = await dogsitePoll(location, onTick, deveParar);
-  const txt = await (await fetch(resultado.result_table)).text();
-  const pockets = parseTabelaPockets(txt);
-  pockets.forEach((p, i) => { p.residuosUrl = (resultado.residues || [])[i] || null; });
+  verificar();
+  const resposta = await PekiRede.fetch(resultado.result_table);
+  verificar();
+  const txt = await resposta.text();
+  verificar();
+  const diagnostico = {};
+  const pockets = parseTabelaPockets(txt, diagnostico);
+  pockets.forEach((p, i) => { p.residuosUrl = (resultado.residues || [])[diagnostico.indices[i]] || null; });
   POCKETS_CACHE[chave] = { pockets, residues: resultado.residues || [] };
+  if (diagnostico.descartadas) POCKETS_CACHE[chave].descartadas = diagnostico.descartadas;
   return POCKETS_CACHE[chave];
 }
 
@@ -31,7 +42,7 @@ async function dogsiteSubmit(pdbId, opcoes) {
   const codigo = opcoes && opcoes.preservarCaixa ? String(pdbId) : String(pdbId).toLowerCase();
   let resp;
   try {
-    resp = await fetch(DOGSITE_API, {
+    resp = await PekiRede.fetch(DOGSITE_API, {
       method: "POST",
       headers: { "Content-Type": "application/json", Accept: "application/json" },
       body: JSON.stringify({
@@ -44,6 +55,7 @@ async function dogsiteSubmit(pdbId, opcoes) {
       }),
     });
   } catch (e) {
+    if (PekiRede.ehTimeout(e)) throw e;
     throw new Error("Sem conexão com a API ProteinsPlus (ou bloqueio de rede).");
   }
   if (resp.status === 429) throw new Error("Limite de uso da API atingido. Tente novamente em alguns minutos.");
@@ -56,41 +68,61 @@ async function dogsiteSubmit(pdbId, opcoes) {
 }
 
 async function dogsitePoll(location, onTick, deveParar) {
+  return PekiRede.limitar((signal) => consultarJobDogsite(location, onTick, deveParar, signal), { chave: "dogsiteJob" });
+}
+
+async function consultarJobDogsite(location, onTick, deveParar, signal) {
+  const polling = PekiRede.config.polling.dogsite;
   const parar = () => typeof deveParar === "function" && deveParar();
-  for (let i = 0; i < 45; i++) { // ~3 min no maximo (45 x 4s)
+  for (let i = 0; i < polling.tentativas; i++) {
     if (parar()) throw new Error("Cálculo cancelado.");
+    if (signal && signal.aborted) throw PekiRede.erroTimeout();
     let r;
-    try { r = await fetch(location, { headers: { Accept: "application/json" } }); }
-    catch (e) { throw new Error("Conexão perdida durante o cálculo dos pockets."); }
+    try { r = await PekiRede.fetch(location, { signal, headers: { Accept: "application/json" } }); }
+    catch (e) { if (PekiRede.ehTimeout(e)) throw e; throw new Error("Conexão perdida durante o cálculo dos pockets."); }
+    if (parar()) throw new Error("Cálculo cancelado.");
     if (r.status === 429) throw new Error("Limite de uso da API atingido. Tente novamente em alguns minutos.");
     if (r.status === 200) {
       const d = await r.json();
+      if (parar()) throw new Error("Cálculo cancelado.");
       if (d.result_table) return d;
     }
+    if (signal && signal.aborted) throw PekiRede.erroTimeout();
     if (onTick) onTick(i + 1);
-    for (let s = 0; s < 4; s++) {
+    for (let s = 0; s < polling.passos; s++) {
       if (parar()) throw new Error("Cálculo cancelado.");
-      await sleep(1000);
+      await sleep(polling.intervaloMs);
     }
   }
-  throw new Error("Tempo esgotado aguardando o DoGSiteScorer.");
+  throw PekiRede.erroTimeout();
 }
 
 // Converte o TSV de descritores num array de objetos {name, volume, ...}.
-function parseTabelaPockets(txt) {
+function parseTabelaPockets(txt, diagnostico = {}) {
+  diagnostico.descartadas = 0;
+  diagnostico.indices = [];
   const linhas = txt.split("\n").map((l) => l.replace(/\r$/, "")).filter((l) => l.trim());
   if (linhas.length < 2) return [];
   const header = linhas[0].split("\t").map((h) => h.trim());
   const idx = {};
   for (const [k, col] of Object.entries(POCKET_COLS)) idx[k] = header.indexOf(col);
 
-  const num = (v) => { const n = parseFloat(String(v).trim()); return Number.isFinite(n) ? n : null; };
+  const num = (v) => Number(String(v).trim());
   const pockets = [];
+  let indice = 0;
   for (let i = 1; i < linhas.length; i++) {
     const c = linhas[i].split("\t");
-    const nome = (c[idx.name] || `P_${i - 1}`).trim();
+    const nome = (c[idx.name] || "").trim();
     // analysisDetail=0 ja retorna so pockets, mas filtramos subpockets por seguranca
-    if (/_\d+_\d+$/.test(nome)) continue;
+    const subpocket = /_\d+_\d+$/.test(nome);
+    const origem = subpocket ? null : indice++;
+    if (!nome || c.length !== header.length || Object.keys(POCKET_COLS).some((k) =>
+      idx[k] < 0 || (k !== "name" && !numeroPocketValido(c[idx[k]])))) {
+      diagnostico.descartadas += 1;
+      continue;
+    }
+    if (subpocket) continue;
+    diagnostico.indices.push(origem);
     pockets.push({
       name: nome,
       volume: num(c[idx.volume]),
@@ -103,4 +135,41 @@ function parseTabelaPockets(txt) {
     });
   }
   return pockets;
+}
+
+function numeroPocketValido(valor) {
+  const texto = String(valor == null ? "" : valor).trim();
+  return /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?$/.test(texto) && Number.isFinite(Number(texto));
+}
+
+// Só os registros de átomos do arquivo de pocket são validados. Cabeçalhos e
+// delimitadores de modelos permanecem no texto; o leitor geral de PDB não muda.
+function filtrarResiduosPocket(texto, diagnostico = {}) {
+  diagnostico.descartadas = 0;
+  return String(texto).split("\n").filter((linha) => {
+    const rec = linha.substring(0, 6).trim();
+    if (rec !== "ATOM" && rec !== "HETATM") {
+      if (!/^(ATOM|HETATM)/.test(linha)) return true;
+      diagnostico.descartadas += 1;
+      return false;
+    }
+    const inteiro = (ini, fim) => /^[+-]?\d+$/.test(linha.substring(ini, fim).trim());
+    const valido = linha.length >= 54 && inteiro(6, 11) && inteiro(22, 26)
+      && linha.substring(12, 16).trim() && linha.substring(17, 20).trim() && linha.charAt(21).trim()
+      && [[30, 38], [38, 46], [46, 54]].every(([ini, fim]) => numeroPocketValido(linha.substring(ini, fim)))
+      && [[54, 60], [60, 66]].every(([ini, fim]) => {
+        const valor = linha.substring(ini, fim).trim();
+        return !valor || numeroPocketValido(valor);
+      });
+    if (!valido) diagnostico.descartadas += 1;
+    return !!valido;
+  }).join("\n");
+}
+
+function avisoLinhasPocket(descartadas) {
+  return descartadas ? " Aviso: " + descartadas + " linha(s) inválida(s) descartada(s) na leitura dos pockets." : "";
+}
+
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = { parseTabelaPockets, filtrarResiduosPocket, avisoLinhasPocket };
 }

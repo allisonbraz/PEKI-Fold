@@ -584,41 +584,53 @@ ${htmlVinaPreparo(F, pocketOpts, vinaCampos)}
     if (ta) ta.value = PrepAnalysis.formatarConfigVina(c);
   }
 
+  let geracaoConsulta = 0;
+  function invalidarConsultas() { geracaoConsulta += 1; }
+
   async function sugerirCaixa() {
-    const status = document.getElementById("prep-vina-status");
-    const sel = document.getElementById("prep-pocket");
-    const idx = sel ? sel.value : "";
-    const p = estado.pockets && estado.pockets[idx];
-    if (!p || !p.residuosUrl) {
-      if (status) status.textContent = estado.pdbId
-        ? "Detecte os pockets na aba Pockets e volte aqui. A caixa não é calculada sozinha."
-        : "A caixa pede um ID do PDB, porque o DoGSiteScorer não recebe arquivo enviado.";
-      return;
-    }
-    if (status) status.textContent = "Lendo os resíduos do pocket…";
-    let txt = cacheRes.get(p.residuosUrl);
-    if (!txt) {
-      const resp = await fetch(p.residuosUrl);
-      if (!resp.ok) throw new Error("Não foi possível baixar os resíduos do pocket (" + resp.status + ").");
-      txt = await resp.text();
-      cacheRes.set(p.residuosUrl, txt);
-    }
-    const margem = Number(document.getElementById("prep-margem").value);
-    const caixa = PrepAnalysis.caixaPocket(txt, margem);
-    if (!caixa.ok) throw new Error(caixa.erro);
-    vina.sugerida = caixa;
-    vina.editada = {
-      center_x: caixa.center_x, center_y: caixa.center_y, center_z: caixa.center_z,
-      size_x: caixa.size_x, size_y: caixa.size_y, size_z: caixa.size_z,
-    };
-    vina.margem = caixa.margem;
-    vina.pocketIdx = String(idx);
-    vina.residuosTxt = txt;
-    lerDecisoes();
-    render();
-    const st = document.getElementById("prep-vina-status");
-    if (st) {
-      st.textContent = `Sugestão a partir de ${p.name}: ${caixa.nAtomos} átomos, margem ${caixa.margem} Å de cada lado. ${PrepAnalysis.FRASES.vina}`;
+    const g = ++geracaoConsulta;
+    const atual = () => g === geracaoConsulta;
+    try {
+      const status = document.getElementById("prep-vina-status");
+      const sel = document.getElementById("prep-pocket");
+      const idx = sel ? sel.value : "";
+      const p = estado.pockets && estado.pockets[idx];
+      if (!p || !p.residuosUrl) {
+        if (status) status.textContent = estado.pdbId
+          ? "Detecte os pockets na aba Pockets e volte aqui. A caixa não é calculada sozinha."
+          : "A caixa pede um ID do PDB, porque o DoGSiteScorer não recebe arquivo enviado.";
+        return;
+      }
+      if (status) status.textContent = "Lendo os resíduos do pocket…";
+      let txt = cacheRes.get(p.residuosUrl);
+      if (!txt) {
+        const resp = await PekiRede.fetch(p.residuosUrl);
+        if (!atual()) return;
+        if (!resp.ok) throw new Error("Não foi possível baixar os resíduos do pocket (" + resp.status + ").");
+        txt = await resp.text();
+        if (!atual()) return;
+        cacheRes.set(p.residuosUrl, txt);
+      }
+      const margem = Number(document.getElementById("prep-margem").value);
+      const diagnostico = {};
+      const caixa = PrepAnalysis.caixaPocket(txt, margem, diagnostico);
+      if (!caixa.ok) throw new Error(caixa.erro + avisoLinhasPocket(diagnostico.descartadas));
+      vina.sugerida = caixa;
+      vina.editada = {
+        center_x: caixa.center_x, center_y: caixa.center_y, center_z: caixa.center_z,
+        size_x: caixa.size_x, size_y: caixa.size_y, size_z: caixa.size_z,
+      };
+      vina.margem = caixa.margem;
+      vina.pocketIdx = String(idx);
+      vina.residuosTxt = txt;
+      lerDecisoes();
+      render();
+      const st = document.getElementById("prep-vina-status");
+      if (st) {
+        st.textContent = `Sugestão a partir de ${p.name}: ${caixa.nAtomos} átomos, margem ${caixa.margem} Å de cada lado. ${PrepAnalysis.FRASES.vina}` + avisoLinhasPocket(diagnostico.descartadas);
+      }
+    } catch (e) {
+      if (atual()) throw e;
     }
   }
 
@@ -932,11 +944,13 @@ ${htmlVinaPreparo(F, pocketOpts, vinaCampos)}
   }
 
   function reiniciar() {
+    invalidarConsultas();
     destaque = null;
     caixaDesenhada = false;
   }
 
   function aoCarregar(est) {
+    invalidarConsultas();
     if (!ATIVO || typeof PrepAnalysis === "undefined") return;
     estado = est;
     destaque = null;
@@ -984,11 +998,13 @@ ${htmlVinaPreparo(F, pocketOpts, vinaCampos)}
     if (!v) return;
     if (destaque && destaque.length) {
       for (const item of destaque) {
+        const icode = item.icode || " ";
         const sel = {
           chain: item.cadeia === "_" ? "" : item.cadeia,
-          resi: item.icode ? String(item.resseq) + item.icode : item.resseq,
+          resi: item.resseq,
           atom: item.atom,
         };
+        if (estado.viewerFormato !== "cif" || icode !== " ") sel.icode = icode;
         v.setStyle(sel, { sphere: { color: item.color, radius: item.radius } });
       }
     }
@@ -1085,7 +1101,7 @@ ${htmlVinaPreparo(F, pocketOpts, vinaCampos)}
     };
   }
 
-  return { ativo, temFicha, reiniciar, aoCarregar, aposEstilo, aoMostrar, markdown, anexarPdf, resumoAnalise };
+  return { ativo, temFicha, invalidarConsultas, reiniciar, aoCarregar, aposEstilo, aoMostrar, markdown, anexarPdf, resumoAnalise };
 })();
 
 if (typeof globalThis !== "undefined") globalThis.PrepUI = PrepUI;

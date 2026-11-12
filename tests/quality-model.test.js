@@ -272,7 +272,7 @@ function testeJsonEErros() {
       limite: 80,
       metodoArquivo: "X-RAY DIFFRACTION",
     });
-    assert(grande.estado === "parcial" && grande.local.estado === "pendente" && metrica(grande, "resolucao").valor === 1.5, "XML acima do limite guarda o global e deixa o local pendente");
+    assert(grande.codigo === "xml_grande_demais" && grande.metricas.length === 0 && /80 bytes/.test(grande.mensagem), "XML acima do limite informa o excesso sem usar conteúdo parcial");
 
     const semId = await QualityModel.consultarRelatorio("", { fetch: async () => { throw new Error("não devia consultar"); } });
     assert(semId.estado === "nao_aplica" && semId.metricas.length === 0, "upload sem ID não consulta");

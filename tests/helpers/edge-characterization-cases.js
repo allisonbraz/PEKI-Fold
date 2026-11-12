@@ -16,10 +16,10 @@ class FixedDate extends Date {
 }
 
 function models(extra = {}) {
-  const context = vm.createContext({ Date: FixedDate, console, AbortController, TextDecoder,
+  const context = vm.createContext({ Date: FixedDate, console, AbortController, TextDecoder, TextEncoder,
     fetch() { throw new Error("Rede real proibida nas caracterizações adicionais."); },
     setTimeout() { throw new Error("Timer real proibido nesta suíte."); }, clearTimeout() {}, ...extra });
-  for (const name of ["pdb-analysis", "structure-model", "prep-analysis", "analysis-snapshot", "quality-model"]) {
+  for (const name of ["network", "pdb-analysis", "structure-model", "prep-analysis", "analysis-snapshot", "quality-model"]) {
     vm.runInContext(read("docs/" + name + ".js"), context, { filename: name + ".js" });
   }
   return (name) => vm.runInContext(name, context);
@@ -196,10 +196,10 @@ async function consultationEdges() {
     return new Promise((_resolve, reject) => { request.signal.addEventListener("abort", () => reject(abortError()), { once: true }); timers.fire(); });
   });
   out.canceladoDuranteCorpoAceito = await run("cancelamento durante corpo", ({ ctrl, timers }) => ({ status: 200, text: async () => {
-    assert.equal(timers.active.size, 0, "o timeout atual termina antes da leitura do corpo"); ctrl.abort(); return xml;
+    assert.equal(timers.active.size, 1, "o corpo também tem prazo, sem alterar o cancelamento externo"); ctrl.abort(); return xml;
   } }));
   out.canceladoDuranteJsonAceito = await run("cancelamento durante corpo JSON", ({ index, ctrl, timers }) => index === 1 ? { status: 404 } : { status: 200, json: async () => {
-    assert.equal(timers.active.size, 0); ctrl.abort(); return clone(entry);
+    assert.equal(timers.active.size, 1); ctrl.abort(); return clone(entry);
   } });
   out.xmlTruncado = await run("XML truncado", xmlResponse, { limite: 80 });
   out.idDivergente = await run("ID divergente", ({ index }) => index === 1 ? { status: 200, text: async () => xml.replace('pdbid="1CRN"', 'pdbid="4HHB"') } : jsonResponse());

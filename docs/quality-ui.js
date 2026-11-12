@@ -41,6 +41,16 @@ const QualityUI = (() => {
     return QualityModel.respostaAtual(ticket, ticketAtual());
   }
 
+  function cacheDaConsulta(ticket, seq, tipo) {
+    if (!cache) return cache;
+    const atual = () => aindaVale(ticket) && seq === (tipo === "rel" ? seqRel : seqComp);
+    return {
+      ...cache,
+      gravarRelatorio(id, dado) { return atual() && cache.gravarRelatorio(id, dado); },
+      gravarComponente(codigo, dado) { return atual() && cache.gravarComponente(codigo, dado); },
+    };
+  }
+
   function vincular(raiz) {
     desvincular();
     if (!raiz || typeof raiz.addEventListener !== "function") return;
@@ -153,7 +163,7 @@ const QualityUI = (() => {
     const sinal = sinalDe("rel");
     const rel = await QualityModel.consultarRelatorio(id, {
       fetch: typeof fetch === "function" ? fetch : null,
-      cache,
+      cache: cacheDaConsulta(ticket, seq, "rel"),
       signal: sinal,
       forcar: false,
       metodoArquivo: metodoArquivo(),
@@ -184,13 +194,13 @@ const QualityUI = (() => {
     let cursor = 0;
     async function worker() {
       while (cursor < fila.length) {
-        if (sinal && sinal.aborted) return;
+        if (!aindaVale(ticket) || seq !== seqComp || (sinal && sinal.aborted)) return;
         const i = cursor;
         cursor += 1;
         const item = fila[i];
         anotacoes[i] = await QualityModel.consultarComponente(item.codigo, {
           fetch: typeof fetch === "function" ? fetch : null,
-          cache,
+          cache: cacheDaConsulta(ticket, seq, "comp"),
           signal: sinal,
         });
       }

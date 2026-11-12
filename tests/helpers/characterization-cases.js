@@ -25,7 +25,7 @@ class FixedDate extends Date {
 
 function browser(files = []) {
   const context = vm.createContext({
-    Date: FixedDate, console, setTimeout, clearTimeout, AbortController, TextDecoder,
+    Date: FixedDate, console, setTimeout, clearTimeout, AbortController, TextDecoder, TextEncoder,
     window: {},
     document: {
       readyState: "loading", addEventListener() {},
@@ -33,12 +33,12 @@ function browser(files = []) {
     },
     fetch() { throw new Error("Rede real proibida nos testes de caracterização."); },
   });
-  for (const file of files) vm.runInContext(read("docs/" + file + ".js"), context, { filename: file + ".js" });
+  for (const file of ["network", ...files]) vm.runInContext(read("docs/" + file + ".js"), context, { filename: file + ".js" });
   return { context, get: (expression) => vm.runInContext(expression, context) };
 }
 
 function models() {
-  return browser(["pdb-analysis", "structure-model", "quality-model", "prep-analysis", "ensemble-analysis", "analysis-snapshot"]);
+  return browser(["pdb-analysis", "structure-model", "quality-model", "prep-analysis", "ensemble-analysis", "analysis-snapshot", "dogsite-client"]);
 }
 
 function record(fields) {
@@ -111,7 +111,7 @@ function classic() {
   const chains = PA.separarCadeias(pdb);
   return {
     individualMultimodelo: SM.ler(multi).analise,
-    comparacaoMultimodelo: PA.analisarCompleto(multi),
+    comparacaoMultimodelo: PA.analisarCompleto(PA.primeiroModelo(multi)),
     sintetica: PA.analisarCompleto(pdb), metadados: PA.extrairMetadados(pdb), cadeias: chains,
     motivoPdb: PA.buscarMotivo(pdb, ["CYS", "CYS"]),
     motivoInsercao: SM.buscarMotivo(SM.ler(pdb).analise.residuosPorCadeia, ["GLY"]),
@@ -235,7 +235,14 @@ async function exportsCase() {
   const pdb = syntheticPdb(), result = SM.ler(pdb), estado = get("estado");
   Object.assign(estado, { nome: "sintetica.pdb", pdbId: "1ABC", pdbText: pdb, estrutura: result.estrutura,
     dados: result.analise, meta: PA.extrairMetadados(pdb), corPorCadeia: { A: "#2a5599", _: "#e8513a" },
-    viewer: { pngURI: () => "data:image/png;base64,FIXTURE" }, pockets: (await pockets()).result.pockets,
+    viewer: { pngURI: () => "data:image/png;base64,FIXTURE" },
+    // Keep nullable legacy descriptors independent of TSV parsing in export tests.
+    pockets: [
+      { name: "P_0", volume: 100, surface: 50, depth: 8, accept: 2, donor: 3,
+        hydrophobicity: 0.4, drugScore: 0.7, residuosUrl: "url-P0" },
+      { name: "P_1", volume: null, surface: 20, depth: 4, accept: 0, donor: 1,
+        hydrophobicity: null, drugScore: null, residuosUrl: "url-subpocket" },
+    ],
     ultimoMotivo: { motivo: "CYS-CYS", ocorrencias: PA.buscarMotivo(pdb, ["CYS", "CYS"]) },
   });
   get("PrepUI").aoCarregar(estado);

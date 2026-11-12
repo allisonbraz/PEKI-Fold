@@ -211,7 +211,8 @@ function viewerFalso() {
 }
 
 function atomo(chain, resi) {
-  return "ATOM  ".padEnd(21, " ") + chain + String(resi).padStart(4, " ");
+  return "ATOM      1  CA  GLY " + chain + String(resi).padStart(4, " ")
+    + "       1.000   2.000   3.000  1.00 20.00           C  ";
 }
 
 function drenar() {

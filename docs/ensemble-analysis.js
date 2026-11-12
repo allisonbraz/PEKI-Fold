@@ -269,7 +269,10 @@ const EnsembleAnalysis = (() => {
     return { resname, chain, resseq, icode, nome, elemento, coords: lerCoords(linha) };
   }
 
-  function parseArquivoResiduos(texto) {
+  function parseArquivoResiduos(texto, diagnostico) {
+    const filtrar = typeof filtrarResiduosPocket === "function" ? filtrarResiduosPocket
+      : require("./dogsite-client.js").filtrarResiduosPocket;
+    texto = filtrar(texto, diagnostico);
     const map = new Map();
     let n = 0;
     let sx = 0;

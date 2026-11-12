@@ -698,14 +698,14 @@
   },
   "caixa": {
     "ok": true,
-    "nAtomos": 12,
+    "nAtomos": 11,
     "margem": 4,
-    "center_x": 7.617,
-    "center_y": 0.833,
+    "center_x": 6.491,
+    "center_y": 0.909,
     "center_z": 0,
-    "size_x": 28,
+    "size_x": 25,
     "size_y": 14,
     "size_z": 8
   },
-  "config": "center_x = 7.617\ncenter_y = 0.833\ncenter_z = 0.000\nsize_x = 28.0\nsize_y = 14.0\nsize_z = 8.0"
+  "config": "center_x = 6.491\ncenter_y = 0.909\ncenter_z = 0.000\nsize_x = 25.0\nsize_y = 14.0\nsize_z = 8.0"
 }

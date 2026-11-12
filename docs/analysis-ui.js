@@ -15,6 +15,7 @@ const AnalysisUI = (() => {
   function $(id) { return document.getElementById(id); }
 
   function abrir() {
+    if (typeof invalidarConsultasEstrutura === "function") invalidarConsultasEstrutura();
     const entrada = $("entrada");
     const workspace = $("workspace");
     const comparacao = $("comparacao");

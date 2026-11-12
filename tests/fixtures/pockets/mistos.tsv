@@ -1,0 +1,9 @@
+name	volume	surface	depth	accept	donor	hydrophobicity	drugScore
+P_0	100	50	8	2	3	0.4	0.7
+P_faltando	10	5
+P_numero	12x	5	2	1	1	0.2	0.1
+	10	5	2	1	1	0.2	0.1
+P_vazio		5	2	1	1	0.2	0.1
+P_inf	Infinity	5	2	1	1	0.2	0.1
+P_nan	10	5	2	1	1	NaN	0.1
+P_1	20	10	4	0	1	0.2	0.8

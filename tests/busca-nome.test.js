@@ -239,7 +239,7 @@ async function fluxosDeRede() {
 
   const lento = fetchQue([{ pendura: true }]);
   const tempo = await BuscaNome.pesquisar("NLRP3", { fetch: lento.fetchImpl, esperaMs: 30 });
-  assert(tempo.codigo === "tempo" && /segundos/.test(tempo.mensagem), "tempo esgotado: " + tempo.mensagem);
+  assert(tempo.codigo === "timeout" && tempo.estado === "erro" && /tempo-limite/.test(tempo.mensagem), "tempo esgotado: " + tempo.mensagem);
 
   const metaLimite = fetchQue([
     { status: 200, texto: JSON.stringify({ total_count: 2, result_set: [{ identifier: "6NPY" }, { identifier: "2NAQ" }] }) },
