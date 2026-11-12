@@ -296,8 +296,7 @@ const EnsembleUI = (() => {
     return nomes.map((n) => "<option value=\"" + esc(n) + "\"" + (n === atual ? " selected" : "") + ">" + esc(n) + "</option>").join("");
   }
 
-  function htmlRelatorio(rel) {
-    const f = EnsembleAnalysis.FRASES;
+  function htmlResumoRelatorio(rel, f) {
     let html = "";
     if (rel.exemplo) html += "<p class=\"ens-exemplo-aviso\">" + esc(f.exemplo) + " Três estruturas inventadas, para ver a tabela sem chamar o DoGSiteScorer.</p>";
     html += "<p id=\"ens-n-efetivo\"><strong>N efetivo = " + rel.nEfetivo + "</strong> (pedidas nesta execução: " + rel.nPedidas;
@@ -309,6 +308,11 @@ const EnsembleUI = (() => {
     html += "<p class=\"ens-nota\">" + esc(rel.alinhamento.limitacao) + "</p>";
     if (avisoCache) html += "<p class=\"ens-nota\">" + esc(avisoCache) + "</p>";
 
+    return html;
+  }
+
+  function htmlGruposRelatorio(rel, f) {
+    let html = "";
     html += "<div class=\"ens-scroll\"><table class=\"ens-tabela\"><thead><tr>";
     html += "<th>Grupo</th><th>Persistência</th><th>drugScore DoGSite</th><th>Volume DoGSite (Å³)</th><th>Estruturas</th><th>Apo / holo</th>";
     html += "</tr></thead><tbody>";
@@ -331,6 +335,11 @@ const EnsembleUI = (() => {
     html += "</tbody></table></div>";
     html += "<p class=\"ens-nota\">" + esc(f.descritor) + " " + esc(f.persistencia) + "</p>";
 
+    return html;
+  }
+
+  function htmlResiduosRelatorio(rel) {
+    let html = "";
     for (const g of rel.grupos) {
       const res = g.residuos;
       html += "<section class=\"ens-grupo\"><h3>" + esc(g.id) + " — resíduos, " + esc(g.persistencia.texto) + "</h3>";
@@ -345,6 +354,11 @@ const EnsembleUI = (() => {
       html += "</section>";
     }
 
+    return html;
+  }
+
+  function htmlMatrizRelatorio(rel, f) {
+    let html = "";
     html += "<h3>Estrutura × bolsão</h3>";
     html += "<p id=\"ens-matriz-titulo\"><strong>N efetivo = " + rel.nEfetivo + ".</strong> Cada célula é o bolsão do DoGSite naquela estrutura, ou ausência.</p>";
     html += "<div class=\"ens-scroll\"><table class=\"ens-tabela\"><thead><tr><th>Estrutura</th><th>Apo / holo</th>";
@@ -362,6 +376,10 @@ const EnsembleUI = (() => {
     html += "</tbody></table></div>";
     html += "<p class=\"ens-nota\">" + esc(f.apoHolo) + "</p>";
 
+    return html;
+  }
+
+  function atualizarSessaoRelatorio(rel) {
     const refAtual = sessao.referenciaId && rel.estruturas.some((e) => e.id === sessao.referenciaId && e.incluida)
       ? sessao.referenciaId
       : rel.referenciaId;
@@ -382,6 +400,11 @@ const EnsembleUI = (() => {
     sessao.sugEns = rel.caixaEnsemble;
     sessao.sugEst = estCaixa.caixa;
 
+    return { refAtual, estCaixa };
+  }
+
+  function htmlCaixasRelatorio(rel, f, estCaixa) {
+    let html = "";
     html += "<div class=\"ens-caixas\">";
     html += "<section><h3>Caixa do ensemble</h3>";
     html += "<p class=\"rotulo-fixo\">" + esc(f.vina) + " " + esc(f.preparo) + " " + esc(f.docking) + "</p>";
@@ -408,6 +431,11 @@ const EnsembleUI = (() => {
     html += "<button type=\"button\" class=\"primary-btn\" id=\"ens-caixa-est\">Desenhar no 3D</button></div></section>";
     html += "</div>";
 
+    return html;
+  }
+
+  function htmlControlesRelatorio(rel, refAtual) {
+    let html = "";
     html += "<div class=\"ens-viewer-controles\">";
     html += "<label>Referência do 3D <select id=\"ens-ref\">" + opcoesEstruturas(rel, refAtual) + "</select></label>";
     html += "<label>Grupo <select id=\"ens-grupo\">" + rel.grupos.map((g) =>
@@ -417,6 +445,11 @@ const EnsembleUI = (() => {
     html += "<button type=\"button\" class=\"ghost-btn\" id=\"ens-limpar\">Limpar marcas</button>";
     html += "</div>";
 
+    return html;
+  }
+
+  function htmlLeituraRelatorio(rel, f) {
+    let html = "";
     html += "<section class=\"ens-leitura\"><h3>Evidência</h3><ul>";
     html += "<li>" + esc(f.evidencia) + "</li>";
     html += "<li>N efetivo = " + rel.nEfetivo + ". Cada recorrência desta página traz k de N efetivo.</li>";
@@ -432,6 +465,20 @@ const EnsembleUI = (() => {
     html += "<li>" + esc(f.redundancia) + "</li>";
     html += "<li>" + esc(f.motor) + "</li>";
     html += "</ul></section>";
+    return html;
+  }
+
+  function htmlRelatorio(rel) {
+    const f = EnsembleAnalysis.FRASES;
+    let html = "";
+    html += htmlResumoRelatorio(rel, f);
+    html += htmlGruposRelatorio(rel, f);
+    html += htmlResiduosRelatorio(rel);
+    html += htmlMatrizRelatorio(rel, f);
+    const { refAtual, estCaixa } = atualizarSessaoRelatorio(rel);
+    html += htmlCaixasRelatorio(rel, f, estCaixa);
+    html += htmlControlesRelatorio(rel, refAtual);
+    html += htmlLeituraRelatorio(rel, f);
     return html;
   }
 
