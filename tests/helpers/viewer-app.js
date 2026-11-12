@@ -8,7 +8,7 @@ const vm = require("node:vm");
 // Keep that same shared scope for the legacy CommonJS suites, without adding
 // Node-only globals or exports to production. The existing DOM/global mocks
 // remain live, including fetch and PrepUI replacements made by each test.
-const source = ["viewer.js", "app.js"].map((name) =>
+const source = ["viewer.js", "comparison.js", "app.js"].map((name) =>
   fs.readFileSync(path.join(__dirname, "../../docs", name), "utf8")
 ).join("\n");
 const run = vm.runInThisContext("(function (module) {\n" + source + "\n})", {
