@@ -22,12 +22,17 @@ test("comportamento conhecido: null vira zero no JSON salvo", () => {
   assert.equal(nulosAtuais.qualidade.metricas[0].valor, 0);
 });
 
-test("comportamento conhecido: validação interna aceita métricas com tipo incorreto", () => {
+test("validação interna rejeita métricas com tipo incorreto antes da importação", () => {
   const AS = models().get("AnalysisSnapshot");
   const snapshot = cases.snapshots().snapshot;
   snapshot.qualidade = { estado: "ok", metricas: {} };
-  assert.equal(AS.validarObjeto(snapshot).ok, true);
-  assert.throws(() => AS.comparar([snapshot, { ...snapshot, id: "SIN-OUTRO" }], {}), /lista\.find is not a function/);
+  const validacao = AS.validarObjeto(snapshot);
+  assert.equal(validacao.ok, false);
+  assert.match(validacao.erro, /qualidade\.metricas.*array/);
+  const antigo = JSON.parse(fs.readFileSync(path.join(__dirname, "fixtures/analises/4HHB-analise.json"), "utf8"));
+  const importacao = AS.importar(JSON.stringify(snapshot), [antigo]);
+  assert.equal(importacao.ok, false);
+  assert.deepStrictEqual(json(importacao.colecao), [antigo]);
 });
 
 test("comportamento conhecido: XML em blocos perde subgrupo após 64 KiB", async () => {
@@ -168,4 +173,123 @@ test("consulta adicional: cancelamento, timeout, alternativa JSON e erros têm f
   }
   assert.equal(result.rede.resultado.estado, "rede");
   assert.equal(result.jsonInvalido.resultado.estado, "rede");
+});
+
+
+// Derivados da referência sintética existente, apenas para validar tipos.
+function snapshotParaValidacao() {
+  const snap = JSON.parse(fs.readFileSync(path.join(GOLDENS, "exports.json"), "utf8")).snapshot;
+  snap.qualidade.metricas = [{ id: "rfree", valor: 0.2 }];
+  snap.lacunas.naoResolvidos = [{ cadeia: "A", resname: "SER", seq: 3, icode: "A" }];
+  snap.lacunas.saltosNumeracao = [{ cadeia: "A", de: 2, para: 4, interpretacao: "salto_de_numeracao" }];
+  snap.componentes.modificados = [{ codigo: "MSE", instancias: 1, nome: null }];
+  snap.componentes.anotacoesCcd = [{ codigo: "ZN", instancias: 1, estado: "ok" }];
+  snap.preparo.caixaVina = { editada: true, center_x: 0, center_y: 1, center_z: 2, size_x: -5, size_y: 0, size_z: 3 };
+  snap.uniprot.declaracoes = [{ cadeia: "A", accession: "FIXTURE", db: "UNP", pdbInicio: 1, pdbFim: 11 }];
+  return snap;
+}
+
+function alterarCampoValidacao(snap, caminho, valor) {
+  const partes = caminho.split(".");
+  const chave = partes.pop();
+  const alvo = partes.reduce((item, parte) => item[parte], snap);
+  alvo[chave] = valor;
+}
+
+function conferirTipoInvalido(AS, caminho, valor) {
+  const snap = snapshotParaValidacao();
+  alterarCampoValidacao(snap, caminho, valor);
+  const resultado = AS.validarObjeto(snap);
+  assert.equal(resultado.ok, false, caminho + " não pode aceitar " + String(valor));
+  assert.equal(resultado.analise, null);
+  const campo = caminho.replace(/\.(\d+)/g, "[$1]");
+  assert(resultado.erro.includes(campo), resultado.erro);
+}
+
+test("validação rejeita listas e elementos com tipo incorreto", () => {
+  const AS = models().get("AnalysisSnapshot");
+  const listas = ["cadeias", "cadeias.0.residuos", "lacunas.naoResolvidos", "lacunas.saltosNumeracao",
+    "componentes.hetero", "componentes.ions", "componentes.modificados", "componentes.anotacoesCcd",
+    "qualidade.metricas", "qualidade.omitidos", "pockets.itens", "uniprot.declaracoes",
+    "preparo.selecao.cadeias", "preparo.selecao.codigosHetMantidos", "limitacoes"];
+  for (const campo of listas) {
+    for (const valor of [{}, "lista", 0, false, null]) conferirTipoInvalido(AS, campo, valor);
+  }
+  for (const campo of ["cadeias.0", "cadeias.0.residuos.0", "lacunas.naoResolvidos.0",
+    "lacunas.saltosNumeracao.0", "componentes.hetero.0", "componentes.ions.0", "componentes.modificados.0",
+    "componentes.anotacoesCcd.0", "qualidade.metricas.0", "pockets.itens.0", "uniprot.declaracoes.0",
+    "preparo.selecao.cadeias.0", "preparo.selecao.codigosHetMantidos.0", "limitacoes.0"]) {
+    for (const valor of [null, 0, []]) conferirTipoInvalido(AS, campo, valor);
+  }
+});
+
+test("validação exige números finitos ou null sem converter strings", () => {
+  const AS = models().get("AnalysisSnapshot");
+  const numeros = ["modelo.selecionado", "modelo.total", "origem.resolucaoArquivo.valor", "cadeias.0.residuos.0.seq",
+    "cobertura.polimerosModelados", "lacunas.naoResolvidos.0.seq", "lacunas.saltosNumeracao.0.de", "lacunas.saltosNumeracao.0.para",
+    "componentes.proteinas.posicoes", "componentes.proteinas.padrao", "componentes.proteinas.modificadas",
+    "componentes.hetero.0.instancias", "componentes.ions.0.instancias", "componentes.modificados.0.instancias",
+    "componentes.anotacoesCcd.0.instancias", "componentes.aguas.instancias", "qualidade.metricas.0.valor",
+    "pockets.itens.0.volume", "pockets.itens.0.surface", "pockets.itens.0.depth", "pockets.itens.0.hydrophobicity", "pockets.itens.0.drugScore",
+    "preparo.contagens.dissulfetos", "preparo.contagens.glicosilacao", "preparo.contagens.ions", "preparo.contagens.histidinas", "preparo.contagens.aguas",
+    "preparo.caixaVina.center_x", "preparo.caixaVina.center_y", "preparo.caixaVina.center_z",
+    "preparo.caixaVina.size_x", "preparo.caixaVina.size_y", "preparo.caixaVina.size_z",
+    "uniprot.declaracoes.0.pdbInicio", "uniprot.declaracoes.0.pdbFim", "anotacoes.motivoSequencia.ocorrencias"];
+  for (const campo of numeros) {
+    for (const valor of ["0", "2.5", false, {}, [], undefined, NaN, Infinity, -Infinity]) conferirTipoInvalido(AS, campo, valor);
+    if (campo === "cobertura.polimerosModelados") continue;
+    const snap = snapshotParaValidacao();
+    alterarCampoValidacao(snap, campo, null);
+    assert.equal(AS.validarObjeto(snap).ok, true, campo + " aceita null");
+  }
+});
+
+test("validação rejeita strings obrigatórias ausentes, vazias ou com outro tipo", () => {
+  const AS = models().get("AnalysisSnapshot");
+  for (const campo of ["schema", "id", "rotulo", "geradoEm", "cadeias.0.id", "cadeias.0.residuos.0.resname",
+    "componentes.hetero.0.codigo", "qualidade.metricas.0.id", "pockets.itens.0.name", "preparo.estado"]) {
+    for (const valor of [undefined, null, "", " ", 42, false, [], {}]) conferirTipoInvalido(AS, campo, valor);
+  }
+  for (const valor of [undefined, null, 42, [], {}]) conferirTipoInvalido(AS, "cadeias.0.sequencia", valor);
+  for (const campo of ["qualidade.metricas.0.id", "pockets.itens.0.name", "componentes.hetero.0.codigo"]) {
+    const snap = snapshotParaValidacao(), partes = campo.split("."), chave = partes.pop();
+    delete partes.reduce((item, parte) => item[parte], snap)[chave];
+    assert.equal(AS.validarObjeto(snap).ok, false, campo + " é obrigatório");
+  }
+});
+
+test("validação rejeita objetos e booleanos com outro tipo", () => {
+  const AS = models().get("AnalysisSnapshot");
+  for (const campo of ["origem", "modelo", "cobertura", "lacunas", "componentes", "componentes.proteinas",
+    "componentes.aguas", "componentes.holo", "qualidade", "qualidade.fonte", "qualidade.local", "pockets",
+    "preparo", "preparo.contagens", "preparo.selecao", "preparo.anotacoes", "preparo.caixaVina", "uniprot", "anotacoes"]) {
+    for (const valor of [[], "objeto", false]) conferirTipoInvalido(AS, campo, valor);
+  }
+  for (const campo of ["origem.sintetico", "lacunas.determinado", "preparo.selecao.removerAguas", "preparo.caixaVina.editada"]) {
+    for (const valor of ["false", 0, null, {}]) conferirTipoInvalido(AS, campo, valor);
+  }
+});
+
+test("snapshots antigos válidos são reimportados sem conversões nem defaults", () => {
+  const AS = models().get("AnalysisSnapshot");
+  const exports = JSON.parse(fs.readFileSync(path.join(GOLDENS, "exports.json"), "utf8"));
+  const antigos = [
+    JSON.parse(fs.readFileSync(path.join(__dirname, "fixtures/analises/4HHB-analise.json"), "utf8")),
+    JSON.parse(fs.readFileSync(path.join(GOLDENS, "snapshots.json"), "utf8")).snapshot,
+    exports.snapshot, JSON.parse(exports.downloads.find((d) => d.nome.endsWith("-analise.json")).conteudo),
+    snapshotParaValidacao(),
+  ];
+  const semOpcionais = snapshotParaValidacao();
+  delete semOpcionais.qualidade.omitidos;
+  delete semOpcionais.componentes.anotacoesCcd;
+  delete semOpcionais.uniprot.declaracoes;
+  antigos.push(semOpcionais);
+  for (const antigo of antigos) {
+    const texto = JSON.stringify(antigo);
+    assert.strictEqual(AS.validarObjeto(antigo).analise, antigo);
+    const resultado = AS.importar(texto, []);
+    assert.equal(resultado.ok, true, resultado.erro);
+    assert.equal(JSON.stringify(resultado.analise), texto);
+    assert.deepStrictEqual(json(resultado.colecao), [antigo]);
+  }
 });
