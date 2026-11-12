@@ -1,0 +1,1196 @@
+{
+  "individualMultimodelo": {
+    "cadeias": [
+      "A",
+      "B"
+    ],
+    "estatisticas": {
+      "cadeias": [
+        {
+          "cadeia": "A",
+          "atomos": 207,
+          "residuos": 14,
+          "aminoacidos_diferentes": 9
+        },
+        {
+          "cadeia": "B",
+          "atomos": 901,
+          "residuos": 58,
+          "aminoacidos_diferentes": 18
+        }
+      ],
+      "maior": {
+        "cadeia": "B",
+        "atomos": 901,
+        "residuos": 58,
+        "aminoacidos_diferentes": 18
+      },
+      "menor": {
+        "cadeia": "A",
+        "atomos": 207,
+        "residuos": 14,
+        "aminoacidos_diferentes": 9
+      }
+    },
+    "frequencias": {
+      "A": {
+        "total": 14,
+        "itens": [
+          {
+            "aa": "ALA",
+            "contagem": 1,
+            "porcentagem": 7.14
+          },
+          {
+            "aa": "ARG",
+            "contagem": 1,
+            "porcentagem": 7.14
+          },
+          {
+            "aa": "ASN",
+            "contagem": 0,
+            "porcentagem": 0
+          },
+          {
+            "aa": "ASP",
+            "contagem": 0,
+            "porcentagem": 0
+          },
+          {
+            "aa": "CYS",
+            "contagem": 0,
+            "porcentagem": 0
+          },
+          {
+            "aa": "GLN",
+            "contagem": 0,
+            "porcentagem": 0
+          },
+          {
+            "aa": "GLU",
+            "contagem": 0,
+            "porcentagem": 0
+          },
+          {
+            "aa": "GLY",
+            "contagem": 1,
+            "porcentagem": 7.14
+          },
+          {
+            "aa": "HIS",
+            "contagem": 0,
+            "porcentagem": 0
+          },
+          {
+            "aa": "ILE",
+            "contagem": 0,
+            "porcentagem": 0
+          },
+          {
+            "aa": "LEU",
+            "contagem": 1,
+            "porcentagem": 7.14
+          },
+          {
+            "aa": "LYS",
+            "contagem": 1,
+            "porcentagem": 7.14
+          },
+          {
+            "aa": "MET",
+            "contagem": 0,
+            "porcentagem": 0
+          },
+          {
+            "aa": "PHE",
+            "contagem": 0,
+            "porcentagem": 0
+          },
+          {
+            "aa": "PRO",
+            "contagem": 5,
+            "porcentagem": 35.71
+          },
+          {
+            "aa": "SER",
+            "contagem": 2,
+            "porcentagem": 14.29
+          },
+          {
+            "aa": "THR",
+            "contagem": 1,
+            "porcentagem": 7.14
+          },
+          {
+            "aa": "TRP",
+            "contagem": 0,
+            "porcentagem": 0
+          },
+          {
+            "aa": "TYR",
+            "contagem": 0,
+            "porcentagem": 0
+          },
+          {
+            "aa": "VAL",
+            "contagem": 1,
+            "porcentagem": 7.14
+          }
+        ]
+      },
+      "B": {
+        "total": 58,
+        "itens": [
+          {
+            "aa": "ALA",
+            "contagem": 4,
+            "porcentagem": 6.9
+          },
+          {
+            "aa": "ARG",
+            "contagem": 2,
+            "porcentagem": 3.45
+          },
+          {
+            "aa": "ASN",
+            "contagem": 2,
+            "porcentagem": 3.45
+          },
+          {
+            "aa": "ASP",
+            "contagem": 4,
+            "porcentagem": 6.9
+          },
+          {
+            "aa": "CYS",
+            "contagem": 0,
+            "porcentagem": 0
+          },
+          {
+            "aa": "GLN",
+            "contagem": 1,
+            "porcentagem": 1.72
+          },
+          {
+            "aa": "GLU",
+            "contagem": 6,
+            "porcentagem": 10.34
+          },
+          {
+            "aa": "GLY",
+            "contagem": 4,
+            "porcentagem": 6.9
+          },
+          {
+            "aa": "HIS",
+            "contagem": 1,
+            "porcentagem": 1.72
+          },
+          {
+            "aa": "ILE",
+            "contagem": 2,
+            "porcentagem": 3.45
+          },
+          {
+            "aa": "LEU",
+            "contagem": 5,
+            "porcentagem": 8.62
+          },
+          {
+            "aa": "LYS",
+            "contagem": 2,
+            "porcentagem": 3.45
+          },
+          {
+            "aa": "MET",
+            "contagem": 0,
+            "porcentagem": 0
+          },
+          {
+            "aa": "PHE",
+            "contagem": 3,
+            "porcentagem": 5.17
+          },
+          {
+            "aa": "PRO",
+            "contagem": 2,
+            "porcentagem": 3.45
+          },
+          {
+            "aa": "SER",
+            "contagem": 5,
+            "porcentagem": 8.62
+          },
+          {
+            "aa": "THR",
+            "contagem": 5,
+            "porcentagem": 8.62
+          },
+          {
+            "aa": "TRP",
+            "contagem": 2,
+            "porcentagem": 3.45
+          },
+          {
+            "aa": "TYR",
+            "contagem": 4,
+            "porcentagem": 6.9
+          },
+          {
+            "aa": "VAL",
+            "contagem": 4,
+            "porcentagem": 6.9
+          }
+        ]
+      }
+    },
+    "sequencias": {
+      "A": "PPRPLPVAPGSSKT",
+      "B": "VTLFVALYDYEARTEDDLSFHKGEKFQILNSSEGDWWEARSLTTGETGYIPSNYVAPV"
+    },
+    "residuosPorCadeia": {
+      "A": [
+        [
+          "PRO",
+          "91"
+        ],
+        [
+          "PRO",
+          "92"
+        ],
+        [
+          "ARG",
+          "93"
+        ],
+        [
+          "PRO",
+          "94"
+        ],
+        [
+          "LEU",
+          "95"
+        ],
+        [
+          "PRO",
+          "96"
+        ],
+        [
+          "VAL",
+          "97"
+        ],
+        [
+          "ALA",
+          "98"
+        ],
+        [
+          "PRO",
+          "99"
+        ],
+        [
+          "GLY",
+          "100"
+        ],
+        [
+          "SER",
+          "101"
+        ],
+        [
+          "SER",
+          "102"
+        ],
+        [
+          "LYS",
+          "103"
+        ],
+        [
+          "THR",
+          "104"
+        ]
+      ],
+      "B": [
+        [
+          "VAL",
+          "84"
+        ],
+        [
+          "THR",
+          "85"
+        ],
+        [
+          "LEU",
+          "86"
+        ],
+        [
+          "PHE",
+          "87"
+        ],
+        [
+          "VAL",
+          "88"
+        ],
+        [
+          "ALA",
+          "89"
+        ],
+        [
+          "LEU",
+          "100"
+        ],
+        [
+          "TYR",
+          "101"
+        ],
+        [
+          "ASP",
+          "102"
+        ],
+        [
+          "TYR",
+          "103"
+        ],
+        [
+          "GLU",
+          "104"
+        ],
+        [
+          "ALA",
+          "105"
+        ],
+        [
+          "ARG",
+          "106"
+        ],
+        [
+          "THR",
+          "107"
+        ],
+        [
+          "GLU",
+          "108"
+        ],
+        [
+          "ASP",
+          "109"
+        ],
+        [
+          "ASP",
+          "110"
+        ],
+        [
+          "LEU",
+          "111"
+        ],
+        [
+          "SER",
+          "112"
+        ],
+        [
+          "PHE",
+          "113"
+        ],
+        [
+          "HIS",
+          "114"
+        ],
+        [
+          "LYS",
+          "115"
+        ],
+        [
+          "GLY",
+          "116"
+        ],
+        [
+          "GLU",
+          "117"
+        ],
+        [
+          "LYS",
+          "118"
+        ],
+        [
+          "PHE",
+          "119"
+        ],
+        [
+          "GLN",
+          "120"
+        ],
+        [
+          "ILE",
+          "121"
+        ],
+        [
+          "LEU",
+          "122"
+        ],
+        [
+          "ASN",
+          "123"
+        ],
+        [
+          "SER",
+          "124"
+        ],
+        [
+          "SER",
+          "125"
+        ],
+        [
+          "GLU",
+          "126"
+        ],
+        [
+          "GLY",
+          "127"
+        ],
+        [
+          "ASP",
+          "128"
+        ],
+        [
+          "TRP",
+          "129"
+        ],
+        [
+          "TRP",
+          "130"
+        ],
+        [
+          "GLU",
+          "131"
+        ],
+        [
+          "ALA",
+          "132"
+        ],
+        [
+          "ARG",
+          "133"
+        ],
+        [
+          "SER",
+          "134"
+        ],
+        [
+          "LEU",
+          "135"
+        ],
+        [
+          "THR",
+          "136"
+        ],
+        [
+          "THR",
+          "137"
+        ],
+        [
+          "GLY",
+          "138"
+        ],
+        [
+          "GLU",
+          "139"
+        ],
+        [
+          "THR",
+          "140"
+        ],
+        [
+          "GLY",
+          "141"
+        ],
+        [
+          "TYR",
+          "142"
+        ],
+        [
+          "ILE",
+          "143"
+        ],
+        [
+          "PRO",
+          "144"
+        ],
+        [
+          "SER",
+          "145"
+        ],
+        [
+          "ASN",
+          "146"
+        ],
+        [
+          "TYR",
+          "147"
+        ],
+        [
+          "VAL",
+          "148"
+        ],
+        [
+          "ALA",
+          "149"
+        ],
+        [
+          "PRO",
+          "150"
+        ],
+        [
+          "VAL",
+          "151"
+        ]
+      ]
+    }
+  },
+  "comparacaoMultimodelo": {
+    "cadeias": [
+      "A",
+      "B"
+    ],
+    "estatisticas": {
+      "cadeias": [
+        {
+          "cadeia": "A",
+          "atomos": 5175,
+          "residuos": 14,
+          "aminoacidos_diferentes": 9
+        },
+        {
+          "cadeia": "B",
+          "atomos": 22525,
+          "residuos": 58,
+          "aminoacidos_diferentes": 18
+        }
+      ],
+      "maior": {
+        "cadeia": "B",
+        "atomos": 22525,
+        "residuos": 58,
+        "aminoacidos_diferentes": 18
+      },
+      "menor": {
+        "cadeia": "A",
+        "atomos": 5175,
+        "residuos": 14,
+        "aminoacidos_diferentes": 9
+      }
+    },
+    "frequencias": {
+      "A": {
+        "total": 14,
+        "itens": [
+          {
+            "aa": "ALA",
+            "contagem": 1,
+            "porcentagem": 7.14
+          },
+          {
+            "aa": "ARG",
+            "contagem": 1,
+            "porcentagem": 7.14
+          },
+          {
+            "aa": "ASN",
+            "contagem": 0,
+            "porcentagem": 0
+          },
+          {
+            "aa": "ASP",
+            "contagem": 0,
+            "porcentagem": 0
+          },
+          {
+            "aa": "CYS",
+            "contagem": 0,
+            "porcentagem": 0
+          },
+          {
+            "aa": "GLN",
+            "contagem": 0,
+            "porcentagem": 0
+          },
+          {
+            "aa": "GLU",
+            "contagem": 0,
+            "porcentagem": 0
+          },
+          {
+            "aa": "GLY",
+            "contagem": 1,
+            "porcentagem": 7.14
+          },
+          {
+            "aa": "HIS",
+            "contagem": 0,
+            "porcentagem": 0
+          },
+          {
+            "aa": "ILE",
+            "contagem": 0,
+            "porcentagem": 0
+          },
+          {
+            "aa": "LEU",
+            "contagem": 1,
+            "porcentagem": 7.14
+          },
+          {
+            "aa": "LYS",
+            "contagem": 1,
+            "porcentagem": 7.14
+          },
+          {
+            "aa": "MET",
+            "contagem": 0,
+            "porcentagem": 0
+          },
+          {
+            "aa": "PHE",
+            "contagem": 0,
+            "porcentagem": 0
+          },
+          {
+            "aa": "PRO",
+            "contagem": 5,
+            "porcentagem": 35.71
+          },
+          {
+            "aa": "SER",
+            "contagem": 2,
+            "porcentagem": 14.29
+          },
+          {
+            "aa": "THR",
+            "contagem": 1,
+            "porcentagem": 7.14
+          },
+          {
+            "aa": "TRP",
+            "contagem": 0,
+            "porcentagem": 0
+          },
+          {
+            "aa": "TYR",
+            "contagem": 0,
+            "porcentagem": 0
+          },
+          {
+            "aa": "VAL",
+            "contagem": 1,
+            "porcentagem": 7.14
+          }
+        ]
+      },
+      "B": {
+        "total": 58,
+        "itens": [
+          {
+            "aa": "ALA",
+            "contagem": 4,
+            "porcentagem": 6.9
+          },
+          {
+            "aa": "ARG",
+            "contagem": 2,
+            "porcentagem": 3.45
+          },
+          {
+            "aa": "ASN",
+            "contagem": 2,
+            "porcentagem": 3.45
+          },
+          {
+            "aa": "ASP",
+            "contagem": 4,
+            "porcentagem": 6.9
+          },
+          {
+            "aa": "CYS",
+            "contagem": 0,
+            "porcentagem": 0
+          },
+          {
+            "aa": "GLN",
+            "contagem": 1,
+            "porcentagem": 1.72
+          },
+          {
+            "aa": "GLU",
+            "contagem": 6,
+            "porcentagem": 10.34
+          },
+          {
+            "aa": "GLY",
+            "contagem": 4,
+            "porcentagem": 6.9
+          },
+          {
+            "aa": "HIS",
+            "contagem": 1,
+            "porcentagem": 1.72
+          },
+          {
+            "aa": "ILE",
+            "contagem": 2,
+            "porcentagem": 3.45
+          },
+          {
+            "aa": "LEU",
+            "contagem": 5,
+            "porcentagem": 8.62
+          },
+          {
+            "aa": "LYS",
+            "contagem": 2,
+            "porcentagem": 3.45
+          },
+          {
+            "aa": "MET",
+            "contagem": 0,
+            "porcentagem": 0
+          },
+          {
+            "aa": "PHE",
+            "contagem": 3,
+            "porcentagem": 5.17
+          },
+          {
+            "aa": "PRO",
+            "contagem": 2,
+            "porcentagem": 3.45
+          },
+          {
+            "aa": "SER",
+            "contagem": 5,
+            "porcentagem": 8.62
+          },
+          {
+            "aa": "THR",
+            "contagem": 5,
+            "porcentagem": 8.62
+          },
+          {
+            "aa": "TRP",
+            "contagem": 2,
+            "porcentagem": 3.45
+          },
+          {
+            "aa": "TYR",
+            "contagem": 4,
+            "porcentagem": 6.9
+          },
+          {
+            "aa": "VAL",
+            "contagem": 4,
+            "porcentagem": 6.9
+          }
+        ]
+      }
+    },
+    "sequencias": {
+      "A": "PPRPLPVAPGSSKT",
+      "B": "VTLFVALYDYEARTEDDLSFHKGEKFQILNSSEGDWWEARSLTTGETGYIPSNYVAPV"
+    }
+  },
+  "sintetica": {
+    "cadeias": [
+      "A",
+      "_"
+    ],
+    "estatisticas": {
+      "cadeias": [
+        {
+          "cadeia": "A",
+          "atomos": 8,
+          "residuos": 6,
+          "aminoacidos_diferentes": 5
+        },
+        {
+          "cadeia": "_",
+          "atomos": 1,
+          "residuos": 1,
+          "aminoacidos_diferentes": 1
+        }
+      ],
+      "maior": {
+        "cadeia": "A",
+        "atomos": 8,
+        "residuos": 6,
+        "aminoacidos_diferentes": 5
+      },
+      "menor": {
+        "cadeia": "_",
+        "atomos": 1,
+        "residuos": 1,
+        "aminoacidos_diferentes": 1
+      }
+    },
+    "frequencias": {
+      "A": {
+        "total": 6,
+        "itens": [
+          {
+            "aa": "ALA",
+            "contagem": 1,
+            "porcentagem": 16.67
+          },
+          {
+            "aa": "ARG",
+            "contagem": 0,
+            "porcentagem": 0
+          },
+          {
+            "aa": "ASN",
+            "contagem": 1,
+            "porcentagem": 16.67
+          },
+          {
+            "aa": "ASP",
+            "contagem": 0,
+            "porcentagem": 0
+          },
+          {
+            "aa": "CYS",
+            "contagem": 2,
+            "porcentagem": 33.33
+          },
+          {
+            "aa": "GLN",
+            "contagem": 0,
+            "porcentagem": 0
+          },
+          {
+            "aa": "GLU",
+            "contagem": 0,
+            "porcentagem": 0
+          },
+          {
+            "aa": "GLY",
+            "contagem": 1,
+            "porcentagem": 16.67
+          },
+          {
+            "aa": "HIS",
+            "contagem": 1,
+            "porcentagem": 16.67
+          },
+          {
+            "aa": "ILE",
+            "contagem": 0,
+            "porcentagem": 0
+          },
+          {
+            "aa": "LEU",
+            "contagem": 0,
+            "porcentagem": 0
+          },
+          {
+            "aa": "LYS",
+            "contagem": 0,
+            "porcentagem": 0
+          },
+          {
+            "aa": "MET",
+            "contagem": 0,
+            "porcentagem": 0
+          },
+          {
+            "aa": "PHE",
+            "contagem": 0,
+            "porcentagem": 0
+          },
+          {
+            "aa": "PRO",
+            "contagem": 0,
+            "porcentagem": 0
+          },
+          {
+            "aa": "SER",
+            "contagem": 0,
+            "porcentagem": 0
+          },
+          {
+            "aa": "THR",
+            "contagem": 0,
+            "porcentagem": 0
+          },
+          {
+            "aa": "TRP",
+            "contagem": 0,
+            "porcentagem": 0
+          },
+          {
+            "aa": "TYR",
+            "contagem": 0,
+            "porcentagem": 0
+          },
+          {
+            "aa": "VAL",
+            "contagem": 0,
+            "porcentagem": 0
+          }
+        ]
+      },
+      "_": {
+        "total": 1,
+        "itens": [
+          {
+            "aa": "ALA",
+            "contagem": 0,
+            "porcentagem": 0
+          },
+          {
+            "aa": "ARG",
+            "contagem": 0,
+            "porcentagem": 0
+          },
+          {
+            "aa": "ASN",
+            "contagem": 0,
+            "porcentagem": 0
+          },
+          {
+            "aa": "ASP",
+            "contagem": 0,
+            "porcentagem": 0
+          },
+          {
+            "aa": "CYS",
+            "contagem": 0,
+            "porcentagem": 0
+          },
+          {
+            "aa": "GLN",
+            "contagem": 0,
+            "porcentagem": 0
+          },
+          {
+            "aa": "GLU",
+            "contagem": 0,
+            "porcentagem": 0
+          },
+          {
+            "aa": "GLY",
+            "contagem": 1,
+            "porcentagem": 100
+          },
+          {
+            "aa": "HIS",
+            "contagem": 0,
+            "porcentagem": 0
+          },
+          {
+            "aa": "ILE",
+            "contagem": 0,
+            "porcentagem": 0
+          },
+          {
+            "aa": "LEU",
+            "contagem": 0,
+            "porcentagem": 0
+          },
+          {
+            "aa": "LYS",
+            "contagem": 0,
+            "porcentagem": 0
+          },
+          {
+            "aa": "MET",
+            "contagem": 0,
+            "porcentagem": 0
+          },
+          {
+            "aa": "PHE",
+            "contagem": 0,
+            "porcentagem": 0
+          },
+          {
+            "aa": "PRO",
+            "contagem": 0,
+            "porcentagem": 0
+          },
+          {
+            "aa": "SER",
+            "contagem": 0,
+            "porcentagem": 0
+          },
+          {
+            "aa": "THR",
+            "contagem": 0,
+            "porcentagem": 0
+          },
+          {
+            "aa": "TRP",
+            "contagem": 0,
+            "porcentagem": 0
+          },
+          {
+            "aa": "TYR",
+            "contagem": 0,
+            "porcentagem": 0
+          },
+          {
+            "aa": "VAL",
+            "contagem": 0,
+            "porcentagem": 0
+          }
+        ]
+      }
+    },
+    "sequencias": {
+      "A": "CCNHGA",
+      "_": "G"
+    }
+  },
+  "metadados": {
+    "id": null,
+    "classificacao": "SYNTHETIC CHARACTERIZATION",
+    "data": "12-NOV-26",
+    "titulo": "SYNTHETIC GEOMETRY; NOT AN EXPERIMENTAL DEPOSIT",
+    "metodo": "X-RAY DIFFRACTION",
+    "resolucao": 2,
+    "organismos": [],
+    "moleculas": [],
+    "ligantes": []
+  },
+  "cadeias": {
+    "A": "ATOM      1  SG  CYS A   1       0.000   0.000   0.000  1.00 20.00           S  \nATOM      2  SG  CYS A   2       2.000   0.000   0.000  1.00 20.00           S  \nATOM      3  ND2 ASN A   4      10.000   0.000   0.000  1.00 20.00           N  \nATOM      4  ND1 HIS A   5       0.000   2.000   0.000  1.00 20.00           N  \nATOM      5  NE2 HIS A   5       0.000   6.000   0.000  1.00 20.00           N  \nATOM      6  CA  GLY A  10A     14.000   0.000   0.000  1.00 20.00           C  \nATOM      7  CB AALA A  11      16.000   0.000   0.000  0.25 20.00           C  \nATOM      8  CB BALA A  11      17.000   0.000   0.000  0.75 20.00           C  \nHETATM   10 ZN   ZN  A 100       0.000   1.000   0.000  1.00 20.00          ZN  \nHETATM   11  C1  NAG A 101      11.400   0.000   0.000  1.00 20.00           C  \nHETATM   12  O   HOH A 102       1.000   1.000   0.000  1.00 20.00           O  \nANISOU    1  SG  CYS A   1                                                      \nEND\n",
+    "_": "ATOM      9  CA  GLY     1      20.000   0.000   0.000  1.00 20.00           C  \nEND\n"
+  },
+  "motivoPdb": [
+    {
+      "cadeia": "A",
+      "posicao": "1",
+      "residuos": [
+        "1",
+        "2"
+      ]
+    }
+  ],
+  "motivoInsercao": [
+    {
+      "cadeia": "A",
+      "posicao": "10A",
+      "residuos": [
+        "10A"
+      ]
+    },
+    {
+      "cadeia": "_",
+      "posicao": "1",
+      "residuos": [
+        "1"
+      ]
+    }
+  ],
+  "frequenciaConsolidada": {
+    "cadeias": [
+      "A",
+      "_"
+    ],
+    "total": 7,
+    "itens": [
+      {
+        "aa": "ALA",
+        "contagem": 1,
+        "porcentagem": 14.29
+      },
+      {
+        "aa": "ARG",
+        "contagem": 0,
+        "porcentagem": 0
+      },
+      {
+        "aa": "ASN",
+        "contagem": 1,
+        "porcentagem": 14.29
+      },
+      {
+        "aa": "ASP",
+        "contagem": 0,
+        "porcentagem": 0
+      },
+      {
+        "aa": "CYS",
+        "contagem": 2,
+        "porcentagem": 28.57
+      },
+      {
+        "aa": "GLN",
+        "contagem": 0,
+        "porcentagem": 0
+      },
+      {
+        "aa": "GLU",
+        "contagem": 0,
+        "porcentagem": 0
+      },
+      {
+        "aa": "GLY",
+        "contagem": 2,
+        "porcentagem": 28.57
+      },
+      {
+        "aa": "HIS",
+        "contagem": 1,
+        "porcentagem": 14.29
+      },
+      {
+        "aa": "ILE",
+        "contagem": 0,
+        "porcentagem": 0
+      },
+      {
+        "aa": "LEU",
+        "contagem": 0,
+        "porcentagem": 0
+      },
+      {
+        "aa": "LYS",
+        "contagem": 0,
+        "porcentagem": 0
+      },
+      {
+        "aa": "MET",
+        "contagem": 0,
+        "porcentagem": 0
+      },
+      {
+        "aa": "PHE",
+        "contagem": 0,
+        "porcentagem": 0
+      },
+      {
+        "aa": "PRO",
+        "contagem": 0,
+        "porcentagem": 0
+      },
+      {
+        "aa": "SER",
+        "contagem": 0,
+        "porcentagem": 0
+      },
+      {
+        "aa": "THR",
+        "contagem": 0,
+        "porcentagem": 0
+      },
+      {
+        "aa": "TRP",
+        "contagem": 0,
+        "porcentagem": 0
+      },
+      {
+        "aa": "TYR",
+        "contagem": 0,
+        "porcentagem": 0
+      },
+      {
+        "aa": "VAL",
+        "contagem": 0,
+        "porcentagem": 0
+      }
+    ]
+  }
+}

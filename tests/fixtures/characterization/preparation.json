@@ -1,0 +1,711 @@
+{
+  "resultado": {
+    "versao": "preparo-1",
+    "nModelos": 0,
+    "raios": {
+      "metal": 2.8,
+      "dissulfeto": 2.5,
+      "glicosilacao": 1.8,
+      "histidina": 3.2
+    },
+    "inventario": {
+      "cadeias": [
+        {
+          "cadeia": "A",
+          "atom": 8,
+          "hetatm": 3,
+          "aguas": 1,
+          "altlocAtomos": 2,
+          "altlocResiduos": 1,
+          "anisou": 1,
+          "insercoes": [
+            "GLY 10A"
+          ]
+        },
+        {
+          "cadeia": "_",
+          "atom": 1,
+          "hetatm": 0,
+          "aguas": 0,
+          "altlocAtomos": 0,
+          "altlocResiduos": 0,
+          "anisou": 0,
+          "insercoes": []
+        }
+      ],
+      "hets": [
+        {
+          "resname": "HOH",
+          "nome": "",
+          "classe": "agua",
+          "classeRotulo": "água",
+          "copias": [
+            {
+              "chave": "HOH|A|102|",
+              "cadeia": "A",
+              "resseq": 102,
+              "icode": "",
+              "nAtomos": 1,
+              "altlocs": [],
+              "occupancyMin": 1
+            }
+          ],
+          "nAtomos": 1,
+          "contemMetal": false
+        },
+        {
+          "resname": "NAG",
+          "nome": "N-ACETYL-D-GLUCOSAMINE",
+          "classe": "acucar",
+          "classeRotulo": "açúcar",
+          "copias": [
+            {
+              "chave": "NAG|A|101|",
+              "cadeia": "A",
+              "resseq": 101,
+              "icode": "",
+              "nAtomos": 1,
+              "altlocs": [],
+              "occupancyMin": 1
+            }
+          ],
+          "nAtomos": 1,
+          "contemMetal": false
+        },
+        {
+          "resname": "ZN",
+          "nome": "",
+          "classe": "metal",
+          "classeRotulo": "íon metálico",
+          "copias": [
+            {
+              "chave": "ZN|A|100|",
+              "cadeia": "A",
+              "resseq": 100,
+              "icode": "",
+              "nAtomos": 1,
+              "altlocs": [],
+              "occupancyMin": 1
+            }
+          ],
+          "nAtomos": 1,
+          "contemMetal": true
+        }
+      ],
+      "alertas": [
+        "A cadeia A tem conformação alternativa em 2 átomo(s) (1 resíduo(s)/átomo com altloc).",
+        "A cadeia A tem 1 linha(s) ANISOU.",
+        "A cadeia A tem código de inserção: GLY 10A.",
+        "Lacuna de numeração não prova resíduo faltante. O REMARK 465 confirma quando ele existe."
+      ],
+      "lacunas": [
+        {
+          "cadeia": "A",
+          "de": 2,
+          "ate": 4,
+          "numeros": [
+            {
+              "resseq": 3,
+              "noRemark465": false
+            }
+          ],
+          "confirmados": 0
+        },
+        {
+          "cadeia": "A",
+          "de": 5,
+          "ate": 10,
+          "numeros": [
+            {
+              "resseq": 6,
+              "noRemark465": false
+            },
+            {
+              "resseq": 7,
+              "noRemark465": false
+            },
+            {
+              "resseq": 8,
+              "noRemark465": false
+            },
+            {
+              "resseq": 9,
+              "noRemark465": false
+            }
+          ],
+          "confirmados": 0
+        }
+      ],
+      "remark465": [],
+      "anisou": 1,
+      "aguas": 1,
+      "semElemento": 0,
+      "maxResProteina": 11,
+      "nAtomos": 12
+    },
+    "ions": {
+      "metais": [
+        {
+          "nomeArquivo": "ZN1.pdb",
+          "elemento": "ZN",
+          "resname": "ZN",
+          "cadeia": "A",
+          "resseq": 100,
+          "icode": "",
+          "altloc": "",
+          "serial": 10,
+          "occupancy": 1,
+          "bfactor": 20,
+          "x": 0,
+          "y": 1,
+          "z": 0,
+          "registro": "HETATM",
+          "elementoFonte": "coluna",
+          "chaveRes": "ZN|A|100|",
+          "atom": {
+            "registro": "HETATM",
+            "serial": 10,
+            "nome": "ZN",
+            "nomeBruto": "ZN  ",
+            "altloc": "",
+            "resname": "ZN",
+            "cadeia": "A",
+            "resseq": 100,
+            "icode": "",
+            "x": 0,
+            "y": 1,
+            "z": 0,
+            "occupancy": 1,
+            "bfactor": 20,
+            "elemento": "ZN",
+            "elementoFonte": "coluna",
+            "linha": "HETATM   10 ZN   ZN  A 100       0.000   1.000   0.000  1.00 20.00          ZN  ",
+            "indice": 9,
+            "chaveRes": "ZN|A|100|",
+            "metal": true,
+            "agua": false
+          },
+          "vizinhos": [
+            {
+              "elemento": "S",
+              "nome": "SG",
+              "resname": "CYS",
+              "cadeia": "A",
+              "resseq": 1,
+              "icode": "",
+              "altloc": "",
+              "serial": 1,
+              "chaveRes": "CYS|A|1|",
+              "agua": false,
+              "distancia": 1,
+              "noLink": true,
+              "notas": [
+                "Cisteína pelo SG: candidata a CYM, se a coordenação for confirmada. A ficha não renomeia o resíduo."
+              ],
+              "atom": {
+                "registro": "ATOM",
+                "serial": 1,
+                "nome": "SG",
+                "nomeBruto": " SG ",
+                "altloc": "",
+                "resname": "CYS",
+                "cadeia": "A",
+                "resseq": 1,
+                "icode": "",
+                "x": 0,
+                "y": 0,
+                "z": 0,
+                "occupancy": 1,
+                "bfactor": 20,
+                "elemento": "S",
+                "elementoFonte": "coluna",
+                "linha": "ATOM      1  SG  CYS A   1       0.000   0.000   0.000  1.00 20.00           S  ",
+                "indice": 0,
+                "chaveRes": "CYS|A|1|",
+                "metal": false,
+                "agua": false
+              }
+            },
+            {
+              "elemento": "N",
+              "nome": "ND1",
+              "resname": "HIS",
+              "cadeia": "A",
+              "resseq": 5,
+              "icode": "",
+              "altloc": "",
+              "serial": 4,
+              "chaveRes": "HIS|A|5|",
+              "agua": false,
+              "distancia": 1,
+              "noLink": true,
+              "notas": [
+                "Histidina pelo ND1: candidata a HIE. Indício geométrico, não protonação. Sem hidrogênios no arquivo, a geometria não separa tautômeros com segurança."
+              ],
+              "atom": {
+                "registro": "ATOM",
+                "serial": 4,
+                "nome": "ND1",
+                "nomeBruto": " ND1",
+                "altloc": "",
+                "resname": "HIS",
+                "cadeia": "A",
+                "resseq": 5,
+                "icode": "",
+                "x": 0,
+                "y": 2,
+                "z": 0,
+                "occupancy": 1,
+                "bfactor": 20,
+                "elemento": "N",
+                "elementoFonte": "coluna",
+                "linha": "ATOM      4  ND1 HIS A   5       0.000   2.000   0.000  1.00 20.00           N  ",
+                "indice": 3,
+                "chaveRes": "HIS|A|5|",
+                "metal": false,
+                "agua": false
+              }
+            },
+            {
+              "elemento": "O",
+              "nome": "O",
+              "resname": "HOH",
+              "cadeia": "A",
+              "resseq": 102,
+              "icode": "",
+              "altloc": "",
+              "serial": 12,
+              "chaveRes": "HOH|A|102|",
+              "agua": true,
+              "distancia": 1,
+              "noLink": true,
+              "notas": [
+                "Água no raio. Pode ser ligante ou artefato de cristalização."
+              ],
+              "atom": {
+                "registro": "HETATM",
+                "serial": 12,
+                "nome": "O",
+                "nomeBruto": " O  ",
+                "altloc": "",
+                "resname": "HOH",
+                "cadeia": "A",
+                "resseq": 102,
+                "icode": "",
+                "x": 1,
+                "y": 1,
+                "z": 0,
+                "occupancy": 1,
+                "bfactor": 20,
+                "elemento": "O",
+                "elementoFonte": "coluna",
+                "linha": "HETATM   12  O   HOH A 102       1.000   1.000   0.000  1.00 20.00           O  ",
+                "indice": 11,
+                "chaveRes": "HOH|A|102|",
+                "metal": false,
+                "agua": true
+              }
+            },
+            {
+              "elemento": "S",
+              "nome": "SG",
+              "resname": "CYS",
+              "cadeia": "A",
+              "resseq": 2,
+              "icode": "",
+              "altloc": "",
+              "serial": 2,
+              "chaveRes": "CYS|A|2|",
+              "agua": false,
+              "distancia": 2.23606797749979,
+              "noLink": true,
+              "notas": [
+                "Cisteína pelo SG: candidata a CYM, se a coordenação for confirmada. A ficha não renomeia o resíduo."
+              ],
+              "atom": {
+                "registro": "ATOM",
+                "serial": 2,
+                "nome": "SG",
+                "nomeBruto": " SG ",
+                "altloc": "",
+                "resname": "CYS",
+                "cadeia": "A",
+                "resseq": 2,
+                "icode": "",
+                "x": 2,
+                "y": 0,
+                "z": 0,
+                "occupancy": 1,
+                "bfactor": 20,
+                "elemento": "S",
+                "elementoFonte": "coluna",
+                "linha": "ATOM      2  SG  CYS A   2       2.000   0.000   0.000  1.00 20.00           S  ",
+                "indice": 1,
+                "chaveRes": "CYS|A|2|",
+                "metal": false,
+                "agua": false
+              }
+            }
+          ]
+        }
+      ],
+      "links": [],
+      "aguasEntre": [],
+      "raio": 2.8
+    },
+    "dissulfetos": {
+      "pares": [
+        {
+          "a": {
+            "registro": "ATOM",
+            "serial": 1,
+            "nome": "SG",
+            "nomeBruto": " SG ",
+            "altloc": "",
+            "resname": "CYS",
+            "cadeia": "A",
+            "resseq": 1,
+            "icode": "",
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "occupancy": 1,
+            "bfactor": 20,
+            "elemento": "S",
+            "elementoFonte": "coluna",
+            "linha": "ATOM      1  SG  CYS A   1       0.000   0.000   0.000  1.00 20.00           S  ",
+            "indice": 0,
+            "chaveRes": "CYS|A|1|",
+            "metal": false,
+            "agua": false
+          },
+          "b": {
+            "registro": "ATOM",
+            "serial": 2,
+            "nome": "SG",
+            "nomeBruto": " SG ",
+            "altloc": "",
+            "resname": "CYS",
+            "cadeia": "A",
+            "resseq": 2,
+            "icode": "",
+            "x": 2,
+            "y": 0,
+            "z": 0,
+            "occupancy": 1,
+            "bfactor": 20,
+            "elemento": "S",
+            "elementoFonte": "coluna",
+            "linha": "ATOM      2  SG  CYS A   2       2.000   0.000   0.000  1.00 20.00           S  ",
+            "indice": 1,
+            "chaveRes": "CYS|A|2|",
+            "metal": false,
+            "agua": false
+          },
+          "distancia": 2,
+          "noSsbond": false
+        }
+      ],
+      "registros": [
+        {
+          "ser": 1,
+          "a": {
+            "resname": "CYS",
+            "cadeia": "A",
+            "resseq": 1,
+            "icode": ""
+          },
+          "b": {
+            "resname": "CYS",
+            "cadeia": "A",
+            "resseq": 2,
+            "icode": ""
+          },
+          "simetriaA": "1555",
+          "simetriaB": "1555",
+          "identidade": true,
+          "distancia": 2,
+          "linha": "SSBOND   1 CYS A    1    CYS A    2                          1555   1555  2.00",
+          "coberto": true
+        }
+      ],
+      "raio": 2.5
+    },
+    "glicosilacao": {
+      "pares": [
+        {
+          "asn": {
+            "registro": "ATOM",
+            "serial": 3,
+            "nome": "ND2",
+            "nomeBruto": " ND2",
+            "altloc": "",
+            "resname": "ASN",
+            "cadeia": "A",
+            "resseq": 4,
+            "icode": "",
+            "x": 10,
+            "y": 0,
+            "z": 0,
+            "occupancy": 1,
+            "bfactor": 20,
+            "elemento": "N",
+            "elementoFonte": "coluna",
+            "linha": "ATOM      3  ND2 ASN A   4      10.000   0.000   0.000  1.00 20.00           N  ",
+            "indice": 2,
+            "chaveRes": "ASN|A|4|",
+            "metal": false,
+            "agua": false
+          },
+          "acucar": {
+            "registro": "HETATM",
+            "serial": 11,
+            "nome": "C1",
+            "nomeBruto": " C1 ",
+            "altloc": "",
+            "resname": "NAG",
+            "cadeia": "A",
+            "resseq": 101,
+            "icode": "",
+            "x": 11.4,
+            "y": 0,
+            "z": 0,
+            "occupancy": 1,
+            "bfactor": 20,
+            "elemento": "C",
+            "elementoFonte": "coluna",
+            "linha": "HETATM   11  C1  NAG A 101      11.400   0.000   0.000  1.00 20.00           C  ",
+            "indice": 10,
+            "chaveRes": "NAG|A|101|",
+            "metal": false,
+            "agua": false
+          },
+          "distancia": 1.4000000000000004,
+          "conhecido": true,
+          "noLink": true
+        }
+      ],
+      "linksAsnC1": [],
+      "arvores": [
+        {
+          "id": 1,
+          "residuos": [
+            {
+              "chave": "NAG|A|101|",
+              "resname": "NAG",
+              "cadeia": "A",
+              "resseq": 101,
+              "icode": "",
+              "nome": "N-ACETYL-D-GLUCOSAMINE",
+              "numeroSugerido": 12,
+              "asns": [
+                "ASN A 4"
+              ]
+            }
+          ]
+        }
+      ],
+      "raio": 1.8,
+      "maxResProteina": 11
+    },
+    "histidinas": {
+      "itens": [
+        {
+          "cadeia": "A",
+          "resseq": 5,
+          "icode": "",
+          "altloc": "",
+          "temND1": true,
+          "temNE2": true,
+          "vizND1": [
+            {
+              "nome": "ZN",
+              "resname": "ZN",
+              "cadeia": "A",
+              "resseq": 100,
+              "icode": "",
+              "elemento": "ZN",
+              "metal": true,
+              "distancia": 1,
+              "agua": false
+            },
+            {
+              "nome": "O",
+              "resname": "HOH",
+              "cadeia": "A",
+              "resseq": 102,
+              "icode": "",
+              "elemento": "O",
+              "metal": false,
+              "distancia": 1.4142135623730951,
+              "agua": true
+            },
+            {
+              "nome": "SG",
+              "resname": "CYS",
+              "cadeia": "A",
+              "resseq": 1,
+              "icode": "",
+              "elemento": "S",
+              "metal": false,
+              "distancia": 2,
+              "agua": false
+            },
+            {
+              "nome": "SG",
+              "resname": "CYS",
+              "cadeia": "A",
+              "resseq": 2,
+              "icode": "",
+              "elemento": "S",
+              "metal": false,
+              "distancia": 2.8284271247461903,
+              "agua": false
+            }
+          ],
+          "vizNE2": [],
+          "metaisND1": 1,
+          "metaisNE2": 0,
+          "enterramento": 4,
+          "candidato": "HIE",
+          "texto": "candidata a HIE — ND1 a 1.00 Å de um metal."
+        }
+      ],
+      "raio": 3.2,
+      "raioEnterramento": 6
+    },
+    "bonds": "# Rascunho de linhas bond para o tleap (AmberTools).\n# Rascunho. Não é um arquivo de entrada pronto. A numeração pode mudar depois do loadpdb e precisa ser conferida.\n# Contato geométrico não é contribuição energética.\n# A cadeia não entra no nome do átomo. Números iguais em cadeias diferentes ficam ambíguos.\n# Dissulfeto CYS A 1 SG — CYS A 2 SG, 2.00 Å. Consta no SSBOND.\nbond <unidade>.1.SG <unidade>.2.SG\n# ASN A 4 ND2 — NAG A 101 C1, 1.40 Å. Açúcar da lista ou do HETNAM. Não consta em LINK de simetria 1555.\nbond <unidade>.4.ND2 <unidade>.101.C1\n",
+    "predita": null,
+    "simetriaLinks": 0,
+    "simetriaSs": 0,
+    "frases": {
+      "contato": "Contato geométrico não é contribuição energética.",
+      "escore": "Escore de docking não é afinidade.",
+      "auxiliar": "Ficha auxiliar: exige conferência humana. Não faz docking, dinâmica molecular, minimização, protonação nem cálculo de afinidade.",
+      "serial": "O número de série é o do arquivo original. Ele muda se outro programa renumerar os átomos. Não serve como identificador depois dessa renumeração.",
+      "predita": "Estrutura predita: o pLDDT, quando está no fator de temperatura, indica a confiança por resíduo. Ele não informa se um pocket está em estado apo ou holo.",
+      "vina": "Sugestão editável de caixa. Não é uma caixa validada e não é resultado de docking.",
+      "protonacao": "Indício geométrico, não protonação. Sem hidrogênios no arquivo, a geometria não separa tautômeros com segurança.",
+      "tleap": "Rascunho. Não é um arquivo de entrada pronto. A numeração pode mudar depois do loadpdb e precisa ser conferida.",
+      "gap": "Lacuna de numeração não prova resíduo faltante. O REMARK 465 confirma quando ele existe.",
+      "acucar": "O nome GLYCAM do açúcar não sai da geometria.",
+      "descritor": "O drugScore e o volume do DoGSite são descritores geométricos da cavidade, não previsão de ligação."
+    }
+  },
+  "limpaA": {
+    "pdb": "REMARK   1 PEKI Fold. PDB filtrado no navegador (ficha de preparo).\nREMARK   1 Nao adiciona hidrogenio, nao protona e nao e entrada pronta de simulacao.\nREMARK   1 Contato geométrico não é contribuição energética.\nATOM      1  SG  CYS A   1       0.000   0.000   0.000  1.00 20.00           S\nATOM      2  SG  CYS A   2       2.000   0.000   0.000  1.00 20.00           S\nATOM      3  ND2 ASN A   4      10.000   0.000   0.000  1.00 20.00           N\nATOM      4  ND1 HIS A   5       0.000   2.000   0.000  1.00 20.00           N\nATOM      5  NE2 HIS A   5       0.000   6.000   0.000  1.00 20.00           N\nATOM      6  CA  GLY A  10A     14.000   0.000   0.000  1.00 20.00           C\nATOM      7  CB AALA A  11      16.000   0.000   0.000  0.25 20.00           C\nTER\nATOM      9  CA  GLY     1      20.000   0.000   0.000  1.00 20.00           C\nTER\nHETATM   10 ZN   ZN  A 100       0.000   1.000   0.000  1.00 20.00          ZN\nHETATM   11  C1  NAG A 101      11.400   0.000   0.000  1.00 20.00           C\nTER\nEND\n",
+    "ions": [
+      {
+        "nomeArquivo": "ZN1.pdb",
+        "chave": "ZN|A|100|",
+        "elemento": "ZN",
+        "cadeia": "A",
+        "resseq": 100,
+        "icode": "",
+        "serial": 10,
+        "pdb": "HETATM   10 ZN   ZN  A 100       0.000   1.000   0.000  1.00 20.00          ZN\nEND\n"
+      }
+    ],
+    "hets": [
+      {
+        "chave": "NAG|A|101|",
+        "nomeArquivo": "NAG_A_101.pdb",
+        "resname": "NAG",
+        "cadeia": "A",
+        "resseq": "101",
+        "icode": "",
+        "pdb": "HETATM   11  C1  NAG A 101      11.400   0.000   0.000  1.00 20.00           C\nEND\n",
+        "nAtomos": 1
+      }
+    ],
+    "linhasResumo": [
+      "Átomos de proteína mantidos: 8.",
+      "HETATM mantidos: 2.",
+      "Águas removidas: 1 linha(s).",
+      "HET não marcados e removidos: 0 linha(s).",
+      "Fora das cadeias escolhidas: 0 linha(s).",
+      "ANISOU descartados: 1.",
+      "Linhas removidas pela regra de altloc (branco ou A): 1.",
+      "Linhas duplicadas descartadas: 0.",
+      "Íons em arquivo próprio: 1.",
+      "O arquivo continua sem hidrogênios adicionados.",
+      "O número de série é o do arquivo original. Ele muda se outro programa renumerar os átomos. Não serve como identificador depois dessa renumeração."
+    ],
+    "vazio": false,
+    "contagens": {
+      "atom": 8,
+      "hetatm": 2,
+      "aguasRemovidas": 1,
+      "hetsRemovidos": 0,
+      "foraCadeia": 0,
+      "anisou": 1,
+      "altlocRemovidos": 1,
+      "duplicadas": 0,
+      "residuosSumiramAltloc": []
+    }
+  },
+  "limpaOcupacao": {
+    "pdb": "REMARK   1 PEKI Fold. PDB filtrado no navegador (ficha de preparo).\nREMARK   1 Nao adiciona hidrogenio, nao protona e nao e entrada pronta de simulacao.\nREMARK   1 Contato geométrico não é contribuição energética.\nATOM      1  SG  CYS A   1       0.000   0.000   0.000  1.00 20.00           S\nATOM      2  SG  CYS A   2       2.000   0.000   0.000  1.00 20.00           S\nATOM      3  ND2 ASN A   4      10.000   0.000   0.000  1.00 20.00           N\nATOM      4  ND1 HIS A   5       0.000   2.000   0.000  1.00 20.00           N\nATOM      5  NE2 HIS A   5       0.000   6.000   0.000  1.00 20.00           N\nATOM      6  CA  GLY A  10A     14.000   0.000   0.000  1.00 20.00           C\nATOM      8  CB BALA A  11      17.000   0.000   0.000  0.75 20.00           C\nHETATM   10 ZN   ZN  A 100       0.000   1.000   0.000  1.00 20.00          ZN\nHETATM   11  C1  NAG A 101      11.400   0.000   0.000  1.00 20.00           C\nHETATM   12  O   HOH A 102       1.000   1.000   0.000  1.00 20.00           O\nTER\nEND\n",
+    "ions": [
+      {
+        "nomeArquivo": "ZN1.pdb",
+        "chave": "ZN|A|100|",
+        "elemento": "ZN",
+        "cadeia": "A",
+        "resseq": 100,
+        "icode": "",
+        "serial": 10,
+        "pdb": "HETATM   10 ZN   ZN  A 100       0.000   1.000   0.000  1.00 20.00          ZN\nEND\n"
+      }
+    ],
+    "hets": [
+      {
+        "chave": "NAG|A|101|",
+        "nomeArquivo": "NAG_A_101.pdb",
+        "resname": "NAG",
+        "cadeia": "A",
+        "resseq": "101",
+        "icode": "",
+        "pdb": "HETATM   11  C1  NAG A 101      11.400   0.000   0.000  1.00 20.00           C\nEND\n",
+        "nAtomos": 1
+      }
+    ],
+    "linhasResumo": [
+      "Átomos de proteína mantidos: 7.",
+      "HETATM mantidos: 3.",
+      "Águas removidas: 0 linha(s).",
+      "HET não marcados e removidos: 0 linha(s).",
+      "Fora das cadeias escolhidas: 1 linha(s).",
+      "ANISOU descartados: 1.",
+      "Linhas removidas pela regra de altloc (maior ocupação): 1.",
+      "Linhas duplicadas descartadas: 0.",
+      "Íons em arquivo próprio: 1.",
+      "O arquivo continua sem hidrogênios adicionados.",
+      "O número de série é o do arquivo original. Ele muda se outro programa renumerar os átomos. Não serve como identificador depois dessa renumeração."
+    ],
+    "vazio": false,
+    "contagens": {
+      "atom": 7,
+      "hetatm": 3,
+      "aguasRemovidas": 0,
+      "hetsRemovidos": 0,
+      "foraCadeia": 1,
+      "anisou": 1,
+      "altlocRemovidos": 1,
+      "duplicadas": 0,
+      "residuosSumiramAltloc": []
+    }
+  },
+  "caixa": {
+    "ok": true,
+    "nAtomos": 12,
+    "margem": 4,
+    "center_x": 7.617,
+    "center_y": 0.833,
+    "center_z": 0,
+    "size_x": 28,
+    "size_y": 14,
+    "size_z": 8
+  },
+  "config": "center_x = 7.617\ncenter_y = 0.833\ncenter_z = 0.000\nsize_x = 28.0\nsize_y = 14.0\nsize_z = 8.0"
+}

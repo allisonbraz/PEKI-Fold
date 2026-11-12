@@ -1,0 +1,2522 @@
+{
+  "relatorio": {
+    "versao": "ensemble-1",
+    "exemplo": true,
+    "mesmoReferencial": true,
+    "nEfetivo": 3,
+    "nPedidas": 3,
+    "nDisponiveis": 3,
+    "referenciaId": "EX1",
+    "parametros": {
+      "modoAlinhamento": "numero",
+      "jaccardMin": 0.5,
+      "usarCentroide": false,
+      "distanciaMax": 6,
+      "margemVina": 4,
+      "faixaCaixa": 50,
+      "limite": 8,
+      "pausaEntreChamadasMs": 2000,
+      "referenciaId": null,
+      "criterio": "Jaccard de resíduos"
+    },
+    "faixas": [
+      75,
+      50,
+      25
+    ],
+    "citacao": {
+      "nome": "PockFlex",
+      "autores": "Rahali et al.",
+      "revista": "Nucleic Acids Research",
+      "ano": 2026,
+      "volume": "54",
+      "fasciculo": "W1",
+      "paginas": "W295–W300",
+      "doi": "10.1093/nar/gkag453",
+      "url": "https://doi.org/10.1093/nar/gkag453"
+    },
+    "frases": {
+      "persistencia": "Persistência indica recorrência do bolsão no conjunto, não druggability nem ligação de composto.",
+      "dinamica": "Ensemble de estruturas cristalográficas não representa dinâmica real.",
+      "exploratorio": "Resultado exploratório: é hipótese, não conclusão.",
+      "docking": "PEKI Fold não é ferramenta de docking.",
+      "evidencia": "Evidência: dado medido no arquivo ou descritor vindo do DoGSiteScorer.",
+      "hipotese": "Hipótese: interpretação que esses dados não provam.",
+      "descritor": "O drugScore e o volume são descritores do DoGSiteScorer. Não são afinidade nem previsão de ligação.",
+      "alinhamento": "O alinhamento é por número de resíduo e cadeia, ou por sequência simples. Não há sobreposição estrutural.",
+      "centroide": "A distância entre centroides só entra se as estruturas já compartilham o referencial. Este app não sobrepõe coordenadas.",
+      "apoHolo": "Apo ou holo é um indício pela presença de HETATM de ligante. Não confirma o estado biológico.",
+      "vina": "Sugestão editável de caixa. Não é uma caixa validada e não é resultado de docking.",
+      "redundancia": "Estruturas redundantes inflam a contagem. Entradas quase iguais aumentam n sem informação nova, e esta aba não remove essa redundância.",
+      "motor": "Resultados de motores diferentes não devem ser misturados. Esta aba usa somente o DoGSiteScorer. O drugScore daqui não entra na mesma conta que o escore de outro programa.",
+      "nEfetivo": "N efetivo é o número de estruturas que de fato entraram no agrupamento. A recorrência aparece como k de N efetivo.",
+      "mesmaProteina": "O app não confere se os IDs são a mesma proteína.",
+      "exemplo": "EXEMPLO SINTÉTICO. Estes bolsões não vieram do DoGSiteScorer.",
+      "relacionado": "Trabalho relacionado: PockFlex (Rahali et al., Nucleic Acids Research 2026, 54(W1), W295–W300, https://doi.org/10.1093/nar/gkag453). Também analisa bolsões num conjunto de estruturas. Esta aba é a leitura do PEKI Fold, no navegador e em português, com a ficha de preparo e uma caixa editável. Não há comparação de desempenho com o PockFlex.",
+      "preparo": "O texto da caixa segue o mesmo formato da ficha de preparo. Continua sendo sugestão editável e não substitui a conferência daquela ficha."
+    },
+    "alinhamento": {
+      "modo": "numero",
+      "limitacao": "Alinhamento por número de resíduo e pela letra da cadeia. A cadeia A de uma estrutura só encontra a cadeia A de outra com o mesmo número. Não há sobreposição de coordenadas. Se a numeração ou a letra da cadeia mudou, resíduos do mesmo lugar podem ficar separados, e resíduos diferentes podem cair no mesmo número.",
+      "referenciaId": "EX1",
+      "pareamentos": []
+    },
+    "centroideAplicado": false,
+    "avisoCentroide": null,
+    "agrupamento": "Guloso, na ordem recebida. Um bolsão entra num grupo se a estrutura ainda não está nele e o Jaccard de resíduos com o membro de maior Jaccard atinge o limiar. G1 é o primeiro grupo aberto, não um ranking.",
+    "grupos": [
+      {
+        "id": "G1",
+        "persistencia": {
+          "k": 3,
+          "n": 3,
+          "pct": 100,
+          "faixa": 75,
+          "rotuloFaixa": "≥ 75%",
+          "texto": "3 de 3"
+        },
+        "persistenteNaCaixa": true,
+        "drugScore": {
+          "n": 3,
+          "media": 0.7,
+          "min": 0.6,
+          "max": 0.8
+        },
+        "volume": {
+          "n": 3,
+          "media": 100,
+          "min": 90,
+          "max": 110
+        },
+        "residuos": {
+          "todos": [
+            {
+              "chave": "A|1|",
+              "nomes": [
+                "ALA"
+              ],
+              "nomesDivergem": false,
+              "rotulo": "ALA A 1",
+              "k": 3,
+              "n": 3,
+              "pct": 100,
+              "faixa": 75,
+              "rotuloFaixa": "≥ 75%",
+              "texto": "3 de 3"
+            },
+            {
+              "chave": "A|2|",
+              "nomes": [
+                "ALA"
+              ],
+              "nomesDivergem": false,
+              "rotulo": "ALA A 2",
+              "k": 3,
+              "n": 3,
+              "pct": 100,
+              "faixa": 75,
+              "rotuloFaixa": "≥ 75%",
+              "texto": "3 de 3"
+            },
+            {
+              "chave": "A|3|",
+              "nomes": [
+                "ALA"
+              ],
+              "nomesDivergem": false,
+              "rotulo": "ALA A 3",
+              "k": 2,
+              "n": 3,
+              "pct": 66.7,
+              "faixa": 50,
+              "rotuloFaixa": "≥ 50% e < 75%",
+              "texto": "2 de 3"
+            }
+          ],
+          "faixa75": [
+            {
+              "chave": "A|1|",
+              "nomes": [
+                "ALA"
+              ],
+              "nomesDivergem": false,
+              "rotulo": "ALA A 1",
+              "k": 3,
+              "n": 3,
+              "pct": 100,
+              "faixa": 75,
+              "rotuloFaixa": "≥ 75%",
+              "texto": "3 de 3"
+            },
+            {
+              "chave": "A|2|",
+              "nomes": [
+                "ALA"
+              ],
+              "nomesDivergem": false,
+              "rotulo": "ALA A 2",
+              "k": 3,
+              "n": 3,
+              "pct": 100,
+              "faixa": 75,
+              "rotuloFaixa": "≥ 75%",
+              "texto": "3 de 3"
+            }
+          ],
+          "faixa50": [
+            {
+              "chave": "A|3|",
+              "nomes": [
+                "ALA"
+              ],
+              "nomesDivergem": false,
+              "rotulo": "ALA A 3",
+              "k": 2,
+              "n": 3,
+              "pct": 66.7,
+              "faixa": 50,
+              "rotuloFaixa": "≥ 50% e < 75%",
+              "texto": "2 de 3"
+            }
+          ],
+          "faixa25": [],
+          "abaixo": []
+        },
+        "estruturas": [
+          "EX1",
+          "EX2",
+          "EX3"
+        ],
+        "misturaApoHolo": true,
+        "centroideReferencia": {
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "n": 8,
+          "fonte": "bolsao-desta-estrutura"
+        },
+        "membros": [
+          {
+            "estruturaId": "EX1",
+            "name": "P_0",
+            "volume": 100,
+            "surface": null,
+            "depth": null,
+            "hydrophobicity": null,
+            "accept": null,
+            "donor": null,
+            "drugScore": 0.8,
+            "jaccardEntrada": null,
+            "distanciaEntrada": null,
+            "aviso": null,
+            "residuos": [
+              "A|1|",
+              "A|2|",
+              "A|3|"
+            ],
+            "extensao": {
+              "n": 8,
+              "cx": 0,
+              "cy": 0,
+              "cz": 0,
+              "minx": -1,
+              "miny": -1,
+              "minz": -1,
+              "maxx": 1,
+              "maxy": 1,
+              "maxz": 1
+            }
+          },
+          {
+            "estruturaId": "EX2",
+            "name": "P_0",
+            "volume": 110,
+            "surface": null,
+            "depth": null,
+            "hydrophobicity": null,
+            "accept": null,
+            "donor": null,
+            "drugScore": 0.7,
+            "jaccardEntrada": 1,
+            "distanciaEntrada": 0.5,
+            "aviso": null,
+            "residuos": [
+              "A|1|",
+              "A|2|",
+              "A|3|"
+            ],
+            "extensao": {
+              "n": 8,
+              "cx": 0.5,
+              "cy": 0,
+              "cz": 0,
+              "minx": -0.5,
+              "miny": -1,
+              "minz": -1,
+              "maxx": 1.5,
+              "maxy": 1,
+              "maxz": 1
+            }
+          },
+          {
+            "estruturaId": "EX3",
+            "name": "P_0",
+            "volume": 90,
+            "surface": null,
+            "depth": null,
+            "hydrophobicity": null,
+            "accept": null,
+            "donor": null,
+            "drugScore": 0.6,
+            "jaccardEntrada": 0.667,
+            "distanciaEntrada": 0.5,
+            "aviso": null,
+            "residuos": [
+              "A|1|",
+              "A|2|"
+            ],
+            "extensao": {
+              "n": 8,
+              "cx": -0.5,
+              "cy": 0,
+              "cz": 0,
+              "minx": -1.5,
+              "miny": -1,
+              "minz": -1,
+              "maxx": 0.5,
+              "maxy": 1,
+              "maxz": 1
+            }
+          }
+        ]
+      },
+      {
+        "id": "G2",
+        "persistencia": {
+          "k": 2,
+          "n": 3,
+          "pct": 66.7,
+          "faixa": 50,
+          "rotuloFaixa": "≥ 50% e < 75%",
+          "texto": "2 de 3"
+        },
+        "persistenteNaCaixa": true,
+        "drugScore": {
+          "n": 2,
+          "media": 0.25,
+          "min": 0.2,
+          "max": 0.3
+        },
+        "volume": {
+          "n": 2,
+          "media": 45,
+          "min": 40,
+          "max": 50
+        },
+        "residuos": {
+          "todos": [
+            {
+              "chave": "A|10|",
+              "nomes": [
+                "ALA"
+              ],
+              "nomesDivergem": false,
+              "rotulo": "ALA A 10",
+              "k": 2,
+              "n": 3,
+              "pct": 66.7,
+              "faixa": 50,
+              "rotuloFaixa": "≥ 50% e < 75%",
+              "texto": "2 de 3"
+            },
+            {
+              "chave": "A|11|",
+              "nomes": [
+                "ALA"
+              ],
+              "nomesDivergem": false,
+              "rotulo": "ALA A 11",
+              "k": 2,
+              "n": 3,
+              "pct": 66.7,
+              "faixa": 50,
+              "rotuloFaixa": "≥ 50% e < 75%",
+              "texto": "2 de 3"
+            },
+            {
+              "chave": "A|12|",
+              "nomes": [
+                "ALA"
+              ],
+              "nomesDivergem": false,
+              "rotulo": "ALA A 12",
+              "k": 1,
+              "n": 3,
+              "pct": 33.3,
+              "faixa": 25,
+              "rotuloFaixa": "≥ 25% e < 50%",
+              "texto": "1 de 3"
+            }
+          ],
+          "faixa75": [],
+          "faixa50": [
+            {
+              "chave": "A|10|",
+              "nomes": [
+                "ALA"
+              ],
+              "nomesDivergem": false,
+              "rotulo": "ALA A 10",
+              "k": 2,
+              "n": 3,
+              "pct": 66.7,
+              "faixa": 50,
+              "rotuloFaixa": "≥ 50% e < 75%",
+              "texto": "2 de 3"
+            },
+            {
+              "chave": "A|11|",
+              "nomes": [
+                "ALA"
+              ],
+              "nomesDivergem": false,
+              "rotulo": "ALA A 11",
+              "k": 2,
+              "n": 3,
+              "pct": 66.7,
+              "faixa": 50,
+              "rotuloFaixa": "≥ 50% e < 75%",
+              "texto": "2 de 3"
+            }
+          ],
+          "faixa25": [
+            {
+              "chave": "A|12|",
+              "nomes": [
+                "ALA"
+              ],
+              "nomesDivergem": false,
+              "rotulo": "ALA A 12",
+              "k": 1,
+              "n": 3,
+              "pct": 33.3,
+              "faixa": 25,
+              "rotuloFaixa": "≥ 25% e < 50%",
+              "texto": "1 de 3"
+            }
+          ],
+          "abaixo": []
+        },
+        "estruturas": [
+          "EX1",
+          "EX2"
+        ],
+        "misturaApoHolo": true,
+        "centroideReferencia": {
+          "x": 10,
+          "y": 0,
+          "z": 0,
+          "n": 8,
+          "fonte": "bolsao-desta-estrutura"
+        },
+        "membros": [
+          {
+            "estruturaId": "EX1",
+            "name": "P_1",
+            "volume": 40,
+            "surface": null,
+            "depth": null,
+            "hydrophobicity": null,
+            "accept": null,
+            "donor": null,
+            "drugScore": 0.2,
+            "jaccardEntrada": null,
+            "distanciaEntrada": null,
+            "aviso": null,
+            "residuos": [
+              "A|10|",
+              "A|11|"
+            ],
+            "extensao": {
+              "n": 8,
+              "cx": 10,
+              "cy": 0,
+              "cz": 0,
+              "minx": 9,
+              "miny": -1,
+              "minz": -1,
+              "maxx": 11,
+              "maxy": 1,
+              "maxz": 1
+            }
+          },
+          {
+            "estruturaId": "EX2",
+            "name": "P_1",
+            "volume": 50,
+            "surface": null,
+            "depth": null,
+            "hydrophobicity": null,
+            "accept": null,
+            "donor": null,
+            "drugScore": 0.3,
+            "jaccardEntrada": 0.667,
+            "distanciaEntrada": 0.5,
+            "aviso": null,
+            "residuos": [
+              "A|10|",
+              "A|11|",
+              "A|12|"
+            ],
+            "extensao": {
+              "n": 8,
+              "cx": 10.5,
+              "cy": 0,
+              "cz": 0,
+              "minx": 9.5,
+              "miny": -1,
+              "minz": -1,
+              "maxx": 11.5,
+              "maxy": 1,
+              "maxz": 1
+            }
+          }
+        ]
+      },
+      {
+        "id": "G3",
+        "persistencia": {
+          "k": 1,
+          "n": 3,
+          "pct": 33.3,
+          "faixa": 25,
+          "rotuloFaixa": "≥ 25% e < 50%",
+          "texto": "1 de 3"
+        },
+        "persistenteNaCaixa": false,
+        "drugScore": {
+          "n": 1,
+          "media": 0.1,
+          "min": 0.1,
+          "max": 0.1
+        },
+        "volume": {
+          "n": 1,
+          "media": 15,
+          "min": 15,
+          "max": 15
+        },
+        "residuos": {
+          "todos": [
+            {
+              "chave": "A|20|",
+              "nomes": [
+                "ALA"
+              ],
+              "nomesDivergem": false,
+              "rotulo": "ALA A 20",
+              "k": 1,
+              "n": 3,
+              "pct": 33.3,
+              "faixa": 25,
+              "rotuloFaixa": "≥ 25% e < 50%",
+              "texto": "1 de 3"
+            }
+          ],
+          "faixa75": [],
+          "faixa50": [],
+          "faixa25": [
+            {
+              "chave": "A|20|",
+              "nomes": [
+                "ALA"
+              ],
+              "nomesDivergem": false,
+              "rotulo": "ALA A 20",
+              "k": 1,
+              "n": 3,
+              "pct": 33.3,
+              "faixa": 25,
+              "rotuloFaixa": "≥ 25% e < 50%",
+              "texto": "1 de 3"
+            }
+          ],
+          "abaixo": []
+        },
+        "estruturas": [
+          "EX3"
+        ],
+        "misturaApoHolo": false,
+        "centroideReferencia": null,
+        "membros": [
+          {
+            "estruturaId": "EX3",
+            "name": "P_1",
+            "volume": 15,
+            "surface": null,
+            "depth": null,
+            "hydrophobicity": null,
+            "accept": null,
+            "donor": null,
+            "drugScore": 0.1,
+            "jaccardEntrada": null,
+            "distanciaEntrada": null,
+            "aviso": null,
+            "residuos": [
+              "A|20|"
+            ],
+            "extensao": {
+              "n": 8,
+              "cx": 20,
+              "cy": 5,
+              "cz": 0,
+              "minx": 19,
+              "miny": 4,
+              "minz": -1,
+              "maxx": 21,
+              "maxy": 6,
+              "maxz": 1
+            }
+          }
+        ]
+      }
+    ],
+    "matriz": {
+      "nEfetivo": 3,
+      "colunas": [
+        {
+          "id": "G1",
+          "persistencia": "3 de 3",
+          "faixa": "≥ 75%"
+        },
+        {
+          "id": "G2",
+          "persistencia": "2 de 3",
+          "faixa": "≥ 50% e < 75%"
+        },
+        {
+          "id": "G3",
+          "persistencia": "1 de 3",
+          "faixa": "≥ 25% e < 50%"
+        }
+      ],
+      "linhas": [
+        {
+          "estruturaId": "EX1",
+          "rotulo": "EX1 (exemplo)",
+          "erro": null,
+          "apoHolo": "apo (indício)",
+          "celulas": [
+            {
+              "presente": true,
+              "bolsao": "P_0",
+              "jaccardEntrada": null
+            },
+            {
+              "presente": true,
+              "bolsao": "P_1",
+              "jaccardEntrada": null
+            },
+            {
+              "presente": false,
+              "bolsao": null,
+              "jaccardEntrada": null
+            }
+          ]
+        },
+        {
+          "estruturaId": "EX2",
+          "rotulo": "EX2 (exemplo)",
+          "erro": null,
+          "apoHolo": "holo (indício)",
+          "celulas": [
+            {
+              "presente": true,
+              "bolsao": "P_0",
+              "jaccardEntrada": 1
+            },
+            {
+              "presente": true,
+              "bolsao": "P_1",
+              "jaccardEntrada": 0.667
+            },
+            {
+              "presente": false,
+              "bolsao": null,
+              "jaccardEntrada": null
+            }
+          ]
+        },
+        {
+          "estruturaId": "EX3",
+          "rotulo": "EX3 (exemplo)",
+          "erro": null,
+          "apoHolo": "apo (indício)",
+          "celulas": [
+            {
+              "presente": true,
+              "bolsao": "P_0",
+              "jaccardEntrada": 0.667
+            },
+            {
+              "presente": false,
+              "bolsao": null,
+              "jaccardEntrada": null
+            },
+            {
+              "presente": true,
+              "bolsao": "P_1",
+              "jaccardEntrada": null
+            }
+          ]
+        }
+      ]
+    },
+    "caixaEnsemble": {
+      "ok": true,
+      "margem": 4,
+      "nCentroides": 2,
+      "formula": "envelope-dos-centroides",
+      "center_x": 5,
+      "center_y": 0,
+      "center_z": 0,
+      "size_x": 18,
+      "size_y": 8,
+      "size_z": 8,
+      "grupos": [
+        "G1",
+        "G2"
+      ],
+      "faixa": 50
+    },
+    "gruposSemCentroide": [],
+    "estruturas": [
+      {
+        "id": "EX1",
+        "rotulo": "EX1 (exemplo)",
+        "origem": "exemplo",
+        "exemplo": true,
+        "erro": null,
+        "incluida": true,
+        "ligante": {
+          "id": "EX1",
+          "rotulo": "EX1 (exemplo)",
+          "classe": "apo",
+          "ligantes": [],
+          "ions": [],
+          "frase": "Apo ou holo é um indício pela presença de HETATM de ligante. Não confirma o estado biológico."
+        },
+        "nBolsos": 2
+      },
+      {
+        "id": "EX2",
+        "rotulo": "EX2 (exemplo)",
+        "origem": "exemplo",
+        "exemplo": true,
+        "erro": null,
+        "incluida": true,
+        "ligante": {
+          "id": "EX2",
+          "rotulo": "EX2 (exemplo)",
+          "classe": "holo",
+          "ligantes": [
+            "LIG A 900"
+          ],
+          "ions": [],
+          "frase": "Apo ou holo é um indício pela presença de HETATM de ligante. Não confirma o estado biológico."
+        },
+        "nBolsos": 2
+      },
+      {
+        "id": "EX3",
+        "rotulo": "EX3 (exemplo)",
+        "origem": "exemplo",
+        "exemplo": true,
+        "erro": null,
+        "incluida": true,
+        "ligante": {
+          "id": "EX3",
+          "rotulo": "EX3 (exemplo)",
+          "classe": "apo",
+          "ligantes": [],
+          "ions": [],
+          "frase": "Apo ou holo é um indício pela presença de HETATM de ligante. Não confirma o estado biológico."
+        },
+        "nBolsos": 2
+      }
+    ],
+    "limitacoes": [
+      "Persistência indica recorrência do bolsão no conjunto, não druggability nem ligação de composto.",
+      "Ensemble de estruturas cristalográficas não representa dinâmica real.",
+      "Resultado exploratório: é hipótese, não conclusão.",
+      "PEKI Fold não é ferramenta de docking.",
+      "Estruturas redundantes inflam a contagem. Entradas quase iguais aumentam n sem informação nova, e esta aba não remove essa redundância.",
+      "Resultados de motores diferentes não devem ser misturados. Esta aba usa somente o DoGSiteScorer. O drugScore daqui não entra na mesma conta que o escore de outro programa.",
+      "N efetivo é o número de estruturas que de fato entraram no agrupamento. A recorrência aparece como k de N efetivo.",
+      "O alinhamento é por número de resíduo e cadeia, ou por sequência simples. Não há sobreposição estrutural.",
+      "Alinhamento por número de resíduo e pela letra da cadeia. A cadeia A de uma estrutura só encontra a cadeia A de outra com o mesmo número. Não há sobreposição de coordenadas. Se a numeração ou a letra da cadeia mudou, resíduos do mesmo lugar podem ficar separados, e resíduos diferentes podem cair no mesmo número.",
+      "O app não confere se os IDs são a mesma proteína.",
+      "Apo ou holo é um indício pela presença de HETATM de ligante. Não confirma o estado biológico.",
+      "O drugScore e o volume são descritores do DoGSiteScorer. Não são afinidade nem previsão de ligação.",
+      "Sugestão editável de caixa. Não é uma caixa validada e não é resultado de docking.",
+      "O texto da caixa segue o mesmo formato da ficha de preparo. Continua sendo sugestão editável e não substitui a conferência daquela ficha.",
+      "EXEMPLO SINTÉTICO. Estes bolsões não vieram do DoGSiteScorer."
+    ],
+    "exclusoesHet": {
+      "aguas": [
+        "HOH",
+        "WAT",
+        "H2O",
+        "DOD"
+      ],
+      "aditivos": [
+        "GOL",
+        "EDO",
+        "PEG",
+        "PG4",
+        "PGE",
+        "1PE",
+        "MPD",
+        "MRD",
+        "ACT",
+        "SO4",
+        "PO4",
+        "DMS",
+        "TRS",
+        "MES",
+        "EPE",
+        "IPA",
+        "MOH",
+        "EOH",
+        "FMT",
+        "ACY",
+        "CIT",
+        "NO3",
+        "SCN"
+      ],
+      "ions": [
+        "LI",
+        "NA",
+        "K",
+        "RB",
+        "CS",
+        "MG",
+        "CA",
+        "SR",
+        "BA",
+        "MN",
+        "FE",
+        "CO",
+        "NI",
+        "CU",
+        "ZN",
+        "CD",
+        "HG",
+        "CL",
+        "BR",
+        "IOD",
+        "AG",
+        "AU",
+        "PT"
+      ]
+    }
+  },
+  "sequencia": {
+    "versao": "ensemble-1",
+    "exemplo": true,
+    "mesmoReferencial": true,
+    "nEfetivo": 3,
+    "nPedidas": 3,
+    "nDisponiveis": 3,
+    "referenciaId": "EX1",
+    "parametros": {
+      "modoAlinhamento": "sequencia",
+      "jaccardMin": 0.5,
+      "usarCentroide": false,
+      "distanciaMax": 6,
+      "margemVina": 4,
+      "faixaCaixa": 50,
+      "limite": 8,
+      "pausaEntreChamadasMs": 2000,
+      "referenciaId": null,
+      "criterio": "Jaccard de resíduos"
+    },
+    "faixas": [
+      75,
+      50,
+      25
+    ],
+    "citacao": {
+      "nome": "PockFlex",
+      "autores": "Rahali et al.",
+      "revista": "Nucleic Acids Research",
+      "ano": 2026,
+      "volume": "54",
+      "fasciculo": "W1",
+      "paginas": "W295–W300",
+      "doi": "10.1093/nar/gkag453",
+      "url": "https://doi.org/10.1093/nar/gkag453"
+    },
+    "frases": {
+      "persistencia": "Persistência indica recorrência do bolsão no conjunto, não druggability nem ligação de composto.",
+      "dinamica": "Ensemble de estruturas cristalográficas não representa dinâmica real.",
+      "exploratorio": "Resultado exploratório: é hipótese, não conclusão.",
+      "docking": "PEKI Fold não é ferramenta de docking.",
+      "evidencia": "Evidência: dado medido no arquivo ou descritor vindo do DoGSiteScorer.",
+      "hipotese": "Hipótese: interpretação que esses dados não provam.",
+      "descritor": "O drugScore e o volume são descritores do DoGSiteScorer. Não são afinidade nem previsão de ligação.",
+      "alinhamento": "O alinhamento é por número de resíduo e cadeia, ou por sequência simples. Não há sobreposição estrutural.",
+      "centroide": "A distância entre centroides só entra se as estruturas já compartilham o referencial. Este app não sobrepõe coordenadas.",
+      "apoHolo": "Apo ou holo é um indício pela presença de HETATM de ligante. Não confirma o estado biológico.",
+      "vina": "Sugestão editável de caixa. Não é uma caixa validada e não é resultado de docking.",
+      "redundancia": "Estruturas redundantes inflam a contagem. Entradas quase iguais aumentam n sem informação nova, e esta aba não remove essa redundância.",
+      "motor": "Resultados de motores diferentes não devem ser misturados. Esta aba usa somente o DoGSiteScorer. O drugScore daqui não entra na mesma conta que o escore de outro programa.",
+      "nEfetivo": "N efetivo é o número de estruturas que de fato entraram no agrupamento. A recorrência aparece como k de N efetivo.",
+      "mesmaProteina": "O app não confere se os IDs são a mesma proteína.",
+      "exemplo": "EXEMPLO SINTÉTICO. Estes bolsões não vieram do DoGSiteScorer.",
+      "relacionado": "Trabalho relacionado: PockFlex (Rahali et al., Nucleic Acids Research 2026, 54(W1), W295–W300, https://doi.org/10.1093/nar/gkag453). Também analisa bolsões num conjunto de estruturas. Esta aba é a leitura do PEKI Fold, no navegador e em português, com a ficha de preparo e uma caixa editável. Não há comparação de desempenho com o PockFlex.",
+      "preparo": "O texto da caixa segue o mesmo formato da ficha de preparo. Continua sendo sugestão editável e não substitui a conferência daquela ficha."
+    },
+    "alinhamento": {
+      "modo": "sequencia",
+      "limitacao": "Alinhamento por sequência (pontuação +1 se a letra é igual, −1 se difere, −1 por buraco), sem matriz de substituição e sem sobreposição de coordenadas. A referência é a primeira estrutura efetiva. Um resíduo sem coluna na referência não cruza com as outras estruturas.",
+      "referenciaId": "EX1",
+      "pareamentos": [
+        {
+          "estruturaId": "EX2",
+          "cadeia": "A",
+          "cadeiaReferencia": "A",
+          "criterio": "mesmo identificador de cadeia",
+          "identidade": 0.833
+        },
+        {
+          "estruturaId": "EX3",
+          "cadeia": "A",
+          "cadeiaReferencia": "A",
+          "criterio": "mesmo identificador de cadeia",
+          "identidade": 0.6
+        }
+      ]
+    },
+    "centroideAplicado": false,
+    "avisoCentroide": null,
+    "agrupamento": "Guloso, na ordem recebida. Um bolsão entra num grupo se a estrutura ainda não está nele e o Jaccard de resíduos com o membro de maior Jaccard atinge o limiar. G1 é o primeiro grupo aberto, não um ranking.",
+    "grupos": [
+      {
+        "id": "G1",
+        "persistencia": {
+          "k": 2,
+          "n": 3,
+          "pct": 66.7,
+          "faixa": 50,
+          "rotuloFaixa": "≥ 50% e < 75%",
+          "texto": "2 de 3"
+        },
+        "persistenteNaCaixa": true,
+        "drugScore": {
+          "n": 2,
+          "media": 0.75,
+          "min": 0.7,
+          "max": 0.8
+        },
+        "volume": {
+          "n": 2,
+          "media": 105,
+          "min": 100,
+          "max": 110
+        },
+        "residuos": {
+          "todos": [
+            {
+              "chave": "A|1|",
+              "nomes": [
+                "ALA"
+              ],
+              "nomesDivergem": false,
+              "rotulo": "ALA A 1",
+              "k": 2,
+              "n": 3,
+              "pct": 66.7,
+              "faixa": 50,
+              "rotuloFaixa": "≥ 50% e < 75%",
+              "texto": "2 de 3"
+            },
+            {
+              "chave": "A|2|",
+              "nomes": [
+                "ALA"
+              ],
+              "nomesDivergem": false,
+              "rotulo": "ALA A 2",
+              "k": 2,
+              "n": 3,
+              "pct": 66.7,
+              "faixa": 50,
+              "rotuloFaixa": "≥ 50% e < 75%",
+              "texto": "2 de 3"
+            },
+            {
+              "chave": "A|3|",
+              "nomes": [
+                "ALA"
+              ],
+              "nomesDivergem": false,
+              "rotulo": "ALA A 3",
+              "k": 1,
+              "n": 3,
+              "pct": 33.3,
+              "faixa": 25,
+              "rotuloFaixa": "≥ 25% e < 50%",
+              "texto": "1 de 3"
+            },
+            {
+              "chave": "local:EX2:A|1|",
+              "nomes": [
+                "ALA"
+              ],
+              "nomesDivergem": false,
+              "rotulo": "ALA A|1| (sem coluna na referência)",
+              "k": 1,
+              "n": 3,
+              "pct": 33.3,
+              "faixa": 25,
+              "rotuloFaixa": "≥ 25% e < 50%",
+              "texto": "1 de 3"
+            }
+          ],
+          "faixa75": [],
+          "faixa50": [
+            {
+              "chave": "A|1|",
+              "nomes": [
+                "ALA"
+              ],
+              "nomesDivergem": false,
+              "rotulo": "ALA A 1",
+              "k": 2,
+              "n": 3,
+              "pct": 66.7,
+              "faixa": 50,
+              "rotuloFaixa": "≥ 50% e < 75%",
+              "texto": "2 de 3"
+            },
+            {
+              "chave": "A|2|",
+              "nomes": [
+                "ALA"
+              ],
+              "nomesDivergem": false,
+              "rotulo": "ALA A 2",
+              "k": 2,
+              "n": 3,
+              "pct": 66.7,
+              "faixa": 50,
+              "rotuloFaixa": "≥ 50% e < 75%",
+              "texto": "2 de 3"
+            }
+          ],
+          "faixa25": [
+            {
+              "chave": "A|3|",
+              "nomes": [
+                "ALA"
+              ],
+              "nomesDivergem": false,
+              "rotulo": "ALA A 3",
+              "k": 1,
+              "n": 3,
+              "pct": 33.3,
+              "faixa": 25,
+              "rotuloFaixa": "≥ 25% e < 50%",
+              "texto": "1 de 3"
+            },
+            {
+              "chave": "local:EX2:A|1|",
+              "nomes": [
+                "ALA"
+              ],
+              "nomesDivergem": false,
+              "rotulo": "ALA A|1| (sem coluna na referência)",
+              "k": 1,
+              "n": 3,
+              "pct": 33.3,
+              "faixa": 25,
+              "rotuloFaixa": "≥ 25% e < 50%",
+              "texto": "1 de 3"
+            }
+          ],
+          "abaixo": []
+        },
+        "estruturas": [
+          "EX1",
+          "EX2"
+        ],
+        "misturaApoHolo": true,
+        "centroideReferencia": {
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "n": 8,
+          "fonte": "bolsao-desta-estrutura"
+        },
+        "membros": [
+          {
+            "estruturaId": "EX1",
+            "name": "P_0",
+            "volume": 100,
+            "surface": null,
+            "depth": null,
+            "hydrophobicity": null,
+            "accept": null,
+            "donor": null,
+            "drugScore": 0.8,
+            "jaccardEntrada": null,
+            "distanciaEntrada": null,
+            "aviso": null,
+            "residuos": [
+              "A|1|",
+              "A|2|",
+              "A|3|"
+            ],
+            "extensao": {
+              "n": 8,
+              "cx": 0,
+              "cy": 0,
+              "cz": 0,
+              "minx": -1,
+              "miny": -1,
+              "minz": -1,
+              "maxx": 1,
+              "maxy": 1,
+              "maxz": 1
+            }
+          },
+          {
+            "estruturaId": "EX2",
+            "name": "P_0",
+            "volume": 110,
+            "surface": null,
+            "depth": null,
+            "hydrophobicity": null,
+            "accept": null,
+            "donor": null,
+            "drugScore": 0.7,
+            "jaccardEntrada": 0.5,
+            "distanciaEntrada": 0.5,
+            "aviso": null,
+            "residuos": [
+              "local:EX2:A|1|",
+              "A|1|",
+              "A|2|"
+            ],
+            "extensao": {
+              "n": 8,
+              "cx": 0.5,
+              "cy": 0,
+              "cz": 0,
+              "minx": -0.5,
+              "miny": -1,
+              "minz": -1,
+              "maxx": 1.5,
+              "maxy": 1,
+              "maxz": 1
+            }
+          }
+        ]
+      },
+      {
+        "id": "G2",
+        "persistencia": {
+          "k": 3,
+          "n": 3,
+          "pct": 100,
+          "faixa": 75,
+          "rotuloFaixa": "≥ 75%",
+          "texto": "3 de 3"
+        },
+        "persistenteNaCaixa": true,
+        "drugScore": {
+          "n": 3,
+          "media": 0.367,
+          "min": 0.2,
+          "max": 0.6
+        },
+        "volume": {
+          "n": 3,
+          "media": 60,
+          "min": 40,
+          "max": 90
+        },
+        "residuos": {
+          "todos": [
+            {
+              "chave": "A|10|",
+              "nomes": [
+                "ALA"
+              ],
+              "nomesDivergem": false,
+              "rotulo": "ALA A 10",
+              "k": 3,
+              "n": 3,
+              "pct": 100,
+              "faixa": 75,
+              "rotuloFaixa": "≥ 75%",
+              "texto": "3 de 3"
+            },
+            {
+              "chave": "A|11|",
+              "nomes": [
+                "ALA"
+              ],
+              "nomesDivergem": false,
+              "rotulo": "ALA A 11",
+              "k": 2,
+              "n": 3,
+              "pct": 66.7,
+              "faixa": 50,
+              "rotuloFaixa": "≥ 50% e < 75%",
+              "texto": "2 de 3"
+            },
+            {
+              "chave": "A|3|",
+              "nomes": [
+                "ALA"
+              ],
+              "nomesDivergem": false,
+              "rotulo": "ALA A 3",
+              "k": 2,
+              "n": 3,
+              "pct": 66.7,
+              "faixa": 50,
+              "rotuloFaixa": "≥ 50% e < 75%",
+              "texto": "2 de 3"
+            }
+          ],
+          "faixa75": [
+            {
+              "chave": "A|10|",
+              "nomes": [
+                "ALA"
+              ],
+              "nomesDivergem": false,
+              "rotulo": "ALA A 10",
+              "k": 3,
+              "n": 3,
+              "pct": 100,
+              "faixa": 75,
+              "rotuloFaixa": "≥ 75%",
+              "texto": "3 de 3"
+            }
+          ],
+          "faixa50": [
+            {
+              "chave": "A|11|",
+              "nomes": [
+                "ALA"
+              ],
+              "nomesDivergem": false,
+              "rotulo": "ALA A 11",
+              "k": 2,
+              "n": 3,
+              "pct": 66.7,
+              "faixa": 50,
+              "rotuloFaixa": "≥ 50% e < 75%",
+              "texto": "2 de 3"
+            },
+            {
+              "chave": "A|3|",
+              "nomes": [
+                "ALA"
+              ],
+              "nomesDivergem": false,
+              "rotulo": "ALA A 3",
+              "k": 2,
+              "n": 3,
+              "pct": 66.7,
+              "faixa": 50,
+              "rotuloFaixa": "≥ 50% e < 75%",
+              "texto": "2 de 3"
+            }
+          ],
+          "faixa25": [],
+          "abaixo": []
+        },
+        "estruturas": [
+          "EX1",
+          "EX2",
+          "EX3"
+        ],
+        "misturaApoHolo": true,
+        "centroideReferencia": {
+          "x": 10,
+          "y": 0,
+          "z": 0,
+          "n": 8,
+          "fonte": "bolsao-desta-estrutura"
+        },
+        "membros": [
+          {
+            "estruturaId": "EX1",
+            "name": "P_1",
+            "volume": 40,
+            "surface": null,
+            "depth": null,
+            "hydrophobicity": null,
+            "accept": null,
+            "donor": null,
+            "drugScore": 0.2,
+            "jaccardEntrada": null,
+            "distanciaEntrada": null,
+            "aviso": null,
+            "residuos": [
+              "A|10|",
+              "A|11|"
+            ],
+            "extensao": {
+              "n": 8,
+              "cx": 10,
+              "cy": 0,
+              "cz": 0,
+              "minx": 9,
+              "miny": -1,
+              "minz": -1,
+              "maxx": 11,
+              "maxy": 1,
+              "maxz": 1
+            }
+          },
+          {
+            "estruturaId": "EX2",
+            "name": "P_1",
+            "volume": 50,
+            "surface": null,
+            "depth": null,
+            "hydrophobicity": null,
+            "accept": null,
+            "donor": null,
+            "drugScore": 0.3,
+            "jaccardEntrada": 0.667,
+            "distanciaEntrada": 0.5,
+            "aviso": null,
+            "residuos": [
+              "A|3|",
+              "A|10|",
+              "A|11|"
+            ],
+            "extensao": {
+              "n": 8,
+              "cx": 10.5,
+              "cy": 0,
+              "cz": 0,
+              "minx": 9.5,
+              "miny": -1,
+              "minz": -1,
+              "maxx": 11.5,
+              "maxy": 1,
+              "maxz": 1
+            }
+          },
+          {
+            "estruturaId": "EX3",
+            "name": "P_0",
+            "volume": 90,
+            "surface": null,
+            "depth": null,
+            "hydrophobicity": null,
+            "accept": null,
+            "donor": null,
+            "drugScore": 0.6,
+            "jaccardEntrada": 0.667,
+            "distanciaEntrada": 11,
+            "aviso": null,
+            "residuos": [
+              "A|3|",
+              "A|10|"
+            ],
+            "extensao": {
+              "n": 8,
+              "cx": -0.5,
+              "cy": 0,
+              "cz": 0,
+              "minx": -1.5,
+              "miny": -1,
+              "minz": -1,
+              "maxx": 0.5,
+              "maxy": 1,
+              "maxz": 1
+            }
+          }
+        ]
+      },
+      {
+        "id": "G3",
+        "persistencia": {
+          "k": 1,
+          "n": 3,
+          "pct": 33.3,
+          "faixa": 25,
+          "rotuloFaixa": "≥ 25% e < 50%",
+          "texto": "1 de 3"
+        },
+        "persistenteNaCaixa": false,
+        "drugScore": {
+          "n": 1,
+          "media": 0.1,
+          "min": 0.1,
+          "max": 0.1
+        },
+        "volume": {
+          "n": 1,
+          "media": 15,
+          "min": 15,
+          "max": 15
+        },
+        "residuos": {
+          "todos": [
+            {
+              "chave": "A|11|",
+              "nomes": [
+                "ALA"
+              ],
+              "nomesDivergem": false,
+              "rotulo": "ALA A 11",
+              "k": 1,
+              "n": 3,
+              "pct": 33.3,
+              "faixa": 25,
+              "rotuloFaixa": "≥ 25% e < 50%",
+              "texto": "1 de 3"
+            }
+          ],
+          "faixa75": [],
+          "faixa50": [],
+          "faixa25": [
+            {
+              "chave": "A|11|",
+              "nomes": [
+                "ALA"
+              ],
+              "nomesDivergem": false,
+              "rotulo": "ALA A 11",
+              "k": 1,
+              "n": 3,
+              "pct": 33.3,
+              "faixa": 25,
+              "rotuloFaixa": "≥ 25% e < 50%",
+              "texto": "1 de 3"
+            }
+          ],
+          "abaixo": []
+        },
+        "estruturas": [
+          "EX3"
+        ],
+        "misturaApoHolo": false,
+        "centroideReferencia": {
+          "x": 33,
+          "y": 0,
+          "z": 0,
+          "n": 1,
+          "fonte": "residuos-mapeados"
+        },
+        "membros": [
+          {
+            "estruturaId": "EX3",
+            "name": "P_1",
+            "volume": 15,
+            "surface": null,
+            "depth": null,
+            "hydrophobicity": null,
+            "accept": null,
+            "donor": null,
+            "drugScore": 0.1,
+            "jaccardEntrada": null,
+            "distanciaEntrada": null,
+            "aviso": null,
+            "residuos": [
+              "A|11|"
+            ],
+            "extensao": {
+              "n": 8,
+              "cx": 20,
+              "cy": 5,
+              "cz": 0,
+              "minx": 19,
+              "miny": 4,
+              "minz": -1,
+              "maxx": 21,
+              "maxy": 6,
+              "maxz": 1
+            }
+          }
+        ]
+      }
+    ],
+    "matriz": {
+      "nEfetivo": 3,
+      "colunas": [
+        {
+          "id": "G1",
+          "persistencia": "2 de 3",
+          "faixa": "≥ 50% e < 75%"
+        },
+        {
+          "id": "G2",
+          "persistencia": "3 de 3",
+          "faixa": "≥ 75%"
+        },
+        {
+          "id": "G3",
+          "persistencia": "1 de 3",
+          "faixa": "≥ 25% e < 50%"
+        }
+      ],
+      "linhas": [
+        {
+          "estruturaId": "EX1",
+          "rotulo": "EX1 (exemplo)",
+          "erro": null,
+          "apoHolo": "apo (indício)",
+          "celulas": [
+            {
+              "presente": true,
+              "bolsao": "P_0",
+              "jaccardEntrada": null
+            },
+            {
+              "presente": true,
+              "bolsao": "P_1",
+              "jaccardEntrada": null
+            },
+            {
+              "presente": false,
+              "bolsao": null,
+              "jaccardEntrada": null
+            }
+          ]
+        },
+        {
+          "estruturaId": "EX2",
+          "rotulo": "EX2 (exemplo)",
+          "erro": null,
+          "apoHolo": "holo (indício)",
+          "celulas": [
+            {
+              "presente": true,
+              "bolsao": "P_0",
+              "jaccardEntrada": 0.5
+            },
+            {
+              "presente": true,
+              "bolsao": "P_1",
+              "jaccardEntrada": 0.667
+            },
+            {
+              "presente": false,
+              "bolsao": null,
+              "jaccardEntrada": null
+            }
+          ]
+        },
+        {
+          "estruturaId": "EX3",
+          "rotulo": "EX3 (exemplo)",
+          "erro": null,
+          "apoHolo": "apo (indício)",
+          "celulas": [
+            {
+              "presente": false,
+              "bolsao": null,
+              "jaccardEntrada": null
+            },
+            {
+              "presente": true,
+              "bolsao": "P_0",
+              "jaccardEntrada": 0.667
+            },
+            {
+              "presente": true,
+              "bolsao": "P_1",
+              "jaccardEntrada": null
+            }
+          ]
+        }
+      ]
+    },
+    "caixaEnsemble": {
+      "ok": true,
+      "margem": 4,
+      "nCentroides": 2,
+      "formula": "envelope-dos-centroides",
+      "center_x": 5,
+      "center_y": 0,
+      "center_z": 0,
+      "size_x": 18,
+      "size_y": 8,
+      "size_z": 8,
+      "grupos": [
+        "G1",
+        "G2"
+      ],
+      "faixa": 50
+    },
+    "gruposSemCentroide": [],
+    "estruturas": [
+      {
+        "id": "EX1",
+        "rotulo": "EX1 (exemplo)",
+        "origem": "exemplo",
+        "exemplo": true,
+        "erro": null,
+        "incluida": true,
+        "ligante": {
+          "id": "EX1",
+          "rotulo": "EX1 (exemplo)",
+          "classe": "apo",
+          "ligantes": [],
+          "ions": [],
+          "frase": "Apo ou holo é um indício pela presença de HETATM de ligante. Não confirma o estado biológico."
+        },
+        "nBolsos": 2
+      },
+      {
+        "id": "EX2",
+        "rotulo": "EX2 (exemplo)",
+        "origem": "exemplo",
+        "exemplo": true,
+        "erro": null,
+        "incluida": true,
+        "ligante": {
+          "id": "EX2",
+          "rotulo": "EX2 (exemplo)",
+          "classe": "holo",
+          "ligantes": [
+            "LIG A 900"
+          ],
+          "ions": [],
+          "frase": "Apo ou holo é um indício pela presença de HETATM de ligante. Não confirma o estado biológico."
+        },
+        "nBolsos": 2
+      },
+      {
+        "id": "EX3",
+        "rotulo": "EX3 (exemplo)",
+        "origem": "exemplo",
+        "exemplo": true,
+        "erro": null,
+        "incluida": true,
+        "ligante": {
+          "id": "EX3",
+          "rotulo": "EX3 (exemplo)",
+          "classe": "apo",
+          "ligantes": [],
+          "ions": [],
+          "frase": "Apo ou holo é um indício pela presença de HETATM de ligante. Não confirma o estado biológico."
+        },
+        "nBolsos": 2
+      }
+    ],
+    "limitacoes": [
+      "Persistência indica recorrência do bolsão no conjunto, não druggability nem ligação de composto.",
+      "Ensemble de estruturas cristalográficas não representa dinâmica real.",
+      "Resultado exploratório: é hipótese, não conclusão.",
+      "PEKI Fold não é ferramenta de docking.",
+      "Estruturas redundantes inflam a contagem. Entradas quase iguais aumentam n sem informação nova, e esta aba não remove essa redundância.",
+      "Resultados de motores diferentes não devem ser misturados. Esta aba usa somente o DoGSiteScorer. O drugScore daqui não entra na mesma conta que o escore de outro programa.",
+      "N efetivo é o número de estruturas que de fato entraram no agrupamento. A recorrência aparece como k de N efetivo.",
+      "O alinhamento é por número de resíduo e cadeia, ou por sequência simples. Não há sobreposição estrutural.",
+      "Alinhamento por sequência (pontuação +1 se a letra é igual, −1 se difere, −1 por buraco), sem matriz de substituição e sem sobreposição de coordenadas. A referência é a primeira estrutura efetiva. Um resíduo sem coluna na referência não cruza com as outras estruturas.",
+      "O app não confere se os IDs são a mesma proteína.",
+      "Apo ou holo é um indício pela presença de HETATM de ligante. Não confirma o estado biológico.",
+      "O drugScore e o volume são descritores do DoGSiteScorer. Não são afinidade nem previsão de ligação.",
+      "Sugestão editável de caixa. Não é uma caixa validada e não é resultado de docking.",
+      "O texto da caixa segue o mesmo formato da ficha de preparo. Continua sendo sugestão editável e não substitui a conferência daquela ficha.",
+      "EXEMPLO SINTÉTICO. Estes bolsões não vieram do DoGSiteScorer."
+    ],
+    "exclusoesHet": {
+      "aguas": [
+        "HOH",
+        "WAT",
+        "H2O",
+        "DOD"
+      ],
+      "aditivos": [
+        "GOL",
+        "EDO",
+        "PEG",
+        "PG4",
+        "PGE",
+        "1PE",
+        "MPD",
+        "MRD",
+        "ACT",
+        "SO4",
+        "PO4",
+        "DMS",
+        "TRS",
+        "MES",
+        "EPE",
+        "IPA",
+        "MOH",
+        "EOH",
+        "FMT",
+        "ACY",
+        "CIT",
+        "NO3",
+        "SCN"
+      ],
+      "ions": [
+        "LI",
+        "NA",
+        "K",
+        "RB",
+        "CS",
+        "MG",
+        "CA",
+        "SR",
+        "BA",
+        "MN",
+        "FE",
+        "CO",
+        "NI",
+        "CU",
+        "ZN",
+        "CD",
+        "HG",
+        "CL",
+        "BR",
+        "IOD",
+        "AG",
+        "AU",
+        "PT"
+      ]
+    }
+  },
+  "ordemInvertida": {
+    "versao": "ensemble-1",
+    "exemplo": true,
+    "mesmoReferencial": true,
+    "nEfetivo": 3,
+    "nPedidas": 3,
+    "nDisponiveis": 3,
+    "referenciaId": "EX1",
+    "parametros": {
+      "modoAlinhamento": "numero",
+      "jaccardMin": 0.5,
+      "usarCentroide": false,
+      "distanciaMax": 6,
+      "margemVina": 4,
+      "faixaCaixa": 50,
+      "limite": 8,
+      "pausaEntreChamadasMs": 2000,
+      "referenciaId": null,
+      "criterio": "Jaccard de resíduos"
+    },
+    "faixas": [
+      75,
+      50,
+      25
+    ],
+    "citacao": {
+      "nome": "PockFlex",
+      "autores": "Rahali et al.",
+      "revista": "Nucleic Acids Research",
+      "ano": 2026,
+      "volume": "54",
+      "fasciculo": "W1",
+      "paginas": "W295–W300",
+      "doi": "10.1093/nar/gkag453",
+      "url": "https://doi.org/10.1093/nar/gkag453"
+    },
+    "frases": {
+      "persistencia": "Persistência indica recorrência do bolsão no conjunto, não druggability nem ligação de composto.",
+      "dinamica": "Ensemble de estruturas cristalográficas não representa dinâmica real.",
+      "exploratorio": "Resultado exploratório: é hipótese, não conclusão.",
+      "docking": "PEKI Fold não é ferramenta de docking.",
+      "evidencia": "Evidência: dado medido no arquivo ou descritor vindo do DoGSiteScorer.",
+      "hipotese": "Hipótese: interpretação que esses dados não provam.",
+      "descritor": "O drugScore e o volume são descritores do DoGSiteScorer. Não são afinidade nem previsão de ligação.",
+      "alinhamento": "O alinhamento é por número de resíduo e cadeia, ou por sequência simples. Não há sobreposição estrutural.",
+      "centroide": "A distância entre centroides só entra se as estruturas já compartilham o referencial. Este app não sobrepõe coordenadas.",
+      "apoHolo": "Apo ou holo é um indício pela presença de HETATM de ligante. Não confirma o estado biológico.",
+      "vina": "Sugestão editável de caixa. Não é uma caixa validada e não é resultado de docking.",
+      "redundancia": "Estruturas redundantes inflam a contagem. Entradas quase iguais aumentam n sem informação nova, e esta aba não remove essa redundância.",
+      "motor": "Resultados de motores diferentes não devem ser misturados. Esta aba usa somente o DoGSiteScorer. O drugScore daqui não entra na mesma conta que o escore de outro programa.",
+      "nEfetivo": "N efetivo é o número de estruturas que de fato entraram no agrupamento. A recorrência aparece como k de N efetivo.",
+      "mesmaProteina": "O app não confere se os IDs são a mesma proteína.",
+      "exemplo": "EXEMPLO SINTÉTICO. Estes bolsões não vieram do DoGSiteScorer.",
+      "relacionado": "Trabalho relacionado: PockFlex (Rahali et al., Nucleic Acids Research 2026, 54(W1), W295–W300, https://doi.org/10.1093/nar/gkag453). Também analisa bolsões num conjunto de estruturas. Esta aba é a leitura do PEKI Fold, no navegador e em português, com a ficha de preparo e uma caixa editável. Não há comparação de desempenho com o PockFlex.",
+      "preparo": "O texto da caixa segue o mesmo formato da ficha de preparo. Continua sendo sugestão editável e não substitui a conferência daquela ficha."
+    },
+    "alinhamento": {
+      "modo": "numero",
+      "limitacao": "Alinhamento por número de resíduo e pela letra da cadeia. A cadeia A de uma estrutura só encontra a cadeia A de outra com o mesmo número. Não há sobreposição de coordenadas. Se a numeração ou a letra da cadeia mudou, resíduos do mesmo lugar podem ficar separados, e resíduos diferentes podem cair no mesmo número.",
+      "referenciaId": "EX1",
+      "pareamentos": []
+    },
+    "centroideAplicado": false,
+    "avisoCentroide": null,
+    "agrupamento": "Guloso, na ordem recebida. Um bolsão entra num grupo se a estrutura ainda não está nele e o Jaccard de resíduos com o membro de maior Jaccard atinge o limiar. G1 é o primeiro grupo aberto, não um ranking.",
+    "grupos": [
+      {
+        "id": "G1",
+        "persistencia": {
+          "k": 1,
+          "n": 3,
+          "pct": 33.3,
+          "faixa": 25,
+          "rotuloFaixa": "≥ 25% e < 50%",
+          "texto": "1 de 3"
+        },
+        "persistenteNaCaixa": false,
+        "drugScore": {
+          "n": 1,
+          "media": 0.1,
+          "min": 0.1,
+          "max": 0.1
+        },
+        "volume": {
+          "n": 1,
+          "media": 15,
+          "min": 15,
+          "max": 15
+        },
+        "residuos": {
+          "todos": [
+            {
+              "chave": "A|20|",
+              "nomes": [
+                "ALA"
+              ],
+              "nomesDivergem": false,
+              "rotulo": "ALA A 20",
+              "k": 1,
+              "n": 3,
+              "pct": 33.3,
+              "faixa": 25,
+              "rotuloFaixa": "≥ 25% e < 50%",
+              "texto": "1 de 3"
+            }
+          ],
+          "faixa75": [],
+          "faixa50": [],
+          "faixa25": [
+            {
+              "chave": "A|20|",
+              "nomes": [
+                "ALA"
+              ],
+              "nomesDivergem": false,
+              "rotulo": "ALA A 20",
+              "k": 1,
+              "n": 3,
+              "pct": 33.3,
+              "faixa": 25,
+              "rotuloFaixa": "≥ 25% e < 50%",
+              "texto": "1 de 3"
+            }
+          ],
+          "abaixo": []
+        },
+        "estruturas": [
+          "EX3"
+        ],
+        "misturaApoHolo": false,
+        "centroideReferencia": null,
+        "membros": [
+          {
+            "estruturaId": "EX3",
+            "name": "P_1",
+            "volume": 15,
+            "surface": null,
+            "depth": null,
+            "hydrophobicity": null,
+            "accept": null,
+            "donor": null,
+            "drugScore": 0.1,
+            "jaccardEntrada": null,
+            "distanciaEntrada": null,
+            "aviso": null,
+            "residuos": [
+              "A|20|"
+            ],
+            "extensao": {
+              "n": 8,
+              "cx": 20,
+              "cy": 5,
+              "cz": 0,
+              "minx": 19,
+              "miny": 4,
+              "minz": -1,
+              "maxx": 21,
+              "maxy": 6,
+              "maxz": 1
+            }
+          }
+        ]
+      },
+      {
+        "id": "G2",
+        "persistencia": {
+          "k": 3,
+          "n": 3,
+          "pct": 100,
+          "faixa": 75,
+          "rotuloFaixa": "≥ 75%",
+          "texto": "3 de 3"
+        },
+        "persistenteNaCaixa": true,
+        "drugScore": {
+          "n": 3,
+          "media": 0.7,
+          "min": 0.6,
+          "max": 0.8
+        },
+        "volume": {
+          "n": 3,
+          "media": 100,
+          "min": 90,
+          "max": 110
+        },
+        "residuos": {
+          "todos": [
+            {
+              "chave": "A|1|",
+              "nomes": [
+                "ALA"
+              ],
+              "nomesDivergem": false,
+              "rotulo": "ALA A 1",
+              "k": 3,
+              "n": 3,
+              "pct": 100,
+              "faixa": 75,
+              "rotuloFaixa": "≥ 75%",
+              "texto": "3 de 3"
+            },
+            {
+              "chave": "A|2|",
+              "nomes": [
+                "ALA"
+              ],
+              "nomesDivergem": false,
+              "rotulo": "ALA A 2",
+              "k": 3,
+              "n": 3,
+              "pct": 100,
+              "faixa": 75,
+              "rotuloFaixa": "≥ 75%",
+              "texto": "3 de 3"
+            },
+            {
+              "chave": "A|3|",
+              "nomes": [
+                "ALA"
+              ],
+              "nomesDivergem": false,
+              "rotulo": "ALA A 3",
+              "k": 2,
+              "n": 3,
+              "pct": 66.7,
+              "faixa": 50,
+              "rotuloFaixa": "≥ 50% e < 75%",
+              "texto": "2 de 3"
+            }
+          ],
+          "faixa75": [
+            {
+              "chave": "A|1|",
+              "nomes": [
+                "ALA"
+              ],
+              "nomesDivergem": false,
+              "rotulo": "ALA A 1",
+              "k": 3,
+              "n": 3,
+              "pct": 100,
+              "faixa": 75,
+              "rotuloFaixa": "≥ 75%",
+              "texto": "3 de 3"
+            },
+            {
+              "chave": "A|2|",
+              "nomes": [
+                "ALA"
+              ],
+              "nomesDivergem": false,
+              "rotulo": "ALA A 2",
+              "k": 3,
+              "n": 3,
+              "pct": 100,
+              "faixa": 75,
+              "rotuloFaixa": "≥ 75%",
+              "texto": "3 de 3"
+            }
+          ],
+          "faixa50": [
+            {
+              "chave": "A|3|",
+              "nomes": [
+                "ALA"
+              ],
+              "nomesDivergem": false,
+              "rotulo": "ALA A 3",
+              "k": 2,
+              "n": 3,
+              "pct": 66.7,
+              "faixa": 50,
+              "rotuloFaixa": "≥ 50% e < 75%",
+              "texto": "2 de 3"
+            }
+          ],
+          "faixa25": [],
+          "abaixo": []
+        },
+        "estruturas": [
+          "EX3",
+          "EX2",
+          "EX1"
+        ],
+        "misturaApoHolo": true,
+        "centroideReferencia": {
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "n": 8,
+          "fonte": "bolsao-desta-estrutura"
+        },
+        "membros": [
+          {
+            "estruturaId": "EX3",
+            "name": "P_0",
+            "volume": 90,
+            "surface": null,
+            "depth": null,
+            "hydrophobicity": null,
+            "accept": null,
+            "donor": null,
+            "drugScore": 0.6,
+            "jaccardEntrada": null,
+            "distanciaEntrada": null,
+            "aviso": null,
+            "residuos": [
+              "A|1|",
+              "A|2|"
+            ],
+            "extensao": {
+              "n": 8,
+              "cx": -0.5,
+              "cy": 0,
+              "cz": 0,
+              "minx": -1.5,
+              "miny": -1,
+              "minz": -1,
+              "maxx": 0.5,
+              "maxy": 1,
+              "maxz": 1
+            }
+          },
+          {
+            "estruturaId": "EX2",
+            "name": "P_0",
+            "volume": 110,
+            "surface": null,
+            "depth": null,
+            "hydrophobicity": null,
+            "accept": null,
+            "donor": null,
+            "drugScore": 0.7,
+            "jaccardEntrada": 0.667,
+            "distanciaEntrada": 1,
+            "aviso": null,
+            "residuos": [
+              "A|1|",
+              "A|2|",
+              "A|3|"
+            ],
+            "extensao": {
+              "n": 8,
+              "cx": 0.5,
+              "cy": 0,
+              "cz": 0,
+              "minx": -0.5,
+              "miny": -1,
+              "minz": -1,
+              "maxx": 1.5,
+              "maxy": 1,
+              "maxz": 1
+            }
+          },
+          {
+            "estruturaId": "EX1",
+            "name": "P_0",
+            "volume": 100,
+            "surface": null,
+            "depth": null,
+            "hydrophobicity": null,
+            "accept": null,
+            "donor": null,
+            "drugScore": 0.8,
+            "jaccardEntrada": 1,
+            "distanciaEntrada": 0.5,
+            "aviso": null,
+            "residuos": [
+              "A|1|",
+              "A|2|",
+              "A|3|"
+            ],
+            "extensao": {
+              "n": 8,
+              "cx": 0,
+              "cy": 0,
+              "cz": 0,
+              "minx": -1,
+              "miny": -1,
+              "minz": -1,
+              "maxx": 1,
+              "maxy": 1,
+              "maxz": 1
+            }
+          }
+        ]
+      },
+      {
+        "id": "G3",
+        "persistencia": {
+          "k": 2,
+          "n": 3,
+          "pct": 66.7,
+          "faixa": 50,
+          "rotuloFaixa": "≥ 50% e < 75%",
+          "texto": "2 de 3"
+        },
+        "persistenteNaCaixa": true,
+        "drugScore": {
+          "n": 2,
+          "media": 0.25,
+          "min": 0.2,
+          "max": 0.3
+        },
+        "volume": {
+          "n": 2,
+          "media": 45,
+          "min": 40,
+          "max": 50
+        },
+        "residuos": {
+          "todos": [
+            {
+              "chave": "A|10|",
+              "nomes": [
+                "ALA"
+              ],
+              "nomesDivergem": false,
+              "rotulo": "ALA A 10",
+              "k": 2,
+              "n": 3,
+              "pct": 66.7,
+              "faixa": 50,
+              "rotuloFaixa": "≥ 50% e < 75%",
+              "texto": "2 de 3"
+            },
+            {
+              "chave": "A|11|",
+              "nomes": [
+                "ALA"
+              ],
+              "nomesDivergem": false,
+              "rotulo": "ALA A 11",
+              "k": 2,
+              "n": 3,
+              "pct": 66.7,
+              "faixa": 50,
+              "rotuloFaixa": "≥ 50% e < 75%",
+              "texto": "2 de 3"
+            },
+            {
+              "chave": "A|12|",
+              "nomes": [
+                "ALA"
+              ],
+              "nomesDivergem": false,
+              "rotulo": "ALA A 12",
+              "k": 1,
+              "n": 3,
+              "pct": 33.3,
+              "faixa": 25,
+              "rotuloFaixa": "≥ 25% e < 50%",
+              "texto": "1 de 3"
+            }
+          ],
+          "faixa75": [],
+          "faixa50": [
+            {
+              "chave": "A|10|",
+              "nomes": [
+                "ALA"
+              ],
+              "nomesDivergem": false,
+              "rotulo": "ALA A 10",
+              "k": 2,
+              "n": 3,
+              "pct": 66.7,
+              "faixa": 50,
+              "rotuloFaixa": "≥ 50% e < 75%",
+              "texto": "2 de 3"
+            },
+            {
+              "chave": "A|11|",
+              "nomes": [
+                "ALA"
+              ],
+              "nomesDivergem": false,
+              "rotulo": "ALA A 11",
+              "k": 2,
+              "n": 3,
+              "pct": 66.7,
+              "faixa": 50,
+              "rotuloFaixa": "≥ 50% e < 75%",
+              "texto": "2 de 3"
+            }
+          ],
+          "faixa25": [
+            {
+              "chave": "A|12|",
+              "nomes": [
+                "ALA"
+              ],
+              "nomesDivergem": false,
+              "rotulo": "ALA A 12",
+              "k": 1,
+              "n": 3,
+              "pct": 33.3,
+              "faixa": 25,
+              "rotuloFaixa": "≥ 25% e < 50%",
+              "texto": "1 de 3"
+            }
+          ],
+          "abaixo": []
+        },
+        "estruturas": [
+          "EX2",
+          "EX1"
+        ],
+        "misturaApoHolo": true,
+        "centroideReferencia": {
+          "x": 10,
+          "y": 0,
+          "z": 0,
+          "n": 8,
+          "fonte": "bolsao-desta-estrutura"
+        },
+        "membros": [
+          {
+            "estruturaId": "EX2",
+            "name": "P_1",
+            "volume": 50,
+            "surface": null,
+            "depth": null,
+            "hydrophobicity": null,
+            "accept": null,
+            "donor": null,
+            "drugScore": 0.3,
+            "jaccardEntrada": null,
+            "distanciaEntrada": null,
+            "aviso": null,
+            "residuos": [
+              "A|10|",
+              "A|11|",
+              "A|12|"
+            ],
+            "extensao": {
+              "n": 8,
+              "cx": 10.5,
+              "cy": 0,
+              "cz": 0,
+              "minx": 9.5,
+              "miny": -1,
+              "minz": -1,
+              "maxx": 11.5,
+              "maxy": 1,
+              "maxz": 1
+            }
+          },
+          {
+            "estruturaId": "EX1",
+            "name": "P_1",
+            "volume": 40,
+            "surface": null,
+            "depth": null,
+            "hydrophobicity": null,
+            "accept": null,
+            "donor": null,
+            "drugScore": 0.2,
+            "jaccardEntrada": 0.667,
+            "distanciaEntrada": 0.5,
+            "aviso": null,
+            "residuos": [
+              "A|10|",
+              "A|11|"
+            ],
+            "extensao": {
+              "n": 8,
+              "cx": 10,
+              "cy": 0,
+              "cz": 0,
+              "minx": 9,
+              "miny": -1,
+              "minz": -1,
+              "maxx": 11,
+              "maxy": 1,
+              "maxz": 1
+            }
+          }
+        ]
+      }
+    ],
+    "matriz": {
+      "nEfetivo": 3,
+      "colunas": [
+        {
+          "id": "G1",
+          "persistencia": "1 de 3",
+          "faixa": "≥ 25% e < 50%"
+        },
+        {
+          "id": "G2",
+          "persistencia": "3 de 3",
+          "faixa": "≥ 75%"
+        },
+        {
+          "id": "G3",
+          "persistencia": "2 de 3",
+          "faixa": "≥ 50% e < 75%"
+        }
+      ],
+      "linhas": [
+        {
+          "estruturaId": "EX1",
+          "rotulo": "EX1 (exemplo)",
+          "erro": null,
+          "apoHolo": "apo (indício)",
+          "celulas": [
+            {
+              "presente": false,
+              "bolsao": null,
+              "jaccardEntrada": null
+            },
+            {
+              "presente": true,
+              "bolsao": "P_0",
+              "jaccardEntrada": 1
+            },
+            {
+              "presente": true,
+              "bolsao": "P_1",
+              "jaccardEntrada": 0.667
+            }
+          ]
+        },
+        {
+          "estruturaId": "EX2",
+          "rotulo": "EX2 (exemplo)",
+          "erro": null,
+          "apoHolo": "holo (indício)",
+          "celulas": [
+            {
+              "presente": false,
+              "bolsao": null,
+              "jaccardEntrada": null
+            },
+            {
+              "presente": true,
+              "bolsao": "P_0",
+              "jaccardEntrada": 0.667
+            },
+            {
+              "presente": true,
+              "bolsao": "P_1",
+              "jaccardEntrada": null
+            }
+          ]
+        },
+        {
+          "estruturaId": "EX3",
+          "rotulo": "EX3 (exemplo)",
+          "erro": null,
+          "apoHolo": "apo (indício)",
+          "celulas": [
+            {
+              "presente": true,
+              "bolsao": "P_1",
+              "jaccardEntrada": null
+            },
+            {
+              "presente": true,
+              "bolsao": "P_0",
+              "jaccardEntrada": null
+            },
+            {
+              "presente": false,
+              "bolsao": null,
+              "jaccardEntrada": null
+            }
+          ]
+        }
+      ]
+    },
+    "caixaEnsemble": {
+      "ok": true,
+      "margem": 4,
+      "nCentroides": 2,
+      "formula": "envelope-dos-centroides",
+      "center_x": 5,
+      "center_y": 0,
+      "center_z": 0,
+      "size_x": 18,
+      "size_y": 8,
+      "size_z": 8,
+      "grupos": [
+        "G2",
+        "G3"
+      ],
+      "faixa": 50
+    },
+    "gruposSemCentroide": [],
+    "estruturas": [
+      {
+        "id": "EX1",
+        "rotulo": "EX1 (exemplo)",
+        "origem": "exemplo",
+        "exemplo": true,
+        "erro": null,
+        "incluida": true,
+        "ligante": {
+          "id": "EX1",
+          "rotulo": "EX1 (exemplo)",
+          "classe": "apo",
+          "ligantes": [],
+          "ions": [],
+          "frase": "Apo ou holo é um indício pela presença de HETATM de ligante. Não confirma o estado biológico."
+        },
+        "nBolsos": 2
+      },
+      {
+        "id": "EX2",
+        "rotulo": "EX2 (exemplo)",
+        "origem": "exemplo",
+        "exemplo": true,
+        "erro": null,
+        "incluida": true,
+        "ligante": {
+          "id": "EX2",
+          "rotulo": "EX2 (exemplo)",
+          "classe": "holo",
+          "ligantes": [
+            "LIG A 900"
+          ],
+          "ions": [],
+          "frase": "Apo ou holo é um indício pela presença de HETATM de ligante. Não confirma o estado biológico."
+        },
+        "nBolsos": 2
+      },
+      {
+        "id": "EX3",
+        "rotulo": "EX3 (exemplo)",
+        "origem": "exemplo",
+        "exemplo": true,
+        "erro": null,
+        "incluida": true,
+        "ligante": {
+          "id": "EX3",
+          "rotulo": "EX3 (exemplo)",
+          "classe": "apo",
+          "ligantes": [],
+          "ions": [],
+          "frase": "Apo ou holo é um indício pela presença de HETATM de ligante. Não confirma o estado biológico."
+        },
+        "nBolsos": 2
+      }
+    ],
+    "limitacoes": [
+      "Persistência indica recorrência do bolsão no conjunto, não druggability nem ligação de composto.",
+      "Ensemble de estruturas cristalográficas não representa dinâmica real.",
+      "Resultado exploratório: é hipótese, não conclusão.",
+      "PEKI Fold não é ferramenta de docking.",
+      "Estruturas redundantes inflam a contagem. Entradas quase iguais aumentam n sem informação nova, e esta aba não remove essa redundância.",
+      "Resultados de motores diferentes não devem ser misturados. Esta aba usa somente o DoGSiteScorer. O drugScore daqui não entra na mesma conta que o escore de outro programa.",
+      "N efetivo é o número de estruturas que de fato entraram no agrupamento. A recorrência aparece como k de N efetivo.",
+      "O alinhamento é por número de resíduo e cadeia, ou por sequência simples. Não há sobreposição estrutural.",
+      "Alinhamento por número de resíduo e pela letra da cadeia. A cadeia A de uma estrutura só encontra a cadeia A de outra com o mesmo número. Não há sobreposição de coordenadas. Se a numeração ou a letra da cadeia mudou, resíduos do mesmo lugar podem ficar separados, e resíduos diferentes podem cair no mesmo número.",
+      "O app não confere se os IDs são a mesma proteína.",
+      "Apo ou holo é um indício pela presença de HETATM de ligante. Não confirma o estado biológico.",
+      "O drugScore e o volume são descritores do DoGSiteScorer. Não são afinidade nem previsão de ligação.",
+      "Sugestão editável de caixa. Não é uma caixa validada e não é resultado de docking.",
+      "O texto da caixa segue o mesmo formato da ficha de preparo. Continua sendo sugestão editável e não substitui a conferência daquela ficha.",
+      "EXEMPLO SINTÉTICO. Estes bolsões não vieram do DoGSiteScorer."
+    ],
+    "exclusoesHet": {
+      "aguas": [
+        "HOH",
+        "WAT",
+        "H2O",
+        "DOD"
+      ],
+      "aditivos": [
+        "GOL",
+        "EDO",
+        "PEG",
+        "PG4",
+        "PGE",
+        "1PE",
+        "MPD",
+        "MRD",
+        "ACT",
+        "SO4",
+        "PO4",
+        "DMS",
+        "TRS",
+        "MES",
+        "EPE",
+        "IPA",
+        "MOH",
+        "EOH",
+        "FMT",
+        "ACY",
+        "CIT",
+        "NO3",
+        "SCN"
+      ],
+      "ions": [
+        "LI",
+        "NA",
+        "K",
+        "RB",
+        "CS",
+        "MG",
+        "CA",
+        "SR",
+        "BA",
+        "MN",
+        "FE",
+        "CO",
+        "NI",
+        "CU",
+        "ZN",
+        "CD",
+        "HG",
+        "CL",
+        "BR",
+        "IOD",
+        "AG",
+        "AU",
+        "PT"
+      ]
+    }
+  },
+  "csv": {
+    "grupos": "grupo,persistencia_k,persistencia_N_efetivo,persistencia,faixa,drugScore_media,drugScore_min,drugScore_max,volume_media,volume_min,volume_max,residuos_75,residuos_50,residuos_25,residuos_abaixo,estruturas,mistura_apo_holo,jaccard_min,pedir_centroide,centroide_aplicado,distancia_max,alinhamento,faixa_caixa,margem_vina,n_efetivo,n_pedidas,versao,exemplo,decisao_pesquisador,motor,doi_trabalho_relacionado\nG1,3,3,3 de 3,≥ 75%,0.7,0.6,0.8,100,90,110,\"ALA A 1 (3 de 3, 100%); ALA A 2 (3 de 3, 100%)\",\"ALA A 3 (2 de 3, 66.7%)\",,,EX1; EX2; EX3,sim,0.5,nao,nao,6,numero,50,4,3,3,ensemble-1,sim,\"Decisão sintética, sem validação biológica.\",DoGSiteScorer,10.1093/nar/gkag453\nG2,2,3,2 de 3,≥ 50% e < 75%,0.25,0.2,0.3,45,40,50,,\"ALA A 10 (2 de 3, 66.7%); ALA A 11 (2 de 3, 66.7%)\",\"ALA A 12 (1 de 3, 33.3%)\",,EX1; EX2,sim,0.5,nao,nao,6,numero,50,4,3,3,ensemble-1,sim,\"Decisão sintética, sem validação biológica.\",DoGSiteScorer,10.1093/nar/gkag453\nG3,1,3,1 de 3,≥ 25% e < 50%,0.1,0.1,0.1,15,15,15,,,\"ALA A 20 (1 de 3, 33.3%)\",,EX3,nao,0.5,nao,nao,6,numero,50,4,3,3,ensemble-1,sim,\"Decisão sintética, sem validação biológica.\",DoGSiteScorer,10.1093/nar/gkag453\n",
+    "matriz": "estrutura,apo_holo,erro,grupo,bolsao,presente,jaccard_entrada,jaccard_min,pedir_centroide,centroide_aplicado,distancia_max,alinhamento,faixa_caixa,margem_vina,n_efetivo,n_pedidas,versao,exemplo,decisao_pesquisador,motor,doi_trabalho_relacionado\nEX1,apo (indício),,G1,P_0,sim,,0.5,nao,nao,6,numero,50,4,3,3,ensemble-1,sim,\"Decisão sintética, sem validação biológica.\",DoGSiteScorer,10.1093/nar/gkag453\nEX1,apo (indício),,G2,P_1,sim,,0.5,nao,nao,6,numero,50,4,3,3,ensemble-1,sim,\"Decisão sintética, sem validação biológica.\",DoGSiteScorer,10.1093/nar/gkag453\nEX1,apo (indício),,G3,,nao,,0.5,nao,nao,6,numero,50,4,3,3,ensemble-1,sim,\"Decisão sintética, sem validação biológica.\",DoGSiteScorer,10.1093/nar/gkag453\nEX2,holo (indício),,G1,P_0,sim,1,0.5,nao,nao,6,numero,50,4,3,3,ensemble-1,sim,\"Decisão sintética, sem validação biológica.\",DoGSiteScorer,10.1093/nar/gkag453\nEX2,holo (indício),,G2,P_1,sim,0.667,0.5,nao,nao,6,numero,50,4,3,3,ensemble-1,sim,\"Decisão sintética, sem validação biológica.\",DoGSiteScorer,10.1093/nar/gkag453\nEX2,holo (indício),,G3,,nao,,0.5,nao,nao,6,numero,50,4,3,3,ensemble-1,sim,\"Decisão sintética, sem validação biológica.\",DoGSiteScorer,10.1093/nar/gkag453\nEX3,apo (indício),,G1,P_0,sim,0.667,0.5,nao,nao,6,numero,50,4,3,3,ensemble-1,sim,\"Decisão sintética, sem validação biológica.\",DoGSiteScorer,10.1093/nar/gkag453\nEX3,apo (indício),,G2,,nao,,0.5,nao,nao,6,numero,50,4,3,3,ensemble-1,sim,\"Decisão sintética, sem validação biológica.\",DoGSiteScorer,10.1093/nar/gkag453\nEX3,apo (indício),,G3,P_1,sim,,0.5,nao,nao,6,numero,50,4,3,3,ensemble-1,sim,\"Decisão sintética, sem validação biológica.\",DoGSiteScorer,10.1093/nar/gkag453\n"
+  },
+  "json": "{\n  \"versao\": \"ensemble-1\",\n  \"geradoEm\": \"2026-11-12T15:00:00.000Z\",\n  \"trabalhoRelacionado\": {\n    \"nome\": \"PockFlex\",\n    \"autores\": \"Rahali et al.\",\n    \"revista\": \"Nucleic Acids Research\",\n    \"ano\": 2026,\n    \"volume\": \"54\",\n    \"fasciculo\": \"W1\",\n    \"paginas\": \"W295–W300\",\n    \"doi\": \"10.1093/nar/gkag453\",\n    \"url\": \"https://doi.org/10.1093/nar/gkag453\"\n  },\n  \"frases\": {\n    \"persistencia\": \"Persistência indica recorrência do bolsão no conjunto, não druggability nem ligação de composto.\",\n    \"dinamica\": \"Ensemble de estruturas cristalográficas não representa dinâmica real.\",\n    \"exploratorio\": \"Resultado exploratório: é hipótese, não conclusão.\",\n    \"docking\": \"PEKI Fold não é ferramenta de docking.\",\n    \"evidencia\": \"Evidência: dado medido no arquivo ou descritor vindo do DoGSiteScorer.\",\n    \"hipotese\": \"Hipótese: interpretação que esses dados não provam.\",\n    \"descritor\": \"O drugScore e o volume são descritores do DoGSiteScorer. Não são afinidade nem previsão de ligação.\",\n    \"alinhamento\": \"O alinhamento é por número de resíduo e cadeia, ou por sequência simples. Não há sobreposição estrutural.\",\n    \"centroide\": \"A distância entre centroides só entra se as estruturas já compartilham o referencial. Este app não sobrepõe coordenadas.\",\n    \"apoHolo\": \"Apo ou holo é um indício pela presença de HETATM de ligante. Não confirma o estado biológico.\",\n    \"vina\": \"Sugestão editável de caixa. Não é uma caixa validada e não é resultado de docking.\",\n    \"redundancia\": \"Estruturas redundantes inflam a contagem. Entradas quase iguais aumentam n sem informação nova, e esta aba não remove essa redundância.\",\n    \"motor\": \"Resultados de motores diferentes não devem ser misturados. Esta aba usa somente o DoGSiteScorer. O drugScore daqui não entra na mesma conta que o escore de outro programa.\",\n    \"nEfetivo\": \"N efetivo é o número de estruturas que de fato entraram no agrupamento. A recorrência aparece como k de N efetivo.\",\n    \"mesmaProteina\": \"O app não confere se os IDs são a mesma proteína.\",\n    \"exemplo\": \"EXEMPLO SINTÉTICO. Estes bolsões não vieram do DoGSiteScorer.\",\n    \"relacionado\": \"Trabalho relacionado: PockFlex (Rahali et al., Nucleic Acids Research 2026, 54(W1), W295–W300, https://doi.org/10.1093/nar/gkag453). Também analisa bolsões num conjunto de estruturas. Esta aba é a leitura do PEKI Fold, no navegador e em português, com a ficha de preparo e uma caixa editável. Não há comparação de desempenho com o PockFlex.\",\n    \"preparo\": \"O texto da caixa segue o mesmo formato da ficha de preparo. Continua sendo sugestão editável e não substitui a conferência daquela ficha.\"\n  },\n  \"decisaoPesquisador\": \"Decisão sintética, sem validação biológica.\",\n  \"relatorio\": {\n    \"versao\": \"ensemble-1\",\n    \"exemplo\": true,\n    \"mesmoReferencial\": true,\n    \"nEfetivo\": 3,\n    \"nPedidas\": 3,\n    \"nDisponiveis\": 3,\n    \"referenciaId\": \"EX1\",\n    \"parametros\": {\n      \"modoAlinhamento\": \"numero\",\n      \"jaccardMin\": 0.5,\n      \"usarCentroide\": false,\n      \"distanciaMax\": 6,\n      \"margemVina\": 4,\n      \"faixaCaixa\": 50,\n      \"limite\": 8,\n      \"pausaEntreChamadasMs\": 2000,\n      \"referenciaId\": null,\n      \"criterio\": \"Jaccard de resíduos\"\n    },\n    \"faixas\": [\n      75,\n      50,\n      25\n    ],\n    \"citacao\": {\n      \"nome\": \"PockFlex\",\n      \"autores\": \"Rahali et al.\",\n      \"revista\": \"Nucleic Acids Research\",\n      \"ano\": 2026,\n      \"volume\": \"54\",\n      \"fasciculo\": \"W1\",\n      \"paginas\": \"W295–W300\",\n      \"doi\": \"10.1093/nar/gkag453\",\n      \"url\": \"https://doi.org/10.1093/nar/gkag453\"\n    },\n    \"frases\": {\n      \"persistencia\": \"Persistência indica recorrência do bolsão no conjunto, não druggability nem ligação de composto.\",\n      \"dinamica\": \"Ensemble de estruturas cristalográficas não representa dinâmica real.\",\n      \"exploratorio\": \"Resultado exploratório: é hipótese, não conclusão.\",\n      \"docking\": \"PEKI Fold não é ferramenta de docking.\",\n      \"evidencia\": \"Evidência: dado medido no arquivo ou descritor vindo do DoGSiteScorer.\",\n      \"hipotese\": \"Hipótese: interpretação que esses dados não provam.\",\n      \"descritor\": \"O drugScore e o volume são descritores do DoGSiteScorer. Não são afinidade nem previsão de ligação.\",\n      \"alinhamento\": \"O alinhamento é por número de resíduo e cadeia, ou por sequência simples. Não há sobreposição estrutural.\",\n      \"centroide\": \"A distância entre centroides só entra se as estruturas já compartilham o referencial. Este app não sobrepõe coordenadas.\",\n      \"apoHolo\": \"Apo ou holo é um indício pela presença de HETATM de ligante. Não confirma o estado biológico.\",\n      \"vina\": \"Sugestão editável de caixa. Não é uma caixa validada e não é resultado de docking.\",\n      \"redundancia\": \"Estruturas redundantes inflam a contagem. Entradas quase iguais aumentam n sem informação nova, e esta aba não remove essa redundância.\",\n      \"motor\": \"Resultados de motores diferentes não devem ser misturados. Esta aba usa somente o DoGSiteScorer. O drugScore daqui não entra na mesma conta que o escore de outro programa.\",\n      \"nEfetivo\": \"N efetivo é o número de estruturas que de fato entraram no agrupamento. A recorrência aparece como k de N efetivo.\",\n      \"mesmaProteina\": \"O app não confere se os IDs são a mesma proteína.\",\n      \"exemplo\": \"EXEMPLO SINTÉTICO. Estes bolsões não vieram do DoGSiteScorer.\",\n      \"relacionado\": \"Trabalho relacionado: PockFlex (Rahali et al., Nucleic Acids Research 2026, 54(W1), W295–W300, https://doi.org/10.1093/nar/gkag453). Também analisa bolsões num conjunto de estruturas. Esta aba é a leitura do PEKI Fold, no navegador e em português, com a ficha de preparo e uma caixa editável. Não há comparação de desempenho com o PockFlex.\",\n      \"preparo\": \"O texto da caixa segue o mesmo formato da ficha de preparo. Continua sendo sugestão editável e não substitui a conferência daquela ficha.\"\n    },\n    \"alinhamento\": {\n      \"modo\": \"numero\",\n      \"limitacao\": \"Alinhamento por número de resíduo e pela letra da cadeia. A cadeia A de uma estrutura só encontra a cadeia A de outra com o mesmo número. Não há sobreposição de coordenadas. Se a numeração ou a letra da cadeia mudou, resíduos do mesmo lugar podem ficar separados, e resíduos diferentes podem cair no mesmo número.\",\n      \"referenciaId\": \"EX1\",\n      \"pareamentos\": []\n    },\n    \"centroideAplicado\": false,\n    \"avisoCentroide\": null,\n    \"agrupamento\": \"Guloso, na ordem recebida. Um bolsão entra num grupo se a estrutura ainda não está nele e o Jaccard de resíduos com o membro de maior Jaccard atinge o limiar. G1 é o primeiro grupo aberto, não um ranking.\",\n    \"grupos\": [\n      {\n        \"id\": \"G1\",\n        \"persistencia\": {\n          \"k\": 3,\n          \"n\": 3,\n          \"pct\": 100,\n          \"faixa\": 75,\n          \"rotuloFaixa\": \"≥ 75%\",\n          \"texto\": \"3 de 3\"\n        },\n        \"persistenteNaCaixa\": true,\n        \"drugScore\": {\n          \"n\": 3,\n          \"media\": 0.7,\n          \"min\": 0.6,\n          \"max\": 0.8\n        },\n        \"volume\": {\n          \"n\": 3,\n          \"media\": 100,\n          \"min\": 90,\n          \"max\": 110\n        },\n        \"residuos\": {\n          \"todos\": [\n            {\n              \"chave\": \"A|1|\",\n              \"nomes\": [\n                \"ALA\"\n              ],\n              \"nomesDivergem\": false,\n              \"rotulo\": \"ALA A 1\",\n              \"k\": 3,\n              \"n\": 3,\n              \"pct\": 100,\n              \"faixa\": 75,\n              \"rotuloFaixa\": \"≥ 75%\",\n              \"texto\": \"3 de 3\"\n            },\n            {\n              \"chave\": \"A|2|\",\n              \"nomes\": [\n                \"ALA\"\n              ],\n              \"nomesDivergem\": false,\n              \"rotulo\": \"ALA A 2\",\n              \"k\": 3,\n              \"n\": 3,\n              \"pct\": 100,\n              \"faixa\": 75,\n              \"rotuloFaixa\": \"≥ 75%\",\n              \"texto\": \"3 de 3\"\n            },\n            {\n              \"chave\": \"A|3|\",\n              \"nomes\": [\n                \"ALA\"\n              ],\n              \"nomesDivergem\": false,\n              \"rotulo\": \"ALA A 3\",\n              \"k\": 2,\n              \"n\": 3,\n              \"pct\": 66.7,\n              \"faixa\": 50,\n              \"rotuloFaixa\": \"≥ 50% e < 75%\",\n              \"texto\": \"2 de 3\"\n            }\n          ],\n          \"faixa75\": [\n            {\n              \"chave\": \"A|1|\",\n              \"nomes\": [\n                \"ALA\"\n              ],\n              \"nomesDivergem\": false,\n              \"rotulo\": \"ALA A 1\",\n              \"k\": 3,\n              \"n\": 3,\n              \"pct\": 100,\n              \"faixa\": 75,\n              \"rotuloFaixa\": \"≥ 75%\",\n              \"texto\": \"3 de 3\"\n            },\n            {\n              \"chave\": \"A|2|\",\n              \"nomes\": [\n                \"ALA\"\n              ],\n              \"nomesDivergem\": false,\n              \"rotulo\": \"ALA A 2\",\n              \"k\": 3,\n              \"n\": 3,\n              \"pct\": 100,\n              \"faixa\": 75,\n              \"rotuloFaixa\": \"≥ 75%\",\n              \"texto\": \"3 de 3\"\n            }\n          ],\n          \"faixa50\": [\n            {\n              \"chave\": \"A|3|\",\n              \"nomes\": [\n                \"ALA\"\n              ],\n              \"nomesDivergem\": false,\n              \"rotulo\": \"ALA A 3\",\n              \"k\": 2,\n              \"n\": 3,\n              \"pct\": 66.7,\n              \"faixa\": 50,\n              \"rotuloFaixa\": \"≥ 50% e < 75%\",\n              \"texto\": \"2 de 3\"\n            }\n          ],\n          \"faixa25\": [],\n          \"abaixo\": []\n        },\n        \"estruturas\": [\n          \"EX1\",\n          \"EX2\",\n          \"EX3\"\n        ],\n        \"misturaApoHolo\": true,\n        \"centroideReferencia\": {\n          \"x\": 0,\n          \"y\": 0,\n          \"z\": 0,\n          \"n\": 8,\n          \"fonte\": \"bolsao-desta-estrutura\"\n        },\n        \"membros\": [\n          {\n            \"estruturaId\": \"EX1\",\n            \"name\": \"P_0\",\n            \"volume\": 100,\n            \"surface\": null,\n            \"depth\": null,\n            \"hydrophobicity\": null,\n            \"accept\": null,\n            \"donor\": null,\n            \"drugScore\": 0.8,\n            \"jaccardEntrada\": null,\n            \"distanciaEntrada\": null,\n            \"aviso\": null,\n            \"residuos\": [\n              \"A|1|\",\n              \"A|2|\",\n              \"A|3|\"\n            ],\n            \"extensao\": {\n              \"n\": 8,\n              \"cx\": 0,\n              \"cy\": 0,\n              \"cz\": 0,\n              \"minx\": -1,\n              \"miny\": -1,\n              \"minz\": -1,\n              \"maxx\": 1,\n              \"maxy\": 1,\n              \"maxz\": 1\n            }\n          },\n          {\n            \"estruturaId\": \"EX2\",\n            \"name\": \"P_0\",\n            \"volume\": 110,\n            \"surface\": null,\n            \"depth\": null,\n            \"hydrophobicity\": null,\n            \"accept\": null,\n            \"donor\": null,\n            \"drugScore\": 0.7,\n            \"jaccardEntrada\": 1,\n            \"distanciaEntrada\": 0.5,\n            \"aviso\": null,\n            \"residuos\": [\n              \"A|1|\",\n              \"A|2|\",\n              \"A|3|\"\n            ],\n            \"extensao\": {\n              \"n\": 8,\n              \"cx\": 0.5,\n              \"cy\": 0,\n              \"cz\": 0,\n              \"minx\": -0.5,\n              \"miny\": -1,\n              \"minz\": -1,\n              \"maxx\": 1.5,\n              \"maxy\": 1,\n              \"maxz\": 1\n            }\n          },\n          {\n            \"estruturaId\": \"EX3\",\n            \"name\": \"P_0\",\n            \"volume\": 90,\n            \"surface\": null,\n            \"depth\": null,\n            \"hydrophobicity\": null,\n            \"accept\": null,\n            \"donor\": null,\n            \"drugScore\": 0.6,\n            \"jaccardEntrada\": 0.667,\n            \"distanciaEntrada\": 0.5,\n            \"aviso\": null,\n            \"residuos\": [\n              \"A|1|\",\n              \"A|2|\"\n            ],\n            \"extensao\": {\n              \"n\": 8,\n              \"cx\": -0.5,\n              \"cy\": 0,\n              \"cz\": 0,\n              \"minx\": -1.5,\n              \"miny\": -1,\n              \"minz\": -1,\n              \"maxx\": 0.5,\n              \"maxy\": 1,\n              \"maxz\": 1\n            }\n          }\n        ]\n      },\n      {\n        \"id\": \"G2\",\n        \"persistencia\": {\n          \"k\": 2,\n          \"n\": 3,\n          \"pct\": 66.7,\n          \"faixa\": 50,\n          \"rotuloFaixa\": \"≥ 50% e < 75%\",\n          \"texto\": \"2 de 3\"\n        },\n        \"persistenteNaCaixa\": true,\n        \"drugScore\": {\n          \"n\": 2,\n          \"media\": 0.25,\n          \"min\": 0.2,\n          \"max\": 0.3\n        },\n        \"volume\": {\n          \"n\": 2,\n          \"media\": 45,\n          \"min\": 40,\n          \"max\": 50\n        },\n        \"residuos\": {\n          \"todos\": [\n            {\n              \"chave\": \"A|10|\",\n              \"nomes\": [\n                \"ALA\"\n              ],\n              \"nomesDivergem\": false,\n              \"rotulo\": \"ALA A 10\",\n              \"k\": 2,\n              \"n\": 3,\n              \"pct\": 66.7,\n              \"faixa\": 50,\n              \"rotuloFaixa\": \"≥ 50% e < 75%\",\n              \"texto\": \"2 de 3\"\n            },\n            {\n              \"chave\": \"A|11|\",\n              \"nomes\": [\n                \"ALA\"\n              ],\n              \"nomesDivergem\": false,\n              \"rotulo\": \"ALA A 11\",\n              \"k\": 2,\n              \"n\": 3,\n              \"pct\": 66.7,\n              \"faixa\": 50,\n              \"rotuloFaixa\": \"≥ 50% e < 75%\",\n              \"texto\": \"2 de 3\"\n            },\n            {\n              \"chave\": \"A|12|\",\n              \"nomes\": [\n                \"ALA\"\n              ],\n              \"nomesDivergem\": false,\n              \"rotulo\": \"ALA A 12\",\n              \"k\": 1,\n              \"n\": 3,\n              \"pct\": 33.3,\n              \"faixa\": 25,\n              \"rotuloFaixa\": \"≥ 25% e < 50%\",\n              \"texto\": \"1 de 3\"\n            }\n          ],\n          \"faixa75\": [],\n          \"faixa50\": [\n            {\n              \"chave\": \"A|10|\",\n              \"nomes\": [\n                \"ALA\"\n              ],\n              \"nomesDivergem\": false,\n              \"rotulo\": \"ALA A 10\",\n              \"k\": 2,\n              \"n\": 3,\n              \"pct\": 66.7,\n              \"faixa\": 50,\n              \"rotuloFaixa\": \"≥ 50% e < 75%\",\n              \"texto\": \"2 de 3\"\n            },\n            {\n              \"chave\": \"A|11|\",\n              \"nomes\": [\n                \"ALA\"\n              ],\n              \"nomesDivergem\": false,\n              \"rotulo\": \"ALA A 11\",\n              \"k\": 2,\n              \"n\": 3,\n              \"pct\": 66.7,\n              \"faixa\": 50,\n              \"rotuloFaixa\": \"≥ 50% e < 75%\",\n              \"texto\": \"2 de 3\"\n            }\n          ],\n          \"faixa25\": [\n            {\n              \"chave\": \"A|12|\",\n              \"nomes\": [\n                \"ALA\"\n              ],\n              \"nomesDivergem\": false,\n              \"rotulo\": \"ALA A 12\",\n              \"k\": 1,\n              \"n\": 3,\n              \"pct\": 33.3,\n              \"faixa\": 25,\n              \"rotuloFaixa\": \"≥ 25% e < 50%\",\n              \"texto\": \"1 de 3\"\n            }\n          ],\n          \"abaixo\": []\n        },\n        \"estruturas\": [\n          \"EX1\",\n          \"EX2\"\n        ],\n        \"misturaApoHolo\": true,\n        \"centroideReferencia\": {\n          \"x\": 10,\n          \"y\": 0,\n          \"z\": 0,\n          \"n\": 8,\n          \"fonte\": \"bolsao-desta-estrutura\"\n        },\n        \"membros\": [\n          {\n            \"estruturaId\": \"EX1\",\n            \"name\": \"P_1\",\n            \"volume\": 40,\n            \"surface\": null,\n            \"depth\": null,\n            \"hydrophobicity\": null,\n            \"accept\": null,\n            \"donor\": null,\n            \"drugScore\": 0.2,\n            \"jaccardEntrada\": null,\n            \"distanciaEntrada\": null,\n            \"aviso\": null,\n            \"residuos\": [\n              \"A|10|\",\n              \"A|11|\"\n            ],\n            \"extensao\": {\n              \"n\": 8,\n              \"cx\": 10,\n              \"cy\": 0,\n              \"cz\": 0,\n              \"minx\": 9,\n              \"miny\": -1,\n              \"minz\": -1,\n              \"maxx\": 11,\n              \"maxy\": 1,\n              \"maxz\": 1\n            }\n          },\n          {\n            \"estruturaId\": \"EX2\",\n            \"name\": \"P_1\",\n            \"volume\": 50,\n            \"surface\": null,\n            \"depth\": null,\n            \"hydrophobicity\": null,\n            \"accept\": null,\n            \"donor\": null,\n            \"drugScore\": 0.3,\n            \"jaccardEntrada\": 0.667,\n            \"distanciaEntrada\": 0.5,\n            \"aviso\": null,\n            \"residuos\": [\n              \"A|10|\",\n              \"A|11|\",\n              \"A|12|\"\n            ],\n            \"extensao\": {\n              \"n\": 8,\n              \"cx\": 10.5,\n              \"cy\": 0,\n              \"cz\": 0,\n              \"minx\": 9.5,\n              \"miny\": -1,\n              \"minz\": -1,\n              \"maxx\": 11.5,\n              \"maxy\": 1,\n              \"maxz\": 1\n            }\n          }\n        ]\n      },\n      {\n        \"id\": \"G3\",\n        \"persistencia\": {\n          \"k\": 1,\n          \"n\": 3,\n          \"pct\": 33.3,\n          \"faixa\": 25,\n          \"rotuloFaixa\": \"≥ 25% e < 50%\",\n          \"texto\": \"1 de 3\"\n        },\n        \"persistenteNaCaixa\": false,\n        \"drugScore\": {\n          \"n\": 1,\n          \"media\": 0.1,\n          \"min\": 0.1,\n          \"max\": 0.1\n        },\n        \"volume\": {\n          \"n\": 1,\n          \"media\": 15,\n          \"min\": 15,\n          \"max\": 15\n        },\n        \"residuos\": {\n          \"todos\": [\n            {\n              \"chave\": \"A|20|\",\n              \"nomes\": [\n                \"ALA\"\n              ],\n              \"nomesDivergem\": false,\n              \"rotulo\": \"ALA A 20\",\n              \"k\": 1,\n              \"n\": 3,\n              \"pct\": 33.3,\n              \"faixa\": 25,\n              \"rotuloFaixa\": \"≥ 25% e < 50%\",\n              \"texto\": \"1 de 3\"\n            }\n          ],\n          \"faixa75\": [],\n          \"faixa50\": [],\n          \"faixa25\": [\n            {\n              \"chave\": \"A|20|\",\n              \"nomes\": [\n                \"ALA\"\n              ],\n              \"nomesDivergem\": false,\n              \"rotulo\": \"ALA A 20\",\n              \"k\": 1,\n              \"n\": 3,\n              \"pct\": 33.3,\n              \"faixa\": 25,\n              \"rotuloFaixa\": \"≥ 25% e < 50%\",\n              \"texto\": \"1 de 3\"\n            }\n          ],\n          \"abaixo\": []\n        },\n        \"estruturas\": [\n          \"EX3\"\n        ],\n        \"misturaApoHolo\": false,\n        \"centroideReferencia\": null,\n        \"membros\": [\n          {\n            \"estruturaId\": \"EX3\",\n            \"name\": \"P_1\",\n            \"volume\": 15,\n            \"surface\": null,\n            \"depth\": null,\n            \"hydrophobicity\": null,\n            \"accept\": null,\n            \"donor\": null,\n            \"drugScore\": 0.1,\n            \"jaccardEntrada\": null,\n            \"distanciaEntrada\": null,\n            \"aviso\": null,\n            \"residuos\": [\n              \"A|20|\"\n            ],\n            \"extensao\": {\n              \"n\": 8,\n              \"cx\": 20,\n              \"cy\": 5,\n              \"cz\": 0,\n              \"minx\": 19,\n              \"miny\": 4,\n              \"minz\": -1,\n              \"maxx\": 21,\n              \"maxy\": 6,\n              \"maxz\": 1\n            }\n          }\n        ]\n      }\n    ],\n    \"matriz\": {\n      \"nEfetivo\": 3,\n      \"colunas\": [\n        {\n          \"id\": \"G1\",\n          \"persistencia\": \"3 de 3\",\n          \"faixa\": \"≥ 75%\"\n        },\n        {\n          \"id\": \"G2\",\n          \"persistencia\": \"2 de 3\",\n          \"faixa\": \"≥ 50% e < 75%\"\n        },\n        {\n          \"id\": \"G3\",\n          \"persistencia\": \"1 de 3\",\n          \"faixa\": \"≥ 25% e < 50%\"\n        }\n      ],\n      \"linhas\": [\n        {\n          \"estruturaId\": \"EX1\",\n          \"rotulo\": \"EX1 (exemplo)\",\n          \"erro\": null,\n          \"apoHolo\": \"apo (indício)\",\n          \"celulas\": [\n            {\n              \"presente\": true,\n              \"bolsao\": \"P_0\",\n              \"jaccardEntrada\": null\n            },\n            {\n              \"presente\": true,\n              \"bolsao\": \"P_1\",\n              \"jaccardEntrada\": null\n            },\n            {\n              \"presente\": false,\n              \"bolsao\": null,\n              \"jaccardEntrada\": null\n            }\n          ]\n        },\n        {\n          \"estruturaId\": \"EX2\",\n          \"rotulo\": \"EX2 (exemplo)\",\n          \"erro\": null,\n          \"apoHolo\": \"holo (indício)\",\n          \"celulas\": [\n            {\n              \"presente\": true,\n              \"bolsao\": \"P_0\",\n              \"jaccardEntrada\": 1\n            },\n            {\n              \"presente\": true,\n              \"bolsao\": \"P_1\",\n              \"jaccardEntrada\": 0.667\n            },\n            {\n              \"presente\": false,\n              \"bolsao\": null,\n              \"jaccardEntrada\": null\n            }\n          ]\n        },\n        {\n          \"estruturaId\": \"EX3\",\n          \"rotulo\": \"EX3 (exemplo)\",\n          \"erro\": null,\n          \"apoHolo\": \"apo (indício)\",\n          \"celulas\": [\n            {\n              \"presente\": true,\n              \"bolsao\": \"P_0\",\n              \"jaccardEntrada\": 0.667\n            },\n            {\n              \"presente\": false,\n              \"bolsao\": null,\n              \"jaccardEntrada\": null\n            },\n            {\n              \"presente\": true,\n              \"bolsao\": \"P_1\",\n              \"jaccardEntrada\": null\n            }\n          ]\n        }\n      ]\n    },\n    \"caixaEnsemble\": {\n      \"ok\": true,\n      \"margem\": 4,\n      \"nCentroides\": 2,\n      \"formula\": \"envelope-dos-centroides\",\n      \"center_x\": 5,\n      \"center_y\": 0,\n      \"center_z\": 0,\n      \"size_x\": 18,\n      \"size_y\": 8,\n      \"size_z\": 8,\n      \"grupos\": [\n        \"G1\",\n        \"G2\"\n      ],\n      \"faixa\": 50\n    },\n    \"gruposSemCentroide\": [],\n    \"estruturas\": [\n      {\n        \"id\": \"EX1\",\n        \"rotulo\": \"EX1 (exemplo)\",\n        \"origem\": \"exemplo\",\n        \"exemplo\": true,\n        \"erro\": null,\n        \"incluida\": true,\n        \"ligante\": {\n          \"id\": \"EX1\",\n          \"rotulo\": \"EX1 (exemplo)\",\n          \"classe\": \"apo\",\n          \"ligantes\": [],\n          \"ions\": [],\n          \"frase\": \"Apo ou holo é um indício pela presença de HETATM de ligante. Não confirma o estado biológico.\"\n        },\n        \"nBolsos\": 2\n      },\n      {\n        \"id\": \"EX2\",\n        \"rotulo\": \"EX2 (exemplo)\",\n        \"origem\": \"exemplo\",\n        \"exemplo\": true,\n        \"erro\": null,\n        \"incluida\": true,\n        \"ligante\": {\n          \"id\": \"EX2\",\n          \"rotulo\": \"EX2 (exemplo)\",\n          \"classe\": \"holo\",\n          \"ligantes\": [\n            \"LIG A 900\"\n          ],\n          \"ions\": [],\n          \"frase\": \"Apo ou holo é um indício pela presença de HETATM de ligante. Não confirma o estado biológico.\"\n        },\n        \"nBolsos\": 2\n      },\n      {\n        \"id\": \"EX3\",\n        \"rotulo\": \"EX3 (exemplo)\",\n        \"origem\": \"exemplo\",\n        \"exemplo\": true,\n        \"erro\": null,\n        \"incluida\": true,\n        \"ligante\": {\n          \"id\": \"EX3\",\n          \"rotulo\": \"EX3 (exemplo)\",\n          \"classe\": \"apo\",\n          \"ligantes\": [],\n          \"ions\": [],\n          \"frase\": \"Apo ou holo é um indício pela presença de HETATM de ligante. Não confirma o estado biológico.\"\n        },\n        \"nBolsos\": 2\n      }\n    ],\n    \"limitacoes\": [\n      \"Persistência indica recorrência do bolsão no conjunto, não druggability nem ligação de composto.\",\n      \"Ensemble de estruturas cristalográficas não representa dinâmica real.\",\n      \"Resultado exploratório: é hipótese, não conclusão.\",\n      \"PEKI Fold não é ferramenta de docking.\",\n      \"Estruturas redundantes inflam a contagem. Entradas quase iguais aumentam n sem informação nova, e esta aba não remove essa redundância.\",\n      \"Resultados de motores diferentes não devem ser misturados. Esta aba usa somente o DoGSiteScorer. O drugScore daqui não entra na mesma conta que o escore de outro programa.\",\n      \"N efetivo é o número de estruturas que de fato entraram no agrupamento. A recorrência aparece como k de N efetivo.\",\n      \"O alinhamento é por número de resíduo e cadeia, ou por sequência simples. Não há sobreposição estrutural.\",\n      \"Alinhamento por número de resíduo e pela letra da cadeia. A cadeia A de uma estrutura só encontra a cadeia A de outra com o mesmo número. Não há sobreposição de coordenadas. Se a numeração ou a letra da cadeia mudou, resíduos do mesmo lugar podem ficar separados, e resíduos diferentes podem cair no mesmo número.\",\n      \"O app não confere se os IDs são a mesma proteína.\",\n      \"Apo ou holo é um indício pela presença de HETATM de ligante. Não confirma o estado biológico.\",\n      \"O drugScore e o volume são descritores do DoGSiteScorer. Não são afinidade nem previsão de ligação.\",\n      \"Sugestão editável de caixa. Não é uma caixa validada e não é resultado de docking.\",\n      \"O texto da caixa segue o mesmo formato da ficha de preparo. Continua sendo sugestão editável e não substitui a conferência daquela ficha.\",\n      \"EXEMPLO SINTÉTICO. Estes bolsões não vieram do DoGSiteScorer.\"\n    ],\n    \"exclusoesHet\": {\n      \"aguas\": [\n        \"HOH\",\n        \"WAT\",\n        \"H2O\",\n        \"DOD\"\n      ],\n      \"aditivos\": [\n        \"GOL\",\n        \"EDO\",\n        \"PEG\",\n        \"PG4\",\n        \"PGE\",\n        \"1PE\",\n        \"MPD\",\n        \"MRD\",\n        \"ACT\",\n        \"SO4\",\n        \"PO4\",\n        \"DMS\",\n        \"TRS\",\n        \"MES\",\n        \"EPE\",\n        \"IPA\",\n        \"MOH\",\n        \"EOH\",\n        \"FMT\",\n        \"ACY\",\n        \"CIT\",\n        \"NO3\",\n        \"SCN\"\n      ],\n      \"ions\": [\n        \"LI\",\n        \"NA\",\n        \"K\",\n        \"RB\",\n        \"CS\",\n        \"MG\",\n        \"CA\",\n        \"SR\",\n        \"BA\",\n        \"MN\",\n        \"FE\",\n        \"CO\",\n        \"NI\",\n        \"CU\",\n        \"ZN\",\n        \"CD\",\n        \"HG\",\n        \"CL\",\n        \"BR\",\n        \"IOD\",\n        \"AG\",\n        \"AU\",\n        \"PT\"\n      ]\n    }\n  },\n  \"caixaEnsembleEditada\": null,\n  \"caixaEstruturaSugerida\": null,\n  \"caixaEstruturaEditada\": null,\n  \"editadaPeloUsuario\": false\n}"
+}

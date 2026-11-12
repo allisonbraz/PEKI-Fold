@@ -1,0 +1,2627 @@
+{
+  "1A00": {
+    "relatorio": {
+      "schema": "peki-qualidade-1",
+      "estado": "ok",
+      "codigo": null,
+      "mensagem": null,
+      "id": "1A00",
+      "consulta": "xml",
+      "fonte": {
+        "nome": "wwPDB validation report",
+        "distribuicao": "PDBe entry-files",
+        "url": "https://www.ebi.ac.uk/pdbe/entry-files/download/1a00_validation.xml",
+        "schemaXsd": "http://wwpdb.org/validation/schema/wwpdb_validation_v6.06.xsd",
+        "pdbid": "1A00",
+        "data": "Mar  6, 2026 -- 08:34 AM UTC",
+        "percentilebins": "all,2.0,xray"
+      },
+      "links": {
+        "xml": "https://www.ebi.ac.uk/pdbe/entry-files/download/1a00_validation.xml",
+        "json": "https://data.rcsb.org/rest/v1/core/entry/1A00",
+        "pdf": "https://files.rcsb.org/pub/pdb/validation_reports/a0/1a00/1a00_validation.pdf.gz",
+        "xmlGzip": "https://files.rcsb.org/pub/pdb/validation_reports/a0/1a00/1a00_validation.xml.gz",
+        "rcsb": "https://www.rcsb.org/structure/1A00",
+        "pdbe": "https://www.ebi.ac.uk/pdbe/entry/pdb/1a00",
+        "chemcomp": "https://data.rcsb.org/rest/v1/core/chemcomp/",
+        "pdbeComp": "https://www.ebi.ac.uk/pdbe/api/pdb/compound/summary/",
+        "ligante": "https://www.rcsb.org/ligand/"
+      },
+      "metodo": {
+        "classe": "xray",
+        "arquivo": "xray",
+        "relatorio": "xray",
+        "conflito": false
+      },
+      "metricas": [
+        {
+          "id": "resolucao",
+          "rotulo": "Resolução alta citada no relatório",
+          "unidade": "Å",
+          "grupo": "experimento",
+          "valor": 2,
+          "texto": "2.00",
+          "chave": "PDB-resolution"
+        },
+        {
+          "id": "rwork",
+          "rotulo": "Rwork citado pelo relatório (refinamento depositado)",
+          "unidade": null,
+          "grupo": "experimento",
+          "valor": 0.169,
+          "texto": "0.1690",
+          "chave": "PDB-R"
+        },
+        {
+          "id": "rfree",
+          "rotulo": "Rfree citado pelo relatório (refinamento depositado)",
+          "unidade": null,
+          "grupo": "experimento",
+          "valor": 0.223,
+          "texto": "0.2230",
+          "chave": "PDB-Rfree"
+        },
+        {
+          "id": "eds_r",
+          "rotulo": "R recalculado pelo EDS",
+          "unidade": null,
+          "grupo": "ajuste",
+          "valor": 0.5267,
+          "texto": "0.5267",
+          "chave": "EDS_R"
+        },
+        {
+          "id": "dcc_r",
+          "rotulo": "R da verificação DCC",
+          "unidade": null,
+          "grupo": "ajuste",
+          "valor": 0.5314,
+          "texto": "0.5314",
+          "chave": "DCC_R"
+        },
+        {
+          "id": "completude",
+          "rotulo": "Completude dos dados no relatório",
+          "unidade": "%",
+          "grupo": "ajuste",
+          "valor": 90.73,
+          "texto": "90.73",
+          "chave": "DataCompleteness"
+        },
+        {
+          "id": "rsrz",
+          "rotulo": "Resíduos com RSRZ outlier",
+          "unidade": "%",
+          "grupo": "ajuste",
+          "valor": 89.72,
+          "texto": "89.72",
+          "chave": "percent-RSRZ-outliers"
+        },
+        {
+          "id": "fofc",
+          "rotulo": "Correlação Fo–Fc no relatório",
+          "unidade": null,
+          "grupo": "ajuste",
+          "valor": 0.371,
+          "texto": "0.371",
+          "chave": "Fo_Fc_correlation"
+        },
+        {
+          "id": "reflexoes_livres",
+          "rotulo": "Reflexões livres na reanálise (num-free-reflections)",
+          "unidade": null,
+          "grupo": "ajuste",
+          "valor": 0,
+          "texto": "0",
+          "chave": "num-free-reflections"
+        },
+        {
+          "id": "clashscore",
+          "rotulo": "Clashscore",
+          "unidade": null,
+          "grupo": "geometria",
+          "valor": 5.74,
+          "texto": "5.74",
+          "chave": "clashscore"
+        },
+        {
+          "id": "rama",
+          "rotulo": "Ramachandran outliers",
+          "unidade": "%",
+          "grupo": "geometria",
+          "valor": 0,
+          "texto": "0.00",
+          "chave": "percent-rama-outliers"
+        },
+        {
+          "id": "rotamer",
+          "rotulo": "Rotâmeros outliers",
+          "unidade": "%",
+          "grupo": "geometria",
+          "valor": 8.44,
+          "texto": "8.44",
+          "chave": "percent-rota-outliers"
+        },
+        {
+          "id": "bonds_rmsz",
+          "rotulo": "RMSZ dos comprimentos de ligação",
+          "unidade": null,
+          "grupo": "geometria",
+          "valor": 1.05,
+          "texto": "1.05",
+          "chave": "bonds_rmsz"
+        },
+        {
+          "id": "angles_rmsz",
+          "rotulo": "RMSZ dos ângulos de ligação",
+          "unidade": null,
+          "grupo": "geometria",
+          "valor": 1.83,
+          "texto": "1.83",
+          "chave": "angles_rmsz"
+        }
+      ],
+      "omitidos": [
+        {
+          "id": "dcc_rfree",
+          "rotulo": "Rfree da verificação DCC",
+          "motivo": "o relatório marca NotAvailable"
+        }
+      ],
+      "naoAplicaveis": [],
+      "avisos": [
+        "The R factor obtained from EDS is 0.5267, which does not match the depositor's R factor of 0.169. Please interpret the results in this section carefully."
+      ],
+      "local": {
+        "estado": "ok",
+        "motivo": null,
+        "modeloSelecionado": 1,
+        "subgruposLidos": 3,
+        "subgruposOutroModelo": 0,
+        "campoAusente": 0,
+        "semIdentidadeAuthor": 0,
+        "porCadeia": {
+          "A": {
+            "residuosComCoordenadas": 194,
+            "comIndicador": 3,
+            "semIndicador": 191,
+            "lacunasSemCoordenada": 0,
+            "subgrupos": 3,
+            "outliers": 2
+          },
+          "B": {
+            "residuosComCoordenadas": 199,
+            "comIndicador": 0,
+            "semIndicador": 199,
+            "lacunasSemCoordenada": 0,
+            "subgrupos": 0,
+            "outliers": 0
+          },
+          "C": {
+            "residuosComCoordenadas": 208,
+            "comIndicador": 0,
+            "semIndicador": 208,
+            "lacunasSemCoordenada": 0,
+            "subgrupos": 0,
+            "outliers": 0
+          },
+          "D": {
+            "residuosComCoordenadas": 193,
+            "comIndicador": 0,
+            "semIndicador": 193,
+            "lacunasSemCoordenada": 0,
+            "subgrupos": 0,
+            "outliers": 0
+          }
+        },
+        "itens": [
+          {
+            "chain": "A",
+            "resnum": 1,
+            "icode": "",
+            "resname": "VAL",
+            "model": 1,
+            "altcode": "",
+            "said": "A",
+            "ent": "1",
+            "seqLabel": 1,
+            "rama": null,
+            "rota": "OUTLIER",
+            "bondOutliers": 0,
+            "angleOutliers": 0,
+            "clashes": 0,
+            "planeOutliers": 0,
+            "chiralOutliers": 0,
+            "mapeamento": "modelo",
+            "temCoordenadas": true,
+            "labelDivergente": false,
+            "outlier": true
+          },
+          {
+            "chain": "A",
+            "resnum": 2,
+            "icode": "",
+            "resname": "LEU",
+            "model": 1,
+            "altcode": "",
+            "said": "A",
+            "ent": "1",
+            "seqLabel": 2,
+            "rama": "Favored",
+            "rota": "mt",
+            "bondOutliers": 0,
+            "angleOutliers": 0,
+            "clashes": 0,
+            "planeOutliers": 0,
+            "chiralOutliers": 0,
+            "mapeamento": "modelo",
+            "temCoordenadas": true,
+            "labelDivergente": false,
+            "outlier": false
+          },
+          {
+            "chain": "A",
+            "resnum": 3,
+            "icode": "",
+            "resname": "SER",
+            "model": 1,
+            "altcode": "",
+            "said": "A",
+            "ent": "1",
+            "seqLabel": 3,
+            "rama": "Favored",
+            "rota": "p",
+            "bondOutliers": 0,
+            "angleOutliers": 0,
+            "clashes": 1,
+            "planeOutliers": 0,
+            "chiralOutliers": 0,
+            "mapeamento": "modelo",
+            "temCoordenadas": true,
+            "labelDivergente": false,
+            "outlier": true
+          }
+        ],
+        "aviso": "Indicador por resíduo só existe quando o relatório traz ModelledSubgroup com chain (auth_asym_id), resnum (auth_seq_id) e model, e essa posição tem coordenada no modelo selecionado. Lacuna sem coordenada não recebe qualidade local. Resíduo que não está no relatório não é preenchido com zero."
+      },
+      "avisoGlobal": "O relatório wwPDB e os indicadores globais não garantem a qualidade local do sítio. Um valor global pode conviver com problema no local de interesse.",
+      "avisoVizinho": "Lista de resíduos próximos por distância não entra nesta versão."
+    },
+    "texto": "Contrato peki-qualidade-1.\nEstado: ok. Consulta: xml.\nFonte: wwPDB validation report.\nURL: https://www.ebi.ac.uk/pdbe/entry-files/download/1a00_validation.xml\nData no relatório: Mar  6, 2026 -- 08:34 AM UTC.\nID no relatório: 1A00.\nClasse efetiva: xray.\nResolução alta citada no relatório: 2.00 Å.\nRwork citado pelo relatório (refinamento depositado): 0.1690.\nRfree citado pelo relatório (refinamento depositado): 0.2230.\nR recalculado pelo EDS: 0.5267.\nR da verificação DCC: 0.5314.\nCompletude dos dados no relatório: 90.73 %.\nResíduos com RSRZ outlier: 89.72 %.\nCorrelação Fo–Fc no relatório: 0.371.\nReflexões livres na reanálise (num-free-reflections): 0.\nClashscore: 5.74.\nRamachandran outliers: 0.00 %.\nRotâmeros outliers: 8.44 %.\nRMSZ dos comprimentos de ligação: 1.05.\nRMSZ dos ângulos de ligação: 1.83.\nNão exibidos porque o relatório não trouxe valor: Rfree da verificação DCC (o relatório marca NotAvailable).\nThe R factor obtained from EDS is 0.5267, which does not match the depositor's R factor of 0.169. Please interpret the results in this section carefully.\nO relatório wwPDB e os indicadores globais não garantem a qualidade local do sítio. Um valor global pode conviver com problema no local de interesse.\nQualidade local: subgrupos lidos 3; de outro modelo 0; sem chain/resnum/model 0.\nCadeia A: 3 de 194 posições com coordenada têm indicador; 191 sem indicador no relatório; lacunas sem coordenada 0.\nCadeia B: 0 de 199 posições com coordenada têm indicador; 199 sem indicador no relatório; lacunas sem coordenada 0.\nCadeia C: 0 de 208 posições com coordenada têm indicador; 208 sem indicador no relatório; lacunas sem coordenada 0.\nCadeia D: 0 de 193 posições com coordenada têm indicador; 193 sem indicador no relatório; lacunas sem coordenada 0.\nIndicador por resíduo só existe quando o relatório traz ModelledSubgroup com chain (auth_asym_id), resnum (auth_seq_id) e model, e essa posição tem coordenada no modelo selecionado. Lacuna sem coordenada não recebe qualidade local. Resíduo que não está no relatório não é preenchido com zero.\nLista de resíduos próximos por distância não entra nesta versão.",
+    "alternativa": {
+      "schema": "peki-qualidade-1",
+      "estado": "ok",
+      "codigo": null,
+      "mensagem": null,
+      "id": "1A00",
+      "consulta": "rcsb-json",
+      "fonte": {
+        "nome": "wwPDB validation report via RCSB Data API (pdbx_vrpt_summary*)",
+        "distribuicao": "RCSB Data API",
+        "url": "https://data.rcsb.org/rest/v1/core/entry/1A00",
+        "documento": "https://www.rcsb.org/news/feature/67edb6c196cbbd16fc52edb0",
+        "pdbid": "1A00",
+        "data": "2026-03-06T08:34:00.000+00:00"
+      },
+      "links": {
+        "xml": "https://www.ebi.ac.uk/pdbe/entry-files/download/1a00_validation.xml",
+        "json": "https://data.rcsb.org/rest/v1/core/entry/1A00",
+        "pdf": "https://files.rcsb.org/pub/pdb/validation_reports/a0/1a00/1a00_validation.pdf.gz",
+        "xmlGzip": "https://files.rcsb.org/pub/pdb/validation_reports/a0/1a00/1a00_validation.xml.gz",
+        "rcsb": "https://www.rcsb.org/structure/1A00",
+        "pdbe": "https://www.ebi.ac.uk/pdbe/entry/pdb/1a00",
+        "chemcomp": "https://data.rcsb.org/rest/v1/core/chemcomp/",
+        "pdbeComp": "https://www.ebi.ac.uk/pdbe/api/pdb/compound/summary/",
+        "ligante": "https://www.rcsb.org/ligand/"
+      },
+      "metodo": {
+        "classe": "xray",
+        "arquivo": "xray",
+        "relatorio": "xray",
+        "conflito": false
+      },
+      "metricas": [
+        {
+          "id": "resolucao",
+          "rotulo": "Resolução alta citada no relatório. Fonte desta consulta: refinamento depositado na Data API.",
+          "unidade": "Å",
+          "grupo": "experimento",
+          "valor": 2,
+          "texto": "2",
+          "chave": "PDB-resolution"
+        },
+        {
+          "id": "rwork",
+          "rotulo": "Rwork citado pelo relatório (refinamento depositado). Fonte desta consulta: categoria refine na Data API do RCSB; o XML do relatório não foi lido.",
+          "unidade": null,
+          "grupo": "experimento",
+          "valor": 0.169,
+          "texto": "0.169",
+          "chave": "PDB-R"
+        },
+        {
+          "id": "rfree",
+          "rotulo": "Rfree citado pelo relatório (refinamento depositado). Fonte desta consulta: categoria refine na Data API do RCSB; o XML do relatório não foi lido.",
+          "unidade": null,
+          "grupo": "experimento",
+          "valor": 0.223,
+          "texto": "0.223",
+          "chave": "PDB-Rfree"
+        },
+        {
+          "id": "eds_r",
+          "rotulo": "R recalculado pelo EDS",
+          "unidade": null,
+          "grupo": "ajuste",
+          "valor": 0.5267,
+          "texto": "0.5267",
+          "chave": "EDS_R"
+        },
+        {
+          "id": "dcc_r",
+          "rotulo": "R da verificação DCC",
+          "unidade": null,
+          "grupo": "ajuste",
+          "valor": 0.5314,
+          "texto": "0.5314",
+          "chave": "DCC_R"
+        },
+        {
+          "id": "completude",
+          "rotulo": "Completude dos dados no relatório",
+          "unidade": "%",
+          "grupo": "ajuste",
+          "valor": 90.73,
+          "texto": "90.73",
+          "chave": "DataCompleteness"
+        },
+        {
+          "id": "rsrz",
+          "rotulo": "Resíduos com RSRZ outlier",
+          "unidade": "%",
+          "grupo": "ajuste",
+          "valor": 89.72,
+          "texto": "89.72",
+          "chave": "percent-RSRZ-outliers"
+        },
+        {
+          "id": "fofc",
+          "rotulo": "Correlação Fo–Fc no relatório",
+          "unidade": null,
+          "grupo": "ajuste",
+          "valor": 0.371,
+          "texto": "0.371",
+          "chave": "Fo_Fc_correlation"
+        },
+        {
+          "id": "reflexoes_livres",
+          "rotulo": "Reflexões livres na reanálise (num-free-reflections)",
+          "unidade": null,
+          "grupo": "ajuste",
+          "valor": 0,
+          "texto": "0",
+          "chave": "num-free-reflections"
+        },
+        {
+          "id": "clashscore",
+          "rotulo": "Clashscore",
+          "unidade": null,
+          "grupo": "geometria",
+          "valor": 5.74,
+          "texto": "5.74",
+          "chave": "clashscore"
+        },
+        {
+          "id": "rama",
+          "rotulo": "Ramachandran outliers",
+          "unidade": "%",
+          "grupo": "geometria",
+          "valor": 0,
+          "texto": "0",
+          "chave": "percent-rama-outliers"
+        },
+        {
+          "id": "rotamer",
+          "rotulo": "Rotâmeros outliers",
+          "unidade": "%",
+          "grupo": "geometria",
+          "valor": 8.44,
+          "texto": "8.44",
+          "chave": "percent-rota-outliers"
+        },
+        {
+          "id": "bonds_rmsz",
+          "rotulo": "RMSZ dos comprimentos de ligação",
+          "unidade": null,
+          "grupo": "geometria",
+          "valor": 1.05,
+          "texto": "1.05",
+          "chave": "bonds_rmsz"
+        },
+        {
+          "id": "angles_rmsz",
+          "rotulo": "RMSZ dos ângulos de ligação",
+          "unidade": null,
+          "grupo": "geometria",
+          "valor": 1.83,
+          "texto": "1.83",
+          "chave": "angles_rmsz"
+        }
+      ],
+      "omitidos": [
+        {
+          "id": "dcc_rfree",
+          "rotulo": "Rfree da verificação DCC",
+          "motivo": "não informado no relatório"
+        }
+      ],
+      "naoAplicaveis": [],
+      "avisos": [
+        "The R factor obtained from EDS is 0.5267, which does not match the depositor's R factor of 0.169. Please interpret the results in this section carefully.",
+        "Indicadores por resíduo ficam pendentes: esta consulta leu o resumo JSON, não o XML com ModelledSubgroup."
+      ],
+      "local": {
+        "estado": "pendente",
+        "motivo": "O XML wwPDB com chain, resnum e model não foi lido nesta consulta. Não há painel local simulado.",
+        "itens": [],
+        "porCadeia": {},
+        "aviso": "Indicador por resíduo só existe quando o relatório traz ModelledSubgroup com chain (auth_asym_id), resnum (auth_seq_id) e model, e essa posição tem coordenada no modelo selecionado. Lacuna sem coordenada não recebe qualidade local. Resíduo que não está no relatório não é preenchido com zero."
+      },
+      "avisoGlobal": "O relatório wwPDB e os indicadores globais não garantem a qualidade local do sítio. Um valor global pode conviver com problema no local de interesse.",
+      "avisoVizinho": "Lista de resíduos próximos por distância não entra nesta versão."
+    }
+  },
+  "1A0N": {
+    "relatorio": {
+      "schema": "peki-qualidade-1",
+      "estado": "ok",
+      "codigo": null,
+      "mensagem": null,
+      "id": "1A0N",
+      "consulta": "xml",
+      "fonte": {
+        "nome": "wwPDB validation report",
+        "distribuicao": "PDBe entry-files",
+        "url": "https://www.ebi.ac.uk/pdbe/entry-files/download/1a0n_validation.xml",
+        "schemaXsd": "http://wwpdb.org/validation/schema/wwpdb_validation_v6.06.xsd",
+        "pdbid": "1A0N",
+        "data": "Mar  5, 2026 -- 02:42 AM UTC",
+        "percentilebins": "all,nmr"
+      },
+      "links": {
+        "xml": "https://www.ebi.ac.uk/pdbe/entry-files/download/1a0n_validation.xml",
+        "json": "https://data.rcsb.org/rest/v1/core/entry/1A0N",
+        "pdf": "https://files.rcsb.org/pub/pdb/validation_reports/a0/1a0n/1a0n_validation.pdf.gz",
+        "xmlGzip": "https://files.rcsb.org/pub/pdb/validation_reports/a0/1a0n/1a0n_validation.xml.gz",
+        "rcsb": "https://www.rcsb.org/structure/1A0N",
+        "pdbe": "https://www.ebi.ac.uk/pdbe/entry/pdb/1a0n",
+        "chemcomp": "https://data.rcsb.org/rest/v1/core/chemcomp/",
+        "pdbeComp": "https://www.ebi.ac.uk/pdbe/api/pdb/compound/summary/",
+        "ligante": "https://www.rcsb.org/ligand/"
+      },
+      "metodo": {
+        "classe": "nmr",
+        "arquivo": "nmr",
+        "relatorio": "nmr",
+        "conflito": false
+      },
+      "metricas": [
+        {
+          "id": "clashscore",
+          "rotulo": "Clashscore do núcleo bem definido do ensemble",
+          "unidade": null,
+          "grupo": "geometria",
+          "valor": 36.51,
+          "texto": "36.51",
+          "chave": "clashscore"
+        },
+        {
+          "id": "clashscore_completo",
+          "rotulo": "Clashscore do comprimento completo",
+          "unidade": null,
+          "grupo": "geometria",
+          "valor": 35.91,
+          "texto": "35.91",
+          "chave": "clashscore-full-length"
+        },
+        {
+          "id": "rama",
+          "rotulo": "Ramachandran outliers",
+          "unidade": "%",
+          "grupo": "geometria",
+          "valor": 1.85,
+          "texto": "1.85",
+          "chave": "percent-rama-outliers"
+        },
+        {
+          "id": "rama_completo",
+          "rotulo": "Ramachandran outliers no comprimento completo",
+          "unidade": "%",
+          "grupo": "geometria",
+          "valor": 4.65,
+          "texto": "4.65",
+          "chave": "percent-rama-outliers-full-length"
+        },
+        {
+          "id": "rotamer",
+          "rotulo": "Rotâmeros outliers",
+          "unidade": "%",
+          "grupo": "geometria",
+          "valor": 25.5,
+          "texto": "25.50",
+          "chave": "percent-rota-outliers"
+        },
+        {
+          "id": "rotamer_completo",
+          "rotulo": "Rotâmeros outliers no comprimento completo",
+          "unidade": "%",
+          "grupo": "geometria",
+          "valor": 26.13,
+          "texto": "26.13",
+          "chave": "percent-rota-outliers-full-length"
+        },
+        {
+          "id": "bonds_rmsz",
+          "rotulo": "RMSZ dos comprimentos de ligação",
+          "unidade": null,
+          "grupo": "geometria",
+          "valor": 1.37,
+          "texto": "1.37",
+          "chave": "bonds_rmsz"
+        },
+        {
+          "id": "angles_rmsz",
+          "rotulo": "RMSZ dos ângulos de ligação",
+          "unidade": null,
+          "grupo": "geometria",
+          "valor": 1.27,
+          "texto": "1.27",
+          "chave": "angles_rmsz"
+        },
+        {
+          "id": "medoid",
+          "rotulo": "Modelo medóide citado no relatório",
+          "unidade": null,
+          "grupo": "nmr",
+          "valor": 5,
+          "texto": "5",
+          "chave": "medoid_model"
+        },
+        {
+          "id": "nmr_representante",
+          "rotulo": "Modelo representante do NMRCLUST",
+          "unidade": null,
+          "grupo": "nmr",
+          "valor": 8,
+          "texto": "8",
+          "chave": "nmrclust_representative_model"
+        },
+        {
+          "id": "nmr_clusters",
+          "rotulo": "Aglomerados NMRCLUST",
+          "unidade": null,
+          "grupo": "nmr",
+          "valor": 6,
+          "texto": "6",
+          "chave": "nmrclust_number_of_clusters"
+        },
+        {
+          "id": "nmr_modelos",
+          "rotulo": "Modelos considerados pelo NMRCLUST",
+          "unidade": null,
+          "grupo": "nmr",
+          "valor": 25,
+          "texto": "25",
+          "chave": "nmrclust_number_of_models"
+        },
+        {
+          "id": "nmr_outliers",
+          "rotulo": "Modelos outliers do NMRCLUST",
+          "unidade": null,
+          "grupo": "nmr",
+          "valor": 2,
+          "texto": "2",
+          "chave": "nmrclust_number_of_outliers"
+        },
+        {
+          "id": "cyrange_dominios",
+          "rotulo": "Domínios CYRANGE",
+          "unidade": null,
+          "grupo": "nmr",
+          "valor": 1,
+          "texto": "1",
+          "chave": "cyrange_number_of_domains"
+        }
+      ],
+      "omitidos": [],
+      "naoAplicaveis": [],
+      "avisos": [
+        "Consistência dos modelos NMR no relatório: True."
+      ],
+      "local": {
+        "estado": "ok",
+        "motivo": null,
+        "modeloSelecionado": 1,
+        "subgruposLidos": 2,
+        "subgruposOutroModelo": 1,
+        "campoAusente": 0,
+        "semIdentidadeAuthor": 0,
+        "porCadeia": {
+          "A": {
+            "residuosComCoordenadas": 14,
+            "comIndicador": 1,
+            "semIndicador": 13,
+            "lacunasSemCoordenada": 0,
+            "subgrupos": 1,
+            "outliers": 0
+          },
+          "B": {
+            "residuosComCoordenadas": 58,
+            "comIndicador": 0,
+            "semIndicador": 58,
+            "lacunasSemCoordenada": 11,
+            "subgrupos": 0,
+            "outliers": 0
+          }
+        },
+        "itens": [
+          {
+            "chain": "A",
+            "resnum": 91,
+            "icode": "",
+            "resname": "PRO",
+            "model": 1,
+            "altcode": "",
+            "said": "A",
+            "ent": "1",
+            "seqLabel": 1,
+            "rama": null,
+            "rota": "Cg_endo",
+            "bondOutliers": 0,
+            "angleOutliers": 0,
+            "clashes": 0,
+            "planeOutliers": 0,
+            "chiralOutliers": 0,
+            "mapeamento": "modelo",
+            "temCoordenadas": true,
+            "labelDivergente": false,
+            "outlier": false
+          }
+        ],
+        "aviso": "Indicador por resíduo só existe quando o relatório traz ModelledSubgroup com chain (auth_asym_id), resnum (auth_seq_id) e model, e essa posição tem coordenada no modelo selecionado. Lacuna sem coordenada não recebe qualidade local. Resíduo que não está no relatório não é preenchido com zero."
+      },
+      "avisoGlobal": "O relatório wwPDB e os indicadores globais não garantem a qualidade local do sítio. Um valor global pode conviver com problema no local de interesse.",
+      "avisoVizinho": "Lista de resíduos próximos por distância não entra nesta versão."
+    },
+    "texto": "Contrato peki-qualidade-1.\nEstado: ok. Consulta: xml.\nFonte: wwPDB validation report.\nURL: https://www.ebi.ac.uk/pdbe/entry-files/download/1a0n_validation.xml\nData no relatório: Mar  5, 2026 -- 02:42 AM UTC.\nID no relatório: 1A0N.\nClasse efetiva: nmr.\nClashscore do núcleo bem definido do ensemble: 36.51.\nClashscore do comprimento completo: 35.91.\nRamachandran outliers: 1.85 %.\nRamachandran outliers no comprimento completo: 4.65 %.\nRotâmeros outliers: 25.50 %.\nRotâmeros outliers no comprimento completo: 26.13 %.\nRMSZ dos comprimentos de ligação: 1.37.\nRMSZ dos ângulos de ligação: 1.27.\nModelo medóide citado no relatório: 5.\nModelo representante do NMRCLUST: 8.\nAglomerados NMRCLUST: 6.\nModelos considerados pelo NMRCLUST: 25.\nModelos outliers do NMRCLUST: 2.\nDomínios CYRANGE: 1.\nConsistência dos modelos NMR no relatório: True.\nO relatório wwPDB e os indicadores globais não garantem a qualidade local do sítio. Um valor global pode conviver com problema no local de interesse.\nQualidade local: subgrupos lidos 2; de outro modelo 1; sem chain/resnum/model 0.\nCadeia A: 1 de 14 posições com coordenada têm indicador; 13 sem indicador no relatório; lacunas sem coordenada 0.\nCadeia B: 0 de 58 posições com coordenada têm indicador; 58 sem indicador no relatório; lacunas sem coordenada 11.\nIndicador por resíduo só existe quando o relatório traz ModelledSubgroup com chain (auth_asym_id), resnum (auth_seq_id) e model, e essa posição tem coordenada no modelo selecionado. Lacuna sem coordenada não recebe qualidade local. Resíduo que não está no relatório não é preenchido com zero.\nLista de resíduos próximos por distância não entra nesta versão.",
+    "alternativa": {
+      "schema": "peki-qualidade-1",
+      "estado": "ok",
+      "codigo": null,
+      "mensagem": null,
+      "id": "1A0N",
+      "consulta": "rcsb-json",
+      "fonte": {
+        "nome": "wwPDB validation report via RCSB Data API (pdbx_vrpt_summary*)",
+        "distribuicao": "RCSB Data API",
+        "url": "https://data.rcsb.org/rest/v1/core/entry/1A0N",
+        "documento": "https://www.rcsb.org/news/feature/67edb6c196cbbd16fc52edb0",
+        "pdbid": "1A0N",
+        "data": "2026-03-05T02:42:00.000+00:00"
+      },
+      "links": {
+        "xml": "https://www.ebi.ac.uk/pdbe/entry-files/download/1a0n_validation.xml",
+        "json": "https://data.rcsb.org/rest/v1/core/entry/1A0N",
+        "pdf": "https://files.rcsb.org/pub/pdb/validation_reports/a0/1a0n/1a0n_validation.pdf.gz",
+        "xmlGzip": "https://files.rcsb.org/pub/pdb/validation_reports/a0/1a0n/1a0n_validation.xml.gz",
+        "rcsb": "https://www.rcsb.org/structure/1A0N",
+        "pdbe": "https://www.ebi.ac.uk/pdbe/entry/pdb/1a0n",
+        "chemcomp": "https://data.rcsb.org/rest/v1/core/chemcomp/",
+        "pdbeComp": "https://www.ebi.ac.uk/pdbe/api/pdb/compound/summary/",
+        "ligante": "https://www.rcsb.org/ligand/"
+      },
+      "metodo": {
+        "classe": "nmr",
+        "arquivo": "nmr",
+        "relatorio": "nmr",
+        "conflito": false
+      },
+      "metricas": [
+        {
+          "id": "clashscore",
+          "rotulo": "Clashscore do núcleo bem definido do ensemble",
+          "unidade": null,
+          "grupo": "geometria",
+          "valor": 36.51,
+          "texto": "36.51",
+          "chave": "clashscore"
+        },
+        {
+          "id": "clashscore_completo",
+          "rotulo": "Clashscore do comprimento completo",
+          "unidade": null,
+          "grupo": "geometria",
+          "valor": 35.91,
+          "texto": "35.91",
+          "chave": "clashscore-full-length"
+        },
+        {
+          "id": "rama",
+          "rotulo": "Ramachandran outliers",
+          "unidade": "%",
+          "grupo": "geometria",
+          "valor": 1.85,
+          "texto": "1.85",
+          "chave": "percent-rama-outliers"
+        },
+        {
+          "id": "rama_completo",
+          "rotulo": "Ramachandran outliers no comprimento completo",
+          "unidade": "%",
+          "grupo": "geometria",
+          "valor": 4.65,
+          "texto": "4.65",
+          "chave": "percent-rama-outliers-full-length"
+        },
+        {
+          "id": "rotamer",
+          "rotulo": "Rotâmeros outliers",
+          "unidade": "%",
+          "grupo": "geometria",
+          "valor": 25.5,
+          "texto": "25.5",
+          "chave": "percent-rota-outliers"
+        },
+        {
+          "id": "rotamer_completo",
+          "rotulo": "Rotâmeros outliers no comprimento completo",
+          "unidade": "%",
+          "grupo": "geometria",
+          "valor": 26.13,
+          "texto": "26.13",
+          "chave": "percent-rota-outliers-full-length"
+        },
+        {
+          "id": "bonds_rmsz",
+          "rotulo": "RMSZ dos comprimentos de ligação",
+          "unidade": null,
+          "grupo": "geometria",
+          "valor": 1.37,
+          "texto": "1.37",
+          "chave": "bonds_rmsz"
+        },
+        {
+          "id": "angles_rmsz",
+          "rotulo": "RMSZ dos ângulos de ligação",
+          "unidade": null,
+          "grupo": "geometria",
+          "valor": 1.27,
+          "texto": "1.27",
+          "chave": "angles_rmsz"
+        },
+        {
+          "id": "medoid",
+          "rotulo": "Modelo medóide citado no relatório",
+          "unidade": null,
+          "grupo": "nmr",
+          "valor": 5,
+          "texto": "5",
+          "chave": "medoid_model"
+        },
+        {
+          "id": "nmr_representante",
+          "rotulo": "Modelo representante do NMRCLUST",
+          "unidade": null,
+          "grupo": "nmr",
+          "valor": 8,
+          "texto": "8",
+          "chave": "nmrclust_representative_model"
+        },
+        {
+          "id": "nmr_clusters",
+          "rotulo": "Aglomerados NMRCLUST",
+          "unidade": null,
+          "grupo": "nmr",
+          "valor": 6,
+          "texto": "6",
+          "chave": "nmrclust_number_of_clusters"
+        },
+        {
+          "id": "nmr_modelos",
+          "rotulo": "Modelos considerados pelo NMRCLUST",
+          "unidade": null,
+          "grupo": "nmr",
+          "valor": 25,
+          "texto": "25",
+          "chave": "nmrclust_number_of_models"
+        },
+        {
+          "id": "nmr_outliers",
+          "rotulo": "Modelos outliers do NMRCLUST",
+          "unidade": null,
+          "grupo": "nmr",
+          "valor": 2,
+          "texto": "2",
+          "chave": "nmrclust_number_of_outliers"
+        },
+        {
+          "id": "cyrange_dominios",
+          "rotulo": "Domínios CYRANGE",
+          "unidade": null,
+          "grupo": "nmr",
+          "valor": 1,
+          "texto": "1",
+          "chave": "cyrange_number_of_domains"
+        }
+      ],
+      "omitidos": [],
+      "naoAplicaveis": [],
+      "avisos": [
+        "Consistência dos modelos NMR no relatório: True.",
+        "Indicadores por resíduo ficam pendentes: esta consulta leu o resumo JSON, não o XML com ModelledSubgroup."
+      ],
+      "local": {
+        "estado": "pendente",
+        "motivo": "O XML wwPDB com chain, resnum e model não foi lido nesta consulta. Não há painel local simulado.",
+        "itens": [],
+        "porCadeia": {},
+        "aviso": "Indicador por resíduo só existe quando o relatório traz ModelledSubgroup com chain (auth_asym_id), resnum (auth_seq_id) e model, e essa posição tem coordenada no modelo selecionado. Lacuna sem coordenada não recebe qualidade local. Resíduo que não está no relatório não é preenchido com zero."
+      },
+      "avisoGlobal": "O relatório wwPDB e os indicadores globais não garantem a qualidade local do sítio. Um valor global pode conviver com problema no local de interesse.",
+      "avisoVizinho": "Lista de resíduos próximos por distância não entra nesta versão."
+    }
+  },
+  "1CRN": {
+    "relatorio": {
+      "schema": "peki-qualidade-1",
+      "estado": "ok",
+      "codigo": null,
+      "mensagem": null,
+      "id": "1CRN",
+      "consulta": "xml",
+      "fonte": {
+        "nome": "wwPDB validation report",
+        "distribuicao": "PDBe entry-files",
+        "url": "https://www.ebi.ac.uk/pdbe/entry-files/download/1crn_validation.xml",
+        "schemaXsd": "http://wwpdb.org/validation/schema/wwpdb_validation_v6.06.xsd",
+        "pdbid": "1CRN",
+        "data": "Mar  5, 2026 -- 06:54 PM UTC",
+        "percentilebins": "all,1.5,xray"
+      },
+      "links": {
+        "xml": "https://www.ebi.ac.uk/pdbe/entry-files/download/1crn_validation.xml",
+        "json": "https://data.rcsb.org/rest/v1/core/entry/1CRN",
+        "pdf": "https://files.rcsb.org/pub/pdb/validation_reports/cr/1crn/1crn_validation.pdf.gz",
+        "xmlGzip": "https://files.rcsb.org/pub/pdb/validation_reports/cr/1crn/1crn_validation.xml.gz",
+        "rcsb": "https://www.rcsb.org/structure/1CRN",
+        "pdbe": "https://www.ebi.ac.uk/pdbe/entry/pdb/1crn",
+        "chemcomp": "https://data.rcsb.org/rest/v1/core/chemcomp/",
+        "pdbeComp": "https://www.ebi.ac.uk/pdbe/api/pdb/compound/summary/",
+        "ligante": "https://www.rcsb.org/ligand/"
+      },
+      "metodo": {
+        "classe": "xray",
+        "arquivo": "xray",
+        "relatorio": "xray",
+        "conflito": false
+      },
+      "metricas": [
+        {
+          "id": "resolucao",
+          "rotulo": "Resolução alta citada no relatório",
+          "unidade": "Å",
+          "grupo": "experimento",
+          "valor": 1.5,
+          "texto": "1.50",
+          "chave": "PDB-resolution"
+        },
+        {
+          "id": "clashscore",
+          "rotulo": "Clashscore",
+          "unidade": null,
+          "grupo": "geometria",
+          "valor": 0,
+          "texto": "0.00",
+          "chave": "clashscore"
+        },
+        {
+          "id": "rama",
+          "rotulo": "Ramachandran outliers",
+          "unidade": "%",
+          "grupo": "geometria",
+          "valor": 0,
+          "texto": "0.00",
+          "chave": "percent-rama-outliers"
+        },
+        {
+          "id": "rotamer",
+          "rotulo": "Rotâmeros outliers",
+          "unidade": "%",
+          "grupo": "geometria",
+          "valor": 0,
+          "texto": "0.00",
+          "chave": "percent-rota-outliers"
+        },
+        {
+          "id": "bonds_rmsz",
+          "rotulo": "RMSZ dos comprimentos de ligação",
+          "unidade": null,
+          "grupo": "geometria",
+          "valor": 1.5,
+          "texto": "1.50",
+          "chave": "bonds_rmsz"
+        },
+        {
+          "id": "angles_rmsz",
+          "rotulo": "RMSZ dos ângulos de ligação",
+          "unidade": null,
+          "grupo": "geometria",
+          "valor": 1.55,
+          "texto": "1.55",
+          "chave": "angles_rmsz"
+        }
+      ],
+      "omitidos": [
+        {
+          "id": "rwork",
+          "rotulo": "Rwork citado pelo relatório (refinamento depositado)",
+          "motivo": "o relatório marca NotAvailable"
+        },
+        {
+          "id": "rfree",
+          "rotulo": "Rfree citado pelo relatório (refinamento depositado)",
+          "motivo": "o relatório marca NotAvailable"
+        },
+        {
+          "id": "eds_r",
+          "rotulo": "R recalculado pelo EDS",
+          "motivo": "não informado no relatório"
+        },
+        {
+          "id": "dcc_r",
+          "rotulo": "R da verificação DCC",
+          "motivo": "não informado no relatório"
+        },
+        {
+          "id": "dcc_rfree",
+          "rotulo": "Rfree da verificação DCC",
+          "motivo": "não informado no relatório"
+        },
+        {
+          "id": "completude",
+          "rotulo": "Completude dos dados no relatório",
+          "motivo": "não informado no relatório"
+        },
+        {
+          "id": "rsrz",
+          "rotulo": "Resíduos com RSRZ outlier",
+          "motivo": "não informado no relatório"
+        },
+        {
+          "id": "fofc",
+          "rotulo": "Correlação Fo–Fc no relatório",
+          "motivo": "não informado no relatório"
+        },
+        {
+          "id": "reflexoes_livres",
+          "rotulo": "Reflexões livres na reanálise (num-free-reflections)",
+          "motivo": "não informado no relatório"
+        }
+      ],
+      "naoAplicaveis": [],
+      "avisos": [],
+      "local": {
+        "estado": "ok",
+        "motivo": null,
+        "modeloSelecionado": 1,
+        "subgruposLidos": 46,
+        "subgruposOutroModelo": 0,
+        "campoAusente": 0,
+        "semIdentidadeAuthor": 0,
+        "porCadeia": {
+          "A": {
+            "residuosComCoordenadas": 46,
+            "comIndicador": 46,
+            "semIndicador": 0,
+            "lacunasSemCoordenada": 0,
+            "subgrupos": 46,
+            "outliers": 4
+          }
+        },
+        "itens": [
+          {
+            "chain": "A",
+            "resnum": 1,
+            "icode": "",
+            "resname": "THR",
+            "model": 1,
+            "altcode": "",
+            "said": "A",
+            "ent": "1",
+            "seqLabel": 1,
+            "rama": null,
+            "rota": "m",
+            "bondOutliers": 0,
+            "angleOutliers": 0,
+            "clashes": 0,
+            "planeOutliers": 0,
+            "chiralOutliers": 0,
+            "mapeamento": "modelo",
+            "temCoordenadas": true,
+            "labelDivergente": false,
+            "outlier": false
+          },
+          {
+            "chain": "A",
+            "resnum": 2,
+            "icode": "",
+            "resname": "THR",
+            "model": 1,
+            "altcode": "",
+            "said": "A",
+            "ent": "1",
+            "seqLabel": 2,
+            "rama": "Favored",
+            "rota": "p",
+            "bondOutliers": 0,
+            "angleOutliers": 0,
+            "clashes": 0,
+            "planeOutliers": 0,
+            "chiralOutliers": 0,
+            "mapeamento": "modelo",
+            "temCoordenadas": true,
+            "labelDivergente": false,
+            "outlier": false
+          },
+          {
+            "chain": "A",
+            "resnum": 3,
+            "icode": "",
+            "resname": "CYS",
+            "model": 1,
+            "altcode": "",
+            "said": "A",
+            "ent": "1",
+            "seqLabel": 3,
+            "rama": "Favored",
+            "rota": "m",
+            "bondOutliers": 0,
+            "angleOutliers": 0,
+            "clashes": 0,
+            "planeOutliers": 0,
+            "chiralOutliers": 0,
+            "mapeamento": "modelo",
+            "temCoordenadas": true,
+            "labelDivergente": false,
+            "outlier": false
+          },
+          {
+            "chain": "A",
+            "resnum": 4,
+            "icode": "",
+            "resname": "CYS",
+            "model": 1,
+            "altcode": "",
+            "said": "A",
+            "ent": "1",
+            "seqLabel": 4,
+            "rama": "Favored",
+            "rota": "m",
+            "bondOutliers": 0,
+            "angleOutliers": 0,
+            "clashes": 0,
+            "planeOutliers": 0,
+            "chiralOutliers": 0,
+            "mapeamento": "modelo",
+            "temCoordenadas": true,
+            "labelDivergente": false,
+            "outlier": false
+          },
+          {
+            "chain": "A",
+            "resnum": 5,
+            "icode": "",
+            "resname": "PRO",
+            "model": 1,
+            "altcode": "",
+            "said": "A",
+            "ent": "1",
+            "seqLabel": 5,
+            "rama": "Favored",
+            "rota": "Cg_endo",
+            "bondOutliers": 0,
+            "angleOutliers": 0,
+            "clashes": 0,
+            "planeOutliers": 0,
+            "chiralOutliers": 0,
+            "mapeamento": "modelo",
+            "temCoordenadas": true,
+            "labelDivergente": false,
+            "outlier": false
+          },
+          {
+            "chain": "A",
+            "resnum": 6,
+            "icode": "",
+            "resname": "SER",
+            "model": 1,
+            "altcode": "",
+            "said": "A",
+            "ent": "1",
+            "seqLabel": 6,
+            "rama": "Favored",
+            "rota": "p",
+            "bondOutliers": 0,
+            "angleOutliers": 0,
+            "clashes": 0,
+            "planeOutliers": 0,
+            "chiralOutliers": 0,
+            "mapeamento": "modelo",
+            "temCoordenadas": true,
+            "labelDivergente": false,
+            "outlier": false
+          },
+          {
+            "chain": "A",
+            "resnum": 7,
+            "icode": "",
+            "resname": "ILE",
+            "model": 1,
+            "altcode": "",
+            "said": "A",
+            "ent": "1",
+            "seqLabel": 7,
+            "rama": "Favored",
+            "rota": "mt",
+            "bondOutliers": 0,
+            "angleOutliers": 1,
+            "clashes": 0,
+            "planeOutliers": 0,
+            "chiralOutliers": 0,
+            "mapeamento": "modelo",
+            "temCoordenadas": true,
+            "labelDivergente": false,
+            "outlier": true
+          },
+          {
+            "chain": "A",
+            "resnum": 8,
+            "icode": "",
+            "resname": "VAL",
+            "model": 1,
+            "altcode": "",
+            "said": "A",
+            "ent": "1",
+            "seqLabel": 8,
+            "rama": "Favored",
+            "rota": "t",
+            "bondOutliers": 0,
+            "angleOutliers": 0,
+            "clashes": 0,
+            "planeOutliers": 0,
+            "chiralOutliers": 0,
+            "mapeamento": "modelo",
+            "temCoordenadas": true,
+            "labelDivergente": false,
+            "outlier": false
+          },
+          {
+            "chain": "A",
+            "resnum": 9,
+            "icode": "",
+            "resname": "ALA",
+            "model": 1,
+            "altcode": "",
+            "said": "A",
+            "ent": "1",
+            "seqLabel": 9,
+            "rama": "Favored",
+            "rota": null,
+            "bondOutliers": 0,
+            "angleOutliers": 0,
+            "clashes": 0,
+            "planeOutliers": 0,
+            "chiralOutliers": 0,
+            "mapeamento": "modelo",
+            "temCoordenadas": true,
+            "labelDivergente": false,
+            "outlier": false
+          },
+          {
+            "chain": "A",
+            "resnum": 10,
+            "icode": "",
+            "resname": "ARG",
+            "model": 1,
+            "altcode": "",
+            "said": "A",
+            "ent": "1",
+            "seqLabel": 10,
+            "rama": "Favored",
+            "rota": "tpp-160",
+            "bondOutliers": 0,
+            "angleOutliers": 0,
+            "clashes": 0,
+            "planeOutliers": 0,
+            "chiralOutliers": 0,
+            "mapeamento": "modelo",
+            "temCoordenadas": true,
+            "labelDivergente": false,
+            "outlier": false
+          },
+          {
+            "chain": "A",
+            "resnum": 11,
+            "icode": "",
+            "resname": "SER",
+            "model": 1,
+            "altcode": "",
+            "said": "A",
+            "ent": "1",
+            "seqLabel": 11,
+            "rama": "Favored",
+            "rota": "m",
+            "bondOutliers": 0,
+            "angleOutliers": 0,
+            "clashes": 0,
+            "planeOutliers": 0,
+            "chiralOutliers": 0,
+            "mapeamento": "modelo",
+            "temCoordenadas": true,
+            "labelDivergente": false,
+            "outlier": false
+          },
+          {
+            "chain": "A",
+            "resnum": 12,
+            "icode": "",
+            "resname": "ASN",
+            "model": 1,
+            "altcode": "",
+            "said": "A",
+            "ent": "1",
+            "seqLabel": 12,
+            "rama": "Favored",
+            "rota": "m-40",
+            "bondOutliers": 0,
+            "angleOutliers": 1,
+            "clashes": 0,
+            "planeOutliers": 0,
+            "chiralOutliers": 0,
+            "mapeamento": "modelo",
+            "temCoordenadas": true,
+            "labelDivergente": false,
+            "outlier": true
+          },
+          {
+            "chain": "A",
+            "resnum": 13,
+            "icode": "",
+            "resname": "PHE",
+            "model": 1,
+            "altcode": "",
+            "said": "A",
+            "ent": "1",
+            "seqLabel": 13,
+            "rama": "Favored",
+            "rota": "t80",
+            "bondOutliers": 0,
+            "angleOutliers": 0,
+            "clashes": 0,
+            "planeOutliers": 0,
+            "chiralOutliers": 0,
+            "mapeamento": "modelo",
+            "temCoordenadas": true,
+            "labelDivergente": false,
+            "outlier": false
+          },
+          {
+            "chain": "A",
+            "resnum": 14,
+            "icode": "",
+            "resname": "ASN",
+            "model": 1,
+            "altcode": "",
+            "said": "A",
+            "ent": "1",
+            "seqLabel": 14,
+            "rama": "Favored",
+            "rota": "m-40",
+            "bondOutliers": 0,
+            "angleOutliers": 1,
+            "clashes": 0,
+            "planeOutliers": 0,
+            "chiralOutliers": 0,
+            "mapeamento": "modelo",
+            "temCoordenadas": true,
+            "labelDivergente": false,
+            "outlier": true
+          },
+          {
+            "chain": "A",
+            "resnum": 15,
+            "icode": "",
+            "resname": "VAL",
+            "model": 1,
+            "altcode": "",
+            "said": "A",
+            "ent": "1",
+            "seqLabel": 15,
+            "rama": "Favored",
+            "rota": "t",
+            "bondOutliers": 0,
+            "angleOutliers": 0,
+            "clashes": 0,
+            "planeOutliers": 0,
+            "chiralOutliers": 0,
+            "mapeamento": "modelo",
+            "temCoordenadas": true,
+            "labelDivergente": false,
+            "outlier": false
+          },
+          {
+            "chain": "A",
+            "resnum": 16,
+            "icode": "",
+            "resname": "CYS",
+            "model": 1,
+            "altcode": "",
+            "said": "A",
+            "ent": "1",
+            "seqLabel": 16,
+            "rama": "Favored",
+            "rota": "t",
+            "bondOutliers": 0,
+            "angleOutliers": 0,
+            "clashes": 0,
+            "planeOutliers": 0,
+            "chiralOutliers": 0,
+            "mapeamento": "modelo",
+            "temCoordenadas": true,
+            "labelDivergente": false,
+            "outlier": false
+          },
+          {
+            "chain": "A",
+            "resnum": 17,
+            "icode": "",
+            "resname": "ARG",
+            "model": 1,
+            "altcode": "",
+            "said": "A",
+            "ent": "1",
+            "seqLabel": 17,
+            "rama": "Favored",
+            "rota": "mmm160",
+            "bondOutliers": 0,
+            "angleOutliers": 0,
+            "clashes": 0,
+            "planeOutliers": 0,
+            "chiralOutliers": 0,
+            "mapeamento": "modelo",
+            "temCoordenadas": true,
+            "labelDivergente": false,
+            "outlier": false
+          },
+          {
+            "chain": "A",
+            "resnum": 18,
+            "icode": "",
+            "resname": "LEU",
+            "model": 1,
+            "altcode": "",
+            "said": "A",
+            "ent": "1",
+            "seqLabel": 18,
+            "rama": "Favored",
+            "rota": "mt",
+            "bondOutliers": 0,
+            "angleOutliers": 0,
+            "clashes": 0,
+            "planeOutliers": 0,
+            "chiralOutliers": 0,
+            "mapeamento": "modelo",
+            "temCoordenadas": true,
+            "labelDivergente": false,
+            "outlier": false
+          },
+          {
+            "chain": "A",
+            "resnum": 19,
+            "icode": "",
+            "resname": "PRO",
+            "model": 1,
+            "altcode": "",
+            "said": "A",
+            "ent": "1",
+            "seqLabel": 19,
+            "rama": "Favored",
+            "rota": "Cg_endo",
+            "bondOutliers": 0,
+            "angleOutliers": 0,
+            "clashes": 0,
+            "planeOutliers": 0,
+            "chiralOutliers": 0,
+            "mapeamento": "modelo",
+            "temCoordenadas": true,
+            "labelDivergente": false,
+            "outlier": false
+          },
+          {
+            "chain": "A",
+            "resnum": 20,
+            "icode": "",
+            "resname": "GLY",
+            "model": 1,
+            "altcode": "",
+            "said": "A",
+            "ent": "1",
+            "seqLabel": 20,
+            "rama": "Favored",
+            "rota": null,
+            "bondOutliers": 0,
+            "angleOutliers": 0,
+            "clashes": 0,
+            "planeOutliers": 0,
+            "chiralOutliers": 0,
+            "mapeamento": "modelo",
+            "temCoordenadas": true,
+            "labelDivergente": false,
+            "outlier": false
+          },
+          {
+            "chain": "A",
+            "resnum": 21,
+            "icode": "",
+            "resname": "THR",
+            "model": 1,
+            "altcode": "",
+            "said": "A",
+            "ent": "1",
+            "seqLabel": 21,
+            "rama": "Favored",
+            "rota": "m",
+            "bondOutliers": 0,
+            "angleOutliers": 0,
+            "clashes": 0,
+            "planeOutliers": 0,
+            "chiralOutliers": 0,
+            "mapeamento": "modelo",
+            "temCoordenadas": true,
+            "labelDivergente": false,
+            "outlier": false
+          },
+          {
+            "chain": "A",
+            "resnum": 22,
+            "icode": "",
+            "resname": "PRO",
+            "model": 1,
+            "altcode": "",
+            "said": "A",
+            "ent": "1",
+            "seqLabel": 22,
+            "rama": "Favored",
+            "rota": "Cg_exo",
+            "bondOutliers": 0,
+            "angleOutliers": 0,
+            "clashes": 0,
+            "planeOutliers": 0,
+            "chiralOutliers": 0,
+            "mapeamento": "modelo",
+            "temCoordenadas": true,
+            "labelDivergente": false,
+            "outlier": false
+          },
+          {
+            "chain": "A",
+            "resnum": 23,
+            "icode": "",
+            "resname": "GLU",
+            "model": 1,
+            "altcode": "",
+            "said": "A",
+            "ent": "1",
+            "seqLabel": 23,
+            "rama": "Favored",
+            "rota": "mt-10",
+            "bondOutliers": 0,
+            "angleOutliers": 0,
+            "clashes": 0,
+            "planeOutliers": 0,
+            "chiralOutliers": 0,
+            "mapeamento": "modelo",
+            "temCoordenadas": true,
+            "labelDivergente": false,
+            "outlier": false
+          },
+          {
+            "chain": "A",
+            "resnum": 24,
+            "icode": "",
+            "resname": "ALA",
+            "model": 1,
+            "altcode": "",
+            "said": "A",
+            "ent": "1",
+            "seqLabel": 24,
+            "rama": "Favored",
+            "rota": null,
+            "bondOutliers": 0,
+            "angleOutliers": 0,
+            "clashes": 0,
+            "planeOutliers": 0,
+            "chiralOutliers": 0,
+            "mapeamento": "modelo",
+            "temCoordenadas": true,
+            "labelDivergente": false,
+            "outlier": false
+          },
+          {
+            "chain": "A",
+            "resnum": 25,
+            "icode": "",
+            "resname": "ILE",
+            "model": 1,
+            "altcode": "",
+            "said": "A",
+            "ent": "1",
+            "seqLabel": 25,
+            "rama": "Favored",
+            "rota": "mm",
+            "bondOutliers": 0,
+            "angleOutliers": 0,
+            "clashes": 0,
+            "planeOutliers": 0,
+            "chiralOutliers": 0,
+            "mapeamento": "modelo",
+            "temCoordenadas": true,
+            "labelDivergente": false,
+            "outlier": false
+          },
+          {
+            "chain": "A",
+            "resnum": 26,
+            "icode": "",
+            "resname": "CYS",
+            "model": 1,
+            "altcode": "",
+            "said": "A",
+            "ent": "1",
+            "seqLabel": 26,
+            "rama": "Favored",
+            "rota": "m",
+            "bondOutliers": 0,
+            "angleOutliers": 0,
+            "clashes": 0,
+            "planeOutliers": 0,
+            "chiralOutliers": 0,
+            "mapeamento": "modelo",
+            "temCoordenadas": true,
+            "labelDivergente": false,
+            "outlier": false
+          },
+          {
+            "chain": "A",
+            "resnum": 27,
+            "icode": "",
+            "resname": "ALA",
+            "model": 1,
+            "altcode": "",
+            "said": "A",
+            "ent": "1",
+            "seqLabel": 27,
+            "rama": "Favored",
+            "rota": null,
+            "bondOutliers": 0,
+            "angleOutliers": 0,
+            "clashes": 0,
+            "planeOutliers": 0,
+            "chiralOutliers": 0,
+            "mapeamento": "modelo",
+            "temCoordenadas": true,
+            "labelDivergente": false,
+            "outlier": false
+          },
+          {
+            "chain": "A",
+            "resnum": 28,
+            "icode": "",
+            "resname": "THR",
+            "model": 1,
+            "altcode": "",
+            "said": "A",
+            "ent": "1",
+            "seqLabel": 28,
+            "rama": "Favored",
+            "rota": "p",
+            "bondOutliers": 0,
+            "angleOutliers": 0,
+            "clashes": 0,
+            "planeOutliers": 0,
+            "chiralOutliers": 0,
+            "mapeamento": "modelo",
+            "temCoordenadas": true,
+            "labelDivergente": false,
+            "outlier": false
+          },
+          {
+            "chain": "A",
+            "resnum": 29,
+            "icode": "",
+            "resname": "TYR",
+            "model": 1,
+            "altcode": "",
+            "said": "A",
+            "ent": "1",
+            "seqLabel": 29,
+            "rama": "Favored",
+            "rota": "t80",
+            "bondOutliers": 0,
+            "angleOutliers": 0,
+            "clashes": 0,
+            "planeOutliers": 0,
+            "chiralOutliers": 0,
+            "mapeamento": "modelo",
+            "temCoordenadas": true,
+            "labelDivergente": false,
+            "outlier": false
+          },
+          {
+            "chain": "A",
+            "resnum": 30,
+            "icode": "",
+            "resname": "THR",
+            "model": 1,
+            "altcode": "",
+            "said": "A",
+            "ent": "1",
+            "seqLabel": 30,
+            "rama": "Favored",
+            "rota": "p",
+            "bondOutliers": 0,
+            "angleOutliers": 0,
+            "clashes": 0,
+            "planeOutliers": 0,
+            "chiralOutliers": 0,
+            "mapeamento": "modelo",
+            "temCoordenadas": true,
+            "labelDivergente": false,
+            "outlier": false
+          },
+          {
+            "chain": "A",
+            "resnum": 31,
+            "icode": "",
+            "resname": "GLY",
+            "model": 1,
+            "altcode": "",
+            "said": "A",
+            "ent": "1",
+            "seqLabel": 31,
+            "rama": "Favored",
+            "rota": null,
+            "bondOutliers": 0,
+            "angleOutliers": 0,
+            "clashes": 0,
+            "planeOutliers": 0,
+            "chiralOutliers": 0,
+            "mapeamento": "modelo",
+            "temCoordenadas": true,
+            "labelDivergente": false,
+            "outlier": false
+          },
+          {
+            "chain": "A",
+            "resnum": 32,
+            "icode": "",
+            "resname": "CYS",
+            "model": 1,
+            "altcode": "",
+            "said": "A",
+            "ent": "1",
+            "seqLabel": 32,
+            "rama": "Favored",
+            "rota": "m",
+            "bondOutliers": 0,
+            "angleOutliers": 0,
+            "clashes": 0,
+            "planeOutliers": 0,
+            "chiralOutliers": 0,
+            "mapeamento": "modelo",
+            "temCoordenadas": true,
+            "labelDivergente": false,
+            "outlier": false
+          },
+          {
+            "chain": "A",
+            "resnum": 33,
+            "icode": "",
+            "resname": "ILE",
+            "model": 1,
+            "altcode": "",
+            "said": "A",
+            "ent": "1",
+            "seqLabel": 33,
+            "rama": "Favored",
+            "rota": "pt",
+            "bondOutliers": 0,
+            "angleOutliers": 0,
+            "clashes": 0,
+            "planeOutliers": 0,
+            "chiralOutliers": 0,
+            "mapeamento": "modelo",
+            "temCoordenadas": true,
+            "labelDivergente": false,
+            "outlier": false
+          },
+          {
+            "chain": "A",
+            "resnum": 34,
+            "icode": "",
+            "resname": "ILE",
+            "model": 1,
+            "altcode": "",
+            "said": "A",
+            "ent": "1",
+            "seqLabel": 34,
+            "rama": "Favored",
+            "rota": "mt",
+            "bondOutliers": 0,
+            "angleOutliers": 0,
+            "clashes": 0,
+            "planeOutliers": 0,
+            "chiralOutliers": 0,
+            "mapeamento": "modelo",
+            "temCoordenadas": true,
+            "labelDivergente": false,
+            "outlier": false
+          },
+          {
+            "chain": "A",
+            "resnum": 35,
+            "icode": "",
+            "resname": "ILE",
+            "model": 1,
+            "altcode": "",
+            "said": "A",
+            "ent": "1",
+            "seqLabel": 35,
+            "rama": "Favored",
+            "rota": "pt",
+            "bondOutliers": 0,
+            "angleOutliers": 0,
+            "clashes": 0,
+            "planeOutliers": 0,
+            "chiralOutliers": 0,
+            "mapeamento": "modelo",
+            "temCoordenadas": true,
+            "labelDivergente": false,
+            "outlier": false
+          },
+          {
+            "chain": "A",
+            "resnum": 36,
+            "icode": "",
+            "resname": "PRO",
+            "model": 1,
+            "altcode": "",
+            "said": "A",
+            "ent": "1",
+            "seqLabel": 36,
+            "rama": "Favored",
+            "rota": "Cg_endo",
+            "bondOutliers": 0,
+            "angleOutliers": 0,
+            "clashes": 0,
+            "planeOutliers": 0,
+            "chiralOutliers": 0,
+            "mapeamento": "modelo",
+            "temCoordenadas": true,
+            "labelDivergente": false,
+            "outlier": false
+          },
+          {
+            "chain": "A",
+            "resnum": 37,
+            "icode": "",
+            "resname": "GLY",
+            "model": 1,
+            "altcode": "",
+            "said": "A",
+            "ent": "1",
+            "seqLabel": 37,
+            "rama": "Favored",
+            "rota": null,
+            "bondOutliers": 1,
+            "angleOutliers": 0,
+            "clashes": 0,
+            "planeOutliers": 0,
+            "chiralOutliers": 0,
+            "mapeamento": "modelo",
+            "temCoordenadas": true,
+            "labelDivergente": false,
+            "outlier": true
+          },
+          {
+            "chain": "A",
+            "resnum": 38,
+            "icode": "",
+            "resname": "ALA",
+            "model": 1,
+            "altcode": "",
+            "said": "A",
+            "ent": "1",
+            "seqLabel": 38,
+            "rama": "Favored",
+            "rota": null,
+            "bondOutliers": 0,
+            "angleOutliers": 0,
+            "clashes": 0,
+            "planeOutliers": 0,
+            "chiralOutliers": 0,
+            "mapeamento": "modelo",
+            "temCoordenadas": true,
+            "labelDivergente": false,
+            "outlier": false
+          },
+          {
+            "chain": "A",
+            "resnum": 39,
+            "icode": "",
+            "resname": "THR",
+            "model": 1,
+            "altcode": "",
+            "said": "A",
+            "ent": "1",
+            "seqLabel": 39,
+            "rama": "Favored",
+            "rota": "m",
+            "bondOutliers": 0,
+            "angleOutliers": 0,
+            "clashes": 0,
+            "planeOutliers": 0,
+            "chiralOutliers": 0,
+            "mapeamento": "modelo",
+            "temCoordenadas": true,
+            "labelDivergente": false,
+            "outlier": false
+          },
+          {
+            "chain": "A",
+            "resnum": 40,
+            "icode": "",
+            "resname": "CYS",
+            "model": 1,
+            "altcode": "",
+            "said": "A",
+            "ent": "1",
+            "seqLabel": 40,
+            "rama": "Favored",
+            "rota": "m",
+            "bondOutliers": 0,
+            "angleOutliers": 0,
+            "clashes": 0,
+            "planeOutliers": 0,
+            "chiralOutliers": 0,
+            "mapeamento": "modelo",
+            "temCoordenadas": true,
+            "labelDivergente": false,
+            "outlier": false
+          },
+          {
+            "chain": "A",
+            "resnum": 41,
+            "icode": "",
+            "resname": "PRO",
+            "model": 1,
+            "altcode": "",
+            "said": "A",
+            "ent": "1",
+            "seqLabel": 41,
+            "rama": "Favored",
+            "rota": "Cg_endo",
+            "bondOutliers": 0,
+            "angleOutliers": 0,
+            "clashes": 0,
+            "planeOutliers": 0,
+            "chiralOutliers": 0,
+            "mapeamento": "modelo",
+            "temCoordenadas": true,
+            "labelDivergente": false,
+            "outlier": false
+          },
+          {
+            "chain": "A",
+            "resnum": 42,
+            "icode": "",
+            "resname": "GLY",
+            "model": 1,
+            "altcode": "",
+            "said": "A",
+            "ent": "1",
+            "seqLabel": 42,
+            "rama": "Favored",
+            "rota": null,
+            "bondOutliers": 0,
+            "angleOutliers": 0,
+            "clashes": 0,
+            "planeOutliers": 0,
+            "chiralOutliers": 0,
+            "mapeamento": "modelo",
+            "temCoordenadas": true,
+            "labelDivergente": false,
+            "outlier": false
+          },
+          {
+            "chain": "A",
+            "resnum": 43,
+            "icode": "",
+            "resname": "ASP",
+            "model": 1,
+            "altcode": "",
+            "said": "A",
+            "ent": "1",
+            "seqLabel": 43,
+            "rama": "Favored",
+            "rota": "p0",
+            "bondOutliers": 0,
+            "angleOutliers": 0,
+            "clashes": 0,
+            "planeOutliers": 0,
+            "chiralOutliers": 0,
+            "mapeamento": "modelo",
+            "temCoordenadas": true,
+            "labelDivergente": false,
+            "outlier": false
+          },
+          {
+            "chain": "A",
+            "resnum": 44,
+            "icode": "",
+            "resname": "TYR",
+            "model": 1,
+            "altcode": "",
+            "said": "A",
+            "ent": "1",
+            "seqLabel": 44,
+            "rama": "Allowed",
+            "rota": "m-80",
+            "bondOutliers": 0,
+            "angleOutliers": 0,
+            "clashes": 0,
+            "planeOutliers": 0,
+            "chiralOutliers": 0,
+            "mapeamento": "modelo",
+            "temCoordenadas": true,
+            "labelDivergente": false,
+            "outlier": false
+          },
+          {
+            "chain": "A",
+            "resnum": 45,
+            "icode": "",
+            "resname": "ALA",
+            "model": 1,
+            "altcode": "",
+            "said": "A",
+            "ent": "1",
+            "seqLabel": 45,
+            "rama": "Favored",
+            "rota": null,
+            "bondOutliers": 0,
+            "angleOutliers": 0,
+            "clashes": 0,
+            "planeOutliers": 0,
+            "chiralOutliers": 0,
+            "mapeamento": "modelo",
+            "temCoordenadas": true,
+            "labelDivergente": false,
+            "outlier": false
+          },
+          {
+            "chain": "A",
+            "resnum": 46,
+            "icode": "",
+            "resname": "ASN",
+            "model": 1,
+            "altcode": "",
+            "said": "A",
+            "ent": "1",
+            "seqLabel": 46,
+            "rama": null,
+            "rota": "m110",
+            "bondOutliers": 0,
+            "angleOutliers": 0,
+            "clashes": 0,
+            "planeOutliers": 0,
+            "chiralOutliers": 0,
+            "mapeamento": "modelo",
+            "temCoordenadas": true,
+            "labelDivergente": false,
+            "outlier": false
+          }
+        ],
+        "aviso": "Indicador por resíduo só existe quando o relatório traz ModelledSubgroup com chain (auth_asym_id), resnum (auth_seq_id) e model, e essa posição tem coordenada no modelo selecionado. Lacuna sem coordenada não recebe qualidade local. Resíduo que não está no relatório não é preenchido com zero."
+      },
+      "avisoGlobal": "O relatório wwPDB e os indicadores globais não garantem a qualidade local do sítio. Um valor global pode conviver com problema no local de interesse.",
+      "avisoVizinho": "Lista de resíduos próximos por distância não entra nesta versão."
+    },
+    "texto": "Contrato peki-qualidade-1.\nEstado: ok. Consulta: xml.\nFonte: wwPDB validation report.\nURL: https://www.ebi.ac.uk/pdbe/entry-files/download/1crn_validation.xml\nData no relatório: Mar  5, 2026 -- 06:54 PM UTC.\nID no relatório: 1CRN.\nClasse efetiva: xray.\nResolução alta citada no relatório: 1.50 Å.\nClashscore: 0.00.\nRamachandran outliers: 0.00 %.\nRotâmeros outliers: 0.00 %.\nRMSZ dos comprimentos de ligação: 1.50.\nRMSZ dos ângulos de ligação: 1.55.\nNão exibidos porque o relatório não trouxe valor: Rwork citado pelo relatório (refinamento depositado) (o relatório marca NotAvailable); Rfree citado pelo relatório (refinamento depositado) (o relatório marca NotAvailable); R recalculado pelo EDS (não informado no relatório); R da verificação DCC (não informado no relatório); Rfree da verificação DCC (não informado no relatório); Completude dos dados no relatório (não informado no relatório); Resíduos com RSRZ outlier (não informado no relatório); Correlação Fo–Fc no relatório (não informado no relatório); Reflexões livres na reanálise (num-free-reflections) (não informado no relatório).\nO relatório wwPDB e os indicadores globais não garantem a qualidade local do sítio. Um valor global pode conviver com problema no local de interesse.\nQualidade local: subgrupos lidos 46; de outro modelo 0; sem chain/resnum/model 0.\nCadeia A: 46 de 46 posições com coordenada têm indicador; 0 sem indicador no relatório; lacunas sem coordenada 0.\nIndicador por resíduo só existe quando o relatório traz ModelledSubgroup com chain (auth_asym_id), resnum (auth_seq_id) e model, e essa posição tem coordenada no modelo selecionado. Lacuna sem coordenada não recebe qualidade local. Resíduo que não está no relatório não é preenchido com zero.\nLista de resíduos próximos por distância não entra nesta versão.",
+    "alternativa": {
+      "schema": "peki-qualidade-1",
+      "estado": "ok",
+      "codigo": null,
+      "mensagem": null,
+      "id": "1CRN",
+      "consulta": "rcsb-json",
+      "fonte": {
+        "nome": "wwPDB validation report via RCSB Data API (pdbx_vrpt_summary*)",
+        "distribuicao": "RCSB Data API",
+        "url": "https://data.rcsb.org/rest/v1/core/entry/1CRN",
+        "documento": "https://www.rcsb.org/news/feature/67edb6c196cbbd16fc52edb0",
+        "pdbid": "1CRN",
+        "data": "2026-03-05T18:54:00.000+00:00"
+      },
+      "links": {
+        "xml": "https://www.ebi.ac.uk/pdbe/entry-files/download/1crn_validation.xml",
+        "json": "https://data.rcsb.org/rest/v1/core/entry/1CRN",
+        "pdf": "https://files.rcsb.org/pub/pdb/validation_reports/cr/1crn/1crn_validation.pdf.gz",
+        "xmlGzip": "https://files.rcsb.org/pub/pdb/validation_reports/cr/1crn/1crn_validation.xml.gz",
+        "rcsb": "https://www.rcsb.org/structure/1CRN",
+        "pdbe": "https://www.ebi.ac.uk/pdbe/entry/pdb/1crn",
+        "chemcomp": "https://data.rcsb.org/rest/v1/core/chemcomp/",
+        "pdbeComp": "https://www.ebi.ac.uk/pdbe/api/pdb/compound/summary/",
+        "ligante": "https://www.rcsb.org/ligand/"
+      },
+      "metodo": {
+        "classe": "xray",
+        "arquivo": "xray",
+        "relatorio": "xray",
+        "conflito": false
+      },
+      "metricas": [
+        {
+          "id": "resolucao",
+          "rotulo": "Resolução alta citada no relatório. Fonte desta consulta: refinamento depositado na Data API.",
+          "unidade": "Å",
+          "grupo": "experimento",
+          "valor": 1.5,
+          "texto": "1.5",
+          "chave": "PDB-resolution"
+        },
+        {
+          "id": "clashscore",
+          "rotulo": "Clashscore",
+          "unidade": null,
+          "grupo": "geometria",
+          "valor": 0,
+          "texto": "0",
+          "chave": "clashscore"
+        },
+        {
+          "id": "rama",
+          "rotulo": "Ramachandran outliers",
+          "unidade": "%",
+          "grupo": "geometria",
+          "valor": 0,
+          "texto": "0",
+          "chave": "percent-rama-outliers"
+        },
+        {
+          "id": "rotamer",
+          "rotulo": "Rotâmeros outliers",
+          "unidade": "%",
+          "grupo": "geometria",
+          "valor": 0,
+          "texto": "0",
+          "chave": "percent-rota-outliers"
+        },
+        {
+          "id": "bonds_rmsz",
+          "rotulo": "RMSZ dos comprimentos de ligação",
+          "unidade": null,
+          "grupo": "geometria",
+          "valor": 1.5,
+          "texto": "1.5",
+          "chave": "bonds_rmsz"
+        },
+        {
+          "id": "angles_rmsz",
+          "rotulo": "RMSZ dos ângulos de ligação",
+          "unidade": null,
+          "grupo": "geometria",
+          "valor": 1.55,
+          "texto": "1.55",
+          "chave": "angles_rmsz"
+        }
+      ],
+      "omitidos": [
+        {
+          "id": "rwork",
+          "rotulo": "Rwork citado pelo relatório (refinamento depositado)",
+          "motivo": "não informado no relatório"
+        },
+        {
+          "id": "rfree",
+          "rotulo": "Rfree citado pelo relatório (refinamento depositado)",
+          "motivo": "não informado no relatório"
+        },
+        {
+          "id": "eds_r",
+          "rotulo": "R recalculado pelo EDS",
+          "motivo": "não informado no relatório"
+        },
+        {
+          "id": "dcc_r",
+          "rotulo": "R da verificação DCC",
+          "motivo": "não informado no relatório"
+        },
+        {
+          "id": "dcc_rfree",
+          "rotulo": "Rfree da verificação DCC",
+          "motivo": "não informado no relatório"
+        },
+        {
+          "id": "completude",
+          "rotulo": "Completude dos dados no relatório",
+          "motivo": "não informado no relatório"
+        },
+        {
+          "id": "rsrz",
+          "rotulo": "Resíduos com RSRZ outlier",
+          "motivo": "não informado no relatório"
+        },
+        {
+          "id": "fofc",
+          "rotulo": "Correlação Fo–Fc no relatório",
+          "motivo": "não informado no relatório"
+        },
+        {
+          "id": "reflexoes_livres",
+          "rotulo": "Reflexões livres na reanálise (num-free-reflections)",
+          "motivo": "não informado no relatório"
+        }
+      ],
+      "naoAplicaveis": [],
+      "avisos": [
+        "Indicadores por resíduo ficam pendentes: esta consulta leu o resumo JSON, não o XML com ModelledSubgroup."
+      ],
+      "local": {
+        "estado": "pendente",
+        "motivo": "O XML wwPDB com chain, resnum e model não foi lido nesta consulta. Não há painel local simulado.",
+        "itens": [],
+        "porCadeia": {},
+        "aviso": "Indicador por resíduo só existe quando o relatório traz ModelledSubgroup com chain (auth_asym_id), resnum (auth_seq_id) e model, e essa posição tem coordenada no modelo selecionado. Lacuna sem coordenada não recebe qualidade local. Resíduo que não está no relatório não é preenchido com zero."
+      },
+      "avisoGlobal": "O relatório wwPDB e os indicadores globais não garantem a qualidade local do sítio. Um valor global pode conviver com problema no local de interesse.",
+      "avisoVizinho": "Lista de resíduos próximos por distância não entra nesta versão."
+    }
+  },
+  "3DWU": {
+    "relatorio": {
+      "schema": "peki-qualidade-1",
+      "estado": "ok",
+      "codigo": null,
+      "mensagem": null,
+      "id": "3DWU",
+      "consulta": "xml",
+      "fonte": {
+        "nome": "wwPDB validation report",
+        "distribuicao": "PDBe entry-files",
+        "url": "https://www.ebi.ac.uk/pdbe/entry-files/download/3dwu_validation.xml",
+        "schemaXsd": "http://wwpdb.org/validation/schema/wwpdb_validation_v6.06.xsd",
+        "pdbid": "3DWU",
+        "data": "Mar  6, 2026 -- 07:48 PM UTC",
+        "percentilebins": "all,em"
+      },
+      "links": {
+        "xml": "https://www.ebi.ac.uk/pdbe/entry-files/download/3dwu_validation.xml",
+        "json": "https://data.rcsb.org/rest/v1/core/entry/3DWU",
+        "pdf": "https://files.rcsb.org/pub/pdb/validation_reports/dw/3dwu/3dwu_validation.pdf.gz",
+        "xmlGzip": "https://files.rcsb.org/pub/pdb/validation_reports/dw/3dwu/3dwu_validation.xml.gz",
+        "rcsb": "https://www.rcsb.org/structure/3DWU",
+        "pdbe": "https://www.ebi.ac.uk/pdbe/entry/pdb/3dwu",
+        "chemcomp": "https://data.rcsb.org/rest/v1/core/chemcomp/",
+        "pdbeComp": "https://www.ebi.ac.uk/pdbe/api/pdb/compound/summary/",
+        "ligante": "https://www.rcsb.org/ligand/"
+      },
+      "metodo": {
+        "classe": "em",
+        "arquivo": null,
+        "relatorio": "em",
+        "conflito": false
+      },
+      "metricas": [
+        {
+          "id": "resolucao_reconstrucao",
+          "rotulo": "Resolução da reconstrução citada no relatório",
+          "unidade": "Å",
+          "grupo": "experimento",
+          "valor": 12.6,
+          "texto": "12.60",
+          "chave": "PDB-resolution"
+        },
+        {
+          "id": "resolucao_emdb",
+          "rotulo": "Resolução informada ao EMDB",
+          "unidade": "Å",
+          "grupo": "experimento",
+          "valor": 12.6,
+          "texto": "12.6",
+          "chave": "EMDB-resolution"
+        },
+        {
+          "id": "clashscore",
+          "rotulo": "Clashscore",
+          "unidade": null,
+          "grupo": "geometria",
+          "valor": 0,
+          "texto": "0.00",
+          "chave": "clashscore"
+        },
+        {
+          "id": "qscore",
+          "rotulo": "Q-score",
+          "unidade": null,
+          "grupo": "em",
+          "valor": -0.024,
+          "texto": "-0.024",
+          "chave": "Q_score"
+        },
+        {
+          "id": "inclusao",
+          "rotulo": "Inclusão de átomos no mapa",
+          "unidade": null,
+          "grupo": "em",
+          "valor": 0.457,
+          "texto": "0.4570",
+          "chave": "atom_inclusion_all_atoms"
+        },
+        {
+          "id": "inclusao_backbone",
+          "rotulo": "Inclusão do esqueleto no mapa",
+          "unidade": null,
+          "grupo": "em",
+          "valor": 0.457,
+          "texto": "0.4570",
+          "chave": "atom_inclusion_backbone"
+        }
+      ],
+      "omitidos": [
+        {
+          "id": "rama",
+          "rotulo": "Ramachandran outliers",
+          "motivo": "não informado no relatório"
+        },
+        {
+          "id": "rotamer",
+          "rotulo": "Rotâmeros outliers",
+          "motivo": "não informado no relatório"
+        },
+        {
+          "id": "bonds_rmsz",
+          "rotulo": "RMSZ dos comprimentos de ligação",
+          "motivo": "não informado no relatório"
+        },
+        {
+          "id": "angles_rmsz",
+          "rotulo": "RMSZ dos ângulos de ligação",
+          "motivo": "não informado no relatório"
+        }
+      ],
+      "naoAplicaveis": [
+        {
+          "id": "resolucao",
+          "rotulo": "Resolução alta citada no relatório",
+          "motivo": "não exibido: o método efetivo é em e esta métrica não foi tratada como cristalográfica"
+        }
+      ],
+      "avisos": [],
+      "local": {
+        "estado": "ok",
+        "motivo": null,
+        "modeloSelecionado": null,
+        "subgruposLidos": 1,
+        "subgruposOutroModelo": 0,
+        "campoAusente": 0,
+        "semIdentidadeAuthor": 0,
+        "porCadeia": {
+          "A": {
+            "residuosComCoordenadas": 0,
+            "comIndicador": 0,
+            "semIndicador": 0,
+            "lacunasSemCoordenada": 0,
+            "subgrupos": 1,
+            "outliers": 0
+          }
+        },
+        "itens": [
+          {
+            "chain": "A",
+            "resnum": 20,
+            "icode": "",
+            "resname": "VAL",
+            "model": 1,
+            "altcode": "",
+            "said": "A",
+            "ent": "1",
+            "seqLabel": 1,
+            "rama": null,
+            "rota": null,
+            "bondOutliers": 0,
+            "angleOutliers": 0,
+            "clashes": 0,
+            "planeOutliers": 0,
+            "chiralOutliers": 0,
+            "mapeamento": "sem_residuo",
+            "temCoordenadas": false,
+            "labelDivergente": false,
+            "outlier": false
+          }
+        ],
+        "aviso": "Indicador por resíduo só existe quando o relatório traz ModelledSubgroup com chain (auth_asym_id), resnum (auth_seq_id) e model, e essa posição tem coordenada no modelo selecionado. Lacuna sem coordenada não recebe qualidade local. Resíduo que não está no relatório não é preenchido com zero."
+      },
+      "avisoGlobal": "O relatório wwPDB e os indicadores globais não garantem a qualidade local do sítio. Um valor global pode conviver com problema no local de interesse.",
+      "avisoVizinho": "Lista de resíduos próximos por distância não entra nesta versão."
+    },
+    "texto": "Contrato peki-qualidade-1.\nEstado: ok. Consulta: xml.\nFonte: wwPDB validation report.\nURL: https://www.ebi.ac.uk/pdbe/entry-files/download/3dwu_validation.xml\nData no relatório: Mar  6, 2026 -- 07:48 PM UTC.\nID no relatório: 3DWU.\nClasse efetiva: em.\nResolução da reconstrução citada no relatório: 12.60 Å.\nResolução informada ao EMDB: 12.6 Å.\nClashscore: 0.00.\nQ-score: -0.024.\nInclusão de átomos no mapa: 0.4570.\nInclusão do esqueleto no mapa: 0.4570.\nNão exibidos porque o relatório não trouxe valor: Ramachandran outliers (não informado no relatório); Rotâmeros outliers (não informado no relatório); RMSZ dos comprimentos de ligação (não informado no relatório); RMSZ dos ângulos de ligação (não informado no relatório).\nNão aplicados a este método: Resolução alta citada no relatório.\nO relatório wwPDB e os indicadores globais não garantem a qualidade local do sítio. Um valor global pode conviver com problema no local de interesse.\nQualidade local: subgrupos lidos 1; de outro modelo 0; sem chain/resnum/model 0.\nCadeia A: 0 de 0 posições com coordenada têm indicador; 0 sem indicador no relatório; lacunas sem coordenada 0.\nIndicador por resíduo só existe quando o relatório traz ModelledSubgroup com chain (auth_asym_id), resnum (auth_seq_id) e model, e essa posição tem coordenada no modelo selecionado. Lacuna sem coordenada não recebe qualidade local. Resíduo que não está no relatório não é preenchido com zero.\nLista de resíduos próximos por distância não entra nesta versão.",
+    "alternativa": {
+      "schema": "peki-qualidade-1",
+      "estado": "ok",
+      "codigo": null,
+      "mensagem": null,
+      "id": "3DWU",
+      "consulta": "rcsb-json",
+      "fonte": {
+        "nome": "wwPDB validation report via RCSB Data API (pdbx_vrpt_summary*)",
+        "distribuicao": "RCSB Data API",
+        "url": "https://data.rcsb.org/rest/v1/core/entry/3DWU",
+        "documento": "https://www.rcsb.org/news/feature/67edb6c196cbbd16fc52edb0",
+        "pdbid": "3DWU",
+        "data": "2026-03-06T19:48:00.000+00:00"
+      },
+      "links": {
+        "xml": "https://www.ebi.ac.uk/pdbe/entry-files/download/3dwu_validation.xml",
+        "json": "https://data.rcsb.org/rest/v1/core/entry/3DWU",
+        "pdf": "https://files.rcsb.org/pub/pdb/validation_reports/dw/3dwu/3dwu_validation.pdf.gz",
+        "xmlGzip": "https://files.rcsb.org/pub/pdb/validation_reports/dw/3dwu/3dwu_validation.xml.gz",
+        "rcsb": "https://www.rcsb.org/structure/3DWU",
+        "pdbe": "https://www.ebi.ac.uk/pdbe/entry/pdb/3dwu",
+        "chemcomp": "https://data.rcsb.org/rest/v1/core/chemcomp/",
+        "pdbeComp": "https://www.ebi.ac.uk/pdbe/api/pdb/compound/summary/",
+        "ligante": "https://www.rcsb.org/ligand/"
+      },
+      "metodo": {
+        "classe": "em",
+        "arquivo": "em",
+        "relatorio": "em",
+        "conflito": false
+      },
+      "metricas": [
+        {
+          "id": "resolucao_reconstrucao",
+          "rotulo": "Resolução combinada na Data API do RCSB (resolution_combined). Não é o campo PDB-resolution do XML.",
+          "unidade": "Å",
+          "grupo": "experimento",
+          "valor": 12.6,
+          "texto": "12.6",
+          "chave": "PDB-resolution"
+        },
+        {
+          "id": "clashscore",
+          "rotulo": "Clashscore",
+          "unidade": null,
+          "grupo": "geometria",
+          "valor": 0,
+          "texto": "0",
+          "chave": "clashscore"
+        },
+        {
+          "id": "qscore",
+          "rotulo": "Q-score",
+          "unidade": null,
+          "grupo": "em",
+          "valor": -0.024,
+          "texto": "-0.024",
+          "chave": "Q_score"
+        },
+        {
+          "id": "inclusao",
+          "rotulo": "Inclusão de átomos no mapa",
+          "unidade": null,
+          "grupo": "em",
+          "valor": 0.457,
+          "texto": "0.457",
+          "chave": "atom_inclusion_all_atoms"
+        },
+        {
+          "id": "inclusao_backbone",
+          "rotulo": "Inclusão do esqueleto no mapa",
+          "unidade": null,
+          "grupo": "em",
+          "valor": 0.457,
+          "texto": "0.457",
+          "chave": "atom_inclusion_backbone"
+        }
+      ],
+      "omitidos": [
+        {
+          "id": "resolucao_emdb",
+          "rotulo": "Resolução informada ao EMDB",
+          "motivo": "não informado no relatório"
+        },
+        {
+          "id": "rama",
+          "rotulo": "Ramachandran outliers",
+          "motivo": "não informado no relatório"
+        },
+        {
+          "id": "rotamer",
+          "rotulo": "Rotâmeros outliers",
+          "motivo": "não informado no relatório"
+        },
+        {
+          "id": "bonds_rmsz",
+          "rotulo": "RMSZ dos comprimentos de ligação",
+          "motivo": "não informado no relatório"
+        },
+        {
+          "id": "angles_rmsz",
+          "rotulo": "RMSZ dos ângulos de ligação",
+          "motivo": "não informado no relatório"
+        }
+      ],
+      "naoAplicaveis": [
+        {
+          "id": "resolucao",
+          "rotulo": "Resolução alta citada no relatório",
+          "motivo": "não exibido: o método efetivo é em e esta métrica não foi tratada como cristalográfica"
+        }
+      ],
+      "avisos": [
+        "Indicadores por resíduo ficam pendentes: esta consulta leu o resumo JSON, não o XML com ModelledSubgroup."
+      ],
+      "local": {
+        "estado": "pendente",
+        "motivo": "O XML wwPDB com chain, resnum e model não foi lido nesta consulta. Não há painel local simulado.",
+        "itens": [],
+        "porCadeia": {},
+        "aviso": "Indicador por resíduo só existe quando o relatório traz ModelledSubgroup com chain (auth_asym_id), resnum (auth_seq_id) e model, e essa posição tem coordenada no modelo selecionado. Lacuna sem coordenada não recebe qualidade local. Resíduo que não está no relatório não é preenchido com zero."
+      },
+      "avisoGlobal": "O relatório wwPDB e os indicadores globais não garantem a qualidade local do sítio. Um valor global pode conviver com problema no local de interesse.",
+      "avisoVizinho": "Lista de resíduos próximos por distância não entra nesta versão."
+    }
+  },
+  "componentes": [
+    {
+      "codigo": "ZN",
+      "estado": "ok",
+      "nome": "ZINC ION",
+      "tipo": "non-polymer",
+      "formula": "Zn",
+      "massa": 65.409,
+      "massaTexto": "65.409",
+      "links": [
+        {
+          "rotulo": "RCSB ligand ZN",
+          "url": "https://www.rcsb.org/ligand/ZN"
+        }
+      ],
+      "fonte": {
+        "nome": "wwPDB Chemical Component Dictionary via RCSB Data API",
+        "url": "https://data.rcsb.org/rest/v1/core/chemcomp/ZN"
+      },
+      "papelBiologico": null,
+      "aviso": "O tipo no Chemical Component Dictionary é classe química do dicionário. Não é cofator, substrato, inibidor, aditivo nem prova de estado holo."
+    },
+    {
+      "codigo": "HEM",
+      "estado": "ok",
+      "nome": "PROTOPORPHYRIN IX CONTAINING FE",
+      "tipo": "non-polymer",
+      "formula": "C34 H32 Fe N4 O4",
+      "massa": 616.487,
+      "massaTexto": "616.487",
+      "links": [
+        {
+          "rotulo": "RCSB ligand HEM",
+          "url": "https://www.rcsb.org/ligand/HEM"
+        }
+      ],
+      "fonte": {
+        "nome": "wwPDB Chemical Component Dictionary via RCSB Data API",
+        "url": "https://data.rcsb.org/rest/v1/core/chemcomp/HEM"
+      },
+      "papelBiologico": null,
+      "aviso": "O tipo no Chemical Component Dictionary é classe química do dicionário. Não é cofator, substrato, inibidor, aditivo nem prova de estado holo."
+    },
+    {
+      "codigo": "MSE",
+      "estado": "ok",
+      "nome": "SELENOMETHIONINE",
+      "tipo": "L-peptide linking",
+      "formula": "C5 H11 N O2 Se",
+      "massa": 196.106,
+      "massaTexto": "196.106",
+      "links": [
+        {
+          "rotulo": "RCSB ligand MSE",
+          "url": "https://www.rcsb.org/ligand/MSE"
+        },
+        {
+          "rotulo": "CHEBI:62621",
+          "url": "https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI:62621"
+        },
+        {
+          "rotulo": "CHEBI:30021",
+          "url": "https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI:30021"
+        }
+      ],
+      "fonte": {
+        "nome": "wwPDB Chemical Component Dictionary via RCSB Data API",
+        "url": "https://data.rcsb.org/rest/v1/core/chemcomp/MSE"
+      },
+      "papelBiologico": null,
+      "aviso": "O tipo no Chemical Component Dictionary é classe química do dicionário. Não é cofator, substrato, inibidor, aditivo nem prova de estado holo."
+    },
+    {
+      "codigo": "GOL",
+      "estado": "ok",
+      "nome": "GLYCEROL",
+      "tipo": "non-polymer",
+      "formula": "C3 H8 O3",
+      "massa": 92.094,
+      "massaTexto": "92.094",
+      "links": [
+        {
+          "rotulo": "RCSB ligand GOL",
+          "url": "https://www.rcsb.org/ligand/GOL"
+        },
+        {
+          "rotulo": "CHEBI:17754",
+          "url": "https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI:17754"
+        },
+        {
+          "rotulo": "CHEBI:17522",
+          "url": "https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI:17522"
+        }
+      ],
+      "fonte": {
+        "nome": "wwPDB Chemical Component Dictionary via RCSB Data API",
+        "url": "https://data.rcsb.org/rest/v1/core/chemcomp/GOL"
+      },
+      "papelBiologico": null,
+      "aviso": "O tipo no Chemical Component Dictionary é classe química do dicionário. Não é cofator, substrato, inibidor, aditivo nem prova de estado holo."
+    },
+    {
+      "codigo": "HOH",
+      "estado": "ok",
+      "nome": "WATER",
+      "tipo": "non-polymer",
+      "formula": "H2 O",
+      "massa": 18.015,
+      "massaTexto": "18.015",
+      "links": [
+        {
+          "rotulo": "RCSB ligand HOH",
+          "url": "https://www.rcsb.org/ligand/HOH"
+        },
+        {
+          "rotulo": "CHEBI:25805",
+          "url": "https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI:25805"
+        },
+        {
+          "rotulo": "CHEBI:15377",
+          "url": "https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI:15377"
+        }
+      ],
+      "fonte": {
+        "nome": "wwPDB Chemical Component Dictionary via RCSB Data API",
+        "url": "https://data.rcsb.org/rest/v1/core/chemcomp/HOH"
+      },
+      "papelBiologico": null,
+      "aviso": "O tipo no Chemical Component Dictionary é classe química do dicionário. Não é cofator, substrato, inibidor, aditivo nem prova de estado holo."
+    }
+  ]
+}
