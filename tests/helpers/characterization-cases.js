@@ -266,4 +266,5 @@ async function exportsCase() {
 }
 
 module.exports = { ROOT, GOLDENS, NOW, read, json, browser, models, syntheticPdb,
-  cases: { structures, classic, quality, preparation, snapshots: snapshotFixtures, ranking, ensemble, pockets, exports: exportsCase } };
+  cases: { structures, classic, quality, preparation, snapshots: snapshotFixtures, ranking, ensemble, pockets, exports: exportsCase,
+    ...require("./ui-characterization-cases.js").cases } };

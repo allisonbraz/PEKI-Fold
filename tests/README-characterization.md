@@ -26,6 +26,8 @@ falha; os testes não atualizam expectativas automaticamente.
 | `ranking.json` | Pesos, empate, falta de dados, critério eliminatório, região, comparação com JSON antigo, decisão e relatórios Markdown/JSON. |
 | `ensemble.json` | Relatório completo, alinhamento por número/sequência, dependência da ordem de agrupamento, CSV e JSON `ensemble-1`. |
 | `exports.json` | Downloads individuais e da comparação: Markdown, CSV, FASTA e JSON; especificações de gráficos e conteúdo enviado pelo aplicativo ao gerador PDF, incluindo preparo. |
+| `prep-ui.json` | HTML integral de `montar` em sete etapas com 1CRN/4HHB: carga, seleção, decisões, caixa, edição inválida, pockets removidos e arquivo local; estado antes/depois e transição para mmCIF bloqueado. |
+| `ensemble-ui.json` | HTML integral de `htmlRelatorio` e sessão antes/depois em sete etapas: primeira montagem, edições, referência 4HHB, seleções obsoletas, estrutura removida, ausência de bolsões e ensemble vazio; inclui identidades compartilhadas das caixas. |
 
 As entradas reais reutilizam `pdbproteins/pdb1a00.pdb`, `pdb1a1c.pdb`,
 `pdb1a0n.pdb` e as fixtures já versionadas em `fixtures/estrutura/`,
@@ -42,7 +44,24 @@ como `12/11/2026, 12:00:00`, sem depender do fuso ou ICU da máquina.
 Os objetos são comparados no formato serializável em JSON, inclusive campos
 nulos e ordem dos arrays. A impressão JSON também é congelada onde há exportação.
 O harness executa os scripts originais em contextos VM isolados, sem inicializar
-a tela; controla apenas relógio e fronteiras de rede, download, gráficos e PDF.
+a tela; controla relógio e fronteiras de rede, download, gráficos e PDF.
+
+Para as duas interfaces, o harness acrescenta somente uma ponte de acesso no
+retorno do módulo, **em memória**, sem substituir os corpos das funções ou
+alterar `docs/`. O HTML retornado é comparado por inteiro, incluindo espaços,
+atributos e escapes. O DOM mínimo não interpreta HTML nem simula layout.
+`prep-ui` é inicializado por `aoCarregar`; seleção e edição usam os handlers
+originais. `montar` é chamado com estado antes/depois; coordenadas e análise
+volumosas ficam representadas por SHA-256, sem omitir as mudanças de seleção,
+decisões, cache, raios e Vina. A sessão do ensemble fica explícita, incluindo
+assinaturas e sugestões/edições de caixa; também são congelados os aliases e a
+ausência de mutação do relatório durante o render.
+
+As entradas novas são PDBs públicos 1CRN/4HHB em `fixtures/ui-render/`, com URLs
+e hashes em `ORIGEM.md`; o mmCIF 1CRN já existente é reutilizado. Os pockets,
+descritores e erros são simulados. Agrupar proteínas distintas aqui exercita a
+interface e suas divergências, sem afirmar equivalência biológica ou resultado
+real do DoGSite. O relógio é fixo e nenhuma rede é acessada por esses casos.
 
 Isto não é teste visual de 3Dmol/Plotly nem comparação binária de PDF. No PDF são
 verificados textos, tabelas, ordem das seções, imagens solicitadas e nome do
@@ -59,10 +78,15 @@ a seleção que perde inserções e a associação posicional de URLs após o fi
 de subpockets. São registros de bugs atuais, não validação científica. Uma
 correção futura deve alterar as expectativas em uma mudança separada.
 
+As interfaces também congelam caixas do preparo com dimensões não positivas,
+caixa/índice antigos após remover os pockets, seleção/cache retidos ao bloquear
+mmCIF e referências de caixa/pocket/grupo obsoletas no ensemble mesmo depois
+de a referência do 3D ser corrigida.
+
 ## Capturar uma nova referência deliberadamente
 
 Não execute isto para fazer passar uma refatoração com regressão. A captura
-abaixo sobrescreve apenas os nove JSON desta suíte e precisa de revisão do diff:
+abaixo sobrescreve os onze JSON desta suíte e precisa de revisão do diff:
 
 ```sh
 node tests/helpers/capture-characterization.js --write
@@ -72,3 +96,10 @@ node --test tests/characterization.test.js
 
 O comando sem `--write` recusa a gravação. As referências devem permanecer
 versionadas; não há captura automática durante testes ou publicação do site.
+
+Para capturar deliberadamente somente as novas interfaces, preservando as
+referências anteriores:
+
+```sh
+node tests/helpers/capture-characterization.js --write prep-ui ensemble-ui
+```

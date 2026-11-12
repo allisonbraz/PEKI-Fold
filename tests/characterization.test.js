@@ -47,3 +47,49 @@ test("comportamento conhecido: XML em blocos perde subgrupo após 64 KiB", async
   assert.equal(streamed.estado, "ok");
   assert.equal(streamed.local.subgruposLidos, 0);
 });
+
+test("comportamento conhecido: preparo aceita e renderiza caixa com tamanhos não positivos", async () => {
+  const output = await cases["prep-ui"]();
+  const step = output.etapas.find((s) => s.nome === "4HHB-caixa-negativa-aceita");
+  assert.deepStrictEqual(step.depois.vina.editada, {
+    center_x: 1, center_y: 2, center_z: 3, size_x: -5, size_y: 0, size_z: -2,
+  });
+  assert.match(step.html, /id="prep-sx"[^>]*value="-5"/);
+  assert.match(step.html, /id="prep-sy"[^>]*value="0"/);
+  assert.match(step.html, /id="prep-sz"[^>]*value="-2"/);
+});
+
+test("comportamento conhecido: remover pockets não invalida a caixa antiga do preparo", async () => {
+  const output = await cases["prep-ui"]();
+  const step = output.etapas.find((s) => s.nome === "4HHB-pockets-removidos-caixa-antiga");
+  assert.match(step.html, /Nenhum pocket detectado ainda/);
+  assert.match(step.html, /id="prep-sx"[^>]*value="-5"/);
+  assert.equal(step.depois.vina.pocketIdx, "1");
+  assert.equal(step.depois.cacheRes.length, 1);
+  assert.equal(output.pedidos.length, 1, "dois pedidos de sugestão compartilham o cache");
+});
+
+test("comportamento conhecido: mmCIF bloqueado mantém seleção e cache anteriores do preparo", async () => {
+  const step = (await cases["prep-ui"]()).bloqueadoMmcif;
+  assert.match(step.html, /mmCIF não foi enviado/);
+  assert.equal(step.depois.resultado, null);
+  assert.deepStrictEqual(step.depois.selecao, step.antes.selecao);
+  assert.deepStrictEqual(step.depois.cacheRes, step.antes.cacheRes);
+  assert.equal(step.depois.cacheRes.length, 1);
+});
+
+test("comportamento conhecido: ensemble corrige referência mas conserva caixa, pocket e grupo obsoletos", () => {
+  const output = cases["ensemble-ui"]();
+  const pocket = output.etapas.find((s) => s.nome === "pocket-e-grupo-obsoletos");
+  assert.equal(pocket.depois.sessao.bolsaoCaixa, "POCKET_REMOVIDO");
+  assert.match(pocket.html, /<option value="FIX-P_0" selected>/);
+  const step = output.etapas.find((s) => s.nome === "4HHB-removido-referencia-corrigida-caixa-obsoleta");
+  assert.equal(step.depois.sessao.referenciaId, "1CRN");
+  assert.equal(step.depois.sessao.estruturaCaixa, "4HHB");
+  assert.equal(step.depois.sessao.bolsaoCaixa, "POCKET_REMOVIDO");
+  assert.equal(step.depois.sessao.grupoId, "GRUPO_REMOVIDO");
+  assert.match(step.html, /Esta estrutura não tem bolsão neste agrupamento/);
+  for (const rendered of output.etapas) {
+    assert.deepStrictEqual(rendered.relatorioDepois, rendered.relatorioAntes, "render não altera o relatório: " + rendered.nome);
+  }
+});
