@@ -9,11 +9,20 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const POCKETS_CACHE = {};
 
 async function obterPockets(id, onTick, deveParar) {
+  const verificar = () => {
+    if (typeof deveParar === "function" && deveParar()) throw new Error("Cálculo cancelado.");
+  };
+  verificar();
   const chave = String(id).toUpperCase();
   if (POCKETS_CACHE[chave]) return POCKETS_CACHE[chave];
   const location = await dogsiteSubmit(id);
+  verificar();
   const resultado = await dogsitePoll(location, onTick, deveParar);
-  const txt = await (await fetch(resultado.result_table)).text();
+  verificar();
+  const resposta = await fetch(resultado.result_table);
+  verificar();
+  const txt = await resposta.text();
+  verificar();
   const pockets = parseTabelaPockets(txt);
   pockets.forEach((p, i) => { p.residuosUrl = (resultado.residues || [])[i] || null; });
   POCKETS_CACHE[chave] = { pockets, residues: resultado.residues || [] };
@@ -62,9 +71,11 @@ async function dogsitePoll(location, onTick, deveParar) {
     let r;
     try { r = await fetch(location, { headers: { Accept: "application/json" } }); }
     catch (e) { throw new Error("Conexão perdida durante o cálculo dos pockets."); }
+    if (parar()) throw new Error("Cálculo cancelado.");
     if (r.status === 429) throw new Error("Limite de uso da API atingido. Tente novamente em alguns minutos.");
     if (r.status === 200) {
       const d = await r.json();
+      if (parar()) throw new Error("Cálculo cancelado.");
       if (d.result_table) return d;
     }
     if (onTick) onTick(i + 1);

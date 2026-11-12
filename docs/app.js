@@ -30,9 +30,30 @@ const estado = {
   qualidade: null,    // contrato peki-qualidade-1, preenchido pela aba Qualidade
 };
 
+// Cada consulta guarda a geração da estrutura e sua própria sequência.
+let geracaoEstrutura = 0;
+const sequenciasConsulta = new Map();
+function novaConsulta(chave) {
+  const g = geracaoEstrutura;
+  const seq = (sequenciasConsulta.get(chave) || 0) + 1;
+  sequenciasConsulta.set(chave, seq);
+  return () => g === geracaoEstrutura && seq === sequenciasConsulta.get(chave);
+}
+
+function invalidarConsultasEstrutura() {
+  geracaoEstrutura += 1;
+  setLoading(false);
+  buscaNomeSeq += 1;
+  if (typeof geracaoVistaPocket !== "undefined") geracaoVistaPocket += 1;
+  if (typeof QualityUI !== "undefined") QualityUI.invalidar();
+  if (typeof PrepUI !== "undefined" && PrepUI.invalidarConsultas) PrepUI.invalidarConsultas();
+  if (typeof EnsembleUI !== "undefined" && EnsembleUI.invalidarConsultas) EnsembleUI.invalidarConsultas();
+  return geracaoEstrutura;
+}
+
 // Volta para a tela inicial (home), limpando a análise e a URL.
 function irParaHome() {
-  if (typeof QualityUI !== "undefined") QualityUI.invalidar();
+  invalidarConsultasEstrutura();
   if (typeof EnsembleUI !== "undefined" && EnsembleUI.aoFechar) EnsembleUI.aoFechar();
   const ens = $("#ensemble");
   if (ens) ens.hidden = true;
@@ -133,6 +154,7 @@ async function baixarEntrada(pdbId) {
 }
 
 async function analisar({ pdbId, file }) {
+  const g = invalidarConsultasEstrutura();
   limparErro();
   setLoading(true);
   try {
@@ -149,6 +171,7 @@ async function analisar({ pdbId, file }) {
       throw new Error("Envie um arquivo ou informe um ID.");
     }
 
+    if (g !== geracaoEstrutura) return;
     if (typeof StructureModel === "undefined") throw new Error("Leitor de estrutura indisponível.");
     const lido = StructureModel.ler(texto);
     if (!lido.ok) throw new Error(lido.erro.mensagem);
@@ -160,18 +183,20 @@ async function analisar({ pdbId, file }) {
     dados.estrutura = lido.estrutura;
     dados.textoViewer = lido.textoViewer;
     dados.viewerFormato = lido.viewerFormato;
-    await iniciarWorkspace(dados);
+    await iniciarWorkspace(dados, g);
+    if (g !== geracaoEstrutura) return;
     if (id) { enriquecerMetaRCSB(id); atualizarURL("pdb", id); } // enriquece + URL compartilhável
   } catch (e) {
-    mostrarErro(e.message);
+    if (g === geracaoEstrutura) mostrarErro(e.message);
   } finally {
-    setLoading(false);
+    if (g === geracaoEstrutura) setLoading(false);
   }
 }
 
 // ----- workspace -----
-async function iniciarWorkspace(dados) {
+async function iniciarWorkspace(dados, g = geracaoEstrutura) {
   await lib3D();
+  if (g !== geracaoEstrutura) return;
   estado.pdbText = dados.pdb_text;
   estado.textoViewer = dados.textoViewer || dados.pdb_text;
   estado.viewerFormato = dados.viewerFormato || "pdb";
@@ -312,8 +337,9 @@ async function buscarMetaRCSB(id) {
 }
 
 async function enriquecerMetaRCSB(id) {
+  const atual = novaConsulta("metadados");
   const rcsb = await buscarMetaRCSB(id);
-  if (!rcsb || !estado.meta || estado.pdbId !== id) return; // ignora se já trocou de análise
+  if (!atual() || !rcsb || !estado.meta || estado.pdbId !== id) return; // ignora se já trocou de análise
   for (const k of ["titulo", "metodo", "resolucao", "peso", "data", "classificacao"]) {
     if (rcsb[k] != null) estado.meta[k] = rcsb[k];
   }
@@ -709,6 +735,7 @@ function itensAAOrdenados(freq) {
 }
 
 async function plotAA() {
+  const atual = novaConsulta("graficoAA");
   const sel = $("#aa-cadeia");
   const escopo = sel ? sel.value : "*";
   const freq = frequenciaDoEscopo(estado.dados, escopo);
@@ -721,7 +748,9 @@ async function plotAA() {
   }
   renderAtalhoMotivo(freq);
   if (!freq) return;
-  await libPlotly();
+  try { await libPlotly(); }
+  catch (e) { if (!atual()) return; throw e; }
+  if (!atual()) return;
 
   const itens = itensAAOrdenados(freq);
   const x = itens.map((i) => i.aa);
@@ -745,6 +774,7 @@ async function plotAA() {
     font: { color: escuro ? "#e7edf7" : "#1c2433" },
   }, { responsive: true, displayModeBar: false });
 
+  if (!atual()) return;
   const graf = document.getElementById("aa-grafico");
   if (graf && graf.on && !graf._pekiAaClick) {
     graf._pekiAaClick = true;
@@ -952,6 +982,7 @@ function renderPockets() {
 
 async function detectarPockets() {
   if (!estado.pdbId) return;
+  const atual = novaConsulta("pockets");
   const btn = $("#btn-pockets");
   const status = $("#pockets-status");
   const cont = $("#pockets-resultado");
@@ -963,8 +994,9 @@ async function detectarPockets() {
 
   try {
     const { pockets } = await obterPockets(estado.pdbId, (n) => {
-      status.innerHTML = `<span class="spinner"></span> Calculando pockets no servidor… (verificação ${n})`;
-    });
+      if (atual()) status.innerHTML = `<span class="spinner"></span> Calculando pockets no servidor… (verificação ${n})`;
+    }, () => !atual());
+    if (!atual()) return;
     if (!pockets.length) throw new Error("Nenhum pocket retornado pela API.");
 
     estado.pockets = pockets;
@@ -972,6 +1004,7 @@ async function detectarPockets() {
     status.textContent = `✓ ${pockets.length} pocket(s)${cacheado ? " (do cache)" : ""} para ${estado.pdbId}.`;
     renderTabelaPockets(pockets);
   } catch (e) {
+    if (!atual()) return;
     estado.pockets = null;
     estado.pocketsInfo = { estado: "erro", motivo: e.message };
     status.innerHTML = `❌ ${e.message}`;
@@ -1115,7 +1148,10 @@ function renderTabelaPockets(pockets) {
 }
 
 async function plotPockets(pockets) {
-  await libPlotly();
+  const atual = novaConsulta("graficoPockets");
+  try { await libPlotly(); }
+  catch (e) { if (!atual()) return; throw e; }
+  if (!atual()) return;
   const escuro = document.body.dataset.theme === "dark";
   const nomes = pockets.map((p) => p.name);
   const layoutBase = (titulo, ytitulo) => ({
@@ -1228,6 +1264,7 @@ function acaoCampo(valor) {
 }
 
 async function listarPorNome(nome) {
+  invalidarConsultasEstrutura();
   const seq = ++buscaNomeSeq;
   limparErro();
   const painel = $("#busca-nome");

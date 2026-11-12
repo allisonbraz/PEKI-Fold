@@ -137,9 +137,13 @@ const EnsembleUI = (() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  function aoFechar() {
+  function invalidarConsultas() {
     geracao += 1;
     cancelado = true;
+  }
+
+  function aoFechar() {
+    invalidarConsultas();
     const main = $("ensemble");
     if (main) main.hidden = true;
     const box = $("ens-progresso");
@@ -514,6 +518,7 @@ const EnsembleUI = (() => {
   }
 
   function abrirSessao(nova, mensagem) {
+    if (typeof invalidarConsultasEstrutura === "function") invalidarConsultasEstrutura();
     geracao += 1;
     cancelado = true;
     setRodando(false);
@@ -563,9 +568,12 @@ const EnsembleUI = (() => {
 
   async function abrirArquivo(file) {
     if (!ATIVO || typeof EnsembleAnalysis === "undefined") return;
+    if (typeof invalidarConsultasEstrutura === "function") invalidarConsultasEstrutura();
+    const g = ++geracao;
     let texto;
     try { texto = await file.text(); }
-    catch (e) { erroHome("Não foi possível ler o arquivo."); return; }
+    catch (e) { if (g === geracao) erroHome("Não foi possível ler o arquivo."); return; }
+    if (g !== geracao) return;
     if (typeof StructureModel !== "undefined" && StructureModel.pareceMmcif(texto)) {
       erroHome("O ensemble desta versão lê PDB com MODEL/ENDMDL. Este mmCIF não foi interpretado como colunas PDB nem enviado ao DoGSite.");
       return;
@@ -687,7 +695,9 @@ const EnsembleUI = (() => {
   async function chamarUm(item, g, onMsg) {
     if (item.origem === "pdb" && !item.texto) {
       onMsg(item.rotulo + " — baixando coordenadas no RCSB");
-      item.texto = await baixarRCSB(item.id);
+      const texto = await baixarRCSB(item.id);
+      if (parar(g)) throw new Error("Cálculo cancelado.");
+      item.texto = texto;
       if (typeof StructureModel !== "undefined" && !StructureModel.pareceCoordenadaPdb(item.texto)) {
         throw new Error("O PDB baixado para o ensemble não tem coordenadas em colunas PDB. O texto não foi lido como PDB.");
       }
@@ -708,12 +718,14 @@ const EnsembleUI = (() => {
       onMsg(item.rotulo + " — enviando o modelo à ProteinsPlus");
       codigo = await enviarModelo(item.texto, () => parar(g));
     }
+    if (parar(g)) throw new Error("Cálculo cancelado.");
     onMsg(item.rotulo + " — na fila do DoGSiteScorer");
     let pacote;
     if (item.origem !== "modelo" && typeof obterPockets === "function") {
       pacote = await obterPockets(codigo, (n) => onMsg(item.rotulo + " — verificação " + n + " no DoGSiteScorer"), () => parar(g));
     } else {
       const location = await dogsiteSubmit(codigo, { preservarCaixa: true });
+      if (parar(g)) throw new Error("Cálculo cancelado.");
       const resultado = await dogsitePoll(location, (n) => onMsg(item.rotulo + " — verificação " + n + " no DoGSiteScorer"), () => parar(g));
       const txt = await (await fetch(resultado.result_table)).text();
       const pockets = parseTabelaPockets(txt);
@@ -722,6 +734,7 @@ const EnsembleUI = (() => {
     }
     if (!pacote.pockets.length) throw new Error("Nenhum pocket retornado pela API.");
     const resumo = await comResiduos(pacote.pockets, () => parar(g));
+    if (parar(g)) throw new Error("Cálculo cancelado.");
     gravarCache(chave, resumo);
     item.usouRede = true;
     return resumo;
@@ -769,7 +782,7 @@ const EnsembleUI = (() => {
       item.estado = "calculando";
       renderLista(lista);
       try {
-        const pockets = await comBackoff(item, g, (msg) => setProgresso(i, lista.length, msg));
+        const pockets = await comBackoff(item, g, (msg) => { if (!parar(g)) setProgresso(i, lista.length, msg); });
         if (parar(g)) break;
         item.estado = item.usouRede ? "DoGSite concluído" : "cache";
         prontas.push({ ...item, erro: null, bolsos: pockets });
@@ -781,6 +794,7 @@ const EnsembleUI = (() => {
       }
       setProgresso(i + 1, lista.length, item.rotulo + " — " + item.estado + " (" + (i + 1) + " de " + lista.length + ")");
       if (item.usouRede && i < lista.length - 1 && !parar(g)) await esperar(params.pausaEntreChamadasMs, g);
+      if (g !== geracao) return;
       renderLista(lista);
     }
     if (g !== geracao) return;
@@ -823,7 +837,11 @@ const EnsembleUI = (() => {
     }
   }
 
+  let seqDesenho = 0;
   async function desenhar(extra) {
+    const g = geracao;
+    const seq = ++seqDesenho;
+    const atual = () => g === geracao && seq === seqDesenho;
     const est = estruturaRef();
     if (!est || !est.texto) {
       nota("Sem coordenadas da estrutura de referência para o 3D.");
@@ -832,6 +850,7 @@ const EnsembleUI = (() => {
     try {
       if (typeof lib3D !== "function") throw new Error("biblioteca 3D indisponível");
       await lib3D();
+      if (!atual()) return;
       const div = $("ens-viewer");
       if (!div) return;
       if (!viewer) {
@@ -871,6 +890,7 @@ const EnsembleUI = (() => {
       viewer.zoomTo();
       viewer.render();
     } catch (e) {
+      if (!atual()) return;
       const el = $("ens-viewer-nota");
       const base = el ? el.textContent : "";
       nota(base + " O 3D não abriu (" + e.message + "). Os números acima continuam válidos.");
@@ -1037,7 +1057,7 @@ const EnsembleUI = (() => {
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
   else init();
 
-  return { ativo, aoFechar, abrirPorUrl, abrirExemplo };
+  return { ativo, invalidarConsultas, aoFechar, abrirPorUrl, abrirExemplo };
 })();
 
 if (typeof globalThis !== "undefined") globalThis.EnsembleUI = EnsembleUI;

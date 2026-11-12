@@ -58,13 +58,13 @@ function harness() {
   return { context, element, load, get: (expression) => vm.runInContext(expression, context) };
 }
 
-const PREP_RETURN = "  return { ativo, temFicha, reiniciar, aoCarregar, aposEstilo, aoMostrar, markdown, anexarPdf, resumoAnalise };";
+const PREP_RETURN = "  return { ativo, temFicha, invalidarConsultas, reiniciar, aoCarregar, aposEstilo, aoMostrar, markdown, anexarPdf, resumoAnalise };";
 const PREP_BRIDGE = `  globalThis.prepTest = {
     montar, sugerirCaixa, aplicarTextoVina, onChange, onInput,
     state: () => ({ estado, resultado, selecao, destaque, caixaDesenhada,
       ouvintes, decisoes, cacheRes, raios, vina }),
   };`;
-const ENSEMBLE_RETURN = "  return { ativo, aoFechar, abrirPorUrl, abrirExemplo };";
+const ENSEMBLE_RETURN = "  return { ativo, invalidarConsultas, aoFechar, abrirPorUrl, abrirExemplo };";
 const ENSEMBLE_BRIDGE = `  globalThis.ensembleTest = {
     htmlRelatorio, gravarCache,
     setSession(value) { sessao = value; },

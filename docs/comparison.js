@@ -12,11 +12,13 @@ async function compararProteinas(idsRaw) {
   const invalido = ids.find((id) => !/^[0-9][A-Z0-9]{3}$/.test(id));
   if (invalido) { mostrarErro(`ID de PDB inválido: '${invalido}' (ex.: 1A00).`); return; }
 
+  const g = invalidarConsultasEstrutura();
   setLoading(true);
   try {
     const proteinas = [];
     for (const id of ids) {
       const texto = await baixarRCSB(id);
+      if (g !== geracaoEstrutura) return;
       if (typeof StructureModel !== "undefined" && !StructureModel.pareceCoordenadaPdb(texto)) {
         throw new Error(`A comparação desta versão só lê PDB. O arquivo de ${id} não foi interpretado como colunas PDB.`);
       }
@@ -25,17 +27,19 @@ async function compararProteinas(idsRaw) {
     }
     estado.comparacao = proteinas;
     estado.cmpPockets = null;
-    await iniciarComparacao();
+    await iniciarComparacao(g);
+    if (g !== geracaoEstrutura) return;
     atualizarURL("compare", ids.join(","));
   } catch (e) {
-    mostrarErro(e.message);
+    if (g === geracaoEstrutura) mostrarErro(e.message);
   } finally {
-    setLoading(false);
+    if (g === geracaoEstrutura) setLoading(false);
   }
 }
 
-async function iniciarComparacao() {
+async function iniciarComparacao(g = geracaoEstrutura) {
   await lib3D();
+  if (g !== geracaoEstrutura) return;
   const ps = estado.comparacao;
   $("#entrada").hidden = true;
   $("#workspace").hidden = true;
@@ -71,6 +75,7 @@ function resumoProteina(p) {
 }
 
 async function renderCmpStats() {
+  const atual = novaConsulta("renderCmpStats");
   const cont = $("#ctab-stats");
   const resumos = estado.comparacao.map(resumoProteina);
   const maxRes = Math.max(...resumos.map((r) => r.residuos));
@@ -87,7 +92,9 @@ async function renderCmpStats() {
   cont.innerHTML = html;
   $("#btn-cmp-stats-csv").addEventListener("click", baixarCsvCmpStats);
 
-  await libPlotly();
+  try { await libPlotly(); }
+  catch (e) { if (!atual()) return; throw e; }
+  if (!atual()) return;
   const escuro = document.body.dataset.theme === "dark";
   Plotly.newPlot("cmp-graf-stats", [
     { x: resumos.map((r) => r.id), y: resumos.map((r) => r.residuos), type: "bar",
@@ -111,7 +118,10 @@ function renderCmpAA() {
 }
 
 async function plotCmpAA() {
-  await libPlotly();
+  const atual = novaConsulta("plotCmpAA");
+  try { await libPlotly(); }
+  catch (e) { if (!atual()) return; throw e; }
+  if (!atual()) return;
   const escuro = document.body.dataset.theme === "dark";
   const aas = ProtAnalysis.AMINOACIDOS_PADRAO;
   const traces = estado.comparacao.map((p, i) => {
@@ -137,6 +147,7 @@ async function plotCmpAA() {
 }
 
 async function detectarPocketsComparacao() {
+  const atual = novaConsulta("pocketsComparacao");
   const btn = $("#btn-cmp-pockets");
   const status = $("#cmp-pockets-status");
   const cont = $("#cmp-pockets-resultado");
@@ -149,13 +160,15 @@ async function detectarPocketsComparacao() {
       const p = estado.comparacao[i];
       const cacheado = !!POCKETS_CACHE[p.id.toUpperCase()];
       status.innerHTML = `<span class="spinner"></span> ${cacheado ? "Carregando" : "Calculando"} pockets de ${p.id} (${i + 1}/${estado.comparacao.length})…`;
-      const { pockets } = await obterPockets(p.id);
+      const { pockets } = await obterPockets(p.id, null, () => !atual());
+      if (!atual()) return;
       resultado.push({ id: p.id, pockets });
     }
     estado.cmpPockets = resultado;
     status.textContent = `✓ Pockets detectados para ${resultado.length} proteínas.`;
     renderCmpPockets(resultado);
   } catch (e) {
+    if (!atual()) return;
     status.innerHTML = `❌ ${e.message}`;
     btn.disabled = false;
   }
@@ -227,7 +240,10 @@ function renderCmpPockets(resultado) {
 }
 
 async function plotCmpPockets(principais) {
-  await libPlotly();
+  const atual = novaConsulta("plotCmpPockets");
+  try { await libPlotly(); }
+  catch (e) { if (!atual()) return; throw e; }
+  if (!atual()) return;
   const escuro = document.body.dataset.theme === "dark";
   const ids = principais.map((p) => p.prot);
   const barra = (div, ys, titulo, ytit, cor, hint) => Plotly.newPlot(div, [{
