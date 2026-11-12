@@ -28,6 +28,10 @@ falha; os testes não atualizam expectativas automaticamente.
 | `exports.json` | Downloads individuais e da comparação: Markdown, CSV, FASTA e JSON; especificações de gráficos e conteúdo enviado pelo aplicativo ao gerador PDF, incluindo preparo. |
 | `prep-ui.json` | HTML integral de `montar` em sete etapas com 1CRN/4HHB: carga, seleção, decisões, caixa, edição inválida, pockets removidos e arquivo local; estado antes/depois e transição para mmCIF bloqueado. |
 | `ensemble-ui.json` | HTML integral de `htmlRelatorio` e sessão antes/depois em sete etapas: primeira montagem, edições, referência 4HHB, seleções obsoletas, estrutura removida, ausência de bolsões e ensemble vazio; inclui identidades compartilhadas das caixas. |
+| `diagnosticar-caminhos.json` | Dez leituras PDB/mmCIF: 1CRN/4HHB públicos, inserção 2A, saltos sem fonte, REMARK repetido/conflitante e por modelo, SEQRES com ausências, fontes concordantes e flags mmCIF. Congela todas as lacunas e a numeração lida. |
+| `comparar-caminhos.json` | Empates no topo/fora do topo, tolerância não transitiva, pendências/erros e renormalização, eliminação, dados insuficientes, região com inserção e fontes diferentes; métricas e cópias de snapshots são simuladas sobre estruturas públicas. |
+| `limpar-pdb-caminhos.json` | Quatorze combinações de altLoc, ocupação, cadeia A/B/sem ID/vazia/inexistente, águas/HET; primeiro modelo e limpezas de 1CRN/4HHB públicos. Guarda o PDB completo retornado, arquivos separados, contagens e mensagens. |
+| `consultar-relatorio-caminhos.json` | XML, cache/hit/forçar, cancelamentos antes/durante fetch e durante o corpo, timeout disparado por relógio falso, alternativa JSON, ID divergente, truncamento e erros 404/429/503/rede/JSON. Registra respostas completas, pedidos, headers, aborts, timers e cache. |
 
 As entradas reais reutilizam `pdbproteins/pdb1a00.pdb`, `pdb1a1c.pdb`,
 `pdb1a0n.pdb` e as fixtures já versionadas em `fixtures/estrutura/`,
@@ -83,10 +87,24 @@ caixa/índice antigos após remover os pockets, seleção/cache retidos ao bloqu
 mmCIF e referências de caixa/pocket/grupo obsoletas no ensemble mesmo depois
 de a referência do 3D ser corrigida.
 
+Os caminhos adicionais congelam a tolerância de empate não transitiva (posição
+1 sem pertencer à lista de líderes), a inserção que pode mascarar um número sem
+diagnóstico na região e a limpeza por ocupação que mistura A/B por átomo. Na
+consulta, o cache precede o sinal cancelado e ignora um contexto estrutural novo;
+o timeout/listener termina antes da leitura do corpo, que pode ser aceito e
+cacheado mesmo após cancelamento. Os testes registram esses defeitos atuais.
+
+`edge-characterization-cases.js` reutiliza somente coordenadas públicas 1CRN e
+4HHB já locais e o XML/JSON público de 1CRN. As variantes de inserção, SEQRES,
+REMARK, flags mmCIF, altLoc/ocupação e ordem são derivadas em memória e estão
+identificadas como testes, não como modelos depositados. As entradas públicas
+não são modificadas. Descritores/pendências de ranking e todas as respostas de
+rede/erros são simulados; não há consulta remota nem espera real por timeout.
+
 ## Capturar uma nova referência deliberadamente
 
 Não execute isto para fazer passar uma refatoração com regressão. A captura
-abaixo sobrescreve os onze JSON desta suíte e precisa de revisão do diff:
+abaixo sobrescreve os quinze JSON desta suíte e precisa de revisão do diff:
 
 ```sh
 node tests/helpers/capture-characterization.js --write
@@ -102,4 +120,20 @@ referências anteriores:
 
 ```sh
 node tests/helpers/capture-characterization.js --write prep-ui ensemble-ui
+```
+
+Para capturar somente os quatro caminhos adicionais:
+
+```sh
+node tests/helpers/capture-characterization.js --write diagnosticar-caminhos comparar-caminhos limpar-pdb-caminhos consultar-relatorio-caminhos
+```
+
+Todos os arquivos de teste podem ser executados sem rede com o preload abaixo
+(PowerShell). Ele serve a fronteira fetch do antigo smoke por fixture local e
+recusa outras chamadas HTTP/HTTPS. A suíte antiga de preparo precisa dos seus
+PDBs de teste já locais em `fixtures/`; se faltarem, falha em vez de baixá-los.
+
+```powershell
+$testFiles = (Get-ChildItem -LiteralPath tests -Filter '*.test.js' -File).FullName
+node --require ./tests/helpers/offline-network.js --test @testFiles
 ```

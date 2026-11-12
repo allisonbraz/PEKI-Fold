@@ -93,3 +93,79 @@ test("comportamento conhecido: ensemble corrige referência mas conserva caixa, 
     assert.deepStrictEqual(rendered.relatorioDepois, rendered.relatorioAntes, "render não altera o relatório: " + rendered.nome);
   }
 });
+
+test("diagnóstico adicional: inserção não é fundida ao número inteiro e salto não vira ausência", () => {
+  const result = cases["diagnosticar-caminhos"]();
+  const unknown = result["insercao-e-saltos-sem-fonte"];
+  assert.deepStrictEqual(json(unknown.residuos.A.map((r) => r[1])), ["1", "2", "2A", "5", "8"]);
+  assert.equal(unknown.lacunas.determinado, false);
+  assert.deepStrictEqual(json(unknown.lacunas.naoResolvidos), []);
+  assert.deepStrictEqual(json(unknown.lacunas.saltosNumeracao.map((s) => s.inteirosSemResiduoDeclarado)), [[3, 4], [6, 7]]);
+  const declared = result["remark-duplicado-insercao-conflito-modelo"].lacunas;
+  assert.equal(declared.naoResolvidos.filter((r) => r.authSeq === 3).length, 1);
+  assert(declared.naoResolvidos.some((r) => r.authSeq === 4 && r.icode === "A"));
+  assert(!declared.naoResolvidos.some((r) => r.authSeq === 6), "REMARK do modelo 2 não entra no modelo 1");
+});
+
+test("comportamento conhecido: tolerância de empate gera posição 1 sem incluir todos os líderes", () => {
+  const result = cases["comparar-caminhos"]().toleranciaNaoTransitiva;
+  assert.deepStrictEqual(json(result.candidatos.map((c) => [c.id, c.posicao])), [["CRN-A", 1], ["CRN-B", 1], ["CRN-C", 1], ["CRN-D", 4]]);
+  assert.deepStrictEqual(json(result.lideres.map((c) => c.id)), ["CRN-A", "CRN-B"]);
+});
+
+test("comportamento conhecido: inserção mascara posição sem diagnóstico na cobertura da região", () => {
+  const result = cases["comparar-caminhos"]().insercaoMascaraSalto;
+  assert.equal(result.avaliacao.segmentos[0].insercoes, 1);
+  assert.equal(result.avaliacao.indeterminado, false);
+  assert.equal(result.resultado.ranqueado, true);
+  assert(result.resultado.candidatos.every((c) => c.pontuacao === 1));
+});
+
+test("comportamento conhecido: maior ocupação mistura altLoc por átomo no mesmo resíduo", () => {
+  const result = cases["limpar-pdb-caminhos"]();
+  const lines = result.casos.ocupacao.resultado.pdb.split("\n").filter((l) => l.startsWith("ATOM  ") && l[21] === "A" && l.slice(22, 27).trim() === "1");
+  assert.deepStrictEqual(lines.map((l) => [l.slice(12, 16).trim(), l[16]]), [["CA", "B"], ["N", "A"]]);
+  assert.equal(result.casos.cadeiasVazias.resultado.vazio, true);
+  assert.deepStrictEqual(json(result.casos.padrao.resultado.contagens.residuosSumiramAltloc), ["LEU|A|2|"]);
+});
+
+test("comportamento conhecido: cache precede cancelamento e não remapeia novo contexto estrutural", async () => {
+  const result = (await cases["consultar-relatorio-caminhos"]()).cache;
+  assert.equal(result.mesmaReferencia, true);
+  assert.equal(result.pedidosAntesDeForcar, 1);
+  assert.equal(result.pedidos.length, 2);
+  assert.equal(result.canceladoComHit.estado, "ok");
+  assert.equal(result.hit.local.itens[0].mapeamento, "sem_residuo");
+  assert.equal(result.forcado.local.itens[0].mapeamento, "modelo");
+});
+
+test("comportamento conhecido: timeout e listener são removidos antes da leitura do corpo XML", async () => {
+  const captured = await cases["consultar-relatorio-caminhos"]();
+  const jsonBody = captured.canceladoDuranteJsonAceito;
+  assert.equal(jsonBody.cancelado, true);
+  assert.equal(jsonBody.resultado.estado, "ok");
+  assert.equal(jsonBody.cache.relatorios, 1);
+  assert.equal(jsonBody.pedidos[1].cancelamentos, 0);
+  const result = captured.canceladoDuranteCorpoAceito;
+  assert.equal(result.cancelado, true);
+  assert.equal(result.resultado.estado, "ok");
+  assert.equal(result.cache.relatorios, 1);
+  assert.equal(result.pedidos[0].cancelamentos, 0);
+  assert.deepStrictEqual(result.timers, [["agendar", 1, 12000], ["limpar", 1]]);
+});
+
+test("consulta adicional: cancelamento, timeout, alternativa JSON e erros têm fronteiras simuladas", async () => {
+  const result = await cases["consultar-relatorio-caminhos"]();
+  assert.equal(result.canceladoAntes.pedidos.length, 0);
+  assert.equal(result.canceladoNoXml.resultado.codigo, "cancelado");
+  assert.equal(result.canceladoNoJson.resultado.codigo, "cancelado");
+  assert.equal(result.alternativaJson.resultado.consulta, "rcsb-json");
+  assert.equal(result.timeoutXml.resultado.consulta, "rcsb-json");
+  assert(result.timeoutXml.timers.some((t) => t[0] === "disparar"));
+  for (const status of [404, 429, 503]) {
+    assert.equal(result["http" + status].resultado.metricas.length, 0);
+    assert.equal(result["http" + status].cache.relatorios, 0);
+  }
+  assert.equal(result.rede.resultado.estado, "rede");
+  assert.equal(result.jsonInvalido.resultado.estado, "rede");
+});
