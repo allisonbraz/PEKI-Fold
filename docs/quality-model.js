@@ -729,23 +729,67 @@ const QualityModel = (() => {
     return res && typeof res.status === "number" ? res.status : 0;
   }
 
+  function resultadoRelatorioSemId(up) {
+    return {
+      schema: SCHEMA,
+      estado: "nao_aplica",
+      codigo: "sem_id",
+      mensagem: "Sem ID clássico do PDB, o relatório wwPDB não é consultado. Nenhum indicador remoto foi preenchido.",
+      id: up || null,
+      metricas: [],
+      omitidos: [],
+      naoAplicaveis: [],
+      local: { estado: "pendente", motivo: "sem ID de depósito", itens: [] },
+      links: null,
+      avisoGlobal: AVISO_GLOBAL,
+    };
+  }
+
+  function criarControleConsultaRelatorio(sinal, ms) {
+    const child = new AbortController();
+    const timer = setTimeout(() => child.abort(), ms);
+    const cortar = () => child.abort();
+    if (sinal) sinal.addEventListener("abort", cortar, { once: true });
+    return {
+      signal: child.signal,
+      fim() {
+        clearTimeout(timer);
+        if (sinal) sinal.removeEventListener("abort", cortar);
+      },
+    };
+  }
+
+  function processarXmlConsultado(lido, up, o, cache, tentativas, urls) {
+    const rel = lerXml(lido.texto, {
+      id: up,
+      metodoArquivo: o.metodoArquivo,
+      truncado: lido.excedeu,
+      contexto: lido.excedeu ? null : o.contexto,
+    });
+    if (rel.estado === "ok" || rel.estado === "parcial") {
+      if (cache) cache.gravarRelatorio(up, rel);
+      return rel;
+    }
+    if (rel.codigo === "id_divergente") {
+      tentativas.push({ fonte: "pdbe-xml", url: urls.xml, status: "id_divergente" });
+    }
+  }
+
+  function processarJsonConsultado(json, up, o, cache, tentativas) {
+    const rel = lerResumoRcsb(json, { id: up, metodoArquivo: o.metodoArquivo });
+    rel.tentativas = tentativas;
+    if (rel.estado === "ok" || rel.estado === "parcial") {
+      if (cache) cache.gravarRelatorio(up, rel);
+      return rel;
+    }
+    return rel;
+  }
+
   async function consultarRelatorio(id, opts) {
     const o = opts || {};
     const up = normalizarId(id);
     if (!idClassico(up)) {
-      return {
-        schema: SCHEMA,
-        estado: "nao_aplica",
-        codigo: "sem_id",
-        mensagem: "Sem ID clássico do PDB, o relatório wwPDB não é consultado. Nenhum indicador remoto foi preenchido.",
-        id: up || null,
-        metricas: [],
-        omitidos: [],
-        naoAplicaveis: [],
-        local: { estado: "pendente", motivo: "sem ID de depósito", itens: [] },
-        links: null,
-        avisoGlobal: AVISO_GLOBAL,
-      };
+      return resultadoRelatorioSemId(up);
     }
     const cache = o.cache;
     if (cache && !o.forcar) {
@@ -763,21 +807,8 @@ const QualityModel = (() => {
     if (sinal && sinal.aborted) {
       return erroConsulta(up, "cancelado", "A consulta ao relatório foi cancelada. Nenhum indicador foi preenchido.");
     }
-    const childDe = (ms) => {
-      const child = new AbortController();
-      const timer = setTimeout(() => child.abort(), ms);
-      const cortar = () => child.abort();
-      if (sinal) sinal.addEventListener("abort", cortar, { once: true });
-      return {
-        signal: child.signal,
-        fim() {
-          clearTimeout(timer);
-          if (sinal) sinal.removeEventListener("abort", cortar);
-        },
-      };
-    };
     try {
-      const child = childDe(12000);
+      const child = criarControleConsultaRelatorio(sinal, 12000);
       let res;
       try {
         res = await fetchImpl(urls.xml, { signal: child.signal, headers: { Accept: "application/xml,text/xml,*/*" } });
@@ -788,19 +819,8 @@ const QualityModel = (() => {
       tentativas.push({ fonte: "pdbe-xml", url: urls.xml, status });
       if (status === 200) {
         const lido = await textoLimitado(res, limite);
-        const rel = lerXml(lido.texto, {
-          id: up,
-          metodoArquivo: o.metodoArquivo,
-          truncado: lido.excedeu,
-          contexto: lido.excedeu ? null : o.contexto,
-        });
-        if (rel.estado === "ok" || rel.estado === "parcial") {
-          if (cache) cache.gravarRelatorio(up, rel);
-          return rel;
-        }
-        if (rel.codigo === "id_divergente") {
-          tentativas.push({ fonte: "pdbe-xml", url: urls.xml, status: "id_divergente" });
-        }
+        const rel = processarXmlConsultado(lido, up, o, cache, tentativas, urls);
+        if (rel) return rel;
       }
     } catch (e) {
       if (sinal && sinal.aborted) {
@@ -812,7 +832,7 @@ const QualityModel = (() => {
       return erroConsulta(up, "cancelado", "A consulta ao relatório foi cancelada. Nenhum indicador foi preenchido.", tentativas);
     }
     try {
-      const child = childDe(8000);
+      const child = criarControleConsultaRelatorio(sinal, 8000);
       let res;
       try {
         res = await fetchImpl(urls.json, { signal: child.signal, headers: { Accept: "application/json" } });
@@ -829,13 +849,7 @@ const QualityModel = (() => {
       }
       if (status === 200) {
         const json = await res.json();
-        const rel = lerResumoRcsb(json, { id: up, metodoArquivo: o.metodoArquivo });
-        rel.tentativas = tentativas;
-        if (rel.estado === "ok" || rel.estado === "parcial") {
-          if (cache) cache.gravarRelatorio(up, rel);
-          return rel;
-        }
-        return rel;
+        return processarJsonConsultado(json, up, o, cache, tentativas);
       }
       return erroConsulta(up, "http_" + status, "A consulta ao relatório devolveu HTTP " + status + ". Nenhum indicador foi preenchido.", tentativas);
     } catch (e) {
