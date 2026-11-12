@@ -145,15 +145,18 @@ async function detectarPocketsComparacao() {
 
   try {
     const resultado = [];
+    let descartadas = 0;
     for (let i = 0; i < estado.comparacao.length; i++) {
       const p = estado.comparacao[i];
       const cacheado = !!POCKETS_CACHE[p.id.toUpperCase()];
       status.innerHTML = `<span class="spinner"></span> ${cacheado ? "Carregando" : "Calculando"} pockets de ${p.id} (${i + 1}/${estado.comparacao.length})…`;
-      const { pockets } = await obterPockets(p.id);
+      const pacote = await obterPockets(p.id);
+      const { pockets } = pacote;
+      descartadas += pacote.descartadas || 0;
       resultado.push({ id: p.id, pockets });
     }
     estado.cmpPockets = resultado;
-    status.textContent = `✓ Pockets detectados para ${resultado.length} proteínas.`;
+    status.textContent = `✓ Pockets detectados para ${resultado.length} proteínas.` + avisoLinhasPocket(descartadas);
     renderCmpPockets(resultado);
   } catch (e) {
     status.innerHTML = `❌ ${e.message}`;

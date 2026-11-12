@@ -54,7 +54,7 @@ function harness() {
     }
     vm.runInContext(source, context, { filename: file + ".js" });
   }
-  for (const file of ["pdb-analysis", "structure-model", "prep-analysis", "ensemble-analysis"]) load(file);
+  for (const file of ["pdb-analysis", "structure-model", "prep-analysis", "ensemble-analysis", "dogsite-client"]) load(file);
   return { context, element, load, get: (expression) => vm.runInContext(expression, context) };
 }
 

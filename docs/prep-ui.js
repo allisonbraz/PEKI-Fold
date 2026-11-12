@@ -604,8 +604,9 @@ ${htmlVinaPreparo(F, pocketOpts, vinaCampos)}
       cacheRes.set(p.residuosUrl, txt);
     }
     const margem = Number(document.getElementById("prep-margem").value);
-    const caixa = PrepAnalysis.caixaPocket(txt, margem);
-    if (!caixa.ok) throw new Error(caixa.erro);
+    const diagnostico = {};
+    const caixa = PrepAnalysis.caixaPocket(txt, margem, diagnostico);
+    if (!caixa.ok) throw new Error(caixa.erro + avisoLinhasPocket(diagnostico.descartadas));
     vina.sugerida = caixa;
     vina.editada = {
       center_x: caixa.center_x, center_y: caixa.center_y, center_z: caixa.center_z,
@@ -618,7 +619,7 @@ ${htmlVinaPreparo(F, pocketOpts, vinaCampos)}
     render();
     const st = document.getElementById("prep-vina-status");
     if (st) {
-      st.textContent = `Sugestão a partir de ${p.name}: ${caixa.nAtomos} átomos, margem ${caixa.margem} Å de cada lado. ${PrepAnalysis.FRASES.vina}`;
+      st.textContent = `Sugestão a partir de ${p.name}: ${caixa.nAtomos} átomos, margem ${caixa.margem} Å de cada lado. ${PrepAnalysis.FRASES.vina}` + avisoLinhasPocket(diagnostico.descartadas);
     }
   }
 

@@ -944,8 +944,9 @@ function renderPockets() {
     estado.pockets = POCKETS_CACHE[estado.pdbId.toUpperCase()].pockets;
   }
   if (estado.pockets) {
+    const descartadas = POCKETS_CACHE[estado.pdbId.toUpperCase()]?.descartadas;
     estado.pocketsInfo = { estado: "ok", motivo: null };
-    status.textContent = `✓ ${estado.pockets.length} pocket(s) para ${estado.pdbId}.`;
+    status.textContent = `✓ ${estado.pockets.length} pocket(s) para ${estado.pdbId}.` + avisoLinhasPocket(descartadas);
     renderTabelaPockets(estado.pockets);
   }
 }
@@ -962,14 +963,14 @@ async function detectarPockets() {
   status.innerHTML = cacheado ? "" : `<span class="spinner"></span> Enviando ${estado.pdbId} ao DoGSiteScorer…`;
 
   try {
-    const { pockets } = await obterPockets(estado.pdbId, (n) => {
+    const { pockets, descartadas } = await obterPockets(estado.pdbId, (n) => {
       status.innerHTML = `<span class="spinner"></span> Calculando pockets no servidor… (verificação ${n})`;
     });
-    if (!pockets.length) throw new Error("Nenhum pocket retornado pela API.");
+    if (!pockets.length) throw new Error("Nenhum pocket retornado pela API." + avisoLinhasPocket(descartadas));
 
     estado.pockets = pockets;
     estado.pocketsInfo = { estado: "ok", motivo: null };
-    status.textContent = `✓ ${pockets.length} pocket(s)${cacheado ? " (do cache)" : ""} para ${estado.pdbId}.`;
+    status.textContent = `✓ ${pockets.length} pocket(s)${cacheado ? " (do cache)" : ""} para ${estado.pdbId}.` + avisoLinhasPocket(descartadas);
     renderTabelaPockets(pockets);
   } catch (e) {
     estado.pockets = null;

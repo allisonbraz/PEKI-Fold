@@ -306,6 +306,8 @@ const EnsembleUI = (() => {
     if (rel.avisoCentroide) html += "<p class=\"ens-nota\">" + esc(rel.avisoCentroide) + "</p>";
     else if (rel.centroideAplicado) html += "<p class=\"ens-nota\">A distância entre centroides também entrou, no máximo " + rel.parametros.distanciaMax + " Å, porque estas estruturas compartilham referencial.</p>";
     html += "<p class=\"ens-nota\">" + esc(rel.alinhamento.limitacao) + "</p>";
+    const descartadas = (sessao.bolsos || []).reduce((n, b) => n + (b.descartadas || 0), 0);
+    if (descartadas) html += "<p class=\"ens-nota\">" + esc(avisoLinhasPocket(descartadas).trim()) + "</p>";
     if (avisoCache) html += "<p class=\"ens-nota\">" + esc(avisoCache) + "</p>";
 
     return html;
@@ -663,6 +665,7 @@ const EnsembleUI = (() => {
       let residuos = [];
       let extensao = null;
       let aviso = null;
+      const diagnostico = {};
       if (p.residuosUrl) {
         let r;
         try { r = await fetch(p.residuosUrl); }
@@ -670,7 +673,8 @@ const EnsembleUI = (() => {
         if (r.status === 429) throw new Error("Limite de uso da API atingido. Tente novamente em alguns minutos.");
         if (!r.ok) aviso = "Não foi possível baixar os resíduos deste bolsão (HTTP " + r.status + ").";
         else {
-          const parsed = EnsembleAnalysis.parseArquivoResiduos(await r.text());
+          const parsed = EnsembleAnalysis.parseArquivoResiduos(await r.text(), diagnostico);
+          aviso = avisoLinhasPocket(diagnostico.descartadas).trim() || null;
           residuos = parsed.residuos;
           extensao = parsed.extensao;
         }
@@ -680,6 +684,7 @@ const EnsembleUI = (() => {
         hydrophobicity: p.hydrophobicity, accept: p.accept, donor: p.donor, drugScore: p.drugScore,
         residuos, extensao, aviso,
       });
+      if (diagnostico.descartadas) out[out.length - 1].descartadas = diagnostico.descartadas;
     }
     return out;
   }
@@ -716,12 +721,18 @@ const EnsembleUI = (() => {
       const location = await dogsiteSubmit(codigo, { preservarCaixa: true });
       const resultado = await dogsitePoll(location, (n) => onMsg(item.rotulo + " — verificação " + n + " no DoGSiteScorer"), () => parar(g));
       const txt = await (await fetch(resultado.result_table)).text();
-      const pockets = parseTabelaPockets(txt);
-      pockets.forEach((p, i) => { p.residuosUrl = (resultado.residues || [])[i] || null; });
+      const diagnostico = {};
+      const pockets = parseTabelaPockets(txt, diagnostico);
+      pockets.forEach((p, i) => { p.residuosUrl = (resultado.residues || [])[diagnostico.indices[i]] || null; });
       pacote = { pockets };
+      if (diagnostico.descartadas) pacote.descartadas = diagnostico.descartadas;
     }
-    if (!pacote.pockets.length) throw new Error("Nenhum pocket retornado pela API.");
+    if (!pacote.pockets.length) throw new Error("Nenhum pocket retornado pela API." + avisoLinhasPocket(pacote.descartadas));
     const resumo = await comResiduos(pacote.pockets, () => parar(g));
+    if (pacote.descartadas && resumo.length) {
+      resumo[0].descartadas = (resumo[0].descartadas || 0) + pacote.descartadas;
+      resumo[0].aviso = (resumo[0].aviso || "") + avisoLinhasPocket(pacote.descartadas);
+    }
     gravarCache(chave, resumo);
     item.usouRede = true;
     return resumo;

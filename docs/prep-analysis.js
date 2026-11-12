@@ -1145,8 +1145,10 @@ const PrepAnalysis = (() => {
     return a.indice < b.indice;
   }
 
-  function caixaPocket(textoResiduos, margem) {
-    const atomos = parseAtomos(textoResiduos).filter((a) => a.x != null);
+  function caixaPocket(textoResiduos, margem, diagnostico) {
+    const filtrar = typeof filtrarResiduosPocket === "function" ? filtrarResiduosPocket
+      : require("./dogsite-client.js").filtrarResiduosPocket;
+    const atomos = parseAtomos(filtrar(textoResiduos, diagnostico)).filter((a) => a.x != null);
     if (!atomos.length) {
       return { ok: false, erro: "Nenhum átomo no arquivo de resíduos do pocket." };
     }

@@ -14,9 +14,11 @@ async function obterPockets(id, onTick, deveParar) {
   const location = await dogsiteSubmit(id);
   const resultado = await dogsitePoll(location, onTick, deveParar);
   const txt = await (await fetch(resultado.result_table)).text();
-  const pockets = parseTabelaPockets(txt);
-  pockets.forEach((p, i) => { p.residuosUrl = (resultado.residues || [])[i] || null; });
+  const diagnostico = {};
+  const pockets = parseTabelaPockets(txt, diagnostico);
+  pockets.forEach((p, i) => { p.residuosUrl = (resultado.residues || [])[diagnostico.indices[i]] || null; });
   POCKETS_CACHE[chave] = { pockets, residues: resultado.residues || [] };
+  if (diagnostico.descartadas) POCKETS_CACHE[chave].descartadas = diagnostico.descartadas;
   return POCKETS_CACHE[chave];
 }
 
@@ -77,20 +79,31 @@ async function dogsitePoll(location, onTick, deveParar) {
 }
 
 // Converte o TSV de descritores num array de objetos {name, volume, ...}.
-function parseTabelaPockets(txt) {
+function parseTabelaPockets(txt, diagnostico = {}) {
+  diagnostico.descartadas = 0;
+  diagnostico.indices = [];
   const linhas = txt.split("\n").map((l) => l.replace(/\r$/, "")).filter((l) => l.trim());
   if (linhas.length < 2) return [];
   const header = linhas[0].split("\t").map((h) => h.trim());
   const idx = {};
   for (const [k, col] of Object.entries(POCKET_COLS)) idx[k] = header.indexOf(col);
 
-  const num = (v) => { const n = parseFloat(String(v).trim()); return Number.isFinite(n) ? n : null; };
+  const num = (v) => Number(String(v).trim());
   const pockets = [];
+  let indice = 0;
   for (let i = 1; i < linhas.length; i++) {
     const c = linhas[i].split("\t");
-    const nome = (c[idx.name] || `P_${i - 1}`).trim();
+    const nome = (c[idx.name] || "").trim();
     // analysisDetail=0 ja retorna so pockets, mas filtramos subpockets por seguranca
-    if (/_\d+_\d+$/.test(nome)) continue;
+    const subpocket = /_\d+_\d+$/.test(nome);
+    const origem = subpocket ? null : indice++;
+    if (!nome || c.length !== header.length || Object.keys(POCKET_COLS).some((k) =>
+      idx[k] < 0 || (k !== "name" && !numeroPocketValido(c[idx[k]])))) {
+      diagnostico.descartadas += 1;
+      continue;
+    }
+    if (subpocket) continue;
+    diagnostico.indices.push(origem);
     pockets.push({
       name: nome,
       volume: num(c[idx.volume]),
@@ -103,4 +116,41 @@ function parseTabelaPockets(txt) {
     });
   }
   return pockets;
+}
+
+function numeroPocketValido(valor) {
+  const texto = String(valor == null ? "" : valor).trim();
+  return /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?$/.test(texto) && Number.isFinite(Number(texto));
+}
+
+// Só os registros de átomos do arquivo de pocket são validados. Cabeçalhos e
+// delimitadores de modelos permanecem no texto; o leitor geral de PDB não muda.
+function filtrarResiduosPocket(texto, diagnostico = {}) {
+  diagnostico.descartadas = 0;
+  return String(texto).split("\n").filter((linha) => {
+    const rec = linha.substring(0, 6).trim();
+    if (rec !== "ATOM" && rec !== "HETATM") {
+      if (!/^(ATOM|HETATM)/.test(linha)) return true;
+      diagnostico.descartadas += 1;
+      return false;
+    }
+    const inteiro = (ini, fim) => /^[+-]?\d+$/.test(linha.substring(ini, fim).trim());
+    const valido = linha.length >= 54 && inteiro(6, 11) && inteiro(22, 26)
+      && linha.substring(12, 16).trim() && linha.substring(17, 20).trim() && linha.charAt(21).trim()
+      && [[30, 38], [38, 46], [46, 54]].every(([ini, fim]) => numeroPocketValido(linha.substring(ini, fim)))
+      && [[54, 60], [60, 66]].every(([ini, fim]) => {
+        const valor = linha.substring(ini, fim).trim();
+        return !valor || numeroPocketValido(valor);
+      });
+    if (!valido) diagnostico.descartadas += 1;
+    return !!valido;
+  }).join("\n");
+}
+
+function avisoLinhasPocket(descartadas) {
+  return descartadas ? " Aviso: " + descartadas + " linha(s) inválida(s) descartada(s) na leitura dos pockets." : "";
+}
+
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = { parseTabelaPockets, filtrarResiduosPocket, avisoLinhasPocket };
 }

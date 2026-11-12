@@ -249,7 +249,8 @@ function pintarResiduosPocket(sels) {
   v.render();
 }
 
-function selecoesDosResiduos(txt) {
+function selecoesDosResiduos(txt, diagnostico) {
+  txt = filtrarResiduosPocket(txt, diagnostico);
   const selPorCadeia = {};
   for (const linha of String(txt).split("\n")) {
     if (!linha.startsWith("ATOM") && !linha.startsWith("HETATM")) continue;
@@ -338,7 +339,9 @@ async function destacarPocket(idx) {
   try {
     const txt = await (await fetch(p.residuosUrl)).text();
     if (!vistaAindaVale(geracao, idx)) return;
-    const sels = selecoesDosResiduos(txt);
+    const diagnostico = {};
+    const sels = selecoesDosResiduos(txt, diagnostico);
+    if (!sels.length && diagnostico.descartadas) throw new Error("Nenhum resíduo válido no arquivo do pocket." + avisoLinhasPocket(diagnostico.descartadas));
     if (!vistaAindaVale(geracao, idx)) return;
     aplicarEstilo();
     estado.vistaPocket.sels = sels;
@@ -348,7 +351,7 @@ async function destacarPocket(idx) {
     const toggle = $("#surf-toggle");
     if (toggle) toggle.checked = true;
     aplicarSuperficie();
-    if (status) status.textContent = `✓ ${p.name}: resíduos destacados e superfície exibida no 3D.`;
+    if (status) status.textContent = `✓ ${p.name}: resíduos destacados e superfície exibida no 3D.` + avisoLinhasPocket(diagnostico.descartadas);
     sincronizarBotoesPocket();
   } catch (e) {
     if (geracao !== geracaoVistaPocket) return;
