@@ -239,9 +239,7 @@ const PrepUI = (() => {
     return linhas;
   }
 
-  function montar() {
-    const F = PrepAnalysis.FRASES;
-    const inv = resultado.inventario;
+  function dadosInventarioMontagem(inv) {
     const headCad = ["Cadeia", "ATOM", "HETATM", "Águas (res.)", "Átomos com altloc", "ANISOU", "Inserções"];
     const rowsCad = inv.cadeias.map((c) => [
       cad(c.cadeia), c.atom, c.hetatm, c.aguas, c.altlocAtomos, c.anisou, c.insercoes.join(", ") || "—",
@@ -252,6 +250,10 @@ const PrepUI = (() => {
       h.copias.length, h.nAtomos, h.nome || "—",
     ]);
 
+    return { headCad, rowsCad, headHet, rowsHet };
+  }
+
+  function controlesLimpezaMontagem(inv) {
     const checksCadeia = inv.cadeias.map((c) =>
       `<label class="prep-check"><input type="checkbox" data-sel="cadeia" data-chave="${esc(c.cadeia)}" ${selecao.cadeias.has(c.cadeia) ? "checked" : ""}/> Cadeia ${esc(cad(c.cadeia))}</label>`
     ).join("");
@@ -270,6 +272,10 @@ const PrepUI = (() => {
       ? aguas.map((a) => `<label class="prep-check"><input type="checkbox" data-sel="agua" data-chave="${esc(a.chave)}" ${selecao.aguas.has(a.chave) ? "checked" : ""}/> Manter ${esc(a.rotulo)} (${esc(a.metais.join("; "))})</label>`).join("")
       : `<p class="muted small">Nenhuma água dentro do raio dos metais.</p>`;
 
+    return { checksCadeia, hetHtml, aguasHtml };
+  }
+
+  function controlesVinaMontagem() {
     const pockets = (estado && estado.pockets) || [];
     const pocketOpts = pockets.length
       ? pockets.map((p, i) => `<option value="${i}"${String(i) === String(vina.pocketIdx) ? " selected" : ""}>${esc(p.name)}</option>`).join("")
@@ -293,6 +299,10 @@ const PrepUI = (() => {
         ${vina.residuosTxt ? `<button type="button" class="dl-btn" data-acao="vina-residuos">Baixar resíduos do pocket</button>` : ""}
       </div>` : "";
 
+    return { pocketOpts, vinaCampos };
+  }
+
+  function dadosIonsMontagem() {
     const ionRows = linhasIons();
     const ionHtmlRows = ionRows.map((row, i) => {
       if (i > 0 && ionRows[i - 1][0] === row[0]) return row;
@@ -307,15 +317,11 @@ const PrepUI = (() => {
     const linksId = resultado.ions.links.filter((l) => l.identidade);
     const linksCob = linksId.filter((l) => l.coberto).length;
 
-    return `
-      <div class="prep-aviso">
-        <strong>Ficha auxiliar, versão ${esc(PrepAnalysis.VERSAO)}.</strong>
-        ${esc(F.auxiliar)} ${esc(F.contato)} ${esc(F.escore)}
-      </div>
-      ${resultado.predita ? `<p class="aviso-predita">${esc(resultado.predita)}</p>` : ""}
-      ${resultado.nModelos > 1 ? `<p class="aviso-predita">A ficha usa só o primeiro MODEL (há ${resultado.nModelos}).</p>` : ""}
-      <p class="muted small">${esc(cabecalhoTexto().slice(0, 4).join(" · "))}</p>
+    return { ionHtmlRows, nPares, nSem, linksId, linksCob };
+  }
 
+  function htmlControlesPreparo() {
+    return `
       <div class="prep-controles">
         <label>Metais (Å) <input id="prep-raio-metal" data-raio="metal" type="number" min="0" max="15" step="0.1" value="${esc(raios.metal)}"/></label>
         <label>SG–SG (Å) <input id="prep-raio-ss" data-raio="ss" type="number" min="0" max="15" step="0.1" value="${esc(raios.ss)}"/></label>
@@ -329,8 +335,11 @@ const PrepUI = (() => {
         <button type="button" class="dl-btn" data-acao="csv">Ficha CSV</button>
         <button type="button" class="dl-btn" data-acao="pdf">Ficha PDF</button>
         <button type="button" class="ghost-btn" data-acao="limpar-3d">Limpar destaques do preparo</button>
-      </div>
+      </div>`;
+  }
 
+  function htmlInventarioPreparo(F, inv, headCad, rowsCad, headHet, rowsHet) {
+    return `
       <section class="prep-secao">
         <h3>Inventário</h3>
         ${inv.alertas.map((a) => `<p class="prep-aviso">${esc(a)}</p>`).join("")}
@@ -348,8 +357,11 @@ const PrepUI = (() => {
           ${inv.remark465.length ? tabela(["Resíduo", "Cadeia", "Número"], inv.remark465.map((r) => [r.resname, cad(r.cadeia), `${r.resseq}${r.icode || ""}`])) : `<p class="muted small">Este arquivo não traz REMARK 465.</p>`}
         </details>
         ${campoDecisao("inventario")}
-      </section>
+      </section>`;
+  }
 
+  function htmlLimpezaPreparo(F, checksCadeia, hetHtml, aguasHtml) {
+    return `
       <section class="prep-secao">
         <h3>Limpeza e exportação</h3>
         <p class="muted small">O viewer continua mostrando a estrutura original. Os arquivos abaixo são uma cópia filtrada, sem hidrogênios adicionados e sem ANISOU. ${esc(F.serial)}</p>
@@ -369,8 +381,11 @@ const PrepUI = (() => {
           <button type="button" class="dl-btn" data-acao="pacote">Baixar pacote (PDB limpo + íons + HET marcados)</button>
         </div>
         ${campoDecisao("limpeza")}
-      </section>
+      </section>`;
+  }
 
+  function htmlIonsPreparo(F, ionHtmlRows, nPares, nSem, linksId, linksCob) {
+    return `
       <section class="prep-secao">
         <h3>Íons metálicos</h3>
         <p class="rotulo-fixo">${esc(F.contato)} Vizinhos N, O e S até ${esc(raios.metal)} Å. O elemento vem das colunas 77–78, para não confundir cálcio com carbono alfa. ${esc(F.serial)}</p>
@@ -383,8 +398,11 @@ const PrepUI = (() => {
         ${linhasSimetria().length ? `<h4>LINK de metal por simetria cristalográfica</h4><p class="muted small">Operador diferente de 1555. O módulo não constrói a cópia simétrica.</p>${tabela(["Átomo 1", "Átomo 2", "Operadores", "Distância no LINK (Å)"], linhasSimetria())}` : ""}
         ${resultado.ions.aguasEntre.length ? `<p class="prep-aviso">Há água no raio de mais de um metal (${resultado.ions.aguasEntre.map((a) => esc(a.metais.join(" e "))).join("; ")}). Pode ser ponte. Não remova sem conferir.</p>` : ""}
         ${campoDecisao("ions")}
-      </section>
+      </section>`;
+  }
 
+  function htmlQuimicaPreparo(F, inv) {
+    return `
       <section class="prep-secao">
         <h3>Pontes dissulfeto</h3>
         <p class="rotulo-fixo">${esc(F.contato)} Pares SG–SG de CYS ou CYX até ${esc(raios.ss)} Å, comparados ao SSBOND.</p>
@@ -419,8 +437,11 @@ const PrepUI = (() => {
         <p class="rotulo-fixo">${esc(F.protonacao)} A coluna de candidato só reage a metal dentro de ${esc(raios.his)} Å. Enterramento: átomos pesados a ≤ ${resultado.histidinas.raioEnterramento} Å do meio de ND1–NE2, fora do próprio resíduo. Não é área de superfície.</p>
         ${tabela(["Cadeia", "Resíduo", "Candidato", "Metais no ND1", "Metais no NE2", "Enterramento"], linhasHis())}
         ${campoDecisao("histidinas")}
-      </section>
+      </section>`;
+  }
 
+  function htmlVinaPreparo(F, pocketOpts, vinaCampos) {
+    return `
       <section class="prep-secao" id="prep-vina">
         <h3>Caixa sugerida para o Vina</h3>
         <p class="rotulo-fixo">${esc(F.vina)} ${esc(F.descritor)} ${esc(F.escore)} O centro é o centroide dos átomos do arquivo de resíduos do pocket do DoGSite. O tamanho é a extensão em x, y e z mais duas vezes a margem (uma de cada lado), arredondado.</p>
@@ -433,7 +454,34 @@ const PrepUI = (() => {
         <p id="prep-vina-status" class="muted small"></p>
         ${vinaCampos}
         ${campoDecisao("vina")}
-      </section>
+      </section>`;
+  }
+
+  function montar() {
+    const F = PrepAnalysis.FRASES;
+    const inv = resultado.inventario;
+    const { headCad, rowsCad, headHet, rowsHet } = dadosInventarioMontagem(inv);
+
+    const { checksCadeia, hetHtml, aguasHtml } = controlesLimpezaMontagem(inv);
+
+    const { pocketOpts, vinaCampos } = controlesVinaMontagem();
+
+    const { ionHtmlRows, nPares, nSem, linksId, linksCob } = dadosIonsMontagem();
+
+    return `
+      <div class="prep-aviso">
+        <strong>Ficha auxiliar, versão ${esc(PrepAnalysis.VERSAO)}.</strong>
+        ${esc(F.auxiliar)} ${esc(F.contato)} ${esc(F.escore)}
+      </div>
+      ${resultado.predita ? `<p class="aviso-predita">${esc(resultado.predita)}</p>` : ""}
+      ${resultado.nModelos > 1 ? `<p class="aviso-predita">A ficha usa só o primeiro MODEL (há ${resultado.nModelos}).</p>` : ""}
+      <p class="muted small">${esc(cabecalhoTexto().slice(0, 4).join(" · "))}</p>
+${htmlControlesPreparo()}
+${htmlInventarioPreparo(F, inv, headCad, rowsCad, headHet, rowsHet)}
+${htmlLimpezaPreparo(F, checksCadeia, hetHtml, aguasHtml)}
+${htmlIonsPreparo(F, ionHtmlRows, nPares, nSem, linksId, linksCob)}
+${htmlQuimicaPreparo(F, inv)}
+${htmlVinaPreparo(F, pocketOpts, vinaCampos)}
 
       <p class="muted small">${esc(F.auxiliar)} ${esc(F.contato)} ${esc(F.escore)} ${esc(F.serial)} ${esc(F.protonacao)} ${esc(F.vina)}</p>
     `;
