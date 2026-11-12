@@ -111,7 +111,7 @@ function classic() {
   const chains = PA.separarCadeias(pdb);
   return {
     individualMultimodelo: SM.ler(multi).analise,
-    comparacaoMultimodelo: PA.analisarCompleto(multi),
+    comparacaoMultimodelo: PA.analisarCompleto(PA.primeiroModelo(multi)),
     sintetica: PA.analisarCompleto(pdb), metadados: PA.extrairMetadados(pdb), cadeias: chains,
     motivoPdb: PA.buscarMotivo(pdb, ["CYS", "CYS"]),
     motivoInsercao: SM.buscarMotivo(SM.ler(pdb).analise.residuosPorCadeia, ["GLY"]),

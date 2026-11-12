@@ -21,7 +21,8 @@ async function compararProteinas(idsRaw) {
         throw new Error(`A comparação desta versão só lê PDB. O arquivo de ${id} não foi interpretado como colunas PDB.`);
       }
       ProtAnalysis.validar(texto);
-      proteinas.push({ id, pdbText: texto, dados: ProtAnalysis.analisarCompleto(texto) });
+      const selecionado = ProtAnalysis.primeiroModelo(texto);
+      proteinas.push({ id, pdbText: selecionado, dados: ProtAnalysis.analisarCompleto(selecionado) });
     }
     estado.comparacao = proteinas;
     estado.cmpPockets = null;

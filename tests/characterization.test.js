@@ -4,7 +4,7 @@ const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
 const { test } = require("node:test");
-const { cases, GOLDENS, json, models } = require("./helpers/characterization-cases.js");
+const { cases, GOLDENS, json, models, browser } = require("./helpers/characterization-cases.js");
 
 // Expected files are checked in. A normal test run never writes or updates them.
 for (const [name, capture] of Object.entries(cases)) {
@@ -168,4 +168,69 @@ test("consulta adicional: cancelamento, timeout, alternativa JSON e erros têm f
   }
   assert.equal(result.rede.resultado.estado, "rede");
   assert.equal(result.jsonInvalido.resultado.estado, "rede");
+});
+
+
+async function compararArquivosLocais(arquivos) {
+  const { context, get } = browser(["pdb-analysis", "structure-model", "comparison", "export"]);
+  const erros = [], pedidos = [], loading = [], urls = [], downloads = [];
+  Object.assign(context, {
+    estado: { comparacao: null, cmpPockets: [{ id: "ANTIGO" }] }, iniciadas: 0, downloads,
+    limparErro() {}, mostrarErro: (erro) => erros.push(erro), setLoading: (valor) => loading.push(valor),
+    atualizarURL: (...args) => urls.push(args),
+    baixarRCSB: async (id) => { pedidos.push(id); return arquivos[id]; },
+  });
+  get("iniciarComparacao = async () => { iniciadas += 1; }; baixarTexto = (nome, conteudo, tipo) => downloads.push({ nome, conteudo, tipo });");
+  await get("compararProteinas")(Object.keys(arquivos).join(","));
+  assert.deepStrictEqual(erros, []);
+  assert.deepStrictEqual(pedidos, Object.keys(arquivos));
+  assert.deepStrictEqual(loading, [true, false]);
+  assert.deepStrictEqual(urls, [["compare", Object.keys(arquivos).join(",")]]);
+  assert.equal(context.iniciadas, 1);
+  assert.equal(context.estado.cmpPockets, null);
+  return { context, get, downloads };
+}
+
+test("comparação usa só o primeiro MODEL de um PDB pequeno e sintético", async () => {
+  const atomo = (serial, nome, resname, chain, seq) => "ATOM  " + String(serial).padStart(5)
+    + " " + nome.padStart(4) + " " + resname + " " + chain + String(seq).padStart(4)
+    + "       0.000   0.000   0.000  1.00 20.00           C  ";
+  // Geometria artificial: o primeiro modelo é 7, não o MODEL 1.
+  const selecionado = ["HEADER    SYNTHETIC COMPARISON TEST", "MODEL        7",
+    atomo(1, "N", "ALA", "A", 1), atomo(2, "CA", "ALA", "A", 1),
+    atomo(3, "CA", "GLY", "A", 2), "ENDMDL", ""].join("\n");
+  const varios = selecionado + ["MODEL        1", atomo(1, "CA", "ALA", "A", 1),
+    atomo(2, "CA", "VAL", "A", 9), atomo(3, "CA", "SER", "B", 1), "ENDMDL", "END", ""].join("\n");
+  const unico = ["HEADER    SYNTHETIC COMPARISON TEST", "MODEL        3", atomo(1, "CA", "SER", "A", 1), "ENDMDL", "END", ""].join("\n");
+  const { context, get, downloads } = await compararArquivosLocais({ "1ABC": varios, "2ABC": unico });
+  const PA = get("ProtAnalysis"), SM = get("StructureModel");
+  assert.deepStrictEqual(json(context.estado.comparacao[1].dados), json(PA.analisarCompleto(unico)));
+  const p = context.estado.comparacao[0];
+  assert.equal(p.pdbText, selecionado);
+  assert.equal(PA.contarModelos(p.pdbText), 1);
+  const referencia = SM.ler(varios);
+  assert.equal(referencia.estrutura.modelo.selecionado, 7);
+  assert.deepStrictEqual(json(p.dados.estatisticas), json(referencia.analise.estatisticas));
+  assert.deepStrictEqual(json(p.dados.cadeias), ["A"]);
+  assert.deepStrictEqual(json(p.dados.sequencias), { A: "AG" });
+  assert.equal(p.dados.frequencias.A.total, 2);
+  assert.equal(p.dados.frequencias.A.itens.find((i) => i.aa === "VAL").contagem, 0);
+  assert.deepStrictEqual(json(get("resumoProteina")(p)), { id: "1ABC", cadeias: 1, atomos: 3, residuos: 2, aaDiferentes: 2 });
+  const todos = PA.analisarCompleto(varios);
+  assert.equal(todos.cadeias.length, 2, "o modelo seguinte acrescentaria outra cadeia");
+  assert.equal(todos.estatisticas.cadeias.reduce((s, c) => s + c.residuos, 0), 4, "o modelo seguinte acrescentaria outros resíduos");
+  get("baixarCsvCmpStats")();
+  assert.equal(downloads.length, 1);
+  assert.match(downloads[0].conteudo, /^1ABC,1,3,2,2$/m);
+});
+
+test("comparação preserva arquivos sem MODEL e suas contagens", async () => {
+  const arquivos = Object.fromEntries(["1CRN", "4HHB"].map((id) => [id,
+    fs.readFileSync(path.join(__dirname, "fixtures/ui-render/" + id + ".pdb"), "utf8")]));
+  const { context, get } = await compararArquivosLocais(arquivos);
+  const PA = get("ProtAnalysis");
+  for (const p of context.estado.comparacao) {
+    assert.equal(p.pdbText, arquivos[p.id]);
+    assert.deepStrictEqual(json(p.dados), json(PA.analisarCompleto(arquivos[p.id])));
+  }
 });
