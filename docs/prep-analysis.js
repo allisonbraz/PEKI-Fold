@@ -351,11 +351,7 @@ const PrepAnalysis = (() => {
     }[c] || c;
   }
 
-  function inventario(texto) {
-    const pdb = primeiroModelo(texto);
-    const atomos = parseAtomos(pdb);
-    const hetnomes = parseHetnam(texto);
-    const remark = parseRemark465(texto);
+  function contarCadeiasInventario(pdb, atomos) {
     const porCadeia = new Map();
 
     function bucket(cid) {
@@ -384,7 +380,10 @@ const PrepAnalysis = (() => {
       const cid = cadeiaDe(linha.charAt(21));
       bucket(cid).anisou += 1;
     }
+    return porCadeia;
+  }
 
+  function agruparHeteroatomosInventario(atomos, hetnomes) {
     const grupos = new Map();
     for (const a of atomos) {
       if (a.registro !== "HETATM") continue;
@@ -431,8 +430,10 @@ const PrepAnalysis = (() => {
     for (const h of hets) {
       h.copias.sort((a, b) => a.cadeia.localeCompare(b.cadeia) || a.resseq - b.resseq || a.icode.localeCompare(b.icode));
     }
+    return hets;
+  }
 
-    const cadeias = [...porCadeia.values()];
+  function alertasCadeiasInventario(cadeias) {
     const alertas = [];
     for (const c of cadeias) {
       if (c.altlocAtomos) {
@@ -446,7 +447,10 @@ const PrepAnalysis = (() => {
         alertas.push(`A cadeia ${rotuloCadeia(c.cadeia)} tem código de inserção: ${[...c.insercoes].join(", ")}.`);
       }
     }
+    return alertas;
+  }
 
+  function residuosPolimeroInventario(atomos) {
     const polymer = [];
     const visto = new Set();
     for (const a of atomos) {
@@ -456,6 +460,10 @@ const PrepAnalysis = (() => {
       visto.add(k);
       polymer.push({ cadeia: a.cadeia, resseq: a.resseq, icode: a.icode, resname: a.resname });
     }
+    return polymer;
+  }
+
+  function lacunasInventario(polymer, remark) {
     const porPol = new Map();
     for (const r of polymer) {
       if (!porPol.has(r.cadeia)) porPol.set(r.cadeia, []);
@@ -485,8 +493,10 @@ const PrepAnalysis = (() => {
         });
       }
     }
-    if (lacunas.length) alertas.push(FRASES.gap);
+    return lacunas;
+  }
 
+  function alertasElementosInventario(atomos, alertas) {
     const semElemento = atomos.filter((a) => a.elementoFonte !== "coluna").length;
     if (semElemento) {
       alertas.push(
@@ -501,6 +511,28 @@ const PrepAnalysis = (() => {
         "(não é HETATM nem resíduo cujo nome é o próprio metal)."
       );
     }
+    return semElemento;
+  }
+
+  function inventario(texto) {
+    const pdb = primeiroModelo(texto);
+    const atomos = parseAtomos(pdb);
+    const hetnomes = parseHetnam(texto);
+    const remark = parseRemark465(texto);
+    const porCadeia = contarCadeiasInventario(pdb, atomos);
+
+    const hets = agruparHeteroatomosInventario(atomos, hetnomes);
+
+    const cadeias = [...porCadeia.values()];
+    const alertas = alertasCadeiasInventario(cadeias);
+
+    const polymer = residuosPolimeroInventario(atomos);
+
+    const lacunas = lacunasInventario(polymer, remark);
+
+    if (lacunas.length) alertas.push(FRASES.gap);
+
+    const semElemento = alertasElementosInventario(atomos, alertas);
 
     let maxResProteina = null;
     for (const r of polymer) if (maxResProteina == null || r.resseq > maxResProteina) maxResProteina = r.resseq;
