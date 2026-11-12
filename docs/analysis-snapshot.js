@@ -294,13 +294,7 @@ const AnalysisSnapshot = (() => {
     };
   }
 
-  function montarDeWorkspace(estado, opcoes) {
-    const o = opcoes || {};
-    const est = estado && estado.estrutura;
-    if (!est || est.schema !== "peki-estrutura-1") {
-      throw new Error("Ainda não há leitura estrutural para guardar. Abra uma estrutura antes.");
-    }
-    const agora = o.agora || new Date().toISOString();
+  function identidadeDeWorkspace(estado, est) {
     const pdbId = estado.pdbId ? texto(estado.pdbId).toUpperCase() : null;
     const nomeArquivoLocal = corte(estado.nome, 120);
     const idArquivo = est.identidade && est.identidade.id ? texto(est.identidade.id).toUpperCase() : null;
@@ -317,9 +311,10 @@ const AnalysisSnapshot = (() => {
     const url = tipo === "rcsb" && pdbId
       ? "https://files.rcsb.org/download/" + pdbId + (formato === "mmcif" ? ".cif" : ".pdb")
       : null;
-    const cadeias = cadeiasDe(est);
-    const polimerosModelados = cadeias.reduce((s, c) => s + c.residuos.length, 0);
-    const lac = est.lacunas || {};
+    return { pdbId, nomeArquivoLocal, rotulo, metodo, titulo, tipo, formato, fonte, url };
+  }
+
+  function residuosAusentesDeWorkspace(lac) {
     const naoResolvidos = (lac.naoResolvidos || []).map((r) => ({
       cadeia: texto(r.cadeiaAuth || r.chain),
       resname: texto(r.resname).toUpperCase(),
@@ -332,6 +327,70 @@ const AnalysisSnapshot = (() => {
       para: s.para && s.para.seq != null ? s.para.seq : null,
       interpretacao: corte(s.interpretacao, 40),
     }));
+    return { naoResolvidos, saltos };
+  }
+
+  function componentesDeWorkspace(comp, ccd, polimerosModelados) {
+    return {
+      proteinas: {
+        posicoes: comp.proteinas ? inteiro(comp.proteinas.posicoes) : polimerosModelados,
+        padrao: comp.proteinas ? inteiro(comp.proteinas.padrao) : null,
+        modificadas: comp.proteinas ? inteiro(comp.proteinas.modificadas) : null,
+      },
+      hetero: listaCodigos(comp.hetero),
+      ions: listaCodigos(comp.ions),
+      modificados: listaCodigos(comp.modificados),
+      aguas: {
+        instancias: comp.aguas ? inteiro(comp.aguas.instancias) || 0 : 0,
+        nota: corte(comp.aguas && comp.aguas.nota, 240) || "Contagem de águas registradas no modelo. Ausência de registro não significa amostra sem água.",
+      },
+      holo: {
+        estado: corte(comp.holo && comp.holo.estado, 40) || "nao_determinado",
+        motivo: corte(comp.holo && comp.holo.motivo, 240) || AVISO_HOLO,
+      },
+      anotacoesCcd: ccd.anotacoesCcd,
+      ccdEstado: ccd.ccdEstado,
+    };
+  }
+
+  function uniprotDeWorkspace(est) {
+    return {
+      correspondenciaResiduo: "nao_estabelecida",
+      motivo: corte(est.uniprot && est.uniprot.motivo, 300) || "Não há mapa resíduo a resíduo com o UniProt.",
+      declaracoes: ((est.uniprot && est.uniprot.declaracoes) || []).map((d) => ({
+        cadeia: d.cadeiaAuth == null ? null : texto(d.cadeiaAuth),
+        accession: corte(d.accession, 40),
+        db: corte(d.db, 40),
+        pdbInicio: d.pdbInicio == null ? null : d.pdbInicio,
+        pdbFim: d.pdbFim == null ? null : d.pdbFim,
+      })),
+    };
+  }
+
+  function limitacoesDeWorkspace(est) {
+    return [
+      "O PDB original não foi embutido. A comparação usa este snapshot, não uma nova leitura do depósito.",
+      "Não há mapa resíduo a resíduo com UniProt nem sobreposição estrutural.",
+      AVISO_HOLO,
+      AVISO_POCKET,
+      "O relatório wwPDB global não garante a qualidade do sítio.",
+    ].concat((est.limitacoes || []).map((l) => corte(l, 240)).filter(Boolean)).slice(0, 24);
+  }
+
+  function montarDeWorkspace(estado, opcoes) {
+    const o = opcoes || {};
+    const est = estado && estado.estrutura;
+    if (!est || est.schema !== "peki-estrutura-1") {
+      throw new Error("Ainda não há leitura estrutural para guardar. Abra uma estrutura antes.");
+    }
+    const agora = o.agora || new Date().toISOString();
+    const {
+      pdbId, nomeArquivoLocal, rotulo, metodo, titulo, tipo, formato, fonte, url,
+    } = identidadeDeWorkspace(estado, est);
+    const cadeias = cadeiasDe(est);
+    const polimerosModelados = cadeias.reduce((s, c) => s + c.residuos.length, 0);
+    const lac = est.lacunas || {};
+    const { naoResolvidos, saltos } = residuosAusentesDeWorkspace(lac);
     const comp = est.componentes || {};
     const ccd = ccdDe(estado.qualidade);
     const motivo = estado.ultimoMotivo && estado.ultimoMotivo.motivo ? {
@@ -376,48 +435,13 @@ const AnalysisSnapshot = (() => {
         saltosNumeracao: saltos,
         foraDoConstructo: corte(lac.foraDoConstructo && lac.foraDoConstructo.motivo, 240) || "Fora do constructo não avaliado.",
       },
-      componentes: {
-        proteinas: {
-          posicoes: comp.proteinas ? inteiro(comp.proteinas.posicoes) : polimerosModelados,
-          padrao: comp.proteinas ? inteiro(comp.proteinas.padrao) : null,
-          modificadas: comp.proteinas ? inteiro(comp.proteinas.modificadas) : null,
-        },
-        hetero: listaCodigos(comp.hetero),
-        ions: listaCodigos(comp.ions),
-        modificados: listaCodigos(comp.modificados),
-        aguas: {
-          instancias: comp.aguas ? inteiro(comp.aguas.instancias) || 0 : 0,
-          nota: corte(comp.aguas && comp.aguas.nota, 240) || "Contagem de águas registradas no modelo. Ausência de registro não significa amostra sem água.",
-        },
-        holo: {
-          estado: corte(comp.holo && comp.holo.estado, 40) || "nao_determinado",
-          motivo: corte(comp.holo && comp.holo.motivo, 240) || AVISO_HOLO,
-        },
-        anotacoesCcd: ccd.anotacoesCcd,
-        ccdEstado: ccd.ccdEstado,
-      },
+      componentes: componentesDeWorkspace(comp, ccd, polimerosModelados),
       qualidade: qualidadeDe(estado),
       pockets: pocketsDe(estado),
       preparo: preparoDe(est, o.preparo || null),
-      uniprot: {
-        correspondenciaResiduo: "nao_estabelecida",
-        motivo: corte(est.uniprot && est.uniprot.motivo, 300) || "Não há mapa resíduo a resíduo com o UniProt.",
-        declaracoes: ((est.uniprot && est.uniprot.declaracoes) || []).map((d) => ({
-          cadeia: d.cadeiaAuth == null ? null : texto(d.cadeiaAuth),
-          accession: corte(d.accession, 40),
-          db: corte(d.db, 40),
-          pdbInicio: d.pdbInicio == null ? null : d.pdbInicio,
-          pdbFim: d.pdbFim == null ? null : d.pdbFim,
-        })),
-      },
+      uniprot: uniprotDeWorkspace(est),
       anotacoes: { motivoSequencia: motivo },
-      limitacoes: [
-        "O PDB original não foi embutido. A comparação usa este snapshot, não uma nova leitura do depósito.",
-        "Não há mapa resíduo a resíduo com UniProt nem sobreposição estrutural.",
-        AVISO_HOLO,
-        AVISO_POCKET,
-        "O relatório wwPDB global não garante a qualidade do sítio.",
-      ].concat((est.limitacoes || []).map((l) => corte(l, 240)).filter(Boolean)).slice(0, 24),
+      limitacoes: limitacoesDeWorkspace(est),
     };
     const checagem = validarObjeto(snap);
     if (!checagem.ok) throw new Error("O guardado não passou na validação interna: " + checagem.erro);
