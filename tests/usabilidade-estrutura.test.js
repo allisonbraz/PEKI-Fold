@@ -230,7 +230,7 @@ global.PrepUI = {
 
 require("node:vm").runInThisContext(fs.readFileSync(path.join(__dirname, "../docs/dogsite-client.js"), "utf8"), { filename: "dogsite-client.js" });
 require("node:vm").runInThisContext(fs.readFileSync(path.join(__dirname, "../docs/libs-loader.js"), "utf8"), { filename: "libs-loader.js" });
-const App = require("../docs/app.js");
+const App = require("./helpers/viewer-app.js");
 
 function viewerFalso() {
   const calls = [];

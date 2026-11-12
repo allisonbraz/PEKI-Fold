@@ -306,7 +306,8 @@ function arquivosDaInterface() {
   assert(/id="cmp-ids"/.test(html), "comparação por código permanece");
   assert(/id="file-input"/.test(html), "upload permanece");
   const app = fs.readFileSync(path.join(__dirname, "../docs/app.js"), "utf8");
-  assert(app.includes("Ocultar ${p.name} no 3D") && app.includes("Ocultar ${nome} no 3D"), "botão ver/ocultar do pocket permanece");
+  const viewer = fs.readFileSync(path.join(__dirname, "../docs/viewer.js"), "utf8");
+  assert(viewer.includes("Ocultar ${p.name} no 3D") && viewer.includes("Ocultar ${nome} no 3D"), "botão ver/ocultar do pocket permanece");
   assert(app.includes('data-busca-id') || app.includes("data-busca-id"), "clique da lista usa o código escolhido");
   assert(/acaoCampo\(pdbParam\)/.test(app), "link ?pdb= passa pelo mesmo classificador");
   const rodape = html.slice(html.indexOf('class="creditos"'));
