@@ -57,6 +57,8 @@ const AnalysisSnapshot = (() => {
     return Math.trunc(v);
   }
   function decimal(v) {
+    if (v == null || (typeof v === "string" && !v.trim())) return null;
+    if (typeof v !== "number" && typeof v !== "string") return null;
     const n = typeof v === "number" ? v : Number(v);
     return Number.isFinite(n) ? n : null;
   }
@@ -294,13 +296,7 @@ const AnalysisSnapshot = (() => {
     };
   }
 
-  function montarDeWorkspace(estado, opcoes) {
-    const o = opcoes || {};
-    const est = estado && estado.estrutura;
-    if (!est || est.schema !== "peki-estrutura-1") {
-      throw new Error("Ainda não há leitura estrutural para guardar. Abra uma estrutura antes.");
-    }
-    const agora = o.agora || new Date().toISOString();
+  function identidadeDeWorkspace(estado, est) {
     const pdbId = estado.pdbId ? texto(estado.pdbId).toUpperCase() : null;
     const nomeArquivoLocal = corte(estado.nome, 120);
     const idArquivo = est.identidade && est.identidade.id ? texto(est.identidade.id).toUpperCase() : null;
@@ -317,9 +313,10 @@ const AnalysisSnapshot = (() => {
     const url = tipo === "rcsb" && pdbId
       ? "https://files.rcsb.org/download/" + pdbId + (formato === "mmcif" ? ".cif" : ".pdb")
       : null;
-    const cadeias = cadeiasDe(est);
-    const polimerosModelados = cadeias.reduce((s, c) => s + c.residuos.length, 0);
-    const lac = est.lacunas || {};
+    return { pdbId, nomeArquivoLocal, rotulo, metodo, titulo, tipo, formato, fonte, url };
+  }
+
+  function residuosAusentesDeWorkspace(lac) {
     const naoResolvidos = (lac.naoResolvidos || []).map((r) => ({
       cadeia: texto(r.cadeiaAuth || r.chain),
       resname: texto(r.resname).toUpperCase(),
@@ -332,6 +329,70 @@ const AnalysisSnapshot = (() => {
       para: s.para && s.para.seq != null ? s.para.seq : null,
       interpretacao: corte(s.interpretacao, 40),
     }));
+    return { naoResolvidos, saltos };
+  }
+
+  function componentesDeWorkspace(comp, ccd, polimerosModelados) {
+    return {
+      proteinas: {
+        posicoes: comp.proteinas ? inteiro(comp.proteinas.posicoes) : polimerosModelados,
+        padrao: comp.proteinas ? inteiro(comp.proteinas.padrao) : null,
+        modificadas: comp.proteinas ? inteiro(comp.proteinas.modificadas) : null,
+      },
+      hetero: listaCodigos(comp.hetero),
+      ions: listaCodigos(comp.ions),
+      modificados: listaCodigos(comp.modificados),
+      aguas: {
+        instancias: comp.aguas ? inteiro(comp.aguas.instancias) || 0 : 0,
+        nota: corte(comp.aguas && comp.aguas.nota, 240) || "Contagem de águas registradas no modelo. Ausência de registro não significa amostra sem água.",
+      },
+      holo: {
+        estado: corte(comp.holo && comp.holo.estado, 40) || "nao_determinado",
+        motivo: corte(comp.holo && comp.holo.motivo, 240) || AVISO_HOLO,
+      },
+      anotacoesCcd: ccd.anotacoesCcd,
+      ccdEstado: ccd.ccdEstado,
+    };
+  }
+
+  function uniprotDeWorkspace(est) {
+    return {
+      correspondenciaResiduo: "nao_estabelecida",
+      motivo: corte(est.uniprot && est.uniprot.motivo, 300) || "Não há mapa resíduo a resíduo com o UniProt.",
+      declaracoes: ((est.uniprot && est.uniprot.declaracoes) || []).map((d) => ({
+        cadeia: d.cadeiaAuth == null ? null : texto(d.cadeiaAuth),
+        accession: corte(d.accession, 40),
+        db: corte(d.db, 40),
+        pdbInicio: d.pdbInicio == null ? null : d.pdbInicio,
+        pdbFim: d.pdbFim == null ? null : d.pdbFim,
+      })),
+    };
+  }
+
+  function limitacoesDeWorkspace(est) {
+    return [
+      "O PDB original não foi embutido. A comparação usa este snapshot, não uma nova leitura do depósito.",
+      "Não há mapa resíduo a resíduo com UniProt nem sobreposição estrutural.",
+      AVISO_HOLO,
+      AVISO_POCKET,
+      "O relatório wwPDB global não garante a qualidade do sítio.",
+    ].concat((est.limitacoes || []).map((l) => corte(l, 240)).filter(Boolean)).slice(0, 24);
+  }
+
+  function montarDeWorkspace(estado, opcoes) {
+    const o = opcoes || {};
+    const est = estado && estado.estrutura;
+    if (!est || est.schema !== "peki-estrutura-1") {
+      throw new Error("Ainda não há leitura estrutural para guardar. Abra uma estrutura antes.");
+    }
+    const agora = o.agora || new Date().toISOString();
+    const {
+      pdbId, nomeArquivoLocal, rotulo, metodo, titulo, tipo, formato, fonte, url,
+    } = identidadeDeWorkspace(estado, est);
+    const cadeias = cadeiasDe(est);
+    const polimerosModelados = cadeias.reduce((s, c) => s + c.residuos.length, 0);
+    const lac = est.lacunas || {};
+    const { naoResolvidos, saltos } = residuosAusentesDeWorkspace(lac);
     const comp = est.componentes || {};
     const ccd = ccdDe(estado.qualidade);
     const motivo = estado.ultimoMotivo && estado.ultimoMotivo.motivo ? {
@@ -376,48 +437,13 @@ const AnalysisSnapshot = (() => {
         saltosNumeracao: saltos,
         foraDoConstructo: corte(lac.foraDoConstructo && lac.foraDoConstructo.motivo, 240) || "Fora do constructo não avaliado.",
       },
-      componentes: {
-        proteinas: {
-          posicoes: comp.proteinas ? inteiro(comp.proteinas.posicoes) : polimerosModelados,
-          padrao: comp.proteinas ? inteiro(comp.proteinas.padrao) : null,
-          modificadas: comp.proteinas ? inteiro(comp.proteinas.modificadas) : null,
-        },
-        hetero: listaCodigos(comp.hetero),
-        ions: listaCodigos(comp.ions),
-        modificados: listaCodigos(comp.modificados),
-        aguas: {
-          instancias: comp.aguas ? inteiro(comp.aguas.instancias) || 0 : 0,
-          nota: corte(comp.aguas && comp.aguas.nota, 240) || "Contagem de águas registradas no modelo. Ausência de registro não significa amostra sem água.",
-        },
-        holo: {
-          estado: corte(comp.holo && comp.holo.estado, 40) || "nao_determinado",
-          motivo: corte(comp.holo && comp.holo.motivo, 240) || AVISO_HOLO,
-        },
-        anotacoesCcd: ccd.anotacoesCcd,
-        ccdEstado: ccd.ccdEstado,
-      },
+      componentes: componentesDeWorkspace(comp, ccd, polimerosModelados),
       qualidade: qualidadeDe(estado),
       pockets: pocketsDe(estado),
       preparo: preparoDe(est, o.preparo || null),
-      uniprot: {
-        correspondenciaResiduo: "nao_estabelecida",
-        motivo: corte(est.uniprot && est.uniprot.motivo, 300) || "Não há mapa resíduo a resíduo com o UniProt.",
-        declaracoes: ((est.uniprot && est.uniprot.declaracoes) || []).map((d) => ({
-          cadeia: d.cadeiaAuth == null ? null : texto(d.cadeiaAuth),
-          accession: corte(d.accession, 40),
-          db: corte(d.db, 40),
-          pdbInicio: d.pdbInicio == null ? null : d.pdbInicio,
-          pdbFim: d.pdbFim == null ? null : d.pdbFim,
-        })),
-      },
+      uniprot: uniprotDeWorkspace(est),
       anotacoes: { motivoSequencia: motivo },
-      limitacoes: [
-        "O PDB original não foi embutido. A comparação usa este snapshot, não uma nova leitura do depósito.",
-        "Não há mapa resíduo a resíduo com UniProt nem sobreposição estrutural.",
-        AVISO_HOLO,
-        AVISO_POCKET,
-        "O relatório wwPDB global não garante a qualidade do sítio.",
-      ].concat((est.limitacoes || []).map((l) => corte(l, 240)).filter(Boolean)).slice(0, 24),
+      limitacoes: limitacoesDeWorkspace(est),
     };
     const checagem = validarObjeto(snap);
     if (!checagem.ok) throw new Error("O guardado não passou na validação interna: " + checagem.erro);
@@ -448,15 +474,103 @@ const AnalysisSnapshot = (() => {
     return validarObjeto(valor);
   }
 
+  // Só verifica campos conhecidos: "!" exige presença e $nulo permite objetos nulos.
+  function validarTiposSnapshot(dado, esquema, caminho) {
+    const erro = (tipo) => "O campo " + caminho + " precisa ser " + tipo + ".";
+    if (esquema === "number|null") {
+      return dado === null || (typeof dado === "number" && Number.isFinite(dado)) ? null : erro("um número finito ou null");
+    }
+    if (esquema === "texto") return typeof dado === "string" && dado.trim() ? null : erro("uma string não vazia");
+    if (esquema === "string") return typeof dado === "string" ? null : erro("uma string");
+    if (esquema === "string|null") return dado === null || typeof dado === "string" ? null : erro("uma string ou null");
+    if (esquema === "boolean") return typeof dado === "boolean" ? null : erro("um booleano");
+    if (Array.isArray(esquema)) {
+      if (!Array.isArray(dado)) return erro("uma lista (array)");
+      for (let i = 0; i < dado.length; i++) {
+        const mensagem = validarTiposSnapshot(dado[i], esquema[0], caminho + "[" + i + "]");
+        if (mensagem) return mensagem;
+      }
+      return null;
+    }
+    if (dado === null && esquema.$nulo) return null;
+    if (!obj(dado)) return erro(esquema.$nulo ? "um objeto ou null" : "um objeto");
+    for (const [campo, tipo] of Object.entries(esquema)) {
+      if (campo === "$nulo") continue;
+      const obrigatorio = campo.endsWith("!");
+      const nome = obrigatorio ? campo.slice(0, -1) : campo;
+      const lugar = caminho ? caminho + "." + nome : nome;
+      if (!Object.prototype.hasOwnProperty.call(dado, nome)) {
+        if (obrigatorio) return "O campo " + lugar + " é obrigatório.";
+        continue;
+      }
+      const mensagem = validarTiposSnapshot(dado[nome], tipo, lugar);
+      if (mensagem) return mensagem;
+    }
+    return null;
+  }
+
   function validarObjeto(valor) {
     if (!obj(valor)) return falha("O JSON precisa ser um objeto de análise, não uma lista nem um valor solto.");
-    const schema = texto(valor.schema);
+    if (typeof valor.schema !== "string") return falha("O campo schema precisa ser uma string não vazia.");
+    const schema = valor.schema;
     const versao = schema.match(/^peki-analise-(\d+)$/);
     if (!versao) return falha("O arquivo não é uma análise PEKI (schema ausente ou desconhecido). A comparação atual foi mantida.");
     if (Number(versao[1]) > 1) {
       return falha("Versão futura incompatível (" + schema + "). Esta versão lê " + SCHEMA + ". A comparação atual foi mantida.");
     }
     if (schema !== SCHEMA) return falha("Schema " + schema + " não é lido por esta versão. A comparação atual foi mantida.");
+    const erroTipos = validarTiposSnapshot(valor, {
+      "schema!": "texto", versaoApp: "texto", "id!": "texto", "rotulo!": "texto", "geradoEm!": "texto",
+      "origem!": {
+        "tipo!": "texto", "formato!": "texto", pdbId: "string|null", nomeArquivo: "string|null",
+        fonte: "string|null", url: "string|null", titulo: "string|null", metodo: "string|null", nota: "string|null",
+        sintetico: "boolean", resolucaoArquivo: { $nulo: true, valor: "number|null", unidade: "string", origem: "string" },
+      },
+      modelo: { selecionado: "number|null", total: "number|null", criterio: "string|null" },
+      "cadeias!": [{
+        "id!": "texto", auth: "string|null", label: "string|null", "sequencia!": "string",
+        "residuos!": [{ "resname!": "texto", seq: "number|null", icode: "string", classe: "string" }],
+      }],
+      "cobertura!": { "polimerosModelados!": "number|null" },
+      "lacunas!": {
+        "determinado!": "boolean", resumo: "string", foraDoConstructo: "string",
+        "naoResolvidos!": [{ "cadeia!": "string", "resname!": "texto", seq: "number|null", icode: "string" }],
+        saltosNumeracao: [{ "cadeia!": "string", de: "number|null", para: "number|null", interpretacao: "string|null" }],
+      },
+      "componentes!": {
+        proteinas: { posicoes: "number|null", padrao: "number|null", modificadas: "number|null" },
+        "hetero!": [{ "codigo!": "texto", instancias: "number|null", nome: "string|null" }],
+        ions: [{ "codigo!": "texto", instancias: "number|null", nome: "string|null" }],
+        modificados: [{ "codigo!": "texto", instancias: "number|null", nome: "string|null" }],
+        anotacoesCcd: [{ "codigo!": "texto", instancias: "number|null", grupo: "string|null", nome: "string|null", tipo: "string|null", estado: "texto" }],
+        aguas: { instancias: "number|null", nota: "string" },
+        "holo!": { estado: "texto", motivo: "string" }, ccdEstado: "texto",
+      },
+      "qualidade!": {
+        "estado!": "texto", motivo: "string|null", classe: "string|null", consulta: "string|null",
+        fonte: { $nulo: true, nome: "string|null", url: "string|null", data: "string|null" },
+        metricas: [{ "id!": "texto", rotulo: "string", valor: "number|null", unidade: "string|null" }],
+        omitidos: [{ "id!": "texto", motivo: "string" }], local: { estado: "texto", motivo: "string|null" },
+      },
+      "pockets!": {
+        "estado!": "texto", motivo: "string|null", fonte: "string|null", aviso: "string",
+        "itens!": [{ "name!": "texto", volume: "number|null", surface: "number|null", depth: "number|null", hydrophobicity: "number|null", drugScore: "number|null" }],
+      },
+      "preparo!": {
+        "estado!": "texto", motivo: "string|null", versao: "string|null", predita: "string|null",
+        contagens: { $nulo: true, dissulfetos: "number|null", glicosilacao: "number|null", ions: "number|null", histidinas: "number|null", aguas: "number|null" },
+        selecao: { $nulo: true, cadeias: ["texto"], removerAguas: "boolean", altloc: "string|null", codigosHetMantidos: ["texto"] },
+        anotacoes: { $nulo: true, inventario: "string|null", limpeza: "string|null", ions: "string|null", dissulfetos: "string|null", glicosilacao: "string|null", histidinas: "string|null", vina: "string|null" },
+        caixaVina: { $nulo: true, editada: "boolean", center_x: "number|null", center_y: "number|null", center_z: "number|null", size_x: "number|null", size_y: "number|null", size_z: "number|null", aviso: "string" },
+      },
+      "uniprot!": {
+        "correspondenciaResiduo!": "texto", motivo: "string",
+        declaracoes: [{ cadeia: "string|null", accession: "string|null", db: "string|null", pdbInicio: "number|null", pdbFim: "number|null" }],
+      },
+      anotacoes: { motivoSequencia: { $nulo: true, consulta: "string|null", ocorrencias: "number|null" } },
+      limitacoes: ["texto"],
+    }, "");
+    if (erroTipos) return falha(erroTipos);
     if (!/^[A-Za-z0-9._-]{1,80}$/.test(texto(valor.id))) return falha("O identificador da análise está ausente ou usa caracteres não aceitos.");
     if (!corte(valor.rotulo, 80)) return falha("Falta o rótulo da análise.");
     if (!/^\d{4}-\d{2}-\d{2}T/.test(texto(valor.geradoEm))) return falha("A data do guardado não está em ISO 8601.");
@@ -789,8 +903,7 @@ const AnalysisSnapshot = (() => {
     return (valor - norma.min) / (norma.max - norma.min);
   }
 
-  function comparar(snaps, entrada) {
-    const lista = Array.isArray(snaps) ? snaps : [];
+  function criarBaseComparacao(lista) {
     const base = {
       schema: SCHEMA_COMPARACAO,
       versaoApp: VERSAO_APP,
@@ -818,32 +931,10 @@ const AnalysisSnapshot = (() => {
       analises: lista.map(resumoAnalise),
       escolha: null,
     };
-    if (lista.length < MIN_ANALISES || lista.length > MAX_ANALISES) {
-      base.motivo = "A comparação precisa de 2 a 5 análises. Agora há " + lista.length + ".";
-      base.alertas.push(base.motivo);
-      return base;
-    }
-    const norm = normalizarPergunta(entrada);
-    base.pergunta = norm.pergunta;
-    if (!norm.ok) {
-      base.motivo = norm.erros[0];
-      base.alertas = norm.erros.slice();
-      return base;
-    }
-    const pergunta = norm.pergunta;
-    const regiao = norm.regiao;
-    const numeracao = numeracaoComparavel(lista, regiao);
-    base.numeracao = numeracao;
-    if (regiao.ok && !regiao.vazia && !numeracao.comparavel) base.alertas.push(numeracao.motivo);
-    if (pergunta.regiaoEssencial && !regiao.vazia && !numeracao.comparavel) {
-      base.ok = true;
-      base.motivo = "A região é essencial e a numeração não é comparável. Não há ranking para não tratar números diferentes como o mesmo sítio.";
-      base.alertas.unshift(base.motivo);
-      base.candidatos = lista.map((snap) => candidatoVazio(snap, "nao_pontuado", [base.motivo]));
-      base.insights = insightsDe(lista, pergunta, regiao, numeracao, [], null);
-      return base;
-    }
+    return base;
+  }
 
+  function listarCriteriosComparacao(pergunta, base) {
     const criterios = [];
     if (pergunta.pesos.cobertura > 0) criterios.push({ id: "cobertura", rotulo: "Cobertura do modelo", peso: pergunta.pesos.cobertura });
     if (pergunta.pesos.qualidade > 0) criterios.push({ id: "qualidade", rotulo: "Qualidade e confiabilidade", peso: pergunta.pesos.qualidade });
@@ -852,19 +943,10 @@ const AnalysisSnapshot = (() => {
       base.alertas.push("O peso do componente foi ignorado porque nenhum código ou nome foi informado.");
     }
     if (pergunta.pesos.pocket > 0) criterios.push({ id: "pocket", rotulo: "Pocket e drugScore", peso: pergunta.pesos.pocket });
-    if (!criterios.length) {
-      base.ok = true;
-      base.motivo = "Informe ao menos um peso maior que zero. Peso zero exclui o critério e, sem critério, não há ranking.";
-      base.alertas.push(base.motivo);
-      base.candidatos = lista.map((snap) => candidatoVazio(snap, "nao_pontuado", [base.motivo]));
-      return base;
-    }
+    return criterios;
+  }
 
-    const usarRegiao = !!(regiao.ok && !regiao.vazia && numeracao.comparavel);
-    const avaliacoes = new Map(lista.map((snap) => [snap.id, avaliarRegiao(snap, regiao)]));
-    const presencas = new Map(lista.map((snap) => [snap.id, presenciaComponente(snap, pergunta.componente)]));
-    const pockets = new Map(lista.map((snap) => [snap.id, melhorPocket(snap)]));
-
+  function criarCandidatosComparacao(lista, pergunta, regiao, presencas, pockets, avaliacoes) {
     const candidatos = lista.map((snap) => {
       const motivos = [];
       let situacao = "ranqueado";
@@ -901,6 +983,10 @@ const AnalysisSnapshot = (() => {
       };
     });
 
+    return candidatos;
+  }
+
+  function normalizarPontuacoesComparacao(candidatos, pockets, pergunta, base) {
     const ativos = candidatos.filter((c) => c.situacao !== "desclassificado");
     const normasQualidade = {};
     for (const def of METRICAS_MENOR_MELHOR) {
@@ -918,6 +1004,10 @@ const AnalysisSnapshot = (() => {
       base.alertas.push("Nenhuma métrica de qualidade é comparável entre pelo menos duas análises. Ela não entrou como zero.");
     }
 
+    return { normasQualidade, normaPocket };
+  }
+
+  function pontuarCandidatosComparacao(candidatos, pergunta, usarRegiao, avaliacoes, presencas, pockets, normasQualidade, normaPocket) {
     for (const c of candidatos) {
       if (c.situacao === "desclassificado") continue;
       const subs = [];
@@ -978,6 +1068,70 @@ const AnalysisSnapshot = (() => {
       }
     }
 
+  }
+
+  function classificarEmpatesComparacao(pontuados) {
+    pontuados.sort((a, b) => b.pontuacao - a.pontuacao || texto(a.id).localeCompare(texto(b.id)));
+    let pos = 1;
+    for (let i = 0; i < pontuados.length; i++) {
+      if (i > 0 && Math.abs(pontuados[i].pontuacao - pontuados[i - 1].pontuacao) > 1e-9) pos = i + 1;
+      pontuados[i].posicao = pos;
+    }
+    const primeiro = pontuados[0].pontuacao;
+    const lideres = pontuados.filter((c) => Math.abs(c.pontuacao - primeiro) <= 1e-9);
+    for (const c of pontuados) c.empate = lideres.length > 1 && lideres.some((l) => l.id === c.id) ? true : pontuados.filter((o) => o.posicao === c.posicao).length > 1;
+    return lideres;
+  }
+
+  function comparar(snaps, entrada) {
+    const lista = Array.isArray(snaps) ? snaps : [];
+    const base = criarBaseComparacao(lista);
+    if (lista.length < MIN_ANALISES || lista.length > MAX_ANALISES) {
+      base.motivo = "A comparação precisa de 2 a 5 análises. Agora há " + lista.length + ".";
+      base.alertas.push(base.motivo);
+      return base;
+    }
+    const norm = normalizarPergunta(entrada);
+    base.pergunta = norm.pergunta;
+    if (!norm.ok) {
+      base.motivo = norm.erros[0];
+      base.alertas = norm.erros.slice();
+      return base;
+    }
+    const pergunta = norm.pergunta;
+    const regiao = norm.regiao;
+    const numeracao = numeracaoComparavel(lista, regiao);
+    base.numeracao = numeracao;
+    if (regiao.ok && !regiao.vazia && !numeracao.comparavel) base.alertas.push(numeracao.motivo);
+    if (pergunta.regiaoEssencial && !regiao.vazia && !numeracao.comparavel) {
+      base.ok = true;
+      base.motivo = "A região é essencial e a numeração não é comparável. Não há ranking para não tratar números diferentes como o mesmo sítio.";
+      base.alertas.unshift(base.motivo);
+      base.candidatos = lista.map((snap) => candidatoVazio(snap, "nao_pontuado", [base.motivo]));
+      base.insights = insightsDe(lista, pergunta, regiao, numeracao, [], null);
+      return base;
+    }
+
+    const criterios = listarCriteriosComparacao(pergunta, base);
+    if (!criterios.length) {
+      base.ok = true;
+      base.motivo = "Informe ao menos um peso maior que zero. Peso zero exclui o critério e, sem critério, não há ranking.";
+      base.alertas.push(base.motivo);
+      base.candidatos = lista.map((snap) => candidatoVazio(snap, "nao_pontuado", [base.motivo]));
+      return base;
+    }
+
+    const usarRegiao = !!(regiao.ok && !regiao.vazia && numeracao.comparavel);
+    const avaliacoes = new Map(lista.map((snap) => [snap.id, avaliarRegiao(snap, regiao)]));
+    const presencas = new Map(lista.map((snap) => [snap.id, presenciaComponente(snap, pergunta.componente)]));
+    const pockets = new Map(lista.map((snap) => [snap.id, melhorPocket(snap)]));
+
+    const candidatos = criarCandidatosComparacao(lista, pergunta, regiao, presencas, pockets, avaliacoes);
+
+    const { normasQualidade, normaPocket } = normalizarPontuacoesComparacao(candidatos, pockets, pergunta, base);
+
+    pontuarCandidatosComparacao(candidatos, pergunta, usarRegiao, avaliacoes, presencas, pockets, normasQualidade, normaPocket);
+
     const pontuados = candidatos.filter((c) => c.situacao === "ranqueado" && c.pontuacao != null);
     if (!pontuados.length) {
       base.ok = true;
@@ -990,15 +1144,7 @@ const AnalysisSnapshot = (() => {
       base.insights = insightsDe(lista, pergunta, regiao, numeracao, candidatos, usarRegiao);
       return base;
     }
-    pontuados.sort((a, b) => b.pontuacao - a.pontuacao || texto(a.id).localeCompare(texto(b.id)));
-    let pos = 1;
-    for (let i = 0; i < pontuados.length; i++) {
-      if (i > 0 && Math.abs(pontuados[i].pontuacao - pontuados[i - 1].pontuacao) > 1e-9) pos = i + 1;
-      pontuados[i].posicao = pos;
-    }
-    const primeiro = pontuados[0].pontuacao;
-    const lideres = pontuados.filter((c) => Math.abs(c.pontuacao - primeiro) <= 1e-9);
-    for (const c of pontuados) c.empate = lideres.length > 1 && lideres.some((l) => l.id === c.id) ? true : pontuados.filter((o) => o.posicao === c.posicao).length > 1;
+    const lideres = classificarEmpatesComparacao(pontuados);
     base.ok = true;
     base.ranqueado = true;
     base.lideres = lideres.map((c) => ({ id: c.id, rotulo: c.rotulo, pontuacao: c.pontuacao }));

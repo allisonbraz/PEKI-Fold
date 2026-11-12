@@ -1,0 +1,2158 @@
+{
+  "downloads": [
+    {
+      "nome": "PEKI-Fold_sintetica.md",
+      "conteudo": "# PEKI Fold — Análise de sintetica.pdb\n\n*Protein Exploration Kit for Insights*\n\nGerado em 12/11/2026, 12:00:00 · 2 cadeia(s) · 7 resíduos ATOM · 9 átomos ATOM.\n\n## Visão geral\n\nContrato peki-estrutura-1.\nFormato lido: pdb.\nModelo 1 de 1 (arquivo sem registro MODEL).\nTítulo: SYNTHETIC GEOMETRY; NOT AN EXPERIMENTAL DEPOSIT.\nMétodo: X-RAY DIFFRACTION.\nResolução: 2 Å (REMARK 2).\nClassificação do arquivo: SYNTHETIC CHARACTERIZATION.\nNão determinado. Não há fonte explícita cobrindo todas as cadeias com polímero (REMARK 465 com a seção MISSING RESIDUES, categoria mmCIF de não observados, esquema de sequência ou SEQRES com alinhamento único). Saltos de numeração não foram contados como resíduos ausentes.\nA sequência completa no UniProt não foi consultada. O intervalo citado em DBREF ou _struct_ref_seq não foi expandido em resíduos fora do constructo.\nDBREF e _struct_ref_seq são intervalos declarados no arquivo. Esta versão não os expande em pares resíduo a resíduo e não consulta a sequência completa no UniProt.\nNenhuma declaração DBREF ou _struct_ref neste arquivo. Mapa PDB–UniProt pendente.\nProteína: 7 posição(ões) com coordenadas em A, _. nome do resíduo no PDB, sem registro de entidade.\nÁguas registradas no modelo: 1. Contagem de registros HOH, WAT, H2O ou DOD no modelo selecionado. Ausência de registro não significa ausência de água na amostra.\nÍons: ZN ×1. lista parcial de códigos de íon; HETATM não prova estado holo\nHeterocomponentes de classificação biológica incerta: NAG ×1.\nHETATM e o inventário de componentes não estabelecem estado holo ou apo.\nSaltos de numeração:\n- cadeia A entre 2 e 4: nao_determinado (3)\n- cadeia A entre 5 e 10: nao_determinado (6, 7, 8, 9)\n1 linha(s) ATOM/HETATM curtas foram ignoradas.\nHá altLoc. A contagem de posições usa um resíduo por número e código de inserção; as linhas de átomo da estatística clássica continuam incluindo as alternativas.\nResíduos sem coordenadas não são desenhados nem destacados no viewer.\nA leitura peki-estrutura-1 não calcula R, Rfree, clashscore nem qualidade local. Com ID do PDB, a aba Qualidade consulta o relatório wwPDB à parte.\nReconstrução de coordenadas e SWISS-MODEL não entram nesta versão.\nMapa resíduo a resíduo PDB–UniProt fica pendente.\nRegiões fora do constructo não foram separadas das ausências no experimento.\nREMARK 470 e átomos faltando dentro de um resíduo resolvido não entram nesta versão.\nO drugScore do DoGSite continua descritor geométrico, não afinidade.\n\n## Qualidade e componentes\n\nContrato peki-qualidade-1.\nQualidade ainda não consultada. Nenhum indicador foi preenchido com zero.\n\n## Sobre a estrutura\n\n**SYNTHETIC GEOMETRY; NOT AN EXPERIMENTAL DEPOSIT**\n\n- Classificação: SYNTHETIC CHARACTERIZATION\n- Método: X-RAY DIFFRACTION\n- Resolução: 2 Å\n- Depósito: 12-NOV-26\n\n## Estrutura 3D\n\n![Estrutura 3D](data:image/png;base64,FIXTURE)\n\n## Cadeias\n\n| Cadeia | Resíduos | Átomos | Aa diferentes |\n| --- | --- | --- | --- |\n| A | 6 | 8 | 5 |\n| _ | 1 | 1 | 1 |\n\n## Estatísticas\n\n- Cadeias: 2\n- Átomos: 9\n- Resíduos: 7\n- Maior cadeia: A (6 resíduos)\n- Menor cadeia: _ (1 resíduos)\n\n## Aminoácidos\n\n**Cadeia A**\n\n![Aminoácidos cadeia A](data:image/png;base64,GRAPH)\n\n**Cadeia _**\n\n![Aminoácidos cadeia _](data:image/png;base64,GRAPH)\n\n## Sequências (FASTA)\n\n```\n>sintetica_A\nCCNHGA\n>sintetica__\nG\n```\n\n## Motivos\n\nMotivo `CYS-CYS` — 1 ocorrência(s):\n\n| Cadeia | Posição | Resíduos |\n| --- | --- | --- |\n| A | 1 | 1, 2 |\n\n## Pockets\n\n| Pocket | Volume (Å³) | Superfície (Å²) | Profundidade | Hidrofob. | Aceptores | Doadores | DrugScore |\n| --- | --- | --- | --- | --- | --- | --- | --- |\n| P_0 | 100.00 | 50.00 | 8.00 | 0.40 | 2 | 3 | 0.700 |\n| P_1 | — | 20.00 | 4.00 | — | 0 | 1 | — |\n\n**Análise:**\n\n- Maior volume: P_0 (100.00 Å³)\n- Mais profundo: P_0 (8.00)\n- Volume × profundidade: dados insuficientes para avaliar.\n- Mais hidrofóbico: P_0 (0.40)\n- Maior drugScore (descritor geométrico, não é afinidade): P_0 (0.700)\n\n![Volume por pocket](data:image/png;base64,GRAPH)\n\n![Profundidade por pocket](data:image/png;base64,GRAPH)\n\n> O drugScore e o volume são descritores geométricos da cavidade, não previsão de ligação. Escore de docking não é afinidade. Contato geométrico não é contribuição energética.\n\n# Ficha de preparo — 1ABC\n\n- Estrutura: 1ABC\n- Gerado em: 12/11/2026, 12:00:00\n- Versão do módulo: preparo-1\n- Raios: metais 2.8 Å; SG–SG 2.5 Å; ND2–C1 1.8 Å; histidinas 3.2 Å.\n- Ficha auxiliar: exige conferência humana. Não faz docking, dinâmica molecular, minimização, protonação nem cálculo de afinidade.\n- Contato geométrico não é contribuição energética.\n- Escore de docking não é afinidade.\n\n## Inventário\n\nA cadeia A tem conformação alternativa em 2 átomo(s) (1 resíduo(s)/átomo com altloc).\n\nA cadeia A tem 1 linha(s) ANISOU.\n\nA cadeia A tem código de inserção: GLY 10A.\n\nLacuna de numeração não prova resíduo faltante. O REMARK 465 confirma quando ele existe.\n\nLacuna de numeração não prova resíduo faltante. O REMARK 465 confirma quando ele existe.\n\n| Cadeia | ATOM | HETATM | Águas | Altloc | ANISOU |\n| --- | --- | --- | --- | --- | --- |\n| A | 8 | 3 | 1 | 2 | 1 |\n| (sem id) | 1 | 0 | 0 | 0 | 0 |\n\n| Código | Classe | Cópias | Átomos | HETNAM |\n| --- | --- | --- | --- | --- |\n| HOH | água | 1 | 1 |  |\n| NAG | açúcar | 1 | 1 | N-ACETYL-D-GLUCOSAMINE |\n| ZN | íon metálico | 1 | 1 |  |\n\n| Cadeia | Entre | Confirmados no REMARK 465 |\n| --- | --- | --- |\n| A | 2-4 | 0/1 |\n| A | 5-10 | 0/4 |\n\n**Decisão do pesquisador:** (em branco)\n\n## Limpeza e exportação\n\nÁtomos de proteína mantidos: 8.\n\nHETATM mantidos: 2.\n\nÁguas removidas: 1 linha(s).\n\nHET não marcados e removidos: 0 linha(s).\n\nFora das cadeias escolhidas: 0 linha(s).\n\nANISOU descartados: 1.\n\nLinhas removidas pela regra de altloc (branco ou A): 1.\n\nLinhas duplicadas descartadas: 0.\n\nÍons em arquivo próprio: 1.\n\nO arquivo continua sem hidrogênios adicionados.\n\nO número de série é o do arquivo original. Ele muda se outro programa renumerar os átomos. Não serve como identificador depois dessa renumeração.\n\nO número de série é o do arquivo original. Ele muda se outro programa renumerar os átomos. Não serve como identificador depois dessa renumeração.\n\nRegra de altloc: branco ou A.\n\n**Decisão do pesquisador:** (em branco)\n\n## Íons metálicos\n\nContato geométrico não é contribuição energética.\n\nO número de série é o do arquivo original. Ele muda se outro programa renumerar os átomos. Não serve como identificador depois dessa renumeração.\n\nRaio 2.8 Å. Pares sem LINK de simetria 1555 não são, por isso, erros automáticos.\n\n| Íon | Série original | Ocupação | Vizinho | Distância (Å) | LINK 1555 | Notas |\n| --- | --- | --- | --- | --- | --- | --- |\n| ZN1 ZN A 100 | 10 | 1.00 | SG CYS A 1 | 1.00 | não | Cisteína pelo SG: candidata a CYM, se a coordenação for confirmada. A ficha não renomeia o resíduo. |\n| ZN1 ZN A 100 | 10 | 1.00 | ND1 HIS A 5 | 1.00 | não | Histidina pelo ND1: candidata a HIE. Indício geométrico, não protonação. Sem hidrogênios no arquivo, a geometria não separa tautômeros com segurança. |\n| ZN1 ZN A 100 | 10 | 1.00 | O HOH A 102 | 1.00 | não | Água no raio. Pode ser ligante ou artefato de cristalização. |\n| ZN1 ZN A 100 | 10 | 1.00 | SG CYS A 2 | 2.24 | não | Cisteína pelo SG: candidata a CYM, se a coordenação for confirmada. A ficha não renomeia o resíduo. |\n\n**Decisão do pesquisador:** (em branco)\n\n## Pontes dissulfeto\n\nContato geométrico não é contribuição energética.\n\nRascunho. Não é um arquivo de entrada pronto. A numeração pode mudar depois do loadpdb e precisa ser conferida.\n\n| Cisteína 1 | Cisteína 2 | Distância (Å) | SSBOND |\n| --- | --- | --- | --- |\n| CYS A 1 | CYS A 2 | 2.00 | sim |\n\n```\n# Rascunho de linhas bond para o tleap (AmberTools).\n# Rascunho. Não é um arquivo de entrada pronto. A numeração pode mudar depois do loadpdb e precisa ser conferida.\n# Contato geométrico não é contribuição energética.\n# A cadeia não entra no nome do átomo. Números iguais em cadeias diferentes ficam ambíguos.\n# Dissulfeto CYS A 1 SG — CYS A 2 SG, 2.00 Å. Consta no SSBOND.\nbond <unidade>.1.SG <unidade>.2.SG\n# ASN A 4 ND2 — NAG A 101 C1, 1.40 Å. Açúcar da lista ou do HETNAM. Não consta em LINK de simetria 1555.\nbond <unidade>.4.ND2 <unidade>.101.C1\n```\n\n**Decisão do pesquisador:** (em branco)\n\n## Glicosilação\n\nContato geométrico não é contribuição energética.\n\nO nome GLYCAM do açúcar não sai da geometria.\n\nAçúcares permanecem HETATM. O módulo não insere TER entre eles.\n\n| ASN | C1 | Distância (Å) | Origem | LINK |\n| --- | --- | --- | --- | --- |\n| ASN A 4 | NAG A 101 | 1.40 | lista ou HETNAM | não |\n\n| Árvore | Código | Cadeia | Número atual | Número sugerido | HETNAM | ASN |\n| --- | --- | --- | --- | --- | --- | --- |\n| 1 | NAG | A | 101 | 12 | N-ACETYL-D-GLUCOSAMINE | ASN A 4 |\n\n**Decisão do pesquisador:** (em branco)\n\n## Histidinas\n\nIndício geométrico, não protonação. Sem hidrogênios no arquivo, a geometria não separa tautômeros com segurança.\n\nEnterramento: contagem a ≤ 6 Å. Não é área de superfície.\n\n| Cadeia | Resíduo | Candidato | Metais ND1 | Metais NE2 | Enterramento |\n| --- | --- | --- | --- | --- | --- |\n| A | 5 | candidata a HIE — ND1 a 1.00 Å de um metal. | 1 | 0 | 4 |\n\n**Decisão do pesquisador:** (em branco)\n\n## Caixa sugerida para o Vina\n\nSugestão editável de caixa. Não é uma caixa validada e não é resultado de docking.\n\nO drugScore e o volume do DoGSite são descritores geométricos da cavidade, não previsão de ligação.\n\nEscore de docking não é afinidade.\n\nNenhuma caixa calculada nesta exportação.\n\n**Decisão do pesquisador:** (em branco)\n\n- Ficha auxiliar: exige conferência humana. Não faz docking, dinâmica molecular, minimização, protonação nem cálculo de afinidade.\n- Contato geométrico não é contribuição energética.\n- Escore de docking não é afinidade.\n- O número de série é o do arquivo original. Ele muda se outro programa renumerar os átomos. Não serve como identificador depois dessa renumeração.\n- Indício geométrico, não protonação. Sem hidrogênios no arquivo, a geometria não separa tautômeros com segurança.\n- Sugestão editável de caixa. Não é uma caixa validada e não é resultado de docking.\n---\nDesenvolvido por Allison Braz · Universidade Federal de Jataí (UFJ) · orientação do Prof. Dr. Roosevelt Alves da Silva.\n",
+      "mime": "text/markdown;charset=utf-8"
+    },
+    {
+      "nome": "sintetica_estatisticas.csv",
+      "conteudo": "Cadeia,Atomos,Residuos,Aminoacidos_diferentes\nA,8,6,5\n_,1,1,1\n",
+      "mime": "text/csv;charset=utf-8"
+    },
+    {
+      "nome": "sintetica_pockets.csv",
+      "conteudo": "Pocket,Volume_A3,Superficie_A2,Profundidade,Hidrofobicidade,Aceptores,Doadores,DrugScore\nP_0,100,50,8,0.4,2,3,0.7\nP_1,,20,4,,0,1,\n",
+      "mime": "text/csv;charset=utf-8"
+    },
+    {
+      "nome": "PEKI-Fold_comparacao_1ABC-2ABC.md",
+      "conteudo": "# PEKI Fold — Comparação\n\n*Protein Exploration Kit for Insights*\n\nProteínas: 1ABC, 2ABC · gerado em 12/11/2026, 12:00:00.\n\n## Estatísticas\n\n| Proteína | Cadeias | Átomos | Resíduos | Aa diferentes |\n| --- | --- | --- | --- | --- |\n| 1ABC | 2 | 9 | 7 | 5 |\n| 2ABC | 2 | 9 | 7 | 5 |\n\n![Resíduos por proteína](data:image/png;base64,GRAPH)\n\n## Aminoácidos\n\n![Composição de aminoácidos](data:image/png;base64,GRAPH)\n\n## Pockets\n\n### Pocket principal por proteína\n\n| Proteína | Pocket | Volume (Å³) | Profundidade | Hidrofob. | DrugScore |\n| --- | --- | --- | --- | --- | --- |\n| 1ABC | P_0 | 100.00 | 8.00 | 0.40 | 0.700 |\n| 2ABC | P_0 | 100.00 | 8.00 | 0.40 | 0.700 |\n\n**Comparação (perguntas do trabalho):**\n\n- Proteína com pocket de maior volume: 1ABC — P_0 (100.00 Å³)\n- Proteína com pocket mais profundo: 1ABC — P_0 (8.00)\n- Volume × profundidade: dados insuficientes para avaliar.\n- Proteínas mais hidrofóbicas: 1ABC (0.40), 2ABC (0.40)\n- Maior drugScore (descritor geométrico, não é afinidade): 1ABC — P_0 (0.700)\n\n> O drugScore e o volume são descritores geométricos da cavidade, não previsão de ligação. Escore de docking não é afinidade. Contato geométrico não é contribuição energética.\n\n![Volume](data:image/png;base64,GRAPH)\n\n![Profundidade](data:image/png;base64,GRAPH)\n\n![Hidrofobicidade](data:image/png;base64,GRAPH)\n\n---\nDesenvolvido por Allison Braz · Universidade Federal de Jataí (UFJ) · orientação do Prof. Dr. Roosevelt Alves da Silva.\n",
+      "mime": "text/markdown;charset=utf-8"
+    },
+    {
+      "nome": "PEKI-Fold_comparacao_1ABC-2ABC_estatisticas.csv",
+      "conteudo": "Proteina,Cadeias,Atomos,Residuos,Aminoacidos_diferentes\n1ABC,2,9,7,5\n2ABC,2,9,7,5\n",
+      "mime": "text/csv;charset=utf-8"
+    },
+    {
+      "nome": "PEKI-Fold_comparacao_1ABC-2ABC_pockets.csv",
+      "conteudo": "Proteina,Pocket,Volume_A3,Superficie_A2,Profundidade,Hidrofobicidade,Aceptores,Doadores,DrugScore\n1ABC,P_0,100,50,8,0.4,2,3,0.7\n1ABC,P_1,,20,4,,0,1,\n2ABC,P_0,100,50,8,0.4,2,3,0.7\n2ABC,P_1,,20,4,,0,1,\n",
+      "mime": "text/csv;charset=utf-8"
+    },
+    {
+      "nome": "1ABC-analise.json",
+      "conteudo": "{\n  \"schema\": \"peki-analise-1\",\n  \"versaoApp\": \"peki-fold-web\",\n  \"geradoEm\": \"2026-11-12T15:00:00.000Z\",\n  \"id\": \"SIN-SALVO\",\n  \"rotulo\": \"1ABC\",\n  \"origem\": {\n    \"tipo\": \"rcsb\",\n    \"pdbId\": \"1ABC\",\n    \"nomeArquivo\": \"sintetica.pdb\",\n    \"formato\": \"pdb\",\n    \"fonte\": \"RCSB PDB\",\n    \"url\": \"https://files.rcsb.org/download/1ABC.pdb\",\n    \"titulo\": \"SYNTHETIC GEOMETRY; NOT AN EXPERIMENTAL DEPOSIT\",\n    \"metodo\": \"X-RAY DIFFRACTION\",\n    \"resolucaoArquivo\": {\n      \"valor\": 2,\n      \"unidade\": \"Å\",\n      \"origem\": \"REMARK 2\"\n    },\n    \"sintetico\": false,\n    \"nota\": \"O PDB original não foi embutido. Este arquivo guarda a leitura usada na comparação e fica no computador de quem o baixou.\"\n  },\n  \"modelo\": {\n    \"selecionado\": 1,\n    \"total\": 1,\n    \"criterio\": \"arquivo sem registro MODEL\"\n  },\n  \"cadeias\": [\n    {\n      \"id\": \"A\",\n      \"auth\": \"A\",\n      \"label\": null,\n      \"sequencia\": \"CCNHGA\",\n      \"residuos\": [\n        {\n          \"resname\": \"CYS\",\n          \"seq\": 1,\n          \"icode\": \"\",\n          \"classe\": \"proteina\"\n        },\n        {\n          \"resname\": \"CYS\",\n          \"seq\": 2,\n          \"icode\": \"\",\n          \"classe\": \"proteina\"\n        },\n        {\n          \"resname\": \"ASN\",\n          \"seq\": 4,\n          \"icode\": \"\",\n          \"classe\": \"proteina\"\n        },\n        {\n          \"resname\": \"HIS\",\n          \"seq\": 5,\n          \"icode\": \"\",\n          \"classe\": \"proteina\"\n        },\n        {\n          \"resname\": \"GLY\",\n          \"seq\": 10,\n          \"icode\": \"A\",\n          \"classe\": \"proteina\"\n        },\n        {\n          \"resname\": \"ALA\",\n          \"seq\": 11,\n          \"icode\": \"\",\n          \"classe\": \"proteina\"\n        }\n      ]\n    },\n    {\n      \"id\": \"_\",\n      \"auth\": null,\n      \"label\": null,\n      \"sequencia\": \"G\",\n      \"residuos\": [\n        {\n          \"resname\": \"GLY\",\n          \"seq\": 1,\n          \"icode\": \"\",\n          \"classe\": \"proteina\"\n        }\n      ]\n    }\n  ],\n  \"cobertura\": {\n    \"polimerosModelados\": 7\n  },\n  \"lacunas\": {\n    \"determinado\": false,\n    \"resumo\": \"Não determinado. Não há fonte explícita cobrindo todas as cadeias com polímero (REMARK 465 com a seção MISSING RESIDUES, categoria mmCIF de não observados, esquema de sequência ou SEQRES com alinhamento único). Saltos de numeração não foram contados como resíduos ausentes.\",\n    \"naoResolvidos\": [],\n    \"saltosNumeracao\": [\n      {\n        \"cadeia\": \"A\",\n        \"de\": 2,\n        \"para\": 4,\n        \"interpretacao\": \"nao_determinado\"\n      },\n      {\n        \"cadeia\": \"A\",\n        \"de\": 5,\n        \"para\": 10,\n        \"interpretacao\": \"nao_determinado\"\n      }\n    ],\n    \"foraDoConstructo\": \"A sequência completa no UniProt não foi consultada. O intervalo citado em DBREF ou _struct_ref_seq não foi expandido em resíduos fora do constructo.\"\n  },\n  \"componentes\": {\n    \"proteinas\": {\n      \"posicoes\": 7,\n      \"padrao\": 7,\n      \"modificadas\": 0\n    },\n    \"hetero\": [\n      {\n        \"codigo\": \"NAG\",\n        \"instancias\": 1,\n        \"nome\": null\n      }\n    ],\n    \"ions\": [\n      {\n        \"codigo\": \"ZN\",\n        \"instancias\": 1,\n        \"nome\": null\n      }\n    ],\n    \"modificados\": [],\n    \"aguas\": {\n      \"instancias\": 1,\n      \"nota\": \"Contagem de registros HOH, WAT, H2O ou DOD no modelo selecionado. Ausência de registro não significa ausência de água na amostra.\"\n    },\n    \"holo\": {\n      \"estado\": \"nao_determinado\",\n      \"motivo\": \"HETATM e o inventário de componentes não estabelecem estado holo ou apo.\"\n    },\n    \"anotacoesCcd\": [],\n    \"ccdEstado\": \"nao_consultado\"\n  },\n  \"qualidade\": {\n    \"estado\": \"pendente\",\n    \"motivo\": \"A consulta ao relatório wwPDB ainda não concluiu nesta análise. Os indicadores não foram inventados nem zerados.\",\n    \"classe\": null,\n    \"consulta\": null,\n    \"fonte\": null,\n    \"metricas\": [],\n    \"omitidos\": [],\n    \"local\": {\n      \"estado\": \"pendente\",\n      \"motivo\": \"A consulta ao relatório wwPDB ainda não concluiu nesta análise. Os indicadores não foram inventados nem zerados.\"\n    }\n  },\n  \"pockets\": {\n    \"fonte\": \"DoGSiteScorer/ProteinsPlus\",\n    \"aviso\": \"O drugScore é descritor geométrico do DoGSiteScorer. Não é afinidade, não identifica sítio funcional e não corresponde a um pocket alinhado entre estruturas.\",\n    \"itens\": [\n      {\n        \"name\": \"P_0\",\n        \"volume\": 100,\n        \"surface\": 50,\n        \"depth\": 8,\n        \"hydrophobicity\": 0.4,\n        \"drugScore\": 0.7\n      },\n      {\n        \"name\": \"P_1\",\n        \"volume\": null,\n        \"surface\": 20,\n        \"depth\": 4,\n        \"hydrophobicity\": null,\n        \"drugScore\": null\n      }\n    ],\n    \"estado\": \"ok\",\n    \"motivo\": null\n  },\n  \"preparo\": {\n    \"estado\": \"ok\",\n    \"motivo\": null,\n    \"versao\": \"preparo-1\",\n    \"predita\": null,\n    \"contagens\": {\n      \"dissulfetos\": 1,\n      \"glicosilacao\": 1,\n      \"ions\": 1,\n      \"histidinas\": 1,\n      \"aguas\": 1\n    },\n    \"selecao\": {\n      \"cadeias\": [\n        \"A\",\n        \"_\"\n      ],\n      \"removerAguas\": true,\n      \"altloc\": \"A\",\n      \"codigosHetMantidos\": [\n        \"NAG\",\n        \"ZN\"\n      ]\n    },\n    \"anotacoes\": {\n      \"inventario\": null,\n      \"limpeza\": null,\n      \"ions\": null,\n      \"dissulfetos\": null,\n      \"glicosilacao\": null,\n      \"histidinas\": null,\n      \"vina\": null\n    },\n    \"caixaVina\": null\n  },\n  \"uniprot\": {\n    \"correspondenciaResiduo\": \"nao_estabelecida\",\n    \"motivo\": \"DBREF e _struct_ref_seq são intervalos declarados no arquivo. Esta versão não os expande em pares resíduo a resíduo e não consulta a sequência completa no UniProt.\",\n    \"declaracoes\": []\n  },\n  \"anotacoes\": {\n    \"motivoSequencia\": {\n      \"consulta\": \"CYS-CYS\",\n      \"ocorrencias\": 1\n    }\n  },\n  \"limitacoes\": [\n    \"O PDB original não foi embutido. A comparação usa este snapshot, não uma nova leitura do depósito.\",\n    \"Não há mapa resíduo a resíduo com UniProt nem sobreposição estrutural.\",\n    \"Componente observado no snapshot não prova estado holo, apo nem função biológica.\",\n    \"O drugScore é descritor geométrico do DoGSiteScorer. Não é afinidade, não identifica sítio funcional e não corresponde a um pocket alinhado entre estruturas.\",\n    \"O relatório wwPDB global não garante a qualidade do sítio.\",\n    \"Resíduos sem coordenadas não são desenhados nem destacados no viewer.\",\n    \"A leitura peki-estrutura-1 não calcula R, Rfree, clashscore nem qualidade local. Com ID do PDB, a aba Qualidade consulta o relatório wwPDB à parte.\",\n    \"Reconstrução de coordenadas e SWISS-MODEL não entram nesta versão.\",\n    \"Mapa resíduo a resíduo PDB–UniProt fica pendente.\",\n    \"Regiões fora do constructo não foram separadas das ausências no experimento.\",\n    \"REMARK 470 e átomos faltando dentro de um resíduo resolvido não entram nesta versão.\",\n    \"O drugScore do DoGSite continua descritor geométrico, não afinidade.\"\n  ]\n}\n"
+    }
+  ],
+  "charts": [
+    {
+      "spec": {
+        "data": [
+          {
+            "x": [
+              "ALA",
+              "ARG",
+              "ASN",
+              "ASP",
+              "CYS",
+              "GLN",
+              "GLU",
+              "GLY",
+              "HIS",
+              "ILE",
+              "LEU",
+              "LYS",
+              "MET",
+              "PHE",
+              "PRO",
+              "SER",
+              "THR",
+              "TRP",
+              "TYR",
+              "VAL"
+            ],
+            "y": [
+              16.67,
+              0,
+              16.67,
+              0,
+              33.33,
+              0,
+              0,
+              16.67,
+              16.67,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "type": "bar",
+            "marker": {
+              "color": "#2a5599"
+            }
+          }
+        ],
+        "layout": {
+          "title": "Frequência de aminoácidos — cadeia A",
+          "xaxis": {
+            "title": "Aminoácido"
+          },
+          "yaxis": {
+            "title": "Porcentagem (%)"
+          }
+        }
+      },
+      "w": 760,
+      "h": 400
+    },
+    {
+      "spec": {
+        "data": [
+          {
+            "x": [
+              "ALA",
+              "ARG",
+              "ASN",
+              "ASP",
+              "CYS",
+              "GLN",
+              "GLU",
+              "GLY",
+              "HIS",
+              "ILE",
+              "LEU",
+              "LYS",
+              "MET",
+              "PHE",
+              "PRO",
+              "SER",
+              "THR",
+              "TRP",
+              "TYR",
+              "VAL"
+            ],
+            "y": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              100,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "type": "bar",
+            "marker": {
+              "color": "#e8513a"
+            }
+          }
+        ],
+        "layout": {
+          "title": "Frequência de aminoácidos — cadeia _",
+          "xaxis": {
+            "title": "Aminoácido"
+          },
+          "yaxis": {
+            "title": "Porcentagem (%)"
+          }
+        }
+      },
+      "w": 760,
+      "h": 400
+    },
+    {
+      "spec": {
+        "data": [
+          {
+            "x": [
+              "P_0",
+              "P_1"
+            ],
+            "y": [
+              100,
+              null
+            ],
+            "type": "bar",
+            "marker": {
+              "color": "#2a5599"
+            }
+          }
+        ],
+        "layout": {
+          "title": "Volume por pocket",
+          "xaxis": {
+            "title": "Pocket"
+          },
+          "yaxis": {
+            "title": "Volume (Å³)"
+          }
+        }
+      },
+      "w": 760,
+      "h": 400
+    },
+    {
+      "spec": {
+        "data": [
+          {
+            "x": [
+              "P_0",
+              "P_1"
+            ],
+            "y": [
+              8,
+              4
+            ],
+            "type": "bar",
+            "marker": {
+              "color": "#e8513a"
+            }
+          }
+        ],
+        "layout": {
+          "title": "Profundidade por pocket",
+          "xaxis": {
+            "title": "Pocket"
+          },
+          "yaxis": {
+            "title": "Profundidade"
+          }
+        }
+      },
+      "w": 760,
+      "h": 400
+    },
+    {
+      "spec": {
+        "data": [
+          {
+            "x": [
+              "ALA",
+              "ARG",
+              "ASN",
+              "ASP",
+              "CYS",
+              "GLN",
+              "GLU",
+              "GLY",
+              "HIS",
+              "ILE",
+              "LEU",
+              "LYS",
+              "MET",
+              "PHE",
+              "PRO",
+              "SER",
+              "THR",
+              "TRP",
+              "TYR",
+              "VAL"
+            ],
+            "y": [
+              16.67,
+              0,
+              16.67,
+              0,
+              33.33,
+              0,
+              0,
+              16.67,
+              16.67,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "type": "bar",
+            "marker": {
+              "color": "#2a5599"
+            }
+          }
+        ],
+        "layout": {
+          "title": "Frequência de aminoácidos — cadeia A",
+          "xaxis": {
+            "title": "Aminoácido"
+          },
+          "yaxis": {
+            "title": "Porcentagem (%)"
+          }
+        }
+      },
+      "w": 760,
+      "h": 400
+    },
+    {
+      "spec": {
+        "data": [
+          {
+            "x": [
+              "ALA",
+              "ARG",
+              "ASN",
+              "ASP",
+              "CYS",
+              "GLN",
+              "GLU",
+              "GLY",
+              "HIS",
+              "ILE",
+              "LEU",
+              "LYS",
+              "MET",
+              "PHE",
+              "PRO",
+              "SER",
+              "THR",
+              "TRP",
+              "TYR",
+              "VAL"
+            ],
+            "y": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              100,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "type": "bar",
+            "marker": {
+              "color": "#e8513a"
+            }
+          }
+        ],
+        "layout": {
+          "title": "Frequência de aminoácidos — cadeia _",
+          "xaxis": {
+            "title": "Aminoácido"
+          },
+          "yaxis": {
+            "title": "Porcentagem (%)"
+          }
+        }
+      },
+      "w": 760,
+      "h": 400
+    },
+    {
+      "spec": {
+        "data": [
+          {
+            "x": [
+              "P_0",
+              "P_1"
+            ],
+            "y": [
+              100,
+              null
+            ],
+            "type": "bar",
+            "marker": {
+              "color": "#2a5599"
+            }
+          }
+        ],
+        "layout": {
+          "title": "Volume por pocket",
+          "xaxis": {
+            "title": "Pocket"
+          },
+          "yaxis": {
+            "title": "Volume (Å³)"
+          }
+        }
+      },
+      "w": 760,
+      "h": 400
+    },
+    {
+      "spec": {
+        "data": [
+          {
+            "x": [
+              "P_0",
+              "P_1"
+            ],
+            "y": [
+              8,
+              4
+            ],
+            "type": "bar",
+            "marker": {
+              "color": "#e8513a"
+            }
+          }
+        ],
+        "layout": {
+          "title": "Profundidade por pocket",
+          "xaxis": {
+            "title": "Pocket"
+          },
+          "yaxis": {
+            "title": "Profundidade"
+          }
+        }
+      },
+      "w": 760,
+      "h": 400
+    },
+    {
+      "spec": {
+        "data": [
+          {
+            "x": [
+              "1ABC",
+              "2ABC"
+            ],
+            "y": [
+              7,
+              7
+            ],
+            "type": "bar",
+            "marker": {
+              "color": [
+                "#2a5599",
+                "#e8513a"
+              ]
+            }
+          }
+        ],
+        "layout": {
+          "title": "Resíduos por proteína",
+          "xaxis": {
+            "title": "Proteína"
+          },
+          "yaxis": {
+            "title": "Resíduos"
+          }
+        }
+      },
+      "w": 760,
+      "h": 400
+    },
+    {
+      "spec": {
+        "data": [
+          {
+            "x": [
+              "ALA",
+              "ARG",
+              "ASN",
+              "ASP",
+              "CYS",
+              "GLN",
+              "GLU",
+              "GLY",
+              "HIS",
+              "ILE",
+              "LEU",
+              "LYS",
+              "MET",
+              "PHE",
+              "PRO",
+              "SER",
+              "THR",
+              "TRP",
+              "TYR",
+              "VAL"
+            ],
+            "y": [
+              14.29,
+              0,
+              14.29,
+              0,
+              28.57,
+              0,
+              0,
+              28.57,
+              14.29,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "type": "bar",
+            "name": "1ABC",
+            "marker": {
+              "color": "#2a5599"
+            }
+          },
+          {
+            "x": [
+              "ALA",
+              "ARG",
+              "ASN",
+              "ASP",
+              "CYS",
+              "GLN",
+              "GLU",
+              "GLY",
+              "HIS",
+              "ILE",
+              "LEU",
+              "LYS",
+              "MET",
+              "PHE",
+              "PRO",
+              "SER",
+              "THR",
+              "TRP",
+              "TYR",
+              "VAL"
+            ],
+            "y": [
+              14.29,
+              0,
+              14.29,
+              0,
+              28.57,
+              0,
+              0,
+              28.57,
+              14.29,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "type": "bar",
+            "name": "2ABC",
+            "marker": {
+              "color": "#e8513a"
+            }
+          }
+        ],
+        "layout": {
+          "title": "Composição de aminoácidos por proteína",
+          "barmode": "group",
+          "xaxis": {
+            "title": "Aminoácido"
+          },
+          "yaxis": {
+            "title": "%"
+          }
+        }
+      },
+      "w": 900,
+      "h": 420
+    },
+    {
+      "spec": {
+        "data": [
+          {
+            "x": [
+              "1ABC",
+              "2ABC"
+            ],
+            "y": [
+              100,
+              100
+            ],
+            "type": "bar",
+            "marker": {
+              "color": "#2a5599"
+            }
+          }
+        ],
+        "layout": {
+          "title": "Volume do pocket principal",
+          "xaxis": {
+            "title": "Proteína"
+          },
+          "yaxis": {
+            "title": "Volume (Å³)"
+          }
+        }
+      },
+      "w": 760,
+      "h": 400
+    },
+    {
+      "spec": {
+        "data": [
+          {
+            "x": [
+              "1ABC",
+              "2ABC"
+            ],
+            "y": [
+              8,
+              8
+            ],
+            "type": "bar",
+            "marker": {
+              "color": "#e8513a"
+            }
+          }
+        ],
+        "layout": {
+          "title": "Profundidade do pocket principal",
+          "xaxis": {
+            "title": "Proteína"
+          },
+          "yaxis": {
+            "title": "Profundidade"
+          }
+        }
+      },
+      "w": 760,
+      "h": 400
+    },
+    {
+      "spec": {
+        "data": [
+          {
+            "x": [
+              "1ABC",
+              "2ABC"
+            ],
+            "y": [
+              0.4,
+              0.4
+            ],
+            "type": "bar",
+            "marker": {
+              "color": "#9b59b6"
+            }
+          }
+        ],
+        "layout": {
+          "title": "Hidrofobicidade do pocket principal",
+          "xaxis": {
+            "title": "Proteína"
+          },
+          "yaxis": {
+            "title": "Hidrofobicidade"
+          }
+        }
+      },
+      "w": 760,
+      "h": 400
+    },
+    {
+      "spec": {
+        "data": [
+          {
+            "x": [
+              "1ABC",
+              "2ABC"
+            ],
+            "y": [
+              7,
+              7
+            ],
+            "type": "bar",
+            "marker": {
+              "color": [
+                "#2a5599",
+                "#e8513a"
+              ]
+            }
+          }
+        ],
+        "layout": {
+          "title": "Resíduos por proteína",
+          "xaxis": {
+            "title": "Proteína"
+          },
+          "yaxis": {
+            "title": "Resíduos"
+          }
+        }
+      },
+      "w": 760,
+      "h": 400
+    },
+    {
+      "spec": {
+        "data": [
+          {
+            "x": [
+              "ALA",
+              "ARG",
+              "ASN",
+              "ASP",
+              "CYS",
+              "GLN",
+              "GLU",
+              "GLY",
+              "HIS",
+              "ILE",
+              "LEU",
+              "LYS",
+              "MET",
+              "PHE",
+              "PRO",
+              "SER",
+              "THR",
+              "TRP",
+              "TYR",
+              "VAL"
+            ],
+            "y": [
+              14.29,
+              0,
+              14.29,
+              0,
+              28.57,
+              0,
+              0,
+              28.57,
+              14.29,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "type": "bar",
+            "name": "1ABC",
+            "marker": {
+              "color": "#2a5599"
+            }
+          },
+          {
+            "x": [
+              "ALA",
+              "ARG",
+              "ASN",
+              "ASP",
+              "CYS",
+              "GLN",
+              "GLU",
+              "GLY",
+              "HIS",
+              "ILE",
+              "LEU",
+              "LYS",
+              "MET",
+              "PHE",
+              "PRO",
+              "SER",
+              "THR",
+              "TRP",
+              "TYR",
+              "VAL"
+            ],
+            "y": [
+              14.29,
+              0,
+              14.29,
+              0,
+              28.57,
+              0,
+              0,
+              28.57,
+              14.29,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "type": "bar",
+            "name": "2ABC",
+            "marker": {
+              "color": "#e8513a"
+            }
+          }
+        ],
+        "layout": {
+          "title": "Composição de aminoácidos por proteína",
+          "barmode": "group",
+          "xaxis": {
+            "title": "Aminoácido"
+          },
+          "yaxis": {
+            "title": "%"
+          }
+        }
+      },
+      "w": 900,
+      "h": 420
+    },
+    {
+      "spec": {
+        "data": [
+          {
+            "x": [
+              "1ABC",
+              "2ABC"
+            ],
+            "y": [
+              100,
+              100
+            ],
+            "type": "bar",
+            "marker": {
+              "color": "#2a5599"
+            }
+          }
+        ],
+        "layout": {
+          "title": "Volume do pocket principal",
+          "xaxis": {
+            "title": "Proteína"
+          },
+          "yaxis": {
+            "title": "Volume (Å³)"
+          }
+        }
+      },
+      "w": 760,
+      "h": 400
+    },
+    {
+      "spec": {
+        "data": [
+          {
+            "x": [
+              "1ABC",
+              "2ABC"
+            ],
+            "y": [
+              8,
+              8
+            ],
+            "type": "bar",
+            "marker": {
+              "color": "#e8513a"
+            }
+          }
+        ],
+        "layout": {
+          "title": "Profundidade do pocket principal",
+          "xaxis": {
+            "title": "Proteína"
+          },
+          "yaxis": {
+            "title": "Profundidade"
+          }
+        }
+      },
+      "w": 760,
+      "h": 400
+    },
+    {
+      "spec": {
+        "data": [
+          {
+            "x": [
+              "1ABC",
+              "2ABC"
+            ],
+            "y": [
+              0.4,
+              0.4
+            ],
+            "type": "bar",
+            "marker": {
+              "color": "#9b59b6"
+            }
+          }
+        ],
+        "layout": {
+          "title": "Hidrofobicidade do pocket principal",
+          "xaxis": {
+            "title": "Proteína"
+          },
+          "yaxis": {
+            "title": "Hidrofobicidade"
+          }
+        }
+      },
+      "w": 760,
+      "h": 400
+    }
+  ],
+  "pdf": [
+    [
+      "titulo",
+      "PEKI Fold — sintetica.pdb"
+    ],
+    [
+      "par",
+      "Protein Exploration Kit for Insights · gerado em 12/11/2026, 12:00:00"
+    ],
+    [
+      "par",
+      "2 cadeia(s) · 7 resíduos ATOM · 9 átomos ATOM."
+    ],
+    [
+      "sub",
+      "Visão geral"
+    ],
+    [
+      "par",
+      "Contrato peki-estrutura-1."
+    ],
+    [
+      "par",
+      "Formato lido: pdb."
+    ],
+    [
+      "par",
+      "Modelo 1 de 1 (arquivo sem registro MODEL)."
+    ],
+    [
+      "par",
+      "Título: SYNTHETIC GEOMETRY; NOT AN EXPERIMENTAL DEPOSIT."
+    ],
+    [
+      "par",
+      "Método: X-RAY DIFFRACTION."
+    ],
+    [
+      "par",
+      "Resolução: 2 Å (REMARK 2)."
+    ],
+    [
+      "par",
+      "Classificação do arquivo: SYNTHETIC CHARACTERIZATION."
+    ],
+    [
+      "par",
+      "Não determinado. Não há fonte explícita cobrindo todas as cadeias com polímero (REMARK 465 com a seção MISSING RESIDUES, categoria mmCIF de não observados, esquema de sequência ou SEQRES com alinhamento único). Saltos de numeração não foram contados como resíduos ausentes."
+    ],
+    [
+      "par",
+      "A sequência completa no UniProt não foi consultada. O intervalo citado em DBREF ou _struct_ref_seq não foi expandido em resíduos fora do constructo."
+    ],
+    [
+      "par",
+      "DBREF e _struct_ref_seq são intervalos declarados no arquivo. Esta versão não os expande em pares resíduo a resíduo e não consulta a sequência completa no UniProt."
+    ],
+    [
+      "par",
+      "Nenhuma declaração DBREF ou _struct_ref neste arquivo. Mapa PDB–UniProt pendente."
+    ],
+    [
+      "par",
+      "Proteína: 7 posição(ões) com coordenadas em A, _. nome do resíduo no PDB, sem registro de entidade."
+    ],
+    [
+      "par",
+      "Águas registradas no modelo: 1. Contagem de registros HOH, WAT, H2O ou DOD no modelo selecionado. Ausência de registro não significa ausência de água na amostra."
+    ],
+    [
+      "par",
+      "Íons: ZN ×1. lista parcial de códigos de íon; HETATM não prova estado holo"
+    ],
+    [
+      "par",
+      "Heterocomponentes de classificação biológica incerta: NAG ×1."
+    ],
+    [
+      "par",
+      "HETATM e o inventário de componentes não estabelecem estado holo ou apo."
+    ],
+    [
+      "par",
+      "Saltos de numeração:"
+    ],
+    [
+      "par",
+      "- cadeia A entre 2 e 4: nao_determinado (3)"
+    ],
+    [
+      "par",
+      "- cadeia A entre 5 e 10: nao_determinado (6, 7, 8, 9)"
+    ],
+    [
+      "par",
+      "1 linha(s) ATOM/HETATM curtas foram ignoradas."
+    ],
+    [
+      "par",
+      "Há altLoc. A contagem de posições usa um resíduo por número e código de inserção; as linhas de átomo da estatística clássica continuam incluindo as alternativas."
+    ],
+    [
+      "par",
+      "Resíduos sem coordenadas não são desenhados nem destacados no viewer."
+    ],
+    [
+      "par",
+      "A leitura peki-estrutura-1 não calcula R, Rfree, clashscore nem qualidade local. Com ID do PDB, a aba Qualidade consulta o relatório wwPDB à parte."
+    ],
+    [
+      "par",
+      "Reconstrução de coordenadas e SWISS-MODEL não entram nesta versão."
+    ],
+    [
+      "par",
+      "Mapa resíduo a resíduo PDB–UniProt fica pendente."
+    ],
+    [
+      "par",
+      "Regiões fora do constructo não foram separadas das ausências no experimento."
+    ],
+    [
+      "par",
+      "REMARK 470 e átomos faltando dentro de um resíduo resolvido não entram nesta versão."
+    ],
+    [
+      "par",
+      "O drugScore do DoGSite continua descritor geométrico, não afinidade."
+    ],
+    [
+      "sub",
+      "Qualidade e componentes"
+    ],
+    [
+      "par",
+      "Contrato peki-qualidade-1."
+    ],
+    [
+      "par",
+      "Qualidade ainda não consultada. Nenhum indicador foi preenchido com zero."
+    ],
+    [
+      "sub",
+      "Sobre a estrutura"
+    ],
+    [
+      "par",
+      "SYNTHETIC GEOMETRY; NOT AN EXPERIMENTAL DEPOSIT"
+    ],
+    [
+      "tabela",
+      [
+        "Campo",
+        "Valor"
+      ],
+      [
+        [
+          "Classificação",
+          "SYNTHETIC CHARACTERIZATION"
+        ],
+        [
+          "Método",
+          "X-RAY DIFFRACTION"
+        ],
+        [
+          "Resolução",
+          "2 Å"
+        ],
+        [
+          "Depósito",
+          "12-NOV-26"
+        ]
+      ]
+    ],
+    [
+      "sub",
+      "Estrutura 3D"
+    ],
+    [
+      "img",
+      "data:image/png;base64,FIXTURE",
+      320
+    ],
+    [
+      "sub",
+      "Cadeias"
+    ],
+    [
+      "tabela",
+      [
+        "Cadeia",
+        "Resíduos",
+        "Átomos",
+        "Aa diferentes"
+      ],
+      [
+        [
+          "A",
+          6,
+          8,
+          5
+        ],
+        [
+          "_",
+          1,
+          1,
+          1
+        ]
+      ]
+    ],
+    [
+      "sub",
+      "Estatísticas"
+    ],
+    [
+      "tabela",
+      [
+        "Métrica",
+        "Valor"
+      ],
+      [
+        [
+          "Cadeias",
+          2
+        ],
+        [
+          "Átomos",
+          9
+        ],
+        [
+          "Resíduos",
+          7
+        ],
+        [
+          "Maior cadeia",
+          "A (6 res.)"
+        ],
+        [
+          "Menor cadeia",
+          "_ (1 res.)"
+        ]
+      ]
+    ],
+    [
+      "sub",
+      "Aminoácidos"
+    ],
+    [
+      "img",
+      "data:image/png;base64,GRAPH"
+    ],
+    [
+      "img",
+      "data:image/png;base64,GRAPH"
+    ],
+    [
+      "sub",
+      "Sequências (FASTA)"
+    ],
+    [
+      "setFont",
+      "courier",
+      "normal"
+    ],
+    [
+      "par",
+      ">sintetica_A\nCCNHGA"
+    ],
+    [
+      "par",
+      ">sintetica__\nG"
+    ],
+    [
+      "setFont",
+      "helvetica",
+      "normal"
+    ],
+    [
+      "sub",
+      "Motivos"
+    ],
+    [
+      "par",
+      "Motivo CYS-CYS — 1 ocorrência(s)."
+    ],
+    [
+      "tabela",
+      [
+        "Cadeia",
+        "Posição",
+        "Resíduos"
+      ],
+      [
+        [
+          "A",
+          "1",
+          "1, 2"
+        ]
+      ]
+    ],
+    [
+      "sub",
+      "Pockets"
+    ],
+    [
+      "tabela",
+      [
+        "Pocket",
+        "Vol (Å³)",
+        "Sup (Å²)",
+        "Prof",
+        "Hidr.",
+        "Acc",
+        "Don",
+        "Drug"
+      ],
+      [
+        [
+          "P_0",
+          "100.00",
+          "50.00",
+          "8.00",
+          "0.40",
+          2,
+          3,
+          "0.700"
+        ],
+        [
+          "P_1",
+          "—",
+          "20.00",
+          "4.00",
+          "—",
+          0,
+          1,
+          "—"
+        ]
+      ]
+    ],
+    [
+      "par",
+      "• Maior volume: P_0 (100.00 Å³)"
+    ],
+    [
+      "par",
+      "• Mais profundo: P_0 (8.00)"
+    ],
+    [
+      "par",
+      "• Volume × profundidade: dados insuficientes para avaliar."
+    ],
+    [
+      "par",
+      "• Mais hidrofóbico: P_0 (0.40)"
+    ],
+    [
+      "par",
+      "• Maior drugScore (descritor geométrico, não é afinidade): P_0 (0.700)"
+    ],
+    [
+      "par",
+      "O drugScore e o volume são descritores geométricos da cavidade, não previsão de ligação. Escore de docking não é afinidade. Contato geométrico não é contribuição energética."
+    ],
+    [
+      "img",
+      "data:image/png;base64,GRAPH"
+    ],
+    [
+      "img",
+      "data:image/png;base64,GRAPH"
+    ],
+    [
+      "sub",
+      "Ficha de preparo"
+    ],
+    [
+      "par",
+      "Estrutura: 1ABC"
+    ],
+    [
+      "par",
+      "Gerado em: 12/11/2026, 12:00:00"
+    ],
+    [
+      "par",
+      "Versão do módulo: preparo-1"
+    ],
+    [
+      "par",
+      "Raios: metais 2.8 Å; SG–SG 2.5 Å; ND2–C1 1.8 Å; histidinas 3.2 Å."
+    ],
+    [
+      "par",
+      "Ficha auxiliar: exige conferência humana. Não faz docking, dinâmica molecular, minimização, protonação nem cálculo de afinidade."
+    ],
+    [
+      "par",
+      "Contato geométrico não é contribuição energética."
+    ],
+    [
+      "par",
+      "Escore de docking não é afinidade."
+    ],
+    [
+      "sub",
+      "Inventário"
+    ],
+    [
+      "par",
+      "A cadeia A tem conformação alternativa em 2 átomo(s) (1 resíduo(s)/átomo com altloc)."
+    ],
+    [
+      "par",
+      "A cadeia A tem 1 linha(s) ANISOU."
+    ],
+    [
+      "par",
+      "A cadeia A tem código de inserção: GLY 10A."
+    ],
+    [
+      "par",
+      "Lacuna de numeração não prova resíduo faltante. O REMARK 465 confirma quando ele existe."
+    ],
+    [
+      "par",
+      "Lacuna de numeração não prova resíduo faltante. O REMARK 465 confirma quando ele existe."
+    ],
+    [
+      "tabela",
+      [
+        "Cadeia",
+        "ATOM",
+        "HETATM",
+        "Águas",
+        "Altloc",
+        "ANISOU"
+      ],
+      [
+        [
+          "A",
+          8,
+          3,
+          1,
+          2,
+          1
+        ],
+        [
+          "(sem id)",
+          1,
+          0,
+          0,
+          0,
+          0
+        ]
+      ]
+    ],
+    [
+      "tabela",
+      [
+        "Código",
+        "Classe",
+        "Cópias",
+        "Átomos",
+        "HETNAM"
+      ],
+      [
+        [
+          "HOH",
+          "água",
+          1,
+          1,
+          ""
+        ],
+        [
+          "NAG",
+          "açúcar",
+          1,
+          1,
+          "N-ACETYL-D-GLUCOSAMINE"
+        ],
+        [
+          "ZN",
+          "íon metálico",
+          1,
+          1,
+          ""
+        ]
+      ]
+    ],
+    [
+      "tabela",
+      [
+        "Cadeia",
+        "Entre",
+        "Confirmados no REMARK 465"
+      ],
+      [
+        [
+          "A",
+          "2-4",
+          "0/1"
+        ],
+        [
+          "A",
+          "5-10",
+          "0/4"
+        ]
+      ]
+    ],
+    [
+      "par",
+      "Decisão do pesquisador: (em branco)"
+    ],
+    [
+      "sub",
+      "Limpeza e exportação"
+    ],
+    [
+      "par",
+      "Átomos de proteína mantidos: 8."
+    ],
+    [
+      "par",
+      "HETATM mantidos: 2."
+    ],
+    [
+      "par",
+      "Águas removidas: 1 linha(s)."
+    ],
+    [
+      "par",
+      "HET não marcados e removidos: 0 linha(s)."
+    ],
+    [
+      "par",
+      "Fora das cadeias escolhidas: 0 linha(s)."
+    ],
+    [
+      "par",
+      "ANISOU descartados: 1."
+    ],
+    [
+      "par",
+      "Linhas removidas pela regra de altloc (branco ou A): 1."
+    ],
+    [
+      "par",
+      "Linhas duplicadas descartadas: 0."
+    ],
+    [
+      "par",
+      "Íons em arquivo próprio: 1."
+    ],
+    [
+      "par",
+      "O arquivo continua sem hidrogênios adicionados."
+    ],
+    [
+      "par",
+      "O número de série é o do arquivo original. Ele muda se outro programa renumerar os átomos. Não serve como identificador depois dessa renumeração."
+    ],
+    [
+      "par",
+      "O número de série é o do arquivo original. Ele muda se outro programa renumerar os átomos. Não serve como identificador depois dessa renumeração."
+    ],
+    [
+      "par",
+      "Regra de altloc: branco ou A."
+    ],
+    [
+      "par",
+      "Decisão do pesquisador: (em branco)"
+    ],
+    [
+      "sub",
+      "Íons metálicos"
+    ],
+    [
+      "par",
+      "Contato geométrico não é contribuição energética."
+    ],
+    [
+      "par",
+      "O número de série é o do arquivo original. Ele muda se outro programa renumerar os átomos. Não serve como identificador depois dessa renumeração."
+    ],
+    [
+      "par",
+      "Raio 2.8 Å. Pares sem LINK de simetria 1555 não são, por isso, erros automáticos."
+    ],
+    [
+      "tabela",
+      [
+        "Íon",
+        "Série original",
+        "Ocupação",
+        "Vizinho",
+        "Distância (Å)",
+        "LINK 1555",
+        "Notas"
+      ],
+      [
+        [
+          "ZN1 ZN A 100",
+          10,
+          "1.00",
+          "SG CYS A 1",
+          "1.00",
+          "não",
+          "Cisteína pelo SG: candidata a CYM, se a coordenação for confirmada. A ficha não renomeia o resíduo."
+        ],
+        [
+          "ZN1 ZN A 100",
+          10,
+          "1.00",
+          "ND1 HIS A 5",
+          "1.00",
+          "não",
+          "Histidina pelo ND1: candidata a HIE. Indício geométrico, não protonação. Sem hidrogênios no arquivo, a geometria não separa tautômeros com segurança."
+        ],
+        [
+          "ZN1 ZN A 100",
+          10,
+          "1.00",
+          "O HOH A 102",
+          "1.00",
+          "não",
+          "Água no raio. Pode ser ligante ou artefato de cristalização."
+        ],
+        [
+          "ZN1 ZN A 100",
+          10,
+          "1.00",
+          "SG CYS A 2",
+          "2.24",
+          "não",
+          "Cisteína pelo SG: candidata a CYM, se a coordenação for confirmada. A ficha não renomeia o resíduo."
+        ]
+      ]
+    ],
+    [
+      "par",
+      "Decisão do pesquisador: (em branco)"
+    ],
+    [
+      "sub",
+      "Pontes dissulfeto"
+    ],
+    [
+      "par",
+      "Contato geométrico não é contribuição energética."
+    ],
+    [
+      "par",
+      "Rascunho. Não é um arquivo de entrada pronto. A numeração pode mudar depois do loadpdb e precisa ser conferida."
+    ],
+    [
+      "tabela",
+      [
+        "Cisteína 1",
+        "Cisteína 2",
+        "Distância (Å)",
+        "SSBOND"
+      ],
+      [
+        [
+          "CYS A 1",
+          "CYS A 2",
+          "2.00",
+          "sim"
+        ]
+      ]
+    ],
+    [
+      "par",
+      "# Rascunho de linhas bond para o tleap (AmberTools).\n# Rascunho. Não é um arquivo de entrada pronto. A numeração pode mudar depois do loadpdb e precisa ser conferida.\n# Contato geométrico não é contribuição energética.\n# A cadeia não entra no nome do átomo. Números iguais em cadeias diferentes ficam ambíguos.\n# Dissulfeto CYS A 1 SG — CYS A 2 SG, 2.00 Å. Consta no SSBOND.\nbond <unidade>.1.SG <unidade>.2.SG\n# ASN A 4 ND2 — NAG A 101 C1, 1.40 Å. Açúcar da lista ou do HETNAM. Não consta em LINK de simetria 1555.\nbond <unidade>.4.ND2 <unidade>.101.C1\n"
+    ],
+    [
+      "par",
+      "Decisão do pesquisador: (em branco)"
+    ],
+    [
+      "sub",
+      "Glicosilação"
+    ],
+    [
+      "par",
+      "Contato geométrico não é contribuição energética."
+    ],
+    [
+      "par",
+      "O nome GLYCAM do açúcar não sai da geometria."
+    ],
+    [
+      "par",
+      "Açúcares permanecem HETATM. O módulo não insere TER entre eles."
+    ],
+    [
+      "tabela",
+      [
+        "ASN",
+        "C1",
+        "Distância (Å)",
+        "Origem",
+        "LINK"
+      ],
+      [
+        [
+          "ASN A 4",
+          "NAG A 101",
+          "1.40",
+          "lista ou HETNAM",
+          "não"
+        ]
+      ]
+    ],
+    [
+      "tabela",
+      [
+        "Árvore",
+        "Código",
+        "Cadeia",
+        "Número atual",
+        "Número sugerido",
+        "HETNAM",
+        "ASN"
+      ],
+      [
+        [
+          1,
+          "NAG",
+          "A",
+          "101",
+          12,
+          "N-ACETYL-D-GLUCOSAMINE",
+          "ASN A 4"
+        ]
+      ]
+    ],
+    [
+      "par",
+      "Decisão do pesquisador: (em branco)"
+    ],
+    [
+      "sub",
+      "Histidinas"
+    ],
+    [
+      "par",
+      "Indício geométrico, não protonação. Sem hidrogênios no arquivo, a geometria não separa tautômeros com segurança."
+    ],
+    [
+      "par",
+      "Enterramento: contagem a ≤ 6 Å. Não é área de superfície."
+    ],
+    [
+      "tabela",
+      [
+        "Cadeia",
+        "Resíduo",
+        "Candidato",
+        "Metais ND1",
+        "Metais NE2",
+        "Enterramento"
+      ],
+      [
+        [
+          "A",
+          "5",
+          "candidata a HIE — ND1 a 1.00 Å de um metal.",
+          1,
+          0,
+          4
+        ]
+      ]
+    ],
+    [
+      "par",
+      "Decisão do pesquisador: (em branco)"
+    ],
+    [
+      "sub",
+      "Caixa sugerida para o Vina"
+    ],
+    [
+      "par",
+      "Sugestão editável de caixa. Não é uma caixa validada e não é resultado de docking."
+    ],
+    [
+      "par",
+      "O drugScore e o volume do DoGSite são descritores geométricos da cavidade, não previsão de ligação."
+    ],
+    [
+      "par",
+      "Escore de docking não é afinidade."
+    ],
+    [
+      "par",
+      "Nenhuma caixa calculada nesta exportação."
+    ],
+    [
+      "par",
+      "Decisão do pesquisador: (em branco)"
+    ],
+    [
+      "par",
+      "Ficha auxiliar: exige conferência humana. Não faz docking, dinâmica molecular, minimização, protonação nem cálculo de afinidade."
+    ],
+    [
+      "par",
+      "Contato geométrico não é contribuição energética."
+    ],
+    [
+      "par",
+      "Escore de docking não é afinidade."
+    ],
+    [
+      "par",
+      "O número de série é o do arquivo original. Ele muda se outro programa renumerar os átomos. Não serve como identificador depois dessa renumeração."
+    ],
+    [
+      "par",
+      "Indício geométrico, não protonação. Sem hidrogênios no arquivo, a geometria não separa tautômeros com segurança."
+    ],
+    [
+      "par",
+      "Sugestão editável de caixa. Não é uma caixa validada e não é resultado de docking."
+    ],
+    [
+      "espaco",
+      6
+    ],
+    [
+      "setFontSize",
+      8
+    ],
+    [
+      "setTextColor",
+      120
+    ],
+    [
+      "par",
+      "Desenvolvido por Allison Braz · Universidade Federal de Jataí (UFJ) · orientação do Prof. Dr. Roosevelt Alves da Silva."
+    ],
+    [
+      "save",
+      "PEKI-Fold_sintetica.pdf"
+    ],
+    [
+      "titulo",
+      "PEKI Fold — Comparação"
+    ],
+    [
+      "par",
+      "Protein Exploration Kit for Insights · 1ABC, 2ABC · gerado em 12/11/2026, 12:00:00"
+    ],
+    [
+      "sub",
+      "Estatísticas"
+    ],
+    [
+      "tabela",
+      [
+        "Proteína",
+        "Cadeias",
+        "Átomos",
+        "Resíduos",
+        "Aa diferentes"
+      ],
+      [
+        [
+          "1ABC",
+          2,
+          9,
+          7,
+          5
+        ],
+        [
+          "2ABC",
+          2,
+          9,
+          7,
+          5
+        ]
+      ]
+    ],
+    [
+      "img",
+      "data:image/png;base64,GRAPH"
+    ],
+    [
+      "sub",
+      "Aminoácidos"
+    ],
+    [
+      "img",
+      "data:image/png;base64,GRAPH"
+    ],
+    [
+      "sub",
+      "Pockets — pocket principal por proteína"
+    ],
+    [
+      "tabela",
+      [
+        "Proteína",
+        "Pocket",
+        "Volume (Å³)",
+        "Profundidade",
+        "Hidrofob.",
+        "DrugScore"
+      ],
+      [
+        [
+          "1ABC",
+          "P_0",
+          "100.00",
+          "8.00",
+          "0.40",
+          "0.700"
+        ],
+        [
+          "2ABC",
+          "P_0",
+          "100.00",
+          "8.00",
+          "0.40",
+          "0.700"
+        ]
+      ]
+    ],
+    [
+      "par",
+      "• Proteína com pocket de maior volume: 1ABC — P_0 (100.00 Å³)"
+    ],
+    [
+      "par",
+      "• Proteína com pocket mais profundo: 1ABC — P_0 (8.00)"
+    ],
+    [
+      "par",
+      "• Volume × profundidade: dados insuficientes para avaliar."
+    ],
+    [
+      "par",
+      "• Proteínas mais hidrofóbicas: 1ABC (0.40), 2ABC (0.40)"
+    ],
+    [
+      "par",
+      "• Maior drugScore (descritor geométrico, não é afinidade): 1ABC — P_0 (0.700)"
+    ],
+    [
+      "par",
+      "O drugScore e o volume são descritores geométricos da cavidade, não previsão de ligação. Escore de docking não é afinidade. Contato geométrico não é contribuição energética."
+    ],
+    [
+      "img",
+      "data:image/png;base64,GRAPH"
+    ],
+    [
+      "img",
+      "data:image/png;base64,GRAPH"
+    ],
+    [
+      "img",
+      "data:image/png;base64,GRAPH"
+    ],
+    [
+      "espaco",
+      6
+    ],
+    [
+      "setFontSize",
+      8
+    ],
+    [
+      "setTextColor",
+      120
+    ],
+    [
+      "par",
+      "Desenvolvido por Allison Braz · Universidade Federal de Jataí (UFJ) · orientação do Prof. Dr. Roosevelt Alves da Silva."
+    ],
+    [
+      "save",
+      "PEKI-Fold_comparacao_1ABC-2ABC.pdf"
+    ]
+  ],
+  "fasta": [
+    ">sintetica_A\nCCNHGA\n",
+    ">sintetica__\nG\n"
+  ],
+  "snapshot": {
+    "schema": "peki-analise-1",
+    "versaoApp": "peki-fold-web",
+    "geradoEm": "2026-11-12T15:00:00.000Z",
+    "id": "SIN-SALVO",
+    "rotulo": "1ABC",
+    "origem": {
+      "tipo": "rcsb",
+      "pdbId": "1ABC",
+      "nomeArquivo": "sintetica.pdb",
+      "formato": "pdb",
+      "fonte": "RCSB PDB",
+      "url": "https://files.rcsb.org/download/1ABC.pdb",
+      "titulo": "SYNTHETIC GEOMETRY; NOT AN EXPERIMENTAL DEPOSIT",
+      "metodo": "X-RAY DIFFRACTION",
+      "resolucaoArquivo": {
+        "valor": 2,
+        "unidade": "Å",
+        "origem": "REMARK 2"
+      },
+      "sintetico": false,
+      "nota": "O PDB original não foi embutido. Este arquivo guarda a leitura usada na comparação e fica no computador de quem o baixou."
+    },
+    "modelo": {
+      "selecionado": 1,
+      "total": 1,
+      "criterio": "arquivo sem registro MODEL"
+    },
+    "cadeias": [
+      {
+        "id": "A",
+        "auth": "A",
+        "label": null,
+        "sequencia": "CCNHGA",
+        "residuos": [
+          {
+            "resname": "CYS",
+            "seq": 1,
+            "icode": "",
+            "classe": "proteina"
+          },
+          {
+            "resname": "CYS",
+            "seq": 2,
+            "icode": "",
+            "classe": "proteina"
+          },
+          {
+            "resname": "ASN",
+            "seq": 4,
+            "icode": "",
+            "classe": "proteina"
+          },
+          {
+            "resname": "HIS",
+            "seq": 5,
+            "icode": "",
+            "classe": "proteina"
+          },
+          {
+            "resname": "GLY",
+            "seq": 10,
+            "icode": "A",
+            "classe": "proteina"
+          },
+          {
+            "resname": "ALA",
+            "seq": 11,
+            "icode": "",
+            "classe": "proteina"
+          }
+        ]
+      },
+      {
+        "id": "_",
+        "auth": null,
+        "label": null,
+        "sequencia": "G",
+        "residuos": [
+          {
+            "resname": "GLY",
+            "seq": 1,
+            "icode": "",
+            "classe": "proteina"
+          }
+        ]
+      }
+    ],
+    "cobertura": {
+      "polimerosModelados": 7
+    },
+    "lacunas": {
+      "determinado": false,
+      "resumo": "Não determinado. Não há fonte explícita cobrindo todas as cadeias com polímero (REMARK 465 com a seção MISSING RESIDUES, categoria mmCIF de não observados, esquema de sequência ou SEQRES com alinhamento único). Saltos de numeração não foram contados como resíduos ausentes.",
+      "naoResolvidos": [],
+      "saltosNumeracao": [
+        {
+          "cadeia": "A",
+          "de": 2,
+          "para": 4,
+          "interpretacao": "nao_determinado"
+        },
+        {
+          "cadeia": "A",
+          "de": 5,
+          "para": 10,
+          "interpretacao": "nao_determinado"
+        }
+      ],
+      "foraDoConstructo": "A sequência completa no UniProt não foi consultada. O intervalo citado em DBREF ou _struct_ref_seq não foi expandido em resíduos fora do constructo."
+    },
+    "componentes": {
+      "proteinas": {
+        "posicoes": 7,
+        "padrao": 7,
+        "modificadas": 0
+      },
+      "hetero": [
+        {
+          "codigo": "NAG",
+          "instancias": 1,
+          "nome": null
+        }
+      ],
+      "ions": [
+        {
+          "codigo": "ZN",
+          "instancias": 1,
+          "nome": null
+        }
+      ],
+      "modificados": [],
+      "aguas": {
+        "instancias": 1,
+        "nota": "Contagem de registros HOH, WAT, H2O ou DOD no modelo selecionado. Ausência de registro não significa ausência de água na amostra."
+      },
+      "holo": {
+        "estado": "nao_determinado",
+        "motivo": "HETATM e o inventário de componentes não estabelecem estado holo ou apo."
+      },
+      "anotacoesCcd": [],
+      "ccdEstado": "nao_consultado"
+    },
+    "qualidade": {
+      "estado": "pendente",
+      "motivo": "A consulta ao relatório wwPDB ainda não concluiu nesta análise. Os indicadores não foram inventados nem zerados.",
+      "classe": null,
+      "consulta": null,
+      "fonte": null,
+      "metricas": [],
+      "omitidos": [],
+      "local": {
+        "estado": "pendente",
+        "motivo": "A consulta ao relatório wwPDB ainda não concluiu nesta análise. Os indicadores não foram inventados nem zerados."
+      }
+    },
+    "pockets": {
+      "fonte": "DoGSiteScorer/ProteinsPlus",
+      "aviso": "O drugScore é descritor geométrico do DoGSiteScorer. Não é afinidade, não identifica sítio funcional e não corresponde a um pocket alinhado entre estruturas.",
+      "itens": [
+        {
+          "name": "P_0",
+          "volume": 100,
+          "surface": 50,
+          "depth": 8,
+          "hydrophobicity": 0.4,
+          "drugScore": 0.7
+        },
+        {
+          "name": "P_1",
+          "volume": null,
+          "surface": 20,
+          "depth": 4,
+          "hydrophobicity": null,
+          "drugScore": null
+        }
+      ],
+      "estado": "ok",
+      "motivo": null
+    },
+    "preparo": {
+      "estado": "ok",
+      "motivo": null,
+      "versao": "preparo-1",
+      "predita": null,
+      "contagens": {
+        "dissulfetos": 1,
+        "glicosilacao": 1,
+        "ions": 1,
+        "histidinas": 1,
+        "aguas": 1
+      },
+      "selecao": {
+        "cadeias": [
+          "A",
+          "_"
+        ],
+        "removerAguas": true,
+        "altloc": "A",
+        "codigosHetMantidos": [
+          "NAG",
+          "ZN"
+        ]
+      },
+      "anotacoes": {
+        "inventario": null,
+        "limpeza": null,
+        "ions": null,
+        "dissulfetos": null,
+        "glicosilacao": null,
+        "histidinas": null,
+        "vina": null
+      },
+      "caixaVina": null
+    },
+    "uniprot": {
+      "correspondenciaResiduo": "nao_estabelecida",
+      "motivo": "DBREF e _struct_ref_seq são intervalos declarados no arquivo. Esta versão não os expande em pares resíduo a resíduo e não consulta a sequência completa no UniProt.",
+      "declaracoes": []
+    },
+    "anotacoes": {
+      "motivoSequencia": {
+        "consulta": "CYS-CYS",
+        "ocorrencias": 1
+      }
+    },
+    "limitacoes": [
+      "O PDB original não foi embutido. A comparação usa este snapshot, não uma nova leitura do depósito.",
+      "Não há mapa resíduo a resíduo com UniProt nem sobreposição estrutural.",
+      "Componente observado no snapshot não prova estado holo, apo nem função biológica.",
+      "O drugScore é descritor geométrico do DoGSiteScorer. Não é afinidade, não identifica sítio funcional e não corresponde a um pocket alinhado entre estruturas.",
+      "O relatório wwPDB global não garante a qualidade do sítio.",
+      "Resíduos sem coordenadas não são desenhados nem destacados no viewer.",
+      "A leitura peki-estrutura-1 não calcula R, Rfree, clashscore nem qualidade local. Com ID do PDB, a aba Qualidade consulta o relatório wwPDB à parte.",
+      "Reconstrução de coordenadas e SWISS-MODEL não entram nesta versão.",
+      "Mapa resíduo a resíduo PDB–UniProt fica pendente.",
+      "Regiões fora do constructo não foram separadas das ausências no experimento.",
+      "REMARK 470 e átomos faltando dentro de um resíduo resolvido não entram nesta versão.",
+      "O drugScore do DoGSite continua descritor geométrico, não afinidade."
+    ]
+  }
+}

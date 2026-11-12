@@ -351,11 +351,7 @@ const PrepAnalysis = (() => {
     }[c] || c;
   }
 
-  function inventario(texto) {
-    const pdb = primeiroModelo(texto);
-    const atomos = parseAtomos(pdb);
-    const hetnomes = parseHetnam(texto);
-    const remark = parseRemark465(texto);
+  function contarCadeiasInventario(pdb, atomos) {
     const porCadeia = new Map();
 
     function bucket(cid) {
@@ -384,7 +380,10 @@ const PrepAnalysis = (() => {
       const cid = cadeiaDe(linha.charAt(21));
       bucket(cid).anisou += 1;
     }
+    return porCadeia;
+  }
 
+  function agruparHeteroatomosInventario(atomos, hetnomes) {
     const grupos = new Map();
     for (const a of atomos) {
       if (a.registro !== "HETATM") continue;
@@ -431,8 +430,10 @@ const PrepAnalysis = (() => {
     for (const h of hets) {
       h.copias.sort((a, b) => a.cadeia.localeCompare(b.cadeia) || a.resseq - b.resseq || a.icode.localeCompare(b.icode));
     }
+    return hets;
+  }
 
-    const cadeias = [...porCadeia.values()];
+  function alertasCadeiasInventario(cadeias) {
     const alertas = [];
     for (const c of cadeias) {
       if (c.altlocAtomos) {
@@ -446,7 +447,10 @@ const PrepAnalysis = (() => {
         alertas.push(`A cadeia ${rotuloCadeia(c.cadeia)} tem código de inserção: ${[...c.insercoes].join(", ")}.`);
       }
     }
+    return alertas;
+  }
 
+  function residuosPolimeroInventario(atomos) {
     const polymer = [];
     const visto = new Set();
     for (const a of atomos) {
@@ -456,6 +460,10 @@ const PrepAnalysis = (() => {
       visto.add(k);
       polymer.push({ cadeia: a.cadeia, resseq: a.resseq, icode: a.icode, resname: a.resname });
     }
+    return polymer;
+  }
+
+  function lacunasInventario(polymer, remark) {
     const porPol = new Map();
     for (const r of polymer) {
       if (!porPol.has(r.cadeia)) porPol.set(r.cadeia, []);
@@ -485,8 +493,10 @@ const PrepAnalysis = (() => {
         });
       }
     }
-    if (lacunas.length) alertas.push(FRASES.gap);
+    return lacunas;
+  }
 
+  function alertasElementosInventario(atomos, alertas) {
     const semElemento = atomos.filter((a) => a.elementoFonte !== "coluna").length;
     if (semElemento) {
       alertas.push(
@@ -501,6 +511,28 @@ const PrepAnalysis = (() => {
         "(não é HETATM nem resíduo cujo nome é o próprio metal)."
       );
     }
+    return semElemento;
+  }
+
+  function inventario(texto) {
+    const pdb = primeiroModelo(texto);
+    const atomos = parseAtomos(pdb);
+    const hetnomes = parseHetnam(texto);
+    const remark = parseRemark465(texto);
+    const porCadeia = contarCadeiasInventario(pdb, atomos);
+
+    const hets = agruparHeteroatomosInventario(atomos, hetnomes);
+
+    const cadeias = [...porCadeia.values()];
+    const alertas = alertasCadeiasInventario(cadeias);
+
+    const polymer = residuosPolimeroInventario(atomos);
+
+    const lacunas = lacunasInventario(polymer, remark);
+
+    if (lacunas.length) alertas.push(FRASES.gap);
+
+    const semElemento = alertasElementosInventario(atomos, alertas);
 
     let maxResProteina = null;
     for (const r of polymer) if (maxResProteina == null || r.resseq > maxResProteina) maxResProteina = r.resseq;
@@ -919,19 +951,7 @@ const PrepAnalysis = (() => {
     return s;
   }
 
-  function limparPdb(texto, opcoes) {
-    const o = opcoes || {};
-    const pdb = primeiroModelo(texto);
-    const atomos = parseAtomos(pdb);
-    const cadeias = o.cadeias ? new Set(o.cadeias) : null;
-    const hets = o.hets ? new Set(o.hets) : null;
-    const aguasManter = new Set(o.aguasManter || []);
-    const removerAguas = o.removerAguas !== false;
-    const altloc = o.altloc === "ocupacao" ? "ocupacao" : "A";
-
-    let anisou = 0;
-    for (const l of pdb.split("\n")) if (l.startsWith("ANISOU")) anisou += 1;
-
+  function selecionarAtomosLimpeza(atomos, cadeias, hets, aguasManter, removerAguas) {
     const candidatos = [];
     let foraCadeia = 0;
     let aguasRemovidas = 0;
@@ -948,6 +968,10 @@ const PrepAnalysis = (() => {
       candidatos.push(a);
     }
 
+    return { candidatos, foraCadeia, aguasRemovidas, hetsRemovidos };
+  }
+
+  function selecionarAltlocLimpeza(candidatos, altloc) {
     const antes = new Set(candidatos.map((a) => a.chaveRes));
     let escolhidos;
     let altlocRemovidos = 0;
@@ -971,6 +995,10 @@ const PrepAnalysis = (() => {
     const depois = new Set(escolhidos.map((a) => a.chaveRes));
     const sumiram = [...antes].filter((k) => !depois.has(k));
 
+    return { escolhidos, altlocRemovidos, sumiram };
+  }
+
+  function deduplicarLinhasLimpeza(escolhidos) {
     const vistos = new Set();
     const unicos = [];
     let duplicadas = 0;
@@ -981,6 +1009,10 @@ const PrepAnalysis = (() => {
       unicos.push({ atom: a, linha });
     }
 
+    return { unicos, duplicadas };
+  }
+
+  function montarRegistrosLimpeza(unicos) {
     const out = [
       "REMARK   1 PEKI Fold. PDB filtrado no navegador (ficha de preparo).",
       "REMARK   1 Nao adiciona hidrogenio, nao protona e nao e entrada pronta de simulacao.",
@@ -995,6 +1027,10 @@ const PrepAnalysis = (() => {
     if (unicos.length) out.push("TER");
     out.push("END");
 
+    return out;
+  }
+
+  function separarIonsLimpeza(unicos) {
     const contagemEl = {};
     const ions = [];
     for (const item of unicos) {
@@ -1013,6 +1049,10 @@ const PrepAnalysis = (() => {
         pdb: item.linha + "\nEND\n",
       });
     }
+    return ions;
+  }
+
+  function separarHetsLimpeza(unicos) {
     const hetArqs = [];
     const hetGrupos = new Map();
     for (const item of unicos) {
@@ -1031,6 +1071,35 @@ const PrepAnalysis = (() => {
         nAtomos: linhas.length,
       });
     }
+
+    return hetArqs;
+  }
+
+  function limparPdb(texto, opcoes) {
+    const o = opcoes || {};
+    const pdb = primeiroModelo(texto);
+    const atomos = parseAtomos(pdb);
+    const cadeias = o.cadeias ? new Set(o.cadeias) : null;
+    const hets = o.hets ? new Set(o.hets) : null;
+    const aguasManter = new Set(o.aguasManter || []);
+    const removerAguas = o.removerAguas !== false;
+    const altloc = o.altloc === "ocupacao" ? "ocupacao" : "A";
+
+    let anisou = 0;
+    for (const l of pdb.split("\n")) if (l.startsWith("ANISOU")) anisou += 1;
+
+    const { candidatos, foraCadeia, aguasRemovidas, hetsRemovidos } =
+      selecionarAtomosLimpeza(atomos, cadeias, hets, aguasManter, removerAguas);
+
+    const { escolhidos, altlocRemovidos, sumiram } = selecionarAltlocLimpeza(candidatos, altloc);
+
+    const { unicos, duplicadas } = deduplicarLinhasLimpeza(escolhidos);
+
+    const out = montarRegistrosLimpeza(unicos);
+
+    const ions = separarIonsLimpeza(unicos);
+
+    const hetArqs = separarHetsLimpeza(unicos);
 
     const linhasResumo = [
       `Átomos de proteína mantidos: ${unicos.filter((u) => u.atom.registro === "ATOM").length}.`,
@@ -1076,8 +1145,10 @@ const PrepAnalysis = (() => {
     return a.indice < b.indice;
   }
 
-  function caixaPocket(textoResiduos, margem) {
-    const atomos = parseAtomos(textoResiduos).filter((a) => a.x != null);
+  function caixaPocket(textoResiduos, margem, diagnostico) {
+    const filtrar = typeof filtrarResiduosPocket === "function" ? filtrarResiduosPocket
+      : require("./dogsite-client.js").filtrarResiduosPocket;
+    const atomos = parseAtomos(filtrar(textoResiduos, diagnostico)).filter((a) => a.x != null);
     if (!atomos.length) {
       return { ok: false, erro: "Nenhum átomo no arquivo de resíduos do pocket." };
     }

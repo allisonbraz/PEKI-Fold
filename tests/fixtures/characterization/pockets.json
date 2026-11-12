@@ -1,0 +1,83 @@
+{
+  "result": {
+    "pockets": [
+      {
+        "name": "P_0",
+        "volume": 100,
+        "surface": 50,
+        "depth": 8,
+        "accept": 2,
+        "donor": 3,
+        "hydrophobicity": 0.4,
+        "drugScore": 0.7,
+        "residuosUrl": "url-P0"
+      }
+    ],
+    "residues": [
+      "url-P0",
+      "url-subpocket",
+      "url-P1"
+    ],
+    "descartadas": 1
+  },
+  "requests": [
+    {
+      "url": "https://proteins.plus/api/dogsite_rest",
+      "options": {
+        "method": "POST",
+        "headers": {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        "body": "{\"dogsite\":{\"pdbCode\":\"1abc\",\"analysisDetail\":\"0\",\"bindingSitePredictionGranularity\":\"1\",\"ligand\":\"\",\"chain\":\"\"}}",
+        "signal": {}
+      }
+    },
+    {
+      "url": "https://fixture.invalid/job",
+      "options": {
+        "signal": {},
+        "headers": {
+          "Accept": "application/json"
+        }
+      }
+    },
+    {
+      "url": "https://fixture.invalid/table",
+      "options": {
+        "signal": {}
+      }
+    }
+  ],
+  "cacheNaoRepetePedido": true,
+  "analise": [
+    "Maior volume: P_0 (100.00 Å³)",
+    "Mais profundo: P_0 (8.00)",
+    "Volume × profundidade: dados insuficientes para avaliar.",
+    "Mais hidrofóbico: P_0 (0.40)",
+    "Maior drugScore (descritor geométrico, não é afinidade): P_0 (0.700)"
+  ],
+  "selecaoInsercao": [
+    {
+      "chain": "A",
+      "resi": [
+        1,
+        2,
+        4,
+        5,
+        11,
+        100,
+        101,
+        102
+      ],
+      "icode": " "
+    },
+    {
+      "chain": "A",
+      "resi": [
+        10
+      ],
+      "icode": "A"
+    }
+  ]
+}

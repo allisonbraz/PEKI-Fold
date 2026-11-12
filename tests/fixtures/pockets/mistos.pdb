@@ -1,0 +1,13 @@
+REMARK Synthetic malformed variants of public 1CRN coordinate records.
+ATOM      1  N   THR A   1      17.047  14.099   3.625  1.00 13.79           N
+ATOM      1  N   THR A   1
+ATOM      1  N   THR A   1    oops      14.099   3.625  1.00 13.79           N
+ATOM      1  N   THR     1      17.047  14.099   3.625  1.00 13.79           N
+ATOM      1  N   THR A          17.047  14.099   3.625  1.00 13.79           N
+ATOM      1  N       A   1      17.047  14.099   3.625  1.00 13.79           N
+ATOM      1  N   THR A1x        17.047  14.099   3.625  1.00 13.79           N
+ATOM      1  N   THR A   1      17.047NaN        3.625  1.00 13.79           N
+ATOM      1  N   THR A   1      17.047  14.0991.0x      1.00 13.79           N
+ATOM      2  CA  THR A   1      16.967  12.784   4.338  1.00 10.80           C
+ATOM      3  C   THR A   1      15.685  12.755   5.133  1.00  9.19           C
+END

@@ -1,0 +1,1548 @@
+{
+  "regular": {
+    "schema": "peki-comparacao-1",
+    "versaoApp": "peki-fold-web",
+    "schemaAnalise": "peki-analise-1",
+    "geradoEm": "2026-11-12T15:00:00.000Z",
+    "ok": true,
+    "ranqueado": true,
+    "motivo": "1ABC fica à frente com os critérios e pesos desta pergunta.",
+    "pergunta": {
+      "regiao": "",
+      "regiaoEssencial": false,
+      "componente": "ZN",
+      "componenteEliminatorio": false,
+      "pocketEliminatorio": false,
+      "pesos": {
+        "cobertura": 1,
+        "qualidade": 2,
+        "componente": 1,
+        "pocket": 1
+      }
+    },
+    "regras": [
+      "Entram de 2 a 5 análises já guardadas. Uma só, ou mais de cinco, não gera ranking.",
+      "Peso zero exclui o critério da pontuação. Peso não cria dado que o snapshot não tem.",
+      "Dado pendente, não solicitado ou com erro fica indisponível. Não é convertido em zero nem em nota boa.",
+      "A pontuação de cada candidato é a média ponderada das subpontuações disponíveis. Os pesos desses critérios são renormalizados para somar 1. A fração dos pesos ativos que tinham dado é informada à parte e não entra como bônus escondido.",
+      "Cobertura é a proporção de resíduos poliméricos modelados sobre modelados mais ausentes citados por fonte explícita. Sem essa fonte, a cobertura fica indisponível.",
+      "Se a região informada for comparável no número author e no acesso declarado, a cobertura passa a ser a dessa faixa, no referencial de cada análise. Sem mapa resíduo a resíduo, números que não concordam não são tratados como o mesmo sítio.",
+      "Qualidade usa só métricas numéricas presentes, da mesma classe experimental, em pelo menos duas análises. Menor valor fica mais alto dentro deste conjunto. Métrica ausente não entra na média daquele candidato.",
+      "O componente pedido conta como observado ou ausente no inventário do snapshot. Isso não estabelece holo nem função.",
+      "Pocket usa o maior drugScore devolvido pelo DoGSiteScorer. O valor é normalizado só entre quem tem o número. Não há correspondência estrutural entre pockets.",
+      "Critério eliminatório que falha, ou que não dá para verificar, tira o candidato do ranking. Não o coloca em último com nota zero.",
+      "Empate na pontuação permanece empate. A ordem alfabética do identificador só organiza a lista."
+    ],
+    "alertas": [],
+    "numeracao": {
+      "aplicavel": false,
+      "comparavel": null,
+      "motivo": "Nenhuma região foi informada. A cobertura, quando pesada, usa o modelo inteiro."
+    },
+    "candidatos": [
+      {
+        "id": "SIN-CARACTERIZACAO",
+        "rotulo": "1ABC",
+        "origem": "RCSB PDB · 1ABC",
+        "situacao": "ranqueado",
+        "posicao": 1,
+        "empate": false,
+        "pontuacao": 0.75,
+        "fracaoDados": 0.8,
+        "pesosRenormalizados": {
+          "cobertura": null,
+          "qualidade": 0.5,
+          "componente": 0.25,
+          "pocket": 0.25
+        },
+        "subscores": [
+          {
+            "id": "cobertura",
+            "rotulo": "Cobertura do modelo",
+            "peso": 1,
+            "estado": "indisponivel",
+            "subpontuacao": null,
+            "detalhe": "A cobertura não está determinada. Posição sem fonte explícita não entrou como zero."
+          },
+          {
+            "id": "qualidade",
+            "rotulo": "Qualidade e confiabilidade",
+            "peso": 2,
+            "estado": "ok",
+            "subpontuacao": 1,
+            "detalhe": "Rfree 0.2; Clashscore 4. Menor valor fica mais alto só dentro deste conjunto. Métrica ausente não entrou como zero."
+          },
+          {
+            "id": "componente",
+            "rotulo": "Presença do componente",
+            "peso": 1,
+            "estado": "ok",
+            "subpontuacao": 1,
+            "detalhe": "Observado (ZN, 1). Componente observado no snapshot não prova estado holo, apo nem função biológica."
+          },
+          {
+            "id": "pocket",
+            "rotulo": "Pocket e drugScore",
+            "peso": 1,
+            "estado": "ok",
+            "subpontuacao": 0,
+            "detalhe": "Maior drugScore 0.4 em P_0. O drugScore é descritor geométrico do DoGSiteScorer. Não é afinidade, não identifica sítio funcional e não corresponde a um pocket alinhado entre estruturas."
+          }
+        ],
+        "motivos": [
+          "Parte dos pesos ativos não tinha dado (0.8 da soma dos pesos). O que faltou saiu da média e não virou zero."
+        ]
+      },
+      {
+        "id": "SIN-B",
+        "rotulo": "SIN-B",
+        "origem": "RCSB PDB · 1ABC",
+        "situacao": "ranqueado",
+        "posicao": 2,
+        "empate": false,
+        "pontuacao": 0.5,
+        "fracaoDados": 0.8,
+        "pesosRenormalizados": {
+          "cobertura": null,
+          "qualidade": 0.5,
+          "componente": 0.25,
+          "pocket": 0.25
+        },
+        "subscores": [
+          {
+            "id": "cobertura",
+            "rotulo": "Cobertura do modelo",
+            "peso": 1,
+            "estado": "indisponivel",
+            "subpontuacao": null,
+            "detalhe": "A cobertura não está determinada. Posição sem fonte explícita não entrou como zero."
+          },
+          {
+            "id": "qualidade",
+            "rotulo": "Qualidade e confiabilidade",
+            "peso": 2,
+            "estado": "ok",
+            "subpontuacao": 0,
+            "detalhe": "Rfree 0.3; Clashscore 8. Menor valor fica mais alto só dentro deste conjunto. Métrica ausente não entrou como zero."
+          },
+          {
+            "id": "componente",
+            "rotulo": "Presença do componente",
+            "peso": 1,
+            "estado": "ok",
+            "subpontuacao": 1,
+            "detalhe": "Observado (ZN, 1). Componente observado no snapshot não prova estado holo, apo nem função biológica."
+          },
+          {
+            "id": "pocket",
+            "rotulo": "Pocket e drugScore",
+            "peso": 1,
+            "estado": "ok",
+            "subpontuacao": 1,
+            "detalhe": "Maior drugScore 0.8 em P_0. O drugScore é descritor geométrico do DoGSiteScorer. Não é afinidade, não identifica sítio funcional e não corresponde a um pocket alinhado entre estruturas."
+          }
+        ],
+        "motivos": [
+          "Parte dos pesos ativos não tinha dado (0.8 da soma dos pesos). O que faltou saiu da média e não virou zero."
+        ]
+      }
+    ],
+    "lideres": [
+      {
+        "id": "SIN-CARACTERIZACAO",
+        "rotulo": "1ABC",
+        "pontuacao": 0.75
+      }
+    ],
+    "empateNoTopo": false,
+    "razao": "1ABC passa SIN-B sobretudo em Qualidade e confiabilidade (subpontuação 1 contra 0, peso 2).",
+    "insights": [
+      {
+        "id": "cobertura",
+        "criterio": "cobertura",
+        "titulo": "Cobertura do modelo",
+        "estruturas": [
+          "SIN-CARACTERIZACAO",
+          "SIN-B"
+        ],
+        "evidencia": "1ABC: A cobertura não está determinada. Posição sem fonte explícita não entrou como zero. SIN-B: A cobertura não está determinada. Posição sem fonte explícita não entrou como zero.",
+        "limitacao": "A proporção só existe quando a fonte de ausência é explícita."
+      },
+      {
+        "id": "componente",
+        "criterio": "componente",
+        "titulo": "Componente ZN",
+        "estruturas": [
+          "SIN-CARACTERIZACAO",
+          "SIN-B"
+        ],
+        "evidencia": "1ABC: observado, 1 ocorrência(s) SIN-B: observado, 1 ocorrência(s)",
+        "limitacao": "Componente observado no snapshot não prova estado holo, apo nem função biológica."
+      },
+      {
+        "id": "qualidade",
+        "criterio": "qualidade",
+        "titulo": "Qualidade quando o relatório existe",
+        "estruturas": [
+          "SIN-CARACTERIZACAO",
+          "SIN-B"
+        ],
+        "evidencia": "1ABC: classe xray; rfree 0.2, clashscore 4 SIN-B: classe xray; rfree 0.3, clashscore 8",
+        "limitacao": "Métricas de classes diferentes não foram misturadas. O relatório global não garante o sítio."
+      },
+      {
+        "id": "pocket",
+        "criterio": "pocket",
+        "titulo": "Maior drugScore de cada snapshot",
+        "estruturas": [
+          "SIN-CARACTERIZACAO",
+          "SIN-B"
+        ],
+        "evidencia": "1ABC: maior drugScore 0.4 (P_0) SIN-B: maior drugScore 0.8 (P_0)",
+        "limitacao": "O drugScore é descritor geométrico do DoGSiteScorer. Não é afinidade, não identifica sítio funcional e não corresponde a um pocket alinhado entre estruturas."
+      }
+    ],
+    "limitacoes": [
+      "A pontuação é apoio calculado com os critérios e os pesos desta pergunta. Não é verdade biológica nem nota universal de qualidade.",
+      "Não há correspondência UniProt resíduo a resíduo nem alinhamento estrutural.",
+      "Pockets não foram sobrepostos. O maior drugScore de cada snapshot não é o mesmo sítio.",
+      "Arquivos locais, sem sincronização e sem reenvio ao servidor.",
+      "Componente observado no snapshot não prova estado holo, apo nem função biológica."
+    ],
+    "analises": [
+      {
+        "id": "SIN-CARACTERIZACAO",
+        "rotulo": "1ABC",
+        "origem": "RCSB PDB · 1ABC",
+        "geradoEm": "2026-11-12T15:00:00.000Z",
+        "sintetico": false
+      },
+      {
+        "id": "SIN-B",
+        "rotulo": "SIN-B",
+        "origem": "RCSB PDB · 1ABC",
+        "geradoEm": "2026-11-12T15:00:00.000Z",
+        "sintetico": false
+      }
+    ],
+    "escolha": null
+  },
+  "semPesos": {
+    "schema": "peki-comparacao-1",
+    "versaoApp": "peki-fold-web",
+    "schemaAnalise": "peki-analise-1",
+    "geradoEm": "2026-11-12T15:00:00.000Z",
+    "ok": true,
+    "ranqueado": false,
+    "motivo": "Informe ao menos um peso maior que zero. Peso zero exclui o critério e, sem critério, não há ranking.",
+    "pergunta": {
+      "regiao": "",
+      "regiaoEssencial": false,
+      "componente": "",
+      "componenteEliminatorio": false,
+      "pocketEliminatorio": false,
+      "pesos": {
+        "cobertura": 0,
+        "qualidade": 0,
+        "componente": 0,
+        "pocket": 0
+      }
+    },
+    "regras": [
+      "Entram de 2 a 5 análises já guardadas. Uma só, ou mais de cinco, não gera ranking.",
+      "Peso zero exclui o critério da pontuação. Peso não cria dado que o snapshot não tem.",
+      "Dado pendente, não solicitado ou com erro fica indisponível. Não é convertido em zero nem em nota boa.",
+      "A pontuação de cada candidato é a média ponderada das subpontuações disponíveis. Os pesos desses critérios são renormalizados para somar 1. A fração dos pesos ativos que tinham dado é informada à parte e não entra como bônus escondido.",
+      "Cobertura é a proporção de resíduos poliméricos modelados sobre modelados mais ausentes citados por fonte explícita. Sem essa fonte, a cobertura fica indisponível.",
+      "Se a região informada for comparável no número author e no acesso declarado, a cobertura passa a ser a dessa faixa, no referencial de cada análise. Sem mapa resíduo a resíduo, números que não concordam não são tratados como o mesmo sítio.",
+      "Qualidade usa só métricas numéricas presentes, da mesma classe experimental, em pelo menos duas análises. Menor valor fica mais alto dentro deste conjunto. Métrica ausente não entra na média daquele candidato.",
+      "O componente pedido conta como observado ou ausente no inventário do snapshot. Isso não estabelece holo nem função.",
+      "Pocket usa o maior drugScore devolvido pelo DoGSiteScorer. O valor é normalizado só entre quem tem o número. Não há correspondência estrutural entre pockets.",
+      "Critério eliminatório que falha, ou que não dá para verificar, tira o candidato do ranking. Não o coloca em último com nota zero.",
+      "Empate na pontuação permanece empate. A ordem alfabética do identificador só organiza a lista."
+    ],
+    "alertas": [
+      "Informe ao menos um peso maior que zero. Peso zero exclui o critério e, sem critério, não há ranking."
+    ],
+    "numeracao": {
+      "aplicavel": false,
+      "comparavel": null,
+      "motivo": "Nenhuma região foi informada. A cobertura, quando pesada, usa o modelo inteiro."
+    },
+    "candidatos": [
+      {
+        "id": "SIN-CARACTERIZACAO",
+        "rotulo": "1ABC",
+        "origem": "RCSB PDB · 1ABC",
+        "situacao": "nao_pontuado",
+        "posicao": null,
+        "empate": false,
+        "pontuacao": null,
+        "fracaoDados": null,
+        "pesosRenormalizados": {},
+        "subscores": [],
+        "motivos": [
+          "Informe ao menos um peso maior que zero. Peso zero exclui o critério e, sem critério, não há ranking."
+        ]
+      },
+      {
+        "id": "SIN-B",
+        "rotulo": "SIN-B",
+        "origem": "RCSB PDB · 1ABC",
+        "situacao": "nao_pontuado",
+        "posicao": null,
+        "empate": false,
+        "pontuacao": null,
+        "fracaoDados": null,
+        "pesosRenormalizados": {},
+        "subscores": [],
+        "motivos": [
+          "Informe ao menos um peso maior que zero. Peso zero exclui o critério e, sem critério, não há ranking."
+        ]
+      }
+    ],
+    "lideres": [],
+    "empateNoTopo": false,
+    "razao": "",
+    "insights": [],
+    "limitacoes": [
+      "A pontuação é apoio calculado com os critérios e os pesos desta pergunta. Não é verdade biológica nem nota universal de qualidade.",
+      "Não há correspondência UniProt resíduo a resíduo nem alinhamento estrutural.",
+      "Pockets não foram sobrepostos. O maior drugScore de cada snapshot não é o mesmo sítio.",
+      "Arquivos locais, sem sincronização e sem reenvio ao servidor.",
+      "Componente observado no snapshot não prova estado holo, apo nem função biológica."
+    ],
+    "analises": [
+      {
+        "id": "SIN-CARACTERIZACAO",
+        "rotulo": "1ABC",
+        "origem": "RCSB PDB · 1ABC",
+        "geradoEm": "2026-11-12T15:00:00.000Z",
+        "sintetico": false
+      },
+      {
+        "id": "SIN-B",
+        "rotulo": "SIN-B",
+        "origem": "RCSB PDB · 1ABC",
+        "geradoEm": "2026-11-12T15:00:00.000Z",
+        "sintetico": false
+      }
+    ],
+    "escolha": null
+  },
+  "empateReal": {
+    "schema": "peki-comparacao-1",
+    "versaoApp": "peki-fold-web",
+    "schemaAnalise": "peki-analise-1",
+    "geradoEm": "2026-11-12T15:00:00.000Z",
+    "ok": true,
+    "ranqueado": true,
+    "motivo": "Empate na pontuação entre 1ABC, SIN-EMPATE.",
+    "pergunta": {
+      "regiao": "",
+      "regiaoEssencial": false,
+      "componente": "ZN",
+      "componenteEliminatorio": false,
+      "pocketEliminatorio": false,
+      "pesos": {
+        "cobertura": 0,
+        "qualidade": 0,
+        "componente": 1,
+        "pocket": 0
+      }
+    },
+    "regras": [
+      "Entram de 2 a 5 análises já guardadas. Uma só, ou mais de cinco, não gera ranking.",
+      "Peso zero exclui o critério da pontuação. Peso não cria dado que o snapshot não tem.",
+      "Dado pendente, não solicitado ou com erro fica indisponível. Não é convertido em zero nem em nota boa.",
+      "A pontuação de cada candidato é a média ponderada das subpontuações disponíveis. Os pesos desses critérios são renormalizados para somar 1. A fração dos pesos ativos que tinham dado é informada à parte e não entra como bônus escondido.",
+      "Cobertura é a proporção de resíduos poliméricos modelados sobre modelados mais ausentes citados por fonte explícita. Sem essa fonte, a cobertura fica indisponível.",
+      "Se a região informada for comparável no número author e no acesso declarado, a cobertura passa a ser a dessa faixa, no referencial de cada análise. Sem mapa resíduo a resíduo, números que não concordam não são tratados como o mesmo sítio.",
+      "Qualidade usa só métricas numéricas presentes, da mesma classe experimental, em pelo menos duas análises. Menor valor fica mais alto dentro deste conjunto. Métrica ausente não entra na média daquele candidato.",
+      "O componente pedido conta como observado ou ausente no inventário do snapshot. Isso não estabelece holo nem função.",
+      "Pocket usa o maior drugScore devolvido pelo DoGSiteScorer. O valor é normalizado só entre quem tem o número. Não há correspondência estrutural entre pockets.",
+      "Critério eliminatório que falha, ou que não dá para verificar, tira o candidato do ranking. Não o coloca em último com nota zero.",
+      "Empate na pontuação permanece empate. A ordem alfabética do identificador só organiza a lista."
+    ],
+    "alertas": [],
+    "numeracao": {
+      "aplicavel": false,
+      "comparavel": null,
+      "motivo": "Nenhuma região foi informada. A cobertura, quando pesada, usa o modelo inteiro."
+    },
+    "candidatos": [
+      {
+        "id": "SIN-CARACTERIZACAO",
+        "rotulo": "1ABC",
+        "origem": "RCSB PDB · 1ABC",
+        "situacao": "ranqueado",
+        "posicao": 1,
+        "empate": true,
+        "pontuacao": 1,
+        "fracaoDados": 1,
+        "pesosRenormalizados": {
+          "componente": 1
+        },
+        "subscores": [
+          {
+            "id": "componente",
+            "rotulo": "Presença do componente",
+            "peso": 1,
+            "estado": "ok",
+            "subpontuacao": 1,
+            "detalhe": "Observado (ZN, 1). Componente observado no snapshot não prova estado holo, apo nem função biológica."
+          }
+        ],
+        "motivos": []
+      },
+      {
+        "id": "SIN-EMPATE",
+        "rotulo": "SIN-EMPATE",
+        "origem": "RCSB PDB · 1ABC",
+        "situacao": "ranqueado",
+        "posicao": 1,
+        "empate": true,
+        "pontuacao": 1,
+        "fracaoDados": 1,
+        "pesosRenormalizados": {
+          "componente": 1
+        },
+        "subscores": [
+          {
+            "id": "componente",
+            "rotulo": "Presença do componente",
+            "peso": 1,
+            "estado": "ok",
+            "subpontuacao": 1,
+            "detalhe": "Observado (ZN, 1). Componente observado no snapshot não prova estado holo, apo nem função biológica."
+          }
+        ],
+        "motivos": []
+      }
+    ],
+    "lideres": [
+      {
+        "id": "SIN-CARACTERIZACAO",
+        "rotulo": "1ABC",
+        "pontuacao": 1
+      },
+      {
+        "id": "SIN-EMPATE",
+        "rotulo": "SIN-EMPATE",
+        "pontuacao": 1
+      }
+    ],
+    "empateNoTopo": true,
+    "razao": "Há empate entre 1ABC, SIN-EMPATE. A fração de pesos com dado está na tabela e não foi usada como critério extra.",
+    "insights": [
+      {
+        "id": "componente",
+        "criterio": "componente",
+        "titulo": "Componente ZN",
+        "estruturas": [
+          "SIN-CARACTERIZACAO",
+          "SIN-EMPATE"
+        ],
+        "evidencia": "1ABC: observado, 1 ocorrência(s) SIN-EMPATE: observado, 1 ocorrência(s)",
+        "limitacao": "Componente observado no snapshot não prova estado holo, apo nem função biológica."
+      }
+    ],
+    "limitacoes": [
+      "A pontuação é apoio calculado com os critérios e os pesos desta pergunta. Não é verdade biológica nem nota universal de qualidade.",
+      "Não há correspondência UniProt resíduo a resíduo nem alinhamento estrutural.",
+      "Pockets não foram sobrepostos. O maior drugScore de cada snapshot não é o mesmo sítio.",
+      "Arquivos locais, sem sincronização e sem reenvio ao servidor.",
+      "Componente observado no snapshot não prova estado holo, apo nem função biológica."
+    ],
+    "analises": [
+      {
+        "id": "SIN-CARACTERIZACAO",
+        "rotulo": "1ABC",
+        "origem": "RCSB PDB · 1ABC",
+        "geradoEm": "2026-11-12T15:00:00.000Z",
+        "sintetico": false
+      },
+      {
+        "id": "SIN-EMPATE",
+        "rotulo": "SIN-EMPATE",
+        "origem": "RCSB PDB · 1ABC",
+        "geradoEm": "2026-11-12T15:00:00.000Z",
+        "sintetico": false
+      }
+    ],
+    "escolha": null
+  },
+  "pendente": {
+    "schema": "peki-comparacao-1",
+    "versaoApp": "peki-fold-web",
+    "schemaAnalise": "peki-analise-1",
+    "geradoEm": "2026-11-12T15:00:00.000Z",
+    "ok": true,
+    "ranqueado": true,
+    "motivo": "Empate na pontuação entre SIN-B, SIN-C, 1ABC.",
+    "pergunta": {
+      "regiao": "",
+      "regiaoEssencial": false,
+      "componente": "ZN",
+      "componenteEliminatorio": false,
+      "pocketEliminatorio": false,
+      "pesos": {
+        "cobertura": 1,
+        "qualidade": 1,
+        "componente": 1,
+        "pocket": 1
+      }
+    },
+    "regras": [
+      "Entram de 2 a 5 análises já guardadas. Uma só, ou mais de cinco, não gera ranking.",
+      "Peso zero exclui o critério da pontuação. Peso não cria dado que o snapshot não tem.",
+      "Dado pendente, não solicitado ou com erro fica indisponível. Não é convertido em zero nem em nota boa.",
+      "A pontuação de cada candidato é a média ponderada das subpontuações disponíveis. Os pesos desses critérios são renormalizados para somar 1. A fração dos pesos ativos que tinham dado é informada à parte e não entra como bônus escondido.",
+      "Cobertura é a proporção de resíduos poliméricos modelados sobre modelados mais ausentes citados por fonte explícita. Sem essa fonte, a cobertura fica indisponível.",
+      "Se a região informada for comparável no número author e no acesso declarado, a cobertura passa a ser a dessa faixa, no referencial de cada análise. Sem mapa resíduo a resíduo, números que não concordam não são tratados como o mesmo sítio.",
+      "Qualidade usa só métricas numéricas presentes, da mesma classe experimental, em pelo menos duas análises. Menor valor fica mais alto dentro deste conjunto. Métrica ausente não entra na média daquele candidato.",
+      "O componente pedido conta como observado ou ausente no inventário do snapshot. Isso não estabelece holo nem função.",
+      "Pocket usa o maior drugScore devolvido pelo DoGSiteScorer. O valor é normalizado só entre quem tem o número. Não há correspondência estrutural entre pockets.",
+      "Critério eliminatório que falha, ou que não dá para verificar, tira o candidato do ranking. Não o coloca em último com nota zero.",
+      "Empate na pontuação permanece empate. A ordem alfabética do identificador só organiza a lista."
+    ],
+    "alertas": [],
+    "numeracao": {
+      "aplicavel": false,
+      "comparavel": null,
+      "motivo": "Nenhuma região foi informada. A cobertura, quando pesada, usa o modelo inteiro."
+    },
+    "candidatos": [
+      {
+        "id": "SIN-B",
+        "rotulo": "SIN-B",
+        "origem": "RCSB PDB · 1ABC",
+        "situacao": "ranqueado",
+        "posicao": 1,
+        "empate": true,
+        "pontuacao": 1,
+        "fracaoDados": 0.25,
+        "pesosRenormalizados": {
+          "cobertura": null,
+          "qualidade": null,
+          "componente": 1,
+          "pocket": null
+        },
+        "subscores": [
+          {
+            "id": "cobertura",
+            "rotulo": "Cobertura do modelo",
+            "peso": 1,
+            "estado": "indisponivel",
+            "subpontuacao": null,
+            "detalhe": "A cobertura não está determinada. Posição sem fonte explícita não entrou como zero."
+          },
+          {
+            "id": "qualidade",
+            "rotulo": "Qualidade e confiabilidade",
+            "peso": 1,
+            "estado": "indisponivel",
+            "subpontuacao": null,
+            "detalhe": "Qualidade pendente. Não convertida em zero."
+          },
+          {
+            "id": "componente",
+            "rotulo": "Presença do componente",
+            "peso": 1,
+            "estado": "ok",
+            "subpontuacao": 1,
+            "detalhe": "Observado (ZN, 1). Componente observado no snapshot não prova estado holo, apo nem função biológica."
+          },
+          {
+            "id": "pocket",
+            "rotulo": "Pocket e drugScore",
+            "peso": 1,
+            "estado": "indisponivel",
+            "subpontuacao": null,
+            "detalhe": "Pocket indisponível."
+          }
+        ],
+        "motivos": [
+          "Parte dos pesos ativos não tinha dado (0.25 da soma dos pesos). O que faltou saiu da média e não virou zero."
+        ]
+      },
+      {
+        "id": "SIN-C",
+        "rotulo": "SIN-C",
+        "origem": "RCSB PDB · 1ABC",
+        "situacao": "ranqueado",
+        "posicao": 1,
+        "empate": true,
+        "pontuacao": 1,
+        "fracaoDados": 0.75,
+        "pesosRenormalizados": {
+          "cobertura": null,
+          "qualidade": 0.3333333333333333,
+          "componente": 0.3333333333333333,
+          "pocket": 0.3333333333333333
+        },
+        "subscores": [
+          {
+            "id": "cobertura",
+            "rotulo": "Cobertura do modelo",
+            "peso": 1,
+            "estado": "indisponivel",
+            "subpontuacao": null,
+            "detalhe": "A cobertura não está determinada. Posição sem fonte explícita não entrou como zero."
+          },
+          {
+            "id": "qualidade",
+            "rotulo": "Qualidade e confiabilidade",
+            "peso": 1,
+            "estado": "ok",
+            "subpontuacao": 1,
+            "detalhe": "Rfree 0.2 (iguais neste conjunto); Clashscore 4 (iguais neste conjunto). Menor valor fica mais alto só dentro deste conjunto. Métrica ausente não entrou como zero."
+          },
+          {
+            "id": "componente",
+            "rotulo": "Presença do componente",
+            "peso": 1,
+            "estado": "ok",
+            "subpontuacao": 1,
+            "detalhe": "Observado (ZN, 1). Componente observado no snapshot não prova estado holo, apo nem função biológica."
+          },
+          {
+            "id": "pocket",
+            "rotulo": "Pocket e drugScore",
+            "peso": 1,
+            "estado": "ok",
+            "subpontuacao": 1,
+            "detalhe": "Maior drugScore 0.4 em P_0. O drugScore é descritor geométrico do DoGSiteScorer. Não é afinidade, não identifica sítio funcional e não corresponde a um pocket alinhado entre estruturas."
+          }
+        ],
+        "motivos": [
+          "Parte dos pesos ativos não tinha dado (0.75 da soma dos pesos). O que faltou saiu da média e não virou zero."
+        ]
+      },
+      {
+        "id": "SIN-CARACTERIZACAO",
+        "rotulo": "1ABC",
+        "origem": "RCSB PDB · 1ABC",
+        "situacao": "ranqueado",
+        "posicao": 1,
+        "empate": true,
+        "pontuacao": 1,
+        "fracaoDados": 0.75,
+        "pesosRenormalizados": {
+          "cobertura": null,
+          "qualidade": 0.3333333333333333,
+          "componente": 0.3333333333333333,
+          "pocket": 0.3333333333333333
+        },
+        "subscores": [
+          {
+            "id": "cobertura",
+            "rotulo": "Cobertura do modelo",
+            "peso": 1,
+            "estado": "indisponivel",
+            "subpontuacao": null,
+            "detalhe": "A cobertura não está determinada. Posição sem fonte explícita não entrou como zero."
+          },
+          {
+            "id": "qualidade",
+            "rotulo": "Qualidade e confiabilidade",
+            "peso": 1,
+            "estado": "ok",
+            "subpontuacao": 1,
+            "detalhe": "Rfree 0.2 (iguais neste conjunto); Clashscore 4 (iguais neste conjunto). Menor valor fica mais alto só dentro deste conjunto. Métrica ausente não entrou como zero."
+          },
+          {
+            "id": "componente",
+            "rotulo": "Presença do componente",
+            "peso": 1,
+            "estado": "ok",
+            "subpontuacao": 1,
+            "detalhe": "Observado (ZN, 1). Componente observado no snapshot não prova estado holo, apo nem função biológica."
+          },
+          {
+            "id": "pocket",
+            "rotulo": "Pocket e drugScore",
+            "peso": 1,
+            "estado": "ok",
+            "subpontuacao": 1,
+            "detalhe": "Maior drugScore 0.4 em P_0. O drugScore é descritor geométrico do DoGSiteScorer. Não é afinidade, não identifica sítio funcional e não corresponde a um pocket alinhado entre estruturas."
+          }
+        ],
+        "motivos": [
+          "Parte dos pesos ativos não tinha dado (0.75 da soma dos pesos). O que faltou saiu da média e não virou zero."
+        ]
+      }
+    ],
+    "lideres": [
+      {
+        "id": "SIN-B",
+        "rotulo": "SIN-B",
+        "pontuacao": 1
+      },
+      {
+        "id": "SIN-C",
+        "rotulo": "SIN-C",
+        "pontuacao": 1
+      },
+      {
+        "id": "SIN-CARACTERIZACAO",
+        "rotulo": "1ABC",
+        "pontuacao": 1
+      }
+    ],
+    "empateNoTopo": true,
+    "razao": "Há empate entre SIN-B, SIN-C, 1ABC. A fração de pesos com dado está na tabela e não foi usada como critério extra.",
+    "insights": [
+      {
+        "id": "cobertura",
+        "criterio": "cobertura",
+        "titulo": "Cobertura do modelo",
+        "estruturas": [
+          "SIN-CARACTERIZACAO",
+          "SIN-B",
+          "SIN-C"
+        ],
+        "evidencia": "1ABC: A cobertura não está determinada. Posição sem fonte explícita não entrou como zero. SIN-B: A cobertura não está determinada. Posição sem fonte explícita não entrou como zero. SIN-C: A cobertura não está determinada. Posição sem fonte explícita não entrou como zero.",
+        "limitacao": "A proporção só existe quando a fonte de ausência é explícita."
+      },
+      {
+        "id": "componente",
+        "criterio": "componente",
+        "titulo": "Componente ZN",
+        "estruturas": [
+          "SIN-CARACTERIZACAO",
+          "SIN-B",
+          "SIN-C"
+        ],
+        "evidencia": "1ABC: observado, 1 ocorrência(s) SIN-B: observado, 1 ocorrência(s) SIN-C: observado, 1 ocorrência(s)",
+        "limitacao": "Componente observado no snapshot não prova estado holo, apo nem função biológica."
+      },
+      {
+        "id": "qualidade",
+        "criterio": "qualidade",
+        "titulo": "Qualidade quando o relatório existe",
+        "estruturas": [
+          "SIN-CARACTERIZACAO",
+          "SIN-B",
+          "SIN-C"
+        ],
+        "evidencia": "1ABC: classe xray; rfree 0.2, clashscore 4 SIN-B: qualidade pendente.  SIN-C: classe xray; rfree 0.2, clashscore 4",
+        "limitacao": "Métricas de classes diferentes não foram misturadas. O relatório global não garante o sítio."
+      },
+      {
+        "id": "pocket",
+        "criterio": "pocket",
+        "titulo": "Maior drugScore de cada snapshot",
+        "estruturas": [
+          "SIN-CARACTERIZACAO",
+          "SIN-B",
+          "SIN-C"
+        ],
+        "evidencia": "1ABC: maior drugScore 0.4 (P_0) SIN-B: sem drugScore utilizável — Pocket indisponível. SIN-C: maior drugScore 0.4 (P_0)",
+        "limitacao": "O drugScore é descritor geométrico do DoGSiteScorer. Não é afinidade, não identifica sítio funcional e não corresponde a um pocket alinhado entre estruturas."
+      }
+    ],
+    "limitacoes": [
+      "A pontuação é apoio calculado com os critérios e os pesos desta pergunta. Não é verdade biológica nem nota universal de qualidade.",
+      "Não há correspondência UniProt resíduo a resíduo nem alinhamento estrutural.",
+      "Pockets não foram sobrepostos. O maior drugScore de cada snapshot não é o mesmo sítio.",
+      "Arquivos locais, sem sincronização e sem reenvio ao servidor.",
+      "Componente observado no snapshot não prova estado holo, apo nem função biológica."
+    ],
+    "analises": [
+      {
+        "id": "SIN-CARACTERIZACAO",
+        "rotulo": "1ABC",
+        "origem": "RCSB PDB · 1ABC",
+        "geradoEm": "2026-11-12T15:00:00.000Z",
+        "sintetico": false
+      },
+      {
+        "id": "SIN-B",
+        "rotulo": "SIN-B",
+        "origem": "RCSB PDB · 1ABC",
+        "geradoEm": "2026-11-12T15:00:00.000Z",
+        "sintetico": false
+      },
+      {
+        "id": "SIN-C",
+        "rotulo": "SIN-C",
+        "origem": "RCSB PDB · 1ABC",
+        "geradoEm": "2026-11-12T15:00:00.000Z",
+        "sintetico": false
+      }
+    ],
+    "escolha": null
+  },
+  "eliminatorio": {
+    "schema": "peki-comparacao-1",
+    "versaoApp": "peki-fold-web",
+    "schemaAnalise": "peki-analise-1",
+    "geradoEm": "2026-11-12T15:00:00.000Z",
+    "ok": true,
+    "ranqueado": false,
+    "motivo": "Nenhum candidato ficou pontuado. Os eliminados não recebem nota zero.",
+    "pergunta": {
+      "regiao": "",
+      "regiaoEssencial": false,
+      "componente": "",
+      "componenteEliminatorio": false,
+      "pocketEliminatorio": true,
+      "pesos": {
+        "cobertura": 1,
+        "qualidade": 1,
+        "componente": 1,
+        "pocket": 1
+      }
+    },
+    "regras": [
+      "Entram de 2 a 5 análises já guardadas. Uma só, ou mais de cinco, não gera ranking.",
+      "Peso zero exclui o critério da pontuação. Peso não cria dado que o snapshot não tem.",
+      "Dado pendente, não solicitado ou com erro fica indisponível. Não é convertido em zero nem em nota boa.",
+      "A pontuação de cada candidato é a média ponderada das subpontuações disponíveis. Os pesos desses critérios são renormalizados para somar 1. A fração dos pesos ativos que tinham dado é informada à parte e não entra como bônus escondido.",
+      "Cobertura é a proporção de resíduos poliméricos modelados sobre modelados mais ausentes citados por fonte explícita. Sem essa fonte, a cobertura fica indisponível.",
+      "Se a região informada for comparável no número author e no acesso declarado, a cobertura passa a ser a dessa faixa, no referencial de cada análise. Sem mapa resíduo a resíduo, números que não concordam não são tratados como o mesmo sítio.",
+      "Qualidade usa só métricas numéricas presentes, da mesma classe experimental, em pelo menos duas análises. Menor valor fica mais alto dentro deste conjunto. Métrica ausente não entra na média daquele candidato.",
+      "O componente pedido conta como observado ou ausente no inventário do snapshot. Isso não estabelece holo nem função.",
+      "Pocket usa o maior drugScore devolvido pelo DoGSiteScorer. O valor é normalizado só entre quem tem o número. Não há correspondência estrutural entre pockets.",
+      "Critério eliminatório que falha, ou que não dá para verificar, tira o candidato do ranking. Não o coloca em último com nota zero.",
+      "Empate na pontuação permanece empate. A ordem alfabética do identificador só organiza a lista."
+    ],
+    "alertas": [
+      "O peso do componente foi ignorado porque nenhum código ou nome foi informado.",
+      "O drugScore não foi normalizado: é preciso o número em pelo menos duas análises. Pendência não virou zero.",
+      "Nenhuma métrica de qualidade é comparável entre pelo menos duas análises. Ela não entrou como zero.",
+      "Nenhum candidato ficou pontuado. Os eliminados não recebem nota zero."
+    ],
+    "numeracao": {
+      "aplicavel": false,
+      "comparavel": null,
+      "motivo": "Nenhuma região foi informada. A cobertura, quando pesada, usa o modelo inteiro."
+    },
+    "candidatos": [
+      {
+        "id": "SIN-CARACTERIZACAO",
+        "rotulo": "1ABC",
+        "origem": "RCSB PDB · 1ABC",
+        "situacao": "nao_pontuado",
+        "posicao": null,
+        "empate": false,
+        "pontuacao": null,
+        "fracaoDados": 0,
+        "pesosRenormalizados": {},
+        "subscores": [
+          {
+            "id": "cobertura",
+            "rotulo": "Cobertura do modelo",
+            "peso": 1,
+            "estado": "indisponivel",
+            "subpontuacao": null,
+            "detalhe": "A cobertura não está determinada. Posição sem fonte explícita não entrou como zero."
+          },
+          {
+            "id": "qualidade",
+            "rotulo": "Qualidade e confiabilidade",
+            "peso": 1,
+            "estado": "indisponivel",
+            "subpontuacao": null,
+            "detalhe": "Sem métrica comparável com outra análise."
+          },
+          {
+            "id": "pocket",
+            "rotulo": "Pocket e drugScore",
+            "peso": 1,
+            "estado": "indisponivel",
+            "subpontuacao": null,
+            "detalhe": "Há drugScore, mas não há segundo valor para normalizar. Não virou nota."
+          }
+        ],
+        "motivos": [
+          "Nenhum critério ativo tem dado comparável. Isso não é a pior nota."
+        ]
+      },
+      {
+        "id": "SIN-B",
+        "rotulo": "SIN-B",
+        "origem": "RCSB PDB · 1ABC",
+        "situacao": "desclassificado",
+        "posicao": null,
+        "empate": false,
+        "pontuacao": null,
+        "fracaoDados": null,
+        "pesosRenormalizados": {},
+        "subscores": [],
+        "motivos": [
+          "Eliminado: drugScore não verificável (Pocket indisponível.). O pendente não virou zero."
+        ]
+      }
+    ],
+    "lideres": [],
+    "empateNoTopo": false,
+    "razao": "",
+    "insights": [
+      {
+        "id": "cobertura",
+        "criterio": "cobertura",
+        "titulo": "Cobertura do modelo",
+        "estruturas": [
+          "SIN-CARACTERIZACAO",
+          "SIN-B"
+        ],
+        "evidencia": "1ABC: A cobertura não está determinada. Posição sem fonte explícita não entrou como zero. SIN-B: A cobertura não está determinada. Posição sem fonte explícita não entrou como zero.",
+        "limitacao": "A proporção só existe quando a fonte de ausência é explícita."
+      },
+      {
+        "id": "qualidade",
+        "criterio": "qualidade",
+        "titulo": "Qualidade quando o relatório existe",
+        "estruturas": [
+          "SIN-CARACTERIZACAO",
+          "SIN-B"
+        ],
+        "evidencia": "1ABC: classe xray; rfree 0.2, clashscore 4 SIN-B: qualidade pendente. ",
+        "limitacao": "Métricas de classes diferentes não foram misturadas. O relatório global não garante o sítio."
+      },
+      {
+        "id": "pocket",
+        "criterio": "pocket",
+        "titulo": "Maior drugScore de cada snapshot",
+        "estruturas": [
+          "SIN-CARACTERIZACAO",
+          "SIN-B"
+        ],
+        "evidencia": "1ABC: maior drugScore 0.4 (P_0) SIN-B: sem drugScore utilizável — Pocket indisponível.",
+        "limitacao": "O drugScore é descritor geométrico do DoGSiteScorer. Não é afinidade, não identifica sítio funcional e não corresponde a um pocket alinhado entre estruturas."
+      },
+      {
+        "id": "eliminados",
+        "criterio": "eliminatorio",
+        "titulo": "Candidatos fora do ranking",
+        "estruturas": [
+          "SIN-B"
+        ],
+        "evidencia": "SIN-B: Eliminado: drugScore não verificável (Pocket indisponível.). O pendente não virou zero.",
+        "limitacao": "Eliminação não é a pior nota. O candidato não entra na média."
+      }
+    ],
+    "limitacoes": [
+      "A pontuação é apoio calculado com os critérios e os pesos desta pergunta. Não é verdade biológica nem nota universal de qualidade.",
+      "Não há correspondência UniProt resíduo a resíduo nem alinhamento estrutural.",
+      "Pockets não foram sobrepostos. O maior drugScore de cada snapshot não é o mesmo sítio.",
+      "Arquivos locais, sem sincronização e sem reenvio ao servidor.",
+      "Componente observado no snapshot não prova estado holo, apo nem função biológica."
+    ],
+    "analises": [
+      {
+        "id": "SIN-CARACTERIZACAO",
+        "rotulo": "1ABC",
+        "origem": "RCSB PDB · 1ABC",
+        "geradoEm": "2026-11-12T15:00:00.000Z",
+        "sintetico": false
+      },
+      {
+        "id": "SIN-B",
+        "rotulo": "SIN-B",
+        "origem": "RCSB PDB · 1ABC",
+        "geradoEm": "2026-11-12T15:00:00.000Z",
+        "sintetico": false
+      }
+    ],
+    "escolha": null
+  },
+  "regiao": {
+    "schema": "peki-comparacao-1",
+    "versaoApp": "peki-fold-web",
+    "schemaAnalise": "peki-analise-1",
+    "geradoEm": "2026-11-12T15:00:00.000Z",
+    "ok": true,
+    "ranqueado": false,
+    "motivo": "Nenhum candidato ficou pontuado. Os eliminados não recebem nota zero.",
+    "pergunta": {
+      "regiao": "A:1-5",
+      "regiaoEssencial": true,
+      "componente": "",
+      "componenteEliminatorio": false,
+      "pocketEliminatorio": false,
+      "pesos": {
+        "cobertura": 1,
+        "qualidade": 1,
+        "componente": 1,
+        "pocket": 1
+      }
+    },
+    "regras": [
+      "Entram de 2 a 5 análises já guardadas. Uma só, ou mais de cinco, não gera ranking.",
+      "Peso zero exclui o critério da pontuação. Peso não cria dado que o snapshot não tem.",
+      "Dado pendente, não solicitado ou com erro fica indisponível. Não é convertido em zero nem em nota boa.",
+      "A pontuação de cada candidato é a média ponderada das subpontuações disponíveis. Os pesos desses critérios são renormalizados para somar 1. A fração dos pesos ativos que tinham dado é informada à parte e não entra como bônus escondido.",
+      "Cobertura é a proporção de resíduos poliméricos modelados sobre modelados mais ausentes citados por fonte explícita. Sem essa fonte, a cobertura fica indisponível.",
+      "Se a região informada for comparável no número author e no acesso declarado, a cobertura passa a ser a dessa faixa, no referencial de cada análise. Sem mapa resíduo a resíduo, números que não concordam não são tratados como o mesmo sítio.",
+      "Qualidade usa só métricas numéricas presentes, da mesma classe experimental, em pelo menos duas análises. Menor valor fica mais alto dentro deste conjunto. Métrica ausente não entra na média daquele candidato.",
+      "O componente pedido conta como observado ou ausente no inventário do snapshot. Isso não estabelece holo nem função.",
+      "Pocket usa o maior drugScore devolvido pelo DoGSiteScorer. O valor é normalizado só entre quem tem o número. Não há correspondência estrutural entre pockets.",
+      "Critério eliminatório que falha, ou que não dá para verificar, tira o candidato do ranking. Não o coloca em último com nota zero.",
+      "Empate na pontuação permanece empate. A ordem alfabética do identificador só organiza a lista."
+    ],
+    "alertas": [
+      "O peso do componente foi ignorado porque nenhum código ou nome foi informado.",
+      "O drugScore não foi normalizado: é preciso o número em pelo menos duas análises. Pendência não virou zero.",
+      "Nenhuma métrica de qualidade é comparável entre pelo menos duas análises. Ela não entrou como zero.",
+      "Nenhum candidato ficou pontuado. Os eliminados não recebem nota zero."
+    ],
+    "numeracao": {
+      "aplicavel": true,
+      "comparavel": true,
+      "motivo": "A faixa usa o número author e o acesso declarado no arquivo. Isso não é mapa resíduo a resíduo nem sobreposição estrutural."
+    },
+    "candidatos": [
+      {
+        "id": "SIN-CARACTERIZACAO",
+        "rotulo": "1ABC",
+        "origem": "RCSB PDB · 1ABC",
+        "situacao": "desclassificado",
+        "posicao": null,
+        "empate": false,
+        "pontuacao": null,
+        "fracaoDados": null,
+        "pesosRenormalizados": {},
+        "subscores": [],
+        "motivos": [
+          "Eliminado: a região essencial não pôde ser lida neste referencial. A região tem posições sem fonte explícita de ausência em 1ABC. Elas não entram como falha nem como acerto."
+        ]
+      },
+      {
+        "id": "SIN-B",
+        "rotulo": "SIN-B",
+        "origem": "RCSB PDB · 1ABC",
+        "situacao": "desclassificado",
+        "posicao": null,
+        "empate": false,
+        "pontuacao": null,
+        "fracaoDados": null,
+        "pesosRenormalizados": {},
+        "subscores": [],
+        "motivos": [
+          "Eliminado: a região essencial não pôde ser lida neste referencial. A região tem posições sem fonte explícita de ausência em SIN-B. Elas não entram como falha nem como acerto."
+        ]
+      }
+    ],
+    "lideres": [],
+    "empateNoTopo": false,
+    "razao": "",
+    "insights": [
+      {
+        "id": "cobertura",
+        "criterio": "cobertura",
+        "titulo": "Cobertura do modelo",
+        "estruturas": [
+          "SIN-CARACTERIZACAO",
+          "SIN-B"
+        ],
+        "evidencia": "1ABC: A cobertura não está determinada. Posição sem fonte explícita não entrou como zero. SIN-B: A cobertura não está determinada. Posição sem fonte explícita não entrou como zero.",
+        "limitacao": "A proporção só existe quando a fonte de ausência é explícita."
+      },
+      {
+        "id": "regiao",
+        "criterio": "regiao",
+        "titulo": "Região usada na cobertura",
+        "estruturas": [
+          "SIN-CARACTERIZACAO",
+          "SIN-B"
+        ],
+        "evidencia": "1ABC: A:1-5 modelados 4, ausentes citados 0 SIN-B: A:1-5 modelados 4, ausentes citados 0",
+        "limitacao": "A faixa usa o número author e o acesso declarado no arquivo. Isso não é mapa resíduo a resíduo nem sobreposição estrutural."
+      },
+      {
+        "id": "qualidade",
+        "criterio": "qualidade",
+        "titulo": "Qualidade quando o relatório existe",
+        "estruturas": [
+          "SIN-CARACTERIZACAO",
+          "SIN-B"
+        ],
+        "evidencia": "1ABC: classe xray; rfree 0.2, clashscore 4 SIN-B: classe xray; rfree 0.3, clashscore 8",
+        "limitacao": "Métricas de classes diferentes não foram misturadas. O relatório global não garante o sítio."
+      },
+      {
+        "id": "pocket",
+        "criterio": "pocket",
+        "titulo": "Maior drugScore de cada snapshot",
+        "estruturas": [
+          "SIN-CARACTERIZACAO",
+          "SIN-B"
+        ],
+        "evidencia": "1ABC: maior drugScore 0.4 (P_0) SIN-B: maior drugScore 0.8 (P_0)",
+        "limitacao": "O drugScore é descritor geométrico do DoGSiteScorer. Não é afinidade, não identifica sítio funcional e não corresponde a um pocket alinhado entre estruturas."
+      },
+      {
+        "id": "eliminados",
+        "criterio": "eliminatorio",
+        "titulo": "Candidatos fora do ranking",
+        "estruturas": [
+          "SIN-CARACTERIZACAO",
+          "SIN-B"
+        ],
+        "evidencia": "1ABC: Eliminado: a região essencial não pôde ser lida neste referencial. A região tem posições sem fonte explícita de ausência em 1ABC. Elas não entram como falha nem como acerto. SIN-B: Eliminado: a região essencial não pôde ser lida neste referencial. A região tem posições sem fonte explícita de ausência em SIN-B. Elas não entram como falha nem como acerto.",
+        "limitacao": "Eliminação não é a pior nota. O candidato não entra na média."
+      }
+    ],
+    "limitacoes": [
+      "A pontuação é apoio calculado com os critérios e os pesos desta pergunta. Não é verdade biológica nem nota universal de qualidade.",
+      "Não há correspondência UniProt resíduo a resíduo nem alinhamento estrutural.",
+      "Pockets não foram sobrepostos. O maior drugScore de cada snapshot não é o mesmo sítio.",
+      "Arquivos locais, sem sincronização e sem reenvio ao servidor.",
+      "Componente observado no snapshot não prova estado holo, apo nem função biológica."
+    ],
+    "analises": [
+      {
+        "id": "SIN-CARACTERIZACAO",
+        "rotulo": "1ABC",
+        "origem": "RCSB PDB · 1ABC",
+        "geradoEm": "2026-11-12T15:00:00.000Z",
+        "sintetico": false
+      },
+      {
+        "id": "SIN-B",
+        "rotulo": "SIN-B",
+        "origem": "RCSB PDB · 1ABC",
+        "geradoEm": "2026-11-12T15:00:00.000Z",
+        "sintetico": false
+      }
+    ],
+    "escolha": null
+  },
+  "legado": {
+    "schema": "peki-comparacao-1",
+    "versaoApp": "peki-fold-web",
+    "schemaAnalise": "peki-analise-1",
+    "geradoEm": "2026-11-12T15:00:00.000Z",
+    "ok": true,
+    "ranqueado": true,
+    "motivo": "4HHB fica à frente com os critérios e pesos desta pergunta.",
+    "pergunta": {
+      "regiao": "",
+      "regiaoEssencial": false,
+      "componente": "",
+      "componenteEliminatorio": false,
+      "pocketEliminatorio": false,
+      "pesos": {
+        "cobertura": 1,
+        "qualidade": 1,
+        "componente": 1,
+        "pocket": 1
+      }
+    },
+    "regras": [
+      "Entram de 2 a 5 análises já guardadas. Uma só, ou mais de cinco, não gera ranking.",
+      "Peso zero exclui o critério da pontuação. Peso não cria dado que o snapshot não tem.",
+      "Dado pendente, não solicitado ou com erro fica indisponível. Não é convertido em zero nem em nota boa.",
+      "A pontuação de cada candidato é a média ponderada das subpontuações disponíveis. Os pesos desses critérios são renormalizados para somar 1. A fração dos pesos ativos que tinham dado é informada à parte e não entra como bônus escondido.",
+      "Cobertura é a proporção de resíduos poliméricos modelados sobre modelados mais ausentes citados por fonte explícita. Sem essa fonte, a cobertura fica indisponível.",
+      "Se a região informada for comparável no número author e no acesso declarado, a cobertura passa a ser a dessa faixa, no referencial de cada análise. Sem mapa resíduo a resíduo, números que não concordam não são tratados como o mesmo sítio.",
+      "Qualidade usa só métricas numéricas presentes, da mesma classe experimental, em pelo menos duas análises. Menor valor fica mais alto dentro deste conjunto. Métrica ausente não entra na média daquele candidato.",
+      "O componente pedido conta como observado ou ausente no inventário do snapshot. Isso não estabelece holo nem função.",
+      "Pocket usa o maior drugScore devolvido pelo DoGSiteScorer. O valor é normalizado só entre quem tem o número. Não há correspondência estrutural entre pockets.",
+      "Critério eliminatório que falha, ou que não dá para verificar, tira o candidato do ranking. Não o coloca em último com nota zero.",
+      "Empate na pontuação permanece empate. A ordem alfabética do identificador só organiza a lista."
+    ],
+    "alertas": [
+      "O peso do componente foi ignorado porque nenhum código ou nome foi informado.",
+      "O drugScore não foi normalizado: é preciso o número em pelo menos duas análises. Pendência não virou zero.",
+      "Nenhuma métrica de qualidade é comparável entre pelo menos duas análises. Ela não entrou como zero."
+    ],
+    "numeracao": {
+      "aplicavel": false,
+      "comparavel": null,
+      "motivo": "Nenhuma região foi informada. A cobertura, quando pesada, usa o modelo inteiro."
+    },
+    "candidatos": [
+      {
+        "id": "4HHB-20261106T160000000Z",
+        "rotulo": "4HHB",
+        "origem": "RCSB PDB · 4HHB",
+        "situacao": "ranqueado",
+        "posicao": 1,
+        "empate": false,
+        "pontuacao": 1,
+        "fracaoDados": 0.3333333333333333,
+        "pesosRenormalizados": {
+          "cobertura": 1,
+          "qualidade": null,
+          "pocket": null
+        },
+        "subscores": [
+          {
+            "id": "cobertura",
+            "rotulo": "Cobertura do modelo",
+            "peso": 1,
+            "estado": "ok",
+            "subpontuacao": 1,
+            "detalhe": "574 modelados e 0 ausentes citados, no modelo inteiro."
+          },
+          {
+            "id": "qualidade",
+            "rotulo": "Qualidade e confiabilidade",
+            "peso": 1,
+            "estado": "indisponivel",
+            "subpontuacao": null,
+            "detalhe": "Qualidade pendente. Não convertida em zero."
+          },
+          {
+            "id": "pocket",
+            "rotulo": "Pocket e drugScore",
+            "peso": 1,
+            "estado": "indisponivel",
+            "subpontuacao": null,
+            "detalhe": "A detecção não foi executada nesta análise. Não há drugScore para converter em zero."
+          }
+        ],
+        "motivos": [
+          "Parte dos pesos ativos não tinha dado (0.333 da soma dos pesos). O que faltou saiu da média e não virou zero."
+        ]
+      },
+      {
+        "id": "SIN-CARACTERIZACAO",
+        "rotulo": "1ABC",
+        "origem": "RCSB PDB · 1ABC",
+        "situacao": "nao_pontuado",
+        "posicao": null,
+        "empate": false,
+        "pontuacao": null,
+        "fracaoDados": 0,
+        "pesosRenormalizados": {},
+        "subscores": [
+          {
+            "id": "cobertura",
+            "rotulo": "Cobertura do modelo",
+            "peso": 1,
+            "estado": "indisponivel",
+            "subpontuacao": null,
+            "detalhe": "A cobertura não está determinada. Posição sem fonte explícita não entrou como zero."
+          },
+          {
+            "id": "qualidade",
+            "rotulo": "Qualidade e confiabilidade",
+            "peso": 1,
+            "estado": "indisponivel",
+            "subpontuacao": null,
+            "detalhe": "Sem métrica comparável com outra análise."
+          },
+          {
+            "id": "pocket",
+            "rotulo": "Pocket e drugScore",
+            "peso": 1,
+            "estado": "indisponivel",
+            "subpontuacao": null,
+            "detalhe": "Há drugScore, mas não há segundo valor para normalizar. Não virou nota."
+          }
+        ],
+        "motivos": [
+          "Nenhum critério ativo tem dado comparável. Isso não é a pior nota."
+        ]
+      }
+    ],
+    "lideres": [
+      {
+        "id": "4HHB-20261106T160000000Z",
+        "rotulo": "4HHB",
+        "pontuacao": 1
+      }
+    ],
+    "empateNoTopo": false,
+    "razao": "4HHB é o único candidato pontuado. Os demais estão sem dado comparável ou foram eliminados, não zerados.",
+    "insights": [
+      {
+        "id": "cobertura",
+        "criterio": "cobertura",
+        "titulo": "Cobertura do modelo",
+        "estruturas": [
+          "SIN-CARACTERIZACAO",
+          "4HHB-20261106T160000000Z"
+        ],
+        "evidencia": "1ABC: A cobertura não está determinada. Posição sem fonte explícita não entrou como zero. 4HHB: 574 modelados e 0 ausentes citados, no modelo inteiro.",
+        "limitacao": "A proporção só existe quando a fonte de ausência é explícita."
+      },
+      {
+        "id": "qualidade",
+        "criterio": "qualidade",
+        "titulo": "Qualidade quando o relatório existe",
+        "estruturas": [
+          "SIN-CARACTERIZACAO",
+          "4HHB-20261106T160000000Z"
+        ],
+        "evidencia": "1ABC: classe xray; rfree 0.2, clashscore 4 4HHB: qualidade pendente. A consulta ao relatório wwPDB ainda não concluiu nesta análise. Os indicadores não foram inventados nem zerados.",
+        "limitacao": "Métricas de classes diferentes não foram misturadas. O relatório global não garante o sítio."
+      },
+      {
+        "id": "pocket",
+        "criterio": "pocket",
+        "titulo": "Maior drugScore de cada snapshot",
+        "estruturas": [
+          "SIN-CARACTERIZACAO",
+          "4HHB-20261106T160000000Z"
+        ],
+        "evidencia": "1ABC: maior drugScore 0.4 (P_0) 4HHB: sem drugScore utilizável — A detecção não foi executada nesta análise. Não há drugScore para converter em zero.",
+        "limitacao": "O drugScore é descritor geométrico do DoGSiteScorer. Não é afinidade, não identifica sítio funcional e não corresponde a um pocket alinhado entre estruturas."
+      }
+    ],
+    "limitacoes": [
+      "A pontuação é apoio calculado com os critérios e os pesos desta pergunta. Não é verdade biológica nem nota universal de qualidade.",
+      "Não há correspondência UniProt resíduo a resíduo nem alinhamento estrutural.",
+      "Pockets não foram sobrepostos. O maior drugScore de cada snapshot não é o mesmo sítio.",
+      "Arquivos locais, sem sincronização e sem reenvio ao servidor.",
+      "Componente observado no snapshot não prova estado holo, apo nem função biológica."
+    ],
+    "analises": [
+      {
+        "id": "SIN-CARACTERIZACAO",
+        "rotulo": "1ABC",
+        "origem": "RCSB PDB · 1ABC",
+        "geradoEm": "2026-11-12T15:00:00.000Z",
+        "sintetico": false
+      },
+      {
+        "id": "4HHB-20261106T160000000Z",
+        "rotulo": "4HHB",
+        "origem": "RCSB PDB · 4HHB",
+        "geradoEm": "2026-11-06T16:00:00.000Z",
+        "sintetico": false
+      }
+    ],
+    "escolha": null
+  },
+  "escolha": {
+    "schema": "peki-comparacao-1",
+    "versaoApp": "peki-fold-web",
+    "schemaAnalise": "peki-analise-1",
+    "geradoEm": "2026-11-12T15:00:00.000Z",
+    "ok": true,
+    "ranqueado": true,
+    "motivo": "1ABC fica à frente com os critérios e pesos desta pergunta.",
+    "pergunta": {
+      "regiao": "",
+      "regiaoEssencial": false,
+      "componente": "ZN",
+      "componenteEliminatorio": false,
+      "pocketEliminatorio": false,
+      "pesos": {
+        "cobertura": 1,
+        "qualidade": 2,
+        "componente": 1,
+        "pocket": 1
+      }
+    },
+    "regras": [
+      "Entram de 2 a 5 análises já guardadas. Uma só, ou mais de cinco, não gera ranking.",
+      "Peso zero exclui o critério da pontuação. Peso não cria dado que o snapshot não tem.",
+      "Dado pendente, não solicitado ou com erro fica indisponível. Não é convertido em zero nem em nota boa.",
+      "A pontuação de cada candidato é a média ponderada das subpontuações disponíveis. Os pesos desses critérios são renormalizados para somar 1. A fração dos pesos ativos que tinham dado é informada à parte e não entra como bônus escondido.",
+      "Cobertura é a proporção de resíduos poliméricos modelados sobre modelados mais ausentes citados por fonte explícita. Sem essa fonte, a cobertura fica indisponível.",
+      "Se a região informada for comparável no número author e no acesso declarado, a cobertura passa a ser a dessa faixa, no referencial de cada análise. Sem mapa resíduo a resíduo, números que não concordam não são tratados como o mesmo sítio.",
+      "Qualidade usa só métricas numéricas presentes, da mesma classe experimental, em pelo menos duas análises. Menor valor fica mais alto dentro deste conjunto. Métrica ausente não entra na média daquele candidato.",
+      "O componente pedido conta como observado ou ausente no inventário do snapshot. Isso não estabelece holo nem função.",
+      "Pocket usa o maior drugScore devolvido pelo DoGSiteScorer. O valor é normalizado só entre quem tem o número. Não há correspondência estrutural entre pockets.",
+      "Critério eliminatório que falha, ou que não dá para verificar, tira o candidato do ranking. Não o coloca em último com nota zero.",
+      "Empate na pontuação permanece empate. A ordem alfabética do identificador só organiza a lista."
+    ],
+    "alertas": [],
+    "numeracao": {
+      "aplicavel": false,
+      "comparavel": null,
+      "motivo": "Nenhuma região foi informada. A cobertura, quando pesada, usa o modelo inteiro."
+    },
+    "candidatos": [
+      {
+        "id": "SIN-CARACTERIZACAO",
+        "rotulo": "1ABC",
+        "origem": "RCSB PDB · 1ABC",
+        "situacao": "ranqueado",
+        "posicao": 1,
+        "empate": false,
+        "pontuacao": 0.75,
+        "fracaoDados": 0.8,
+        "pesosRenormalizados": {
+          "cobertura": null,
+          "qualidade": 0.5,
+          "componente": 0.25,
+          "pocket": 0.25
+        },
+        "subscores": [
+          {
+            "id": "cobertura",
+            "rotulo": "Cobertura do modelo",
+            "peso": 1,
+            "estado": "indisponivel",
+            "subpontuacao": null,
+            "detalhe": "A cobertura não está determinada. Posição sem fonte explícita não entrou como zero."
+          },
+          {
+            "id": "qualidade",
+            "rotulo": "Qualidade e confiabilidade",
+            "peso": 2,
+            "estado": "ok",
+            "subpontuacao": 1,
+            "detalhe": "Rfree 0.2; Clashscore 4. Menor valor fica mais alto só dentro deste conjunto. Métrica ausente não entrou como zero."
+          },
+          {
+            "id": "componente",
+            "rotulo": "Presença do componente",
+            "peso": 1,
+            "estado": "ok",
+            "subpontuacao": 1,
+            "detalhe": "Observado (ZN, 1). Componente observado no snapshot não prova estado holo, apo nem função biológica."
+          },
+          {
+            "id": "pocket",
+            "rotulo": "Pocket e drugScore",
+            "peso": 1,
+            "estado": "ok",
+            "subpontuacao": 0,
+            "detalhe": "Maior drugScore 0.4 em P_0. O drugScore é descritor geométrico do DoGSiteScorer. Não é afinidade, não identifica sítio funcional e não corresponde a um pocket alinhado entre estruturas."
+          }
+        ],
+        "motivos": [
+          "Parte dos pesos ativos não tinha dado (0.8 da soma dos pesos). O que faltou saiu da média e não virou zero."
+        ]
+      },
+      {
+        "id": "SIN-B",
+        "rotulo": "SIN-B",
+        "origem": "RCSB PDB · 1ABC",
+        "situacao": "ranqueado",
+        "posicao": 2,
+        "empate": false,
+        "pontuacao": 0.5,
+        "fracaoDados": 0.8,
+        "pesosRenormalizados": {
+          "cobertura": null,
+          "qualidade": 0.5,
+          "componente": 0.25,
+          "pocket": 0.25
+        },
+        "subscores": [
+          {
+            "id": "cobertura",
+            "rotulo": "Cobertura do modelo",
+            "peso": 1,
+            "estado": "indisponivel",
+            "subpontuacao": null,
+            "detalhe": "A cobertura não está determinada. Posição sem fonte explícita não entrou como zero."
+          },
+          {
+            "id": "qualidade",
+            "rotulo": "Qualidade e confiabilidade",
+            "peso": 2,
+            "estado": "ok",
+            "subpontuacao": 0,
+            "detalhe": "Rfree 0.3; Clashscore 8. Menor valor fica mais alto só dentro deste conjunto. Métrica ausente não entrou como zero."
+          },
+          {
+            "id": "componente",
+            "rotulo": "Presença do componente",
+            "peso": 1,
+            "estado": "ok",
+            "subpontuacao": 1,
+            "detalhe": "Observado (ZN, 1). Componente observado no snapshot não prova estado holo, apo nem função biológica."
+          },
+          {
+            "id": "pocket",
+            "rotulo": "Pocket e drugScore",
+            "peso": 1,
+            "estado": "ok",
+            "subpontuacao": 1,
+            "detalhe": "Maior drugScore 0.8 em P_0. O drugScore é descritor geométrico do DoGSiteScorer. Não é afinidade, não identifica sítio funcional e não corresponde a um pocket alinhado entre estruturas."
+          }
+        ],
+        "motivos": [
+          "Parte dos pesos ativos não tinha dado (0.8 da soma dos pesos). O que faltou saiu da média e não virou zero."
+        ]
+      }
+    ],
+    "lideres": [
+      {
+        "id": "SIN-CARACTERIZACAO",
+        "rotulo": "1ABC",
+        "pontuacao": 0.75
+      }
+    ],
+    "empateNoTopo": false,
+    "razao": "1ABC passa SIN-B sobretudo em Qualidade e confiabilidade (subpontuação 1 contra 0, peso 2).",
+    "insights": [
+      {
+        "id": "cobertura",
+        "criterio": "cobertura",
+        "titulo": "Cobertura do modelo",
+        "estruturas": [
+          "SIN-CARACTERIZACAO",
+          "SIN-B"
+        ],
+        "evidencia": "1ABC: A cobertura não está determinada. Posição sem fonte explícita não entrou como zero. SIN-B: A cobertura não está determinada. Posição sem fonte explícita não entrou como zero.",
+        "limitacao": "A proporção só existe quando a fonte de ausência é explícita."
+      },
+      {
+        "id": "componente",
+        "criterio": "componente",
+        "titulo": "Componente ZN",
+        "estruturas": [
+          "SIN-CARACTERIZACAO",
+          "SIN-B"
+        ],
+        "evidencia": "1ABC: observado, 1 ocorrência(s) SIN-B: observado, 1 ocorrência(s)",
+        "limitacao": "Componente observado no snapshot não prova estado holo, apo nem função biológica."
+      },
+      {
+        "id": "qualidade",
+        "criterio": "qualidade",
+        "titulo": "Qualidade quando o relatório existe",
+        "estruturas": [
+          "SIN-CARACTERIZACAO",
+          "SIN-B"
+        ],
+        "evidencia": "1ABC: classe xray; rfree 0.2, clashscore 4 SIN-B: classe xray; rfree 0.3, clashscore 8",
+        "limitacao": "Métricas de classes diferentes não foram misturadas. O relatório global não garante o sítio."
+      },
+      {
+        "id": "pocket",
+        "criterio": "pocket",
+        "titulo": "Maior drugScore de cada snapshot",
+        "estruturas": [
+          "SIN-CARACTERIZACAO",
+          "SIN-B"
+        ],
+        "evidencia": "1ABC: maior drugScore 0.4 (P_0) SIN-B: maior drugScore 0.8 (P_0)",
+        "limitacao": "O drugScore é descritor geométrico do DoGSiteScorer. Não é afinidade, não identifica sítio funcional e não corresponde a um pocket alinhado entre estruturas."
+      }
+    ],
+    "limitacoes": [
+      "A pontuação é apoio calculado com os critérios e os pesos desta pergunta. Não é verdade biológica nem nota universal de qualidade.",
+      "Não há correspondência UniProt resíduo a resíduo nem alinhamento estrutural.",
+      "Pockets não foram sobrepostos. O maior drugScore de cada snapshot não é o mesmo sítio.",
+      "Arquivos locais, sem sincronização e sem reenvio ao servidor.",
+      "Componente observado no snapshot não prova estado holo, apo nem função biológica."
+    ],
+    "analises": [
+      {
+        "id": "SIN-CARACTERIZACAO",
+        "rotulo": "1ABC",
+        "origem": "RCSB PDB · 1ABC",
+        "geradoEm": "2026-11-12T15:00:00.000Z",
+        "sintetico": false
+      },
+      {
+        "id": "SIN-B",
+        "rotulo": "SIN-B",
+        "origem": "RCSB PDB · 1ABC",
+        "geradoEm": "2026-11-12T15:00:00.000Z",
+        "sintetico": false
+      }
+    ],
+    "escolha": {
+      "id": "SIN-B",
+      "rotulo": "SIN-B",
+      "justificativa": "Decisão sintética | com\nquebra e *ênfase*.",
+      "diferenteDoLider": true
+    }
+  },
+  "markdown": "# Comparação de análises guardadas\n\nSchema da comparação: `peki-comparacao-1`. Schema da análise: `peki-analise-1`. Versão do app: `peki-fold-web`.\n\nA pontuação é apoio calculado com os critérios e os pesos desta pergunta. Não é verdade biológica nem nota universal de qualidade.\n\n## Pergunta e critérios\n\n- Região: não informada\n- Componente, parceiro ou ligante: ZN\n- Pocket eliminatório: não\n- Pesos: cobertura 1, qualidade 2, componente 1, pocket 1.\n\n## Regras\n\n- Entram de 2 a 5 análises já guardadas. Uma só, ou mais de cinco, não gera ranking.\n- Peso zero exclui o critério da pontuação. Peso não cria dado que o snapshot não tem.\n- Dado pendente, não solicitado ou com erro fica indisponível. Não é convertido em zero nem em nota boa.\n- A pontuação de cada candidato é a média ponderada das subpontuações disponíveis. Os pesos desses critérios são renormalizados para somar 1. A fração dos pesos ativos que tinham dado é informada à parte e não entra como bônus escondido.\n- Cobertura é a proporção de resíduos poliméricos modelados sobre modelados mais ausentes citados por fonte explícita. Sem essa fonte, a cobertura fica indisponível.\n- Se a região informada for comparável no número author e no acesso declarado, a cobertura passa a ser a dessa faixa, no referencial de cada análise. Sem mapa resíduo a resíduo, números que não concordam não são tratados como o mesmo sítio.\n- Qualidade usa só métricas numéricas presentes, da mesma classe experimental, em pelo menos duas análises. Menor valor fica mais alto dentro deste conjunto. Métrica ausente não entra na média daquele candidato.\n- O componente pedido conta como observado ou ausente no inventário do snapshot. Isso não estabelece holo nem função.\n- Pocket usa o maior drugScore devolvido pelo DoGSiteScorer. O valor é normalizado só entre quem tem o número. Não há correspondência estrutural entre pockets.\n- Critério eliminatório que falha, ou que não dá para verificar, tira o candidato do ranking. Não o coloca em último com nota zero.\n- Empate na pontuação permanece empate. A ordem alfabética do identificador só organiza a lista.\n\n## Análises\n\n- 1ABC (`SIN-CARACTERIZACAO`), RCSB PDB · 1ABC, guardada em 2026-11-12T15:00:00.000Z.\n- SIN-B (`SIN-B`), RCSB PDB · 1ABC, guardada em 2026-11-12T15:00:00.000Z.\n\n## Ranking\n\n1ABC fica à frente com os critérios e pesos desta pergunta.\n\n1ABC passa SIN-B sobretudo em Qualidade e confiabilidade (subpontuação 1 contra 0, peso 2).\n\n| Posição | Análise | Situação | Pontuação | Fração dos pesos com dado |\n| --- | --- | --- | --- | --- |\n| 1 | 1ABC | ranqueado | 0.75 | 0.8 |\n| 2 | SIN-B | ranqueado | 0.5 | 0.8 |\n\n### Subpontuações\n\n**1ABC**\n- Cobertura do modelo: indisponível (peso 1). A cobertura não está determinada. Posição sem fonte explícita não entrou como zero.\n- Qualidade e confiabilidade: 1 (peso 2, peso renormalizado 0.5). Rfree 0.2; Clashscore 4. Menor valor fica mais alto só dentro deste conjunto. Métrica ausente não entrou como zero.\n- Presença do componente: 1 (peso 1, peso renormalizado 0.25). Observado (ZN, 1). Componente observado no snapshot não prova estado holo, apo nem função biológica.\n- Pocket e drugScore: 0 (peso 1, peso renormalizado 0.25). Maior drugScore 0.4 em P_0. O drugScore é descritor geométrico do DoGSiteScorer. Não é afinidade, não identifica sítio funcional e não corresponde a um pocket alinhado entre estruturas.\n- Parte dos pesos ativos não tinha dado (0.8 da soma dos pesos). O que faltou saiu da média e não virou zero.\n\n**SIN-B**\n- Cobertura do modelo: indisponível (peso 1). A cobertura não está determinada. Posição sem fonte explícita não entrou como zero.\n- Qualidade e confiabilidade: 0 (peso 2, peso renormalizado 0.5). Rfree 0.3; Clashscore 8. Menor valor fica mais alto só dentro deste conjunto. Métrica ausente não entrou como zero.\n- Presença do componente: 1 (peso 1, peso renormalizado 0.25). Observado (ZN, 1). Componente observado no snapshot não prova estado holo, apo nem função biológica.\n- Pocket e drugScore: 1 (peso 1, peso renormalizado 0.25). Maior drugScore 0.8 em P_0. O drugScore é descritor geométrico do DoGSiteScorer. Não é afinidade, não identifica sítio funcional e não corresponde a um pocket alinhado entre estruturas.\n- Parte dos pesos ativos não tinha dado (0.8 da soma dos pesos). O que faltou saiu da média e não virou zero.\n\n## Fora da pontuação e alertas\n\nNenhum candidato ficou de fora.\n\n## Diferenças usadas nos critérios\n\nOs achados abaixo organizam os dados guardados. Não garantem relevância biológica.\n\n### Cobertura do modelo\n\n1ABC: A cobertura não está determinada. Posição sem fonte explícita não entrou como zero. SIN-B: A cobertura não está determinada. Posição sem fonte explícita não entrou como zero.\n\nLimitação: A proporção só existe quando a fonte de ausência é explícita.\n\n### Componente ZN\n\n1ABC: observado, 1 ocorrência(s) SIN-B: observado, 1 ocorrência(s)\n\nLimitação: Componente observado no snapshot não prova estado holo, apo nem função biológica.\n\n### Qualidade quando o relatório existe\n\n1ABC: classe xray; rfree 0.2, clashscore 4 SIN-B: classe xray; rfree 0.3, clashscore 8\n\nLimitação: Métricas de classes diferentes não foram misturadas. O relatório global não garante o sítio.\n\n### Maior drugScore de cada snapshot\n\n1ABC: maior drugScore 0.4 (P_0) SIN-B: maior drugScore 0.8 (P_0)\n\nLimitação: O drugScore é descritor geométrico do DoGSiteScorer. Não é afinidade, não identifica sítio funcional e não corresponde a um pocket alinhado entre estruturas.\n\n## Escolha final\n\nEscolha diferente do primeiro colocado: SIN-B (`SIN-B`). Decisão sintética | com ⏎ quebra e \\*ênfase\\*.\n\n## Limitações\n\n- A pontuação é apoio calculado com os critérios e os pesos desta pergunta. Não é verdade biológica nem nota universal de qualidade.\n- Não há correspondência UniProt resíduo a resíduo nem alinhamento estrutural.\n- Pockets não foram sobrepostos. O maior drugScore de cada snapshot não é o mesmo sítio.\n- Arquivos locais, sem sincronização e sem reenvio ao servidor.\n- Componente observado no snapshot não prova estado holo, apo nem função biológica.\n- Numeração: Nenhuma região foi informada. A cobertura, quando pesada, usa o modelo inteiro.\n",
+  "json": "{\n  \"schema\": \"peki-comparacao-1\",\n  \"versaoApp\": \"peki-fold-web\",\n  \"schemaAnalise\": \"peki-analise-1\",\n  \"geradoEm\": \"2026-11-12T15:00:00.000Z\",\n  \"ok\": true,\n  \"ranqueado\": true,\n  \"motivo\": \"1ABC fica à frente com os critérios e pesos desta pergunta.\",\n  \"pergunta\": {\n    \"regiao\": \"\",\n    \"regiaoEssencial\": false,\n    \"componente\": \"ZN\",\n    \"componenteEliminatorio\": false,\n    \"pocketEliminatorio\": false,\n    \"pesos\": {\n      \"cobertura\": 1,\n      \"qualidade\": 2,\n      \"componente\": 1,\n      \"pocket\": 1\n    }\n  },\n  \"regras\": [\n    \"Entram de 2 a 5 análises já guardadas. Uma só, ou mais de cinco, não gera ranking.\",\n    \"Peso zero exclui o critério da pontuação. Peso não cria dado que o snapshot não tem.\",\n    \"Dado pendente, não solicitado ou com erro fica indisponível. Não é convertido em zero nem em nota boa.\",\n    \"A pontuação de cada candidato é a média ponderada das subpontuações disponíveis. Os pesos desses critérios são renormalizados para somar 1. A fração dos pesos ativos que tinham dado é informada à parte e não entra como bônus escondido.\",\n    \"Cobertura é a proporção de resíduos poliméricos modelados sobre modelados mais ausentes citados por fonte explícita. Sem essa fonte, a cobertura fica indisponível.\",\n    \"Se a região informada for comparável no número author e no acesso declarado, a cobertura passa a ser a dessa faixa, no referencial de cada análise. Sem mapa resíduo a resíduo, números que não concordam não são tratados como o mesmo sítio.\",\n    \"Qualidade usa só métricas numéricas presentes, da mesma classe experimental, em pelo menos duas análises. Menor valor fica mais alto dentro deste conjunto. Métrica ausente não entra na média daquele candidato.\",\n    \"O componente pedido conta como observado ou ausente no inventário do snapshot. Isso não estabelece holo nem função.\",\n    \"Pocket usa o maior drugScore devolvido pelo DoGSiteScorer. O valor é normalizado só entre quem tem o número. Não há correspondência estrutural entre pockets.\",\n    \"Critério eliminatório que falha, ou que não dá para verificar, tira o candidato do ranking. Não o coloca em último com nota zero.\",\n    \"Empate na pontuação permanece empate. A ordem alfabética do identificador só organiza a lista.\"\n  ],\n  \"alertas\": [],\n  \"numeracao\": {\n    \"aplicavel\": false,\n    \"comparavel\": null,\n    \"motivo\": \"Nenhuma região foi informada. A cobertura, quando pesada, usa o modelo inteiro.\"\n  },\n  \"candidatos\": [\n    {\n      \"id\": \"SIN-CARACTERIZACAO\",\n      \"rotulo\": \"1ABC\",\n      \"origem\": \"RCSB PDB · 1ABC\",\n      \"situacao\": \"ranqueado\",\n      \"posicao\": 1,\n      \"empate\": false,\n      \"pontuacao\": 0.75,\n      \"fracaoDados\": 0.8,\n      \"pesosRenormalizados\": {\n        \"cobertura\": null,\n        \"qualidade\": 0.5,\n        \"componente\": 0.25,\n        \"pocket\": 0.25\n      },\n      \"subscores\": [\n        {\n          \"id\": \"cobertura\",\n          \"rotulo\": \"Cobertura do modelo\",\n          \"peso\": 1,\n          \"estado\": \"indisponivel\",\n          \"subpontuacao\": null,\n          \"detalhe\": \"A cobertura não está determinada. Posição sem fonte explícita não entrou como zero.\"\n        },\n        {\n          \"id\": \"qualidade\",\n          \"rotulo\": \"Qualidade e confiabilidade\",\n          \"peso\": 2,\n          \"estado\": \"ok\",\n          \"subpontuacao\": 1,\n          \"detalhe\": \"Rfree 0.2; Clashscore 4. Menor valor fica mais alto só dentro deste conjunto. Métrica ausente não entrou como zero.\"\n        },\n        {\n          \"id\": \"componente\",\n          \"rotulo\": \"Presença do componente\",\n          \"peso\": 1,\n          \"estado\": \"ok\",\n          \"subpontuacao\": 1,\n          \"detalhe\": \"Observado (ZN, 1). Componente observado no snapshot não prova estado holo, apo nem função biológica.\"\n        },\n        {\n          \"id\": \"pocket\",\n          \"rotulo\": \"Pocket e drugScore\",\n          \"peso\": 1,\n          \"estado\": \"ok\",\n          \"subpontuacao\": 0,\n          \"detalhe\": \"Maior drugScore 0.4 em P_0. O drugScore é descritor geométrico do DoGSiteScorer. Não é afinidade, não identifica sítio funcional e não corresponde a um pocket alinhado entre estruturas.\"\n        }\n      ],\n      \"motivos\": [\n        \"Parte dos pesos ativos não tinha dado (0.8 da soma dos pesos). O que faltou saiu da média e não virou zero.\"\n      ]\n    },\n    {\n      \"id\": \"SIN-B\",\n      \"rotulo\": \"SIN-B\",\n      \"origem\": \"RCSB PDB · 1ABC\",\n      \"situacao\": \"ranqueado\",\n      \"posicao\": 2,\n      \"empate\": false,\n      \"pontuacao\": 0.5,\n      \"fracaoDados\": 0.8,\n      \"pesosRenormalizados\": {\n        \"cobertura\": null,\n        \"qualidade\": 0.5,\n        \"componente\": 0.25,\n        \"pocket\": 0.25\n      },\n      \"subscores\": [\n        {\n          \"id\": \"cobertura\",\n          \"rotulo\": \"Cobertura do modelo\",\n          \"peso\": 1,\n          \"estado\": \"indisponivel\",\n          \"subpontuacao\": null,\n          \"detalhe\": \"A cobertura não está determinada. Posição sem fonte explícita não entrou como zero.\"\n        },\n        {\n          \"id\": \"qualidade\",\n          \"rotulo\": \"Qualidade e confiabilidade\",\n          \"peso\": 2,\n          \"estado\": \"ok\",\n          \"subpontuacao\": 0,\n          \"detalhe\": \"Rfree 0.3; Clashscore 8. Menor valor fica mais alto só dentro deste conjunto. Métrica ausente não entrou como zero.\"\n        },\n        {\n          \"id\": \"componente\",\n          \"rotulo\": \"Presença do componente\",\n          \"peso\": 1,\n          \"estado\": \"ok\",\n          \"subpontuacao\": 1,\n          \"detalhe\": \"Observado (ZN, 1). Componente observado no snapshot não prova estado holo, apo nem função biológica.\"\n        },\n        {\n          \"id\": \"pocket\",\n          \"rotulo\": \"Pocket e drugScore\",\n          \"peso\": 1,\n          \"estado\": \"ok\",\n          \"subpontuacao\": 1,\n          \"detalhe\": \"Maior drugScore 0.8 em P_0. O drugScore é descritor geométrico do DoGSiteScorer. Não é afinidade, não identifica sítio funcional e não corresponde a um pocket alinhado entre estruturas.\"\n        }\n      ],\n      \"motivos\": [\n        \"Parte dos pesos ativos não tinha dado (0.8 da soma dos pesos). O que faltou saiu da média e não virou zero.\"\n      ]\n    }\n  ],\n  \"lideres\": [\n    {\n      \"id\": \"SIN-CARACTERIZACAO\",\n      \"rotulo\": \"1ABC\",\n      \"pontuacao\": 0.75\n    }\n  ],\n  \"empateNoTopo\": false,\n  \"razao\": \"1ABC passa SIN-B sobretudo em Qualidade e confiabilidade (subpontuação 1 contra 0, peso 2).\",\n  \"insights\": [\n    {\n      \"id\": \"cobertura\",\n      \"criterio\": \"cobertura\",\n      \"titulo\": \"Cobertura do modelo\",\n      \"estruturas\": [\n        \"SIN-CARACTERIZACAO\",\n        \"SIN-B\"\n      ],\n      \"evidencia\": \"1ABC: A cobertura não está determinada. Posição sem fonte explícita não entrou como zero. SIN-B: A cobertura não está determinada. Posição sem fonte explícita não entrou como zero.\",\n      \"limitacao\": \"A proporção só existe quando a fonte de ausência é explícita.\"\n    },\n    {\n      \"id\": \"componente\",\n      \"criterio\": \"componente\",\n      \"titulo\": \"Componente ZN\",\n      \"estruturas\": [\n        \"SIN-CARACTERIZACAO\",\n        \"SIN-B\"\n      ],\n      \"evidencia\": \"1ABC: observado, 1 ocorrência(s) SIN-B: observado, 1 ocorrência(s)\",\n      \"limitacao\": \"Componente observado no snapshot não prova estado holo, apo nem função biológica.\"\n    },\n    {\n      \"id\": \"qualidade\",\n      \"criterio\": \"qualidade\",\n      \"titulo\": \"Qualidade quando o relatório existe\",\n      \"estruturas\": [\n        \"SIN-CARACTERIZACAO\",\n        \"SIN-B\"\n      ],\n      \"evidencia\": \"1ABC: classe xray; rfree 0.2, clashscore 4 SIN-B: classe xray; rfree 0.3, clashscore 8\",\n      \"limitacao\": \"Métricas de classes diferentes não foram misturadas. O relatório global não garante o sítio.\"\n    },\n    {\n      \"id\": \"pocket\",\n      \"criterio\": \"pocket\",\n      \"titulo\": \"Maior drugScore de cada snapshot\",\n      \"estruturas\": [\n        \"SIN-CARACTERIZACAO\",\n        \"SIN-B\"\n      ],\n      \"evidencia\": \"1ABC: maior drugScore 0.4 (P_0) SIN-B: maior drugScore 0.8 (P_0)\",\n      \"limitacao\": \"O drugScore é descritor geométrico do DoGSiteScorer. Não é afinidade, não identifica sítio funcional e não corresponde a um pocket alinhado entre estruturas.\"\n    }\n  ],\n  \"limitacoes\": [\n    \"A pontuação é apoio calculado com os critérios e os pesos desta pergunta. Não é verdade biológica nem nota universal de qualidade.\",\n    \"Não há correspondência UniProt resíduo a resíduo nem alinhamento estrutural.\",\n    \"Pockets não foram sobrepostos. O maior drugScore de cada snapshot não é o mesmo sítio.\",\n    \"Arquivos locais, sem sincronização e sem reenvio ao servidor.\",\n    \"Componente observado no snapshot não prova estado holo, apo nem função biológica.\"\n  ],\n  \"analises\": [\n    {\n      \"id\": \"SIN-CARACTERIZACAO\",\n      \"rotulo\": \"1ABC\",\n      \"origem\": \"RCSB PDB · 1ABC\",\n      \"geradoEm\": \"2026-11-12T15:00:00.000Z\",\n      \"sintetico\": false\n    },\n    {\n      \"id\": \"SIN-B\",\n      \"rotulo\": \"SIN-B\",\n      \"origem\": \"RCSB PDB · 1ABC\",\n      \"geradoEm\": \"2026-11-12T15:00:00.000Z\",\n      \"sintetico\": false\n    }\n  ],\n  \"escolha\": {\n    \"id\": \"SIN-B\",\n    \"rotulo\": \"SIN-B\",\n    \"justificativa\": \"Decisão sintética | com\\nquebra e *ênfase*.\",\n    \"diferenteDoLider\": true\n  }\n}\n"
+}

@@ -269,7 +269,10 @@ const EnsembleAnalysis = (() => {
     return { resname, chain, resseq, icode, nome, elemento, coords: lerCoords(linha) };
   }
 
-  function parseArquivoResiduos(texto) {
+  function parseArquivoResiduos(texto, diagnostico) {
+    const filtrar = typeof filtrarResiduosPocket === "function" ? filtrarResiduosPocket
+      : require("./dogsite-client.js").filtrarResiduosPocket;
+    texto = filtrar(texto, diagnostico);
     const map = new Map();
     let n = 0;
     let sx = 0;
@@ -848,9 +851,7 @@ const EnsembleAnalysis = (() => {
     return "fora do N efetivo";
   }
 
-  function montarRelatorio(entrada) {
-    const src = entrada || {};
-    const params = normalizarParams(src.params);
+  function prepararEstruturasRelatorio(src) {
     const brutas = Array.isArray(src.estruturas) ? src.estruturas.map((e) => ({ ...e })) : [];
     const vistos = new Set();
     for (const e of brutas) {
@@ -861,10 +862,10 @@ const EnsembleAnalysis = (() => {
       if (id) vistos.add(id);
       if (!e.erro && !e.texto) e.erro = "Sem coordenadas para alinhar.";
     }
-    const incluidas = brutas.filter((e) => !e.erro);
-    const nEfetivo = incluidas.length;
-    const nPedidas = Number.isFinite(src.nPedidas) ? src.nPedidas : brutas.length;
-    const nDisponiveis = Number.isFinite(src.nDisponiveis) ? src.nDisponiveis : nPedidas;
+    return brutas;
+  }
+
+  function prepararAlinhamentoRelatorio(src, incluidas, params) {
     const alinhamento = construirAlinhamento(incluidas, params.modoAlinhamento);
     let refId = params.referenciaId && incluidas.some((e) => e.id === params.referenciaId)
       ? params.referenciaId
@@ -882,8 +883,10 @@ const EnsembleAnalysis = (() => {
         residuosAlinhados: aplicarMapa(b.residuos, alinhamento.mapas[est.id], est.id),
       });
     }
-    const mesmoReferencial = !!src.mesmoReferencial;
-    const ag = agrupar(bolsosIn, params, mesmoReferencial);
+    return { alinhamento, refId, refEst, bolsosIn };
+  }
+
+  function resumirGruposRelatorio(brutas, ag, nEfetivo, refEst, params) {
     const porId = new Map(brutas.map((e) => [e.id, e]));
     const grupos = ag.grupos.map((g) => {
       const residuos = resumirResiduos(g.membros, nEfetivo);
@@ -920,6 +923,10 @@ const EnsembleAnalysis = (() => {
         })),
       };
     });
+    return grupos;
+  }
+
+  function sugerirCaixaRelatorio(grupos, params) {
     const pontosCaixa = grupos
       .filter((g) => g.persistenteNaCaixa && g.centroideReferencia)
       .map((g) => ({ ...g.centroideReferencia, grupo: g.id }));
@@ -927,7 +934,10 @@ const EnsembleAnalysis = (() => {
     caixaEnsemble.grupos = pontosCaixa.map((p) => p.grupo);
     caixaEnsemble.faixa = params.faixaCaixa;
     const semCentroide = grupos.filter((g) => g.persistenteNaCaixa && !g.centroideReferencia).map((g) => g.id);
-    const ligantes = brutas.map((e) => ({ id: e.id, rotulo: e.rotulo || e.id, ...liganteResumo(e) }));
+    return { caixaEnsemble, semCentroide };
+  }
+
+  function montarMatrizRelatorio(brutas, grupos, nEfetivo) {
     const matriz = {
       nEfetivo,
       colunas: grupos.map((g) => ({ id: g.id, persistencia: g.persistencia.texto, faixa: g.persistencia.rotuloFaixa })),
@@ -944,6 +954,10 @@ const EnsembleAnalysis = (() => {
         }),
       })),
     };
+    return matriz;
+  }
+
+  function limitacoesRelatorio(src, ag, alinhamento, nDisponiveis, nPedidas, nEfetivo) {
     const limitacoes = [
       FRASES.persistencia,
       FRASES.dinamica,
@@ -968,6 +982,25 @@ const EnsembleAnalysis = (() => {
     if (nEfetivo < 2) {
       limitacoes.push("Com menos de duas estruturas efetivas não há recorrência para ler.");
     }
+    return limitacoes;
+  }
+
+  function montarRelatorio(entrada) {
+    const src = entrada || {};
+    const params = normalizarParams(src.params);
+    const brutas = prepararEstruturasRelatorio(src);
+    const incluidas = brutas.filter((e) => !e.erro);
+    const nEfetivo = incluidas.length;
+    const nPedidas = Number.isFinite(src.nPedidas) ? src.nPedidas : brutas.length;
+    const nDisponiveis = Number.isFinite(src.nDisponiveis) ? src.nDisponiveis : nPedidas;
+    const { alinhamento, refId, refEst, bolsosIn } = prepararAlinhamentoRelatorio(src, incluidas, params);
+    const mesmoReferencial = !!src.mesmoReferencial;
+    const ag = agrupar(bolsosIn, params, mesmoReferencial);
+    const grupos = resumirGruposRelatorio(brutas, ag, nEfetivo, refEst, params);
+    const { caixaEnsemble, semCentroide } = sugerirCaixaRelatorio(grupos, params);
+    const ligantes = brutas.map((e) => ({ id: e.id, rotulo: e.rotulo || e.id, ...liganteResumo(e) }));
+    const matriz = montarMatrizRelatorio(brutas, grupos, nEfetivo);
+    const limitacoes = limitacoesRelatorio(src, ag, alinhamento, nDisponiveis, nPedidas, nEfetivo);
     return {
       versao: VERSAO,
       exemplo: !!src.exemplo,

@@ -1003,33 +1003,7 @@ const StructureModel = (() => {
     return atoms[0] || null;
   }
 
-  function diagnosticar(posicoes, fontes, modeloSelecionado) {
-    const presentes = new Map();
-    for (const p of posicoes) {
-      if (p.coords && p.seq != null) presentes.set(p.key, p);
-    }
-    const candidatos = [];
-    const divergencias = [];
-    const ocupacaoZero = [];
-
-    function chaveItem(item) {
-      if (item.seq == null) return item.chain + "|seqres|" + item.seqIndex + "|" + item.resname;
-      return chavePos(item.chain, item.seq, item.icode);
-    }
-
-    function adicionar(item) {
-      if (item.seq == null && item.seqIndex == null) return null;
-      const k = chaveItem(item);
-      if (item.seq != null && presentes.has(chavePos(item.chain, item.seq, item.icode))) {
-        if (item.avisoCoordenada) divergencias.push(item.avisoCoordenada);
-        return null;
-      }
-      const ex = candidatos.find((c) => chaveItem(c) === k && c.resname === item.resname);
-      if (ex) { item.origem.forEach((o) => ex.origem.add(o)); return ex; }
-      candidatos.push(item);
-      return item;
-    }
-
+  function diagnosticarNaoObservados(fontes, modeloSelecionado, presentes, divergencias, ocupacaoZero, adicionar) {
     if (fontes.unobs.presente) {
       for (const it of fontes.unobs.itens) {
         if (it.modelo != null && it.modelo !== modeloSelecionado) continue;
@@ -1065,7 +1039,9 @@ const StructureModel = (() => {
         });
       }
     }
+  }
 
+  function adicionarAusentesRemark(fontes, adicionar) {
     for (const it of fontes.remarkItens) {
       adicionar({
         chain: it.chain, seq: it.seq, icode: it.icode || "", resname: it.resname,
@@ -1075,7 +1051,9 @@ const StructureModel = (() => {
         avisoCoordenada: "REMARK 465 cita " + it.resname + " " + it.chain + " " + it.seq + ", mas há coordenadas nesse número.",
       });
     }
+  }
 
+  function diagnosticarEsquemaSequencia(fontes, presentes, divergencias, adicionar) {
     if (fontes.scheme.presente) {
       for (const it of fontes.scheme.itens) {
         if (it.seq == null) {
@@ -1105,7 +1083,9 @@ const StructureModel = (() => {
         }
       }
     }
+  }
 
+  function diagnosticarSeqres(fontes, posicoes, candidatos, divergencias, adicionar) {
     const seqresInfo = new Map();
     for (const sq of fontes.seqres) {
       const aval = avaliarSeqres(sq, posicoes);
@@ -1140,7 +1120,10 @@ const StructureModel = (() => {
         });
       }
     }
+    return seqresInfo;
+  }
 
+  function diagnosticarCoberturaCadeias(posicoes, fontes, seqresInfo) {
     const classesPolimero = new Set(["proteina", "proteina-modificada", "outro-polimero", "terminal"]);
     const cadeias = new Set();
     for (const p of posicoes) if (classesPolimero.has(p.classe)) cadeias.add(p.chain);
@@ -1158,7 +1141,10 @@ const StructureModel = (() => {
       else if (seqresInfo.get(chain)) motivo = seqresInfo.get(chain).detalhe;
       porCadeia.push({ cadeia: chain, coberto, motivo });
     }
+    return { classesPolimero, cadeias, porCadeia };
+  }
 
+  function diagnosticarSaltosNumeracao(posicoes, classesPolimero, cadeias, porCadeia, candidatos) {
     const saltos = [];
     for (const chain of cadeias) {
       const coberto = porCadeia.find((c) => c.cadeia === chain).coberto;
@@ -1184,8 +1170,10 @@ const StructureModel = (() => {
         });
       }
     }
+    return saltos;
+  }
 
-    const determinado = porCadeia.length > 0 && porCadeia.every((c) => c.coberto);
+  function listarResiduosNaoResolvidos(candidatos) {
     const naoResolvidos = candidatos
       .slice()
       .sort((a, b) => {
@@ -1207,7 +1195,10 @@ const StructureModel = (() => {
         origem: [...c.origem].sort(),
         tipo: c.tipo,
       }));
+    return naoResolvidos;
+  }
 
+  function diagnosticarProximidadeFlanqueadores(posicoes, classesPolimero, candidatos) {
     const proximidade = [];
     const obsPol = posicoes.filter((p) => p.coords && classesPolimero.has(p.classe) && p.seq != null);
     const porChain = new Map();
@@ -1253,6 +1244,52 @@ const StructureModel = (() => {
       }
       fechar();
     }
+    return proximidade;
+  }
+
+  function diagnosticar(posicoes, fontes, modeloSelecionado) {
+    const presentes = new Map();
+    for (const p of posicoes) {
+      if (p.coords && p.seq != null) presentes.set(p.key, p);
+    }
+    const candidatos = [];
+    const divergencias = [];
+    const ocupacaoZero = [];
+
+    function chaveItem(item) {
+      if (item.seq == null) return item.chain + "|seqres|" + item.seqIndex + "|" + item.resname;
+      return chavePos(item.chain, item.seq, item.icode);
+    }
+
+    function adicionar(item) {
+      if (item.seq == null && item.seqIndex == null) return null;
+      const k = chaveItem(item);
+      if (item.seq != null && presentes.has(chavePos(item.chain, item.seq, item.icode))) {
+        if (item.avisoCoordenada) divergencias.push(item.avisoCoordenada);
+        return null;
+      }
+      const ex = candidatos.find((c) => chaveItem(c) === k && c.resname === item.resname);
+      if (ex) { item.origem.forEach((o) => ex.origem.add(o)); return ex; }
+      candidatos.push(item);
+      return item;
+    }
+
+    diagnosticarNaoObservados(fontes, modeloSelecionado, presentes, divergencias, ocupacaoZero, adicionar);
+
+    adicionarAusentesRemark(fontes, adicionar);
+
+    diagnosticarEsquemaSequencia(fontes, presentes, divergencias, adicionar);
+
+    const seqresInfo = diagnosticarSeqres(fontes, posicoes, candidatos, divergencias, adicionar);
+
+    const { classesPolimero, cadeias, porCadeia } = diagnosticarCoberturaCadeias(posicoes, fontes, seqresInfo);
+
+    const saltos = diagnosticarSaltosNumeracao(posicoes, classesPolimero, cadeias, porCadeia, candidatos);
+
+    const determinado = porCadeia.length > 0 && porCadeia.every((c) => c.coberto);
+    const naoResolvidos = listarResiduosNaoResolvidos(candidatos);
+
+    const proximidade = diagnosticarProximidadeFlanqueadores(posicoes, classesPolimero, candidatos);
 
     const fontesLista = [
       { id: "remark465", presente: fontes.remark.itens.length > 0 || fontes.remark.exaustivo, usada: fontes.remark.exaustivo || fontes.remarkItens.length > 0, detalhe: fontes.remark.exaustivo ? "seção MISSING RESIDUES" : (fontes.remarkItens.length ? "linhas de resíduo sem a seção exaustiva" : "ausente") },

@@ -1,0 +1,888 @@
+{
+  "fontes": [
+    "1CRN.pdb",
+    "4HHB.pdb"
+  ],
+  "pocketsSimulados": true,
+  "nota": "Proteínas diferentes: cenário de interface, sem interpretação biológica do agrupamento.",
+  "etapas": [
+    {
+      "nome": "primeira-renderizacao",
+      "antes": {
+        "sessao": {
+          "referenciaId": null,
+          "grupoId": null,
+          "estruturaCaixa": null,
+          "bolsaoCaixa": null,
+          "sigEns": null,
+          "sigEst": null
+        },
+        "geracao": 0,
+        "cancelado": false,
+        "ouvintes": false,
+        "avisoCache": "",
+        "memoria": [],
+        "modeloId": null
+      },
+      "html": "<p id=\"ens-n-efetivo\"><strong>N efetivo = 2</strong> (pedidas nesta execução: 3; carregadas: 4). N efetivo é o número de estruturas que de fato entraram no agrupamento. A recorrência aparece como k de N efetivo.</p><p class=\"ens-nota\">Critério de agrupamento: Jaccard de resíduos ≥ 0.5. Guloso, na ordem recebida. Um bolsão entra num grupo se a estrutura ainda não está nele e o Jaccard de resíduos com o membro de maior Jaccard atinge o limiar. G1 é o primeiro grupo aberto, não um ranking.</p><p class=\"ens-nota\">A distância entre centroides foi pedida, mas não entrou no agrupamento: as estruturas não compartilham referencial e não houve sobreposição.</p><p class=\"ens-nota\">Alinhamento por número de resíduo e pela letra da cadeia. A cadeia A de uma estrutura só encontra a cadeia A de outra com o mesmo número. Não há sobreposição de coordenadas. Se a numeração ou a letra da cadeia mudou, resíduos do mesmo lugar podem ficar separados, e resíduos diferentes podem cair no mesmo número.</p><div class=\"ens-scroll\"><table class=\"ens-tabela\"><thead><tr><th>Grupo</th><th>Persistência</th><th>drugScore DoGSite</th><th>Volume DoGSite (Å³)</th><th>Estruturas</th><th>Apo / holo</th></tr></thead><tbody><tr data-grupo=\"G1\"><td><strong>G1</strong></td><td>2 de 2 (100%) <span class=\"ens-faixa ens-faixa-75\">≥ 75%</span> <span class=\"ens-n\">N efetivo = 2</span></td><td>0.5 (0.5–0.5)</td><td>100 (100–100)</td><td class=\"ens-wrap\">1CRN (apo), 4HHB (holo)</td><td class=\"ens-wrap\">misto.  Há estrutura com ligante e estrutura sem ligante. Evidência: HETATM. Hipótese: o bolsão existe nos dois estados.</td></tr><tr data-grupo=\"G2\"><td><strong>G2</strong></td><td>2 de 2 (100%) <span class=\"ens-faixa ens-faixa-75\">≥ 75%</span> <span class=\"ens-n\">N efetivo = 2</span></td><td>—</td><td>—</td><td class=\"ens-wrap\">1CRN (apo), 4HHB (holo)</td><td class=\"ens-wrap\">misto.  Há estrutura com ligante e estrutura sem ligante. Evidência: HETATM. Hipótese: o bolsão existe nos dois estados.</td></tr></tbody></table></div><p class=\"ens-nota\">O drugScore e o volume são descritores do DoGSiteScorer. Não são afinidade nem previsão de ligação. Persistência indica recorrência do bolsão no conjunto, não druggability nem ligação de composto.</p><section class=\"ens-grupo\"><h3>G1 — resíduos, 2 de 2</h3><p><span class=\"ens-faixa ens-faixa-75\">≥ 75%</span> THR/VAL A 1 (2 de 2, 100%); LEU/THR A 2 (2 de 2, 100%); CYS/SER A 3 (2 de 2, 100%)</p><p><span class=\"ens-faixa ens-faixa-50\">≥ 50% e &lt; 75%</span> nenhum</p><p><span class=\"ens-faixa ens-faixa-25\">≥ 25% e &lt; 50%</span> nenhum</p><p><span class=\"ens-faixa ens-faixa-0\">&lt; 25%</span> nenhum</p><p class=\"ens-nota\">Evidência: o nome do aminoácido não é o mesmo em todas as estruturas (THR/VAL A 1; LEU/THR A 2; CYS/SER A 3). Hipótese: numeração diferente ou mutação; o arquivo não decide qual.</p></section><section class=\"ens-grupo\"><h3>G2 — resíduos, 2 de 2</h3><p><span class=\"ens-faixa ens-faixa-75\">≥ 75%</span> ARG/VAL A 10 (2 de 2, 100%); LYS/SER A 11 (2 de 2, 100%)</p><p><span class=\"ens-faixa ens-faixa-50\">≥ 50% e &lt; 75%</span> nenhum</p><p><span class=\"ens-faixa ens-faixa-25\">≥ 25% e &lt; 50%</span> nenhum</p><p><span class=\"ens-faixa ens-faixa-0\">&lt; 25%</span> nenhum</p><p class=\"ens-nota\">Evidência: o nome do aminoácido não é o mesmo em todas as estruturas (ARG/VAL A 10; LYS/SER A 11). Hipótese: numeração diferente ou mutação; o arquivo não decide qual.</p></section><h3>Estrutura × bolsão</h3><p id=\"ens-matriz-titulo\"><strong>N efetivo = 2.</strong> Cada célula é o bolsão do DoGSite naquela estrutura, ou ausência.</p><div class=\"ens-scroll\"><table class=\"ens-tabela\"><thead><tr><th>Estrutura</th><th>Apo / holo</th><th>G1<br>2 de 2</th><th>G2<br>2 de 2</th></tr></thead><tbody><tr><td>1CRN público</td><td>apo (indício)</td><td>FIX-P_0 (semente)</td><td>FIX-&lt;P_1&gt;&amp;&quot; (semente)</td></tr><tr><td>4HHB &lt;público&gt; &amp; &quot;local&quot;</td><td>holo (indício)</td><td>FIX-P_0 · 1</td><td>FIX-&lt;P_1&gt;&amp;&quot; · 1</td></tr><tr><td>Consulta simulada indisponível — Falha simulada &lt;rede&gt;</td><td>fora do N efetivo</td><td>—</td><td>—</td></tr></tbody></table></div><p class=\"ens-nota\">Apo ou holo é um indício pela presença de HETATM de ligante. Não confirma o estado biológico.</p><div class=\"ens-caixas\"><section><h3>Caixa do ensemble</h3><p class=\"rotulo-fixo\">Sugestão editável de caixa. Não é uma caixa validada e não é resultado de docking. O texto da caixa segue o mesmo formato da ficha de preparo. Continua sendo sugestão editável e não substitui a conferência daquela ficha. PEKI Fold não é ferramenta de docking.</p><p class=\"ens-nota\">Evidência: envelope dos centroides, na estrutura de referência, dos grupos com pelo menos 2 estruturas e faixa ≥ 50%. A margem é 4 Å de cada lado. Hipótese: que esta caixa serve para um ensaio.</p><div class=\"ens-grade\"><label>center_x <input id=\"ens-box-cx\" type=\"number\" step=\"0.001\" value=\"11.925\"></label><label>center_y <input id=\"ens-box-cy\" type=\"number\" step=\"0.001\" value=\"7.734\"></label><label>center_z <input id=\"ens-box-cz\" type=\"number\" step=\"0.001\" value=\"7.292\"></label><label>size_x <input id=\"ens-box-sx\" type=\"number\" step=\"0.1\" value=\"14\"></label><label>size_y <input id=\"ens-box-sy\" type=\"number\" step=\"0.1\" value=\"15.9\"></label><label>size_z <input id=\"ens-box-sz\" type=\"number\" step=\"0.1\" value=\"9.1\"></label></div><textarea id=\"ens-box-txt\" class=\"ens-cfg\" rows=\"6\">center_x = 11.925\ncenter_y = 7.734\ncenter_z = 7.292\nsize_x = 14.0\nsize_y = 15.9\nsize_z = 9.1</textarea><div class=\"ens-acoes\"><button type=\"button\" class=\"ghost-btn\" id=\"ens-aplicar-ens\">Aplicar texto</button><button type=\"button\" class=\"ghost-btn\" id=\"ens-restaurar-ens\">Restaurar sugestão</button><button type=\"button\" class=\"primary-btn\" id=\"ens-caixa-ens\">Desenhar no 3D</button></div></section><section><h3>Caixa desta estrutura</h3><p class=\"ens-nota\">Evidência: centro na média dos átomos do arquivo de resíduos do DoGSite e tamanho na extensão mais a margem, como na ficha de preparo. O referencial é o desta estrutura.</p><label>Estrutura <select id=\"ens-est\"><option value=\"1CRN\" selected>1CRN público</option><option value=\"4HHB\">4HHB &lt;público&gt; &amp; &quot;local&quot;</option></select></label><label>Bolsão <select id=\"ens-bolsao\"><option value=\"FIX-P_0\" selected>FIX-P_0</option><option value=\"FIX-&lt;P_1&gt;&amp;&quot;\">FIX-&lt;P_1&gt;&amp;&quot;</option></select></label><div class=\"ens-grade\"><label>center_x <input id=\"ens-est-cx\" type=\"number\" step=\"0.001\" value=\"14.917\"></label><label>center_y <input id=\"ens-est-cy\" type=\"number\" step=\"0.001\" value=\"11.683\"></label><label>center_z <input id=\"ens-est-cz\" type=\"number\" step=\"0.001\" value=\"6.722\"></label><label>size_x <input id=\"ens-est-sx\" type=\"number\" step=\"0.1\" value=\"15.9\"></label><label>size_y <input id=\"ens-est-sy\" type=\"number\" step=\"0.1\" value=\"12.7\"></label><label>size_z <input id=\"ens-est-sz\" type=\"number\" step=\"0.1\" value=\"15.1\"></label></div><textarea id=\"ens-est-txt\" class=\"ens-cfg\" rows=\"6\">center_x = 14.917\ncenter_y = 11.683\ncenter_z = 6.722\nsize_x = 15.9\nsize_y = 12.7\nsize_z = 15.1</textarea><div class=\"ens-acoes\"><button type=\"button\" class=\"ghost-btn\" id=\"ens-aplicar-est\">Aplicar texto</button><button type=\"button\" class=\"ghost-btn\" id=\"ens-restaurar-est\">Restaurar sugestão</button><button type=\"button\" class=\"primary-btn\" id=\"ens-caixa-est\">Desenhar no 3D</button></div></section></div><div class=\"ens-viewer-controles\"><label>Referência do 3D <select id=\"ens-ref\"><option value=\"1CRN\" selected>1CRN público</option><option value=\"4HHB\">4HHB &lt;público&gt; &amp; &quot;local&quot;</option></select></label><label>Grupo <select id=\"ens-grupo\"><option value=\"G1\">G1 (2 de 2)</option><option value=\"G2\">G2 (2 de 2)</option></select></label><button type=\"button\" class=\"primary-btn\" id=\"ens-ver\">Ver centroide na referência</button><button type=\"button\" class=\"ghost-btn\" id=\"ens-limpar\">Limpar marcas</button></div><section class=\"ens-leitura\"><h3>Evidência</h3><ul><li>Evidência: dado medido no arquivo ou descritor vindo do DoGSiteScorer.</li><li>N efetivo = 2. Cada recorrência desta página traz k de N efetivo.</li><li>Jaccard mínimo usado: 0.5.</li><li>O drugScore e o volume são descritores do DoGSiteScorer. Não são afinidade nem previsão de ligação.</li><li>Apo ou holo é um indício pela presença de HETATM de ligante. Não confirma o estado biológico.</li></ul><h3>Hipótese</h3><ul><li>Hipótese: interpretação que esses dados não provam.</li><li>Persistência indica recorrência do bolsão no conjunto, não druggability nem ligação de composto.</li><li>Ensemble de estruturas cristalográficas não representa dinâmica real.</li><li>Resultado exploratório: é hipótese, não conclusão.</li><li>PEKI Fold não é ferramenta de docking.</li><li>Estruturas redundantes inflam a contagem. Entradas quase iguais aumentam n sem informação nova, e esta aba não remove essa redundância.</li><li>Resultados de motores diferentes não devem ser misturados. Esta aba usa somente o DoGSiteScorer. O drugScore daqui não entra na mesma conta que o escore de outro programa.</li></ul></section>",
+      "depois": {
+        "sessao": {
+          "referenciaId": "1CRN",
+          "grupoId": null,
+          "estruturaCaixa": "1CRN",
+          "bolsaoCaixa": "FIX-P_0",
+          "sigEns": "11.925|7.734|7.292|14|15.9|9.1",
+          "sigEst": "1CRN|FIX-P_0|14.917|11.683|6.722|15.9|12.7|15.1",
+          "editEns": {
+            "ok": true,
+            "margem": 4,
+            "nCentroides": 2,
+            "formula": "envelope-dos-centroides",
+            "center_x": 11.925,
+            "center_y": 7.734,
+            "center_z": 7.292,
+            "size_x": 14,
+            "size_y": 15.9,
+            "size_z": 9.1,
+            "grupos": [
+              "G1",
+              "G2"
+            ],
+            "faixa": 50
+          },
+          "editEst": {
+            "ok": true,
+            "nAtomos": 20,
+            "margem": 4,
+            "formula": "media-dos-atomos",
+            "center_x": 14.917,
+            "center_y": 11.683,
+            "center_z": 6.722,
+            "size_x": 15.9,
+            "size_y": 12.7,
+            "size_z": 15.1
+          },
+          "sugEns": {
+            "ok": true,
+            "margem": 4,
+            "nCentroides": 2,
+            "formula": "envelope-dos-centroides",
+            "center_x": 11.925,
+            "center_y": 7.734,
+            "center_z": 7.292,
+            "size_x": 14,
+            "size_y": 15.9,
+            "size_z": 9.1,
+            "grupos": [
+              "G1",
+              "G2"
+            ],
+            "faixa": 50
+          },
+          "sugEst": {
+            "ok": true,
+            "nAtomos": 20,
+            "margem": 4,
+            "formula": "media-dos-atomos",
+            "center_x": 14.917,
+            "center_y": 11.683,
+            "center_z": 6.722,
+            "size_x": 15.9,
+            "size_y": 12.7,
+            "size_z": 15.1
+          }
+        },
+        "geracao": 0,
+        "cancelado": false,
+        "ouvintes": false,
+        "avisoCache": "",
+        "memoria": [],
+        "modeloId": null
+      },
+      "aliases": {
+        "editEnsSugEns": true,
+        "sugEnsRelatorio": true,
+        "editEstSugEst": true
+      },
+      "relatorioAntes": {
+        "bytes": 11774,
+        "sha256": "acd8a69d993079df184129b8478384e8f97c47613230e114f63fec39d9760e09"
+      },
+      "relatorioDepois": {
+        "bytes": 11774,
+        "sha256": "acd8a69d993079df184129b8478384e8f97c47613230e114f63fec39d9760e09"
+      }
+    },
+    {
+      "nome": "edicoes-preservadas-mesma-assinatura",
+      "antes": {
+        "sessao": {
+          "referenciaId": "1CRN",
+          "grupoId": "G2",
+          "estruturaCaixa": "1CRN",
+          "bolsaoCaixa": "FIX-P_0",
+          "sigEns": "11.925|7.734|7.292|14|15.9|9.1",
+          "sigEst": "1CRN|FIX-P_0|14.917|11.683|6.722|15.9|12.7|15.1",
+          "editEns": {
+            "center_x": 90,
+            "center_y": 91,
+            "center_z": 92,
+            "size_x": 10,
+            "size_y": 11,
+            "size_z": 12
+          },
+          "editEst": {
+            "center_x": 80,
+            "center_y": 81,
+            "center_z": 82,
+            "size_x": 13,
+            "size_y": 14,
+            "size_z": 15
+          },
+          "sugEns": {
+            "ok": true,
+            "margem": 4,
+            "nCentroides": 2,
+            "formula": "envelope-dos-centroides",
+            "center_x": 11.925,
+            "center_y": 7.734,
+            "center_z": 7.292,
+            "size_x": 14,
+            "size_y": 15.9,
+            "size_z": 9.1,
+            "grupos": [
+              "G1",
+              "G2"
+            ],
+            "faixa": 50
+          },
+          "sugEst": {
+            "ok": true,
+            "nAtomos": 20,
+            "margem": 4,
+            "formula": "media-dos-atomos",
+            "center_x": 14.917,
+            "center_y": 11.683,
+            "center_z": 6.722,
+            "size_x": 15.9,
+            "size_y": 12.7,
+            "size_z": 15.1
+          }
+        },
+        "geracao": 0,
+        "cancelado": false,
+        "ouvintes": false,
+        "avisoCache": "",
+        "memoria": [],
+        "modeloId": null
+      },
+      "html": "<p id=\"ens-n-efetivo\"><strong>N efetivo = 2</strong> (pedidas nesta execução: 3; carregadas: 4). N efetivo é o número de estruturas que de fato entraram no agrupamento. A recorrência aparece como k de N efetivo.</p><p class=\"ens-nota\">Critério de agrupamento: Jaccard de resíduos ≥ 0.5. Guloso, na ordem recebida. Um bolsão entra num grupo se a estrutura ainda não está nele e o Jaccard de resíduos com o membro de maior Jaccard atinge o limiar. G1 é o primeiro grupo aberto, não um ranking.</p><p class=\"ens-nota\">A distância entre centroides foi pedida, mas não entrou no agrupamento: as estruturas não compartilham referencial e não houve sobreposição.</p><p class=\"ens-nota\">Alinhamento por número de resíduo e pela letra da cadeia. A cadeia A de uma estrutura só encontra a cadeia A de outra com o mesmo número. Não há sobreposição de coordenadas. Se a numeração ou a letra da cadeia mudou, resíduos do mesmo lugar podem ficar separados, e resíduos diferentes podem cair no mesmo número.</p><div class=\"ens-scroll\"><table class=\"ens-tabela\"><thead><tr><th>Grupo</th><th>Persistência</th><th>drugScore DoGSite</th><th>Volume DoGSite (Å³)</th><th>Estruturas</th><th>Apo / holo</th></tr></thead><tbody><tr data-grupo=\"G1\"><td><strong>G1</strong></td><td>2 de 2 (100%) <span class=\"ens-faixa ens-faixa-75\">≥ 75%</span> <span class=\"ens-n\">N efetivo = 2</span></td><td>0.5 (0.5–0.5)</td><td>100 (100–100)</td><td class=\"ens-wrap\">1CRN (apo), 4HHB (holo)</td><td class=\"ens-wrap\">misto.  Há estrutura com ligante e estrutura sem ligante. Evidência: HETATM. Hipótese: o bolsão existe nos dois estados.</td></tr><tr data-grupo=\"G2\"><td><strong>G2</strong></td><td>2 de 2 (100%) <span class=\"ens-faixa ens-faixa-75\">≥ 75%</span> <span class=\"ens-n\">N efetivo = 2</span></td><td>—</td><td>—</td><td class=\"ens-wrap\">1CRN (apo), 4HHB (holo)</td><td class=\"ens-wrap\">misto.  Há estrutura com ligante e estrutura sem ligante. Evidência: HETATM. Hipótese: o bolsão existe nos dois estados.</td></tr></tbody></table></div><p class=\"ens-nota\">O drugScore e o volume são descritores do DoGSiteScorer. Não são afinidade nem previsão de ligação. Persistência indica recorrência do bolsão no conjunto, não druggability nem ligação de composto.</p><section class=\"ens-grupo\"><h3>G1 — resíduos, 2 de 2</h3><p><span class=\"ens-faixa ens-faixa-75\">≥ 75%</span> THR/VAL A 1 (2 de 2, 100%); LEU/THR A 2 (2 de 2, 100%); CYS/SER A 3 (2 de 2, 100%)</p><p><span class=\"ens-faixa ens-faixa-50\">≥ 50% e &lt; 75%</span> nenhum</p><p><span class=\"ens-faixa ens-faixa-25\">≥ 25% e &lt; 50%</span> nenhum</p><p><span class=\"ens-faixa ens-faixa-0\">&lt; 25%</span> nenhum</p><p class=\"ens-nota\">Evidência: o nome do aminoácido não é o mesmo em todas as estruturas (THR/VAL A 1; LEU/THR A 2; CYS/SER A 3). Hipótese: numeração diferente ou mutação; o arquivo não decide qual.</p></section><section class=\"ens-grupo\"><h3>G2 — resíduos, 2 de 2</h3><p><span class=\"ens-faixa ens-faixa-75\">≥ 75%</span> ARG/VAL A 10 (2 de 2, 100%); LYS/SER A 11 (2 de 2, 100%)</p><p><span class=\"ens-faixa ens-faixa-50\">≥ 50% e &lt; 75%</span> nenhum</p><p><span class=\"ens-faixa ens-faixa-25\">≥ 25% e &lt; 50%</span> nenhum</p><p><span class=\"ens-faixa ens-faixa-0\">&lt; 25%</span> nenhum</p><p class=\"ens-nota\">Evidência: o nome do aminoácido não é o mesmo em todas as estruturas (ARG/VAL A 10; LYS/SER A 11). Hipótese: numeração diferente ou mutação; o arquivo não decide qual.</p></section><h3>Estrutura × bolsão</h3><p id=\"ens-matriz-titulo\"><strong>N efetivo = 2.</strong> Cada célula é o bolsão do DoGSite naquela estrutura, ou ausência.</p><div class=\"ens-scroll\"><table class=\"ens-tabela\"><thead><tr><th>Estrutura</th><th>Apo / holo</th><th>G1<br>2 de 2</th><th>G2<br>2 de 2</th></tr></thead><tbody><tr><td>1CRN público</td><td>apo (indício)</td><td>FIX-P_0 (semente)</td><td>FIX-&lt;P_1&gt;&amp;&quot; (semente)</td></tr><tr><td>4HHB &lt;público&gt; &amp; &quot;local&quot;</td><td>holo (indício)</td><td>FIX-P_0 · 1</td><td>FIX-&lt;P_1&gt;&amp;&quot; · 1</td></tr><tr><td>Consulta simulada indisponível — Falha simulada &lt;rede&gt;</td><td>fora do N efetivo</td><td>—</td><td>—</td></tr></tbody></table></div><p class=\"ens-nota\">Apo ou holo é um indício pela presença de HETATM de ligante. Não confirma o estado biológico.</p><div class=\"ens-caixas\"><section><h3>Caixa do ensemble</h3><p class=\"rotulo-fixo\">Sugestão editável de caixa. Não é uma caixa validada e não é resultado de docking. O texto da caixa segue o mesmo formato da ficha de preparo. Continua sendo sugestão editável e não substitui a conferência daquela ficha. PEKI Fold não é ferramenta de docking.</p><p class=\"ens-nota\">Evidência: envelope dos centroides, na estrutura de referência, dos grupos com pelo menos 2 estruturas e faixa ≥ 50%. A margem é 4 Å de cada lado. Hipótese: que esta caixa serve para um ensaio.</p><div class=\"ens-grade\"><label>center_x <input id=\"ens-box-cx\" type=\"number\" step=\"0.001\" value=\"90\"></label><label>center_y <input id=\"ens-box-cy\" type=\"number\" step=\"0.001\" value=\"91\"></label><label>center_z <input id=\"ens-box-cz\" type=\"number\" step=\"0.001\" value=\"92\"></label><label>size_x <input id=\"ens-box-sx\" type=\"number\" step=\"0.1\" value=\"10\"></label><label>size_y <input id=\"ens-box-sy\" type=\"number\" step=\"0.1\" value=\"11\"></label><label>size_z <input id=\"ens-box-sz\" type=\"number\" step=\"0.1\" value=\"12\"></label></div><textarea id=\"ens-box-txt\" class=\"ens-cfg\" rows=\"6\">center_x = 90.000\ncenter_y = 91.000\ncenter_z = 92.000\nsize_x = 10.0\nsize_y = 11.0\nsize_z = 12.0</textarea><div class=\"ens-acoes\"><button type=\"button\" class=\"ghost-btn\" id=\"ens-aplicar-ens\">Aplicar texto</button><button type=\"button\" class=\"ghost-btn\" id=\"ens-restaurar-ens\">Restaurar sugestão</button><button type=\"button\" class=\"primary-btn\" id=\"ens-caixa-ens\">Desenhar no 3D</button></div></section><section><h3>Caixa desta estrutura</h3><p class=\"ens-nota\">Evidência: centro na média dos átomos do arquivo de resíduos do DoGSite e tamanho na extensão mais a margem, como na ficha de preparo. O referencial é o desta estrutura.</p><label>Estrutura <select id=\"ens-est\"><option value=\"1CRN\" selected>1CRN público</option><option value=\"4HHB\">4HHB &lt;público&gt; &amp; &quot;local&quot;</option></select></label><label>Bolsão <select id=\"ens-bolsao\"><option value=\"FIX-P_0\" selected>FIX-P_0</option><option value=\"FIX-&lt;P_1&gt;&amp;&quot;\">FIX-&lt;P_1&gt;&amp;&quot;</option></select></label><div class=\"ens-grade\"><label>center_x <input id=\"ens-est-cx\" type=\"number\" step=\"0.001\" value=\"80\"></label><label>center_y <input id=\"ens-est-cy\" type=\"number\" step=\"0.001\" value=\"81\"></label><label>center_z <input id=\"ens-est-cz\" type=\"number\" step=\"0.001\" value=\"82\"></label><label>size_x <input id=\"ens-est-sx\" type=\"number\" step=\"0.1\" value=\"13\"></label><label>size_y <input id=\"ens-est-sy\" type=\"number\" step=\"0.1\" value=\"14\"></label><label>size_z <input id=\"ens-est-sz\" type=\"number\" step=\"0.1\" value=\"15\"></label></div><textarea id=\"ens-est-txt\" class=\"ens-cfg\" rows=\"6\">center_x = 80.000\ncenter_y = 81.000\ncenter_z = 82.000\nsize_x = 13.0\nsize_y = 14.0\nsize_z = 15.0</textarea><div class=\"ens-acoes\"><button type=\"button\" class=\"ghost-btn\" id=\"ens-aplicar-est\">Aplicar texto</button><button type=\"button\" class=\"ghost-btn\" id=\"ens-restaurar-est\">Restaurar sugestão</button><button type=\"button\" class=\"primary-btn\" id=\"ens-caixa-est\">Desenhar no 3D</button></div></section></div><div class=\"ens-viewer-controles\"><label>Referência do 3D <select id=\"ens-ref\"><option value=\"1CRN\" selected>1CRN público</option><option value=\"4HHB\">4HHB &lt;público&gt; &amp; &quot;local&quot;</option></select></label><label>Grupo <select id=\"ens-grupo\"><option value=\"G1\">G1 (2 de 2)</option><option value=\"G2\" selected>G2 (2 de 2)</option></select></label><button type=\"button\" class=\"primary-btn\" id=\"ens-ver\">Ver centroide na referência</button><button type=\"button\" class=\"ghost-btn\" id=\"ens-limpar\">Limpar marcas</button></div><section class=\"ens-leitura\"><h3>Evidência</h3><ul><li>Evidência: dado medido no arquivo ou descritor vindo do DoGSiteScorer.</li><li>N efetivo = 2. Cada recorrência desta página traz k de N efetivo.</li><li>Jaccard mínimo usado: 0.5.</li><li>O drugScore e o volume são descritores do DoGSiteScorer. Não são afinidade nem previsão de ligação.</li><li>Apo ou holo é um indício pela presença de HETATM de ligante. Não confirma o estado biológico.</li></ul><h3>Hipótese</h3><ul><li>Hipótese: interpretação que esses dados não provam.</li><li>Persistência indica recorrência do bolsão no conjunto, não druggability nem ligação de composto.</li><li>Ensemble de estruturas cristalográficas não representa dinâmica real.</li><li>Resultado exploratório: é hipótese, não conclusão.</li><li>PEKI Fold não é ferramenta de docking.</li><li>Estruturas redundantes inflam a contagem. Entradas quase iguais aumentam n sem informação nova, e esta aba não remove essa redundância.</li><li>Resultados de motores diferentes não devem ser misturados. Esta aba usa somente o DoGSiteScorer. O drugScore daqui não entra na mesma conta que o escore de outro programa.</li></ul></section>",
+      "depois": {
+        "sessao": {
+          "referenciaId": "1CRN",
+          "grupoId": "G2",
+          "estruturaCaixa": "1CRN",
+          "bolsaoCaixa": "FIX-P_0",
+          "sigEns": "11.925|7.734|7.292|14|15.9|9.1",
+          "sigEst": "1CRN|FIX-P_0|14.917|11.683|6.722|15.9|12.7|15.1",
+          "editEns": {
+            "center_x": 90,
+            "center_y": 91,
+            "center_z": 92,
+            "size_x": 10,
+            "size_y": 11,
+            "size_z": 12
+          },
+          "editEst": {
+            "center_x": 80,
+            "center_y": 81,
+            "center_z": 82,
+            "size_x": 13,
+            "size_y": 14,
+            "size_z": 15
+          },
+          "sugEns": {
+            "ok": true,
+            "margem": 4,
+            "nCentroides": 2,
+            "formula": "envelope-dos-centroides",
+            "center_x": 11.925,
+            "center_y": 7.734,
+            "center_z": 7.292,
+            "size_x": 14,
+            "size_y": 15.9,
+            "size_z": 9.1,
+            "grupos": [
+              "G1",
+              "G2"
+            ],
+            "faixa": 50
+          },
+          "sugEst": {
+            "ok": true,
+            "nAtomos": 20,
+            "margem": 4,
+            "formula": "media-dos-atomos",
+            "center_x": 14.917,
+            "center_y": 11.683,
+            "center_z": 6.722,
+            "size_x": 15.9,
+            "size_y": 12.7,
+            "size_z": 15.1
+          }
+        },
+        "geracao": 0,
+        "cancelado": false,
+        "ouvintes": false,
+        "avisoCache": "",
+        "memoria": [],
+        "modeloId": null
+      },
+      "aliases": {
+        "editEnsSugEns": false,
+        "sugEnsRelatorio": true,
+        "editEstSugEst": false
+      },
+      "relatorioAntes": {
+        "bytes": 11774,
+        "sha256": "acd8a69d993079df184129b8478384e8f97c47613230e114f63fec39d9760e09"
+      },
+      "relatorioDepois": {
+        "bytes": 11774,
+        "sha256": "acd8a69d993079df184129b8478384e8f97c47613230e114f63fec39d9760e09"
+      }
+    },
+    {
+      "nome": "referencia-e-caixa-4HHB",
+      "antes": {
+        "sessao": {
+          "referenciaId": "4HHB",
+          "grupoId": "G2",
+          "estruturaCaixa": "4HHB",
+          "bolsaoCaixa": "FIX-<P_1>&\"",
+          "sigEns": "11.925|7.734|7.292|14|15.9|9.1",
+          "sigEst": "1CRN|FIX-P_0|14.917|11.683|6.722|15.9|12.7|15.1",
+          "editEns": {
+            "center_x": 90,
+            "center_y": 91,
+            "center_z": 92,
+            "size_x": 10,
+            "size_y": 11,
+            "size_z": 12
+          },
+          "editEst": {
+            "center_x": 80,
+            "center_y": 81,
+            "center_z": 82,
+            "size_x": 13,
+            "size_y": 14,
+            "size_z": 15
+          },
+          "sugEns": {
+            "ok": true,
+            "margem": 4,
+            "nCentroides": 2,
+            "formula": "envelope-dos-centroides",
+            "center_x": 11.925,
+            "center_y": 7.734,
+            "center_z": 7.292,
+            "size_x": 14,
+            "size_y": 15.9,
+            "size_z": 9.1,
+            "grupos": [
+              "G1",
+              "G2"
+            ],
+            "faixa": 50
+          },
+          "sugEst": {
+            "ok": true,
+            "nAtomos": 20,
+            "margem": 4,
+            "formula": "media-dos-atomos",
+            "center_x": 14.917,
+            "center_y": 11.683,
+            "center_z": 6.722,
+            "size_x": 15.9,
+            "size_y": 12.7,
+            "size_z": 15.1
+          }
+        },
+        "geracao": 0,
+        "cancelado": false,
+        "ouvintes": false,
+        "avisoCache": "Sem espaço no localStorage; o resultado desta sessão fica só na memória.",
+        "memoria": [
+          [
+            "fixture",
+            []
+          ]
+        ],
+        "modeloId": null
+      },
+      "html": "<p id=\"ens-n-efetivo\"><strong>N efetivo = 2</strong> (pedidas nesta execução: 3; carregadas: 4). N efetivo é o número de estruturas que de fato entraram no agrupamento. A recorrência aparece como k de N efetivo.</p><p class=\"ens-nota\">Critério de agrupamento: Jaccard de resíduos ≥ 0.5. Guloso, na ordem recebida. Um bolsão entra num grupo se a estrutura ainda não está nele e o Jaccard de resíduos com o membro de maior Jaccard atinge o limiar. G1 é o primeiro grupo aberto, não um ranking.</p><p class=\"ens-nota\">A distância entre centroides foi pedida, mas não entrou no agrupamento: as estruturas não compartilham referencial e não houve sobreposição.</p><p class=\"ens-nota\">Alinhamento por número de resíduo e pela letra da cadeia. A cadeia A de uma estrutura só encontra a cadeia A de outra com o mesmo número. Não há sobreposição de coordenadas. Se a numeração ou a letra da cadeia mudou, resíduos do mesmo lugar podem ficar separados, e resíduos diferentes podem cair no mesmo número.</p><p class=\"ens-nota\">Sem espaço no localStorage; o resultado desta sessão fica só na memória.</p><div class=\"ens-scroll\"><table class=\"ens-tabela\"><thead><tr><th>Grupo</th><th>Persistência</th><th>drugScore DoGSite</th><th>Volume DoGSite (Å³)</th><th>Estruturas</th><th>Apo / holo</th></tr></thead><tbody><tr data-grupo=\"G1\"><td><strong>G1</strong></td><td>2 de 2 (100%) <span class=\"ens-faixa ens-faixa-75\">≥ 75%</span> <span class=\"ens-n\">N efetivo = 2</span></td><td>0.5 (0.5–0.5)</td><td>100 (100–100)</td><td class=\"ens-wrap\">1CRN (apo), 4HHB (holo)</td><td class=\"ens-wrap\">misto.  Há estrutura com ligante e estrutura sem ligante. Evidência: HETATM. Hipótese: o bolsão existe nos dois estados.</td></tr><tr data-grupo=\"G2\"><td><strong>G2</strong></td><td>2 de 2 (100%) <span class=\"ens-faixa ens-faixa-75\">≥ 75%</span> <span class=\"ens-n\">N efetivo = 2</span></td><td>—</td><td>—</td><td class=\"ens-wrap\">1CRN (apo), 4HHB (holo)</td><td class=\"ens-wrap\">misto.  Há estrutura com ligante e estrutura sem ligante. Evidência: HETATM. Hipótese: o bolsão existe nos dois estados.</td></tr></tbody></table></div><p class=\"ens-nota\">O drugScore e o volume são descritores do DoGSiteScorer. Não são afinidade nem previsão de ligação. Persistência indica recorrência do bolsão no conjunto, não druggability nem ligação de composto.</p><section class=\"ens-grupo\"><h3>G1 — resíduos, 2 de 2</h3><p><span class=\"ens-faixa ens-faixa-75\">≥ 75%</span> THR/VAL A 1 (2 de 2, 100%); LEU/THR A 2 (2 de 2, 100%); CYS/SER A 3 (2 de 2, 100%)</p><p><span class=\"ens-faixa ens-faixa-50\">≥ 50% e &lt; 75%</span> nenhum</p><p><span class=\"ens-faixa ens-faixa-25\">≥ 25% e &lt; 50%</span> nenhum</p><p><span class=\"ens-faixa ens-faixa-0\">&lt; 25%</span> nenhum</p><p class=\"ens-nota\">Evidência: o nome do aminoácido não é o mesmo em todas as estruturas (THR/VAL A 1; LEU/THR A 2; CYS/SER A 3). Hipótese: numeração diferente ou mutação; o arquivo não decide qual.</p></section><section class=\"ens-grupo\"><h3>G2 — resíduos, 2 de 2</h3><p><span class=\"ens-faixa ens-faixa-75\">≥ 75%</span> ARG/VAL A 10 (2 de 2, 100%); LYS/SER A 11 (2 de 2, 100%)</p><p><span class=\"ens-faixa ens-faixa-50\">≥ 50% e &lt; 75%</span> nenhum</p><p><span class=\"ens-faixa ens-faixa-25\">≥ 25% e &lt; 50%</span> nenhum</p><p><span class=\"ens-faixa ens-faixa-0\">&lt; 25%</span> nenhum</p><p class=\"ens-nota\">Evidência: o nome do aminoácido não é o mesmo em todas as estruturas (ARG/VAL A 10; LYS/SER A 11). Hipótese: numeração diferente ou mutação; o arquivo não decide qual.</p></section><h3>Estrutura × bolsão</h3><p id=\"ens-matriz-titulo\"><strong>N efetivo = 2.</strong> Cada célula é o bolsão do DoGSite naquela estrutura, ou ausência.</p><div class=\"ens-scroll\"><table class=\"ens-tabela\"><thead><tr><th>Estrutura</th><th>Apo / holo</th><th>G1<br>2 de 2</th><th>G2<br>2 de 2</th></tr></thead><tbody><tr><td>1CRN público</td><td>apo (indício)</td><td>FIX-P_0 (semente)</td><td>FIX-&lt;P_1&gt;&amp;&quot; (semente)</td></tr><tr><td>4HHB &lt;público&gt; &amp; &quot;local&quot;</td><td>holo (indício)</td><td>FIX-P_0 · 1</td><td>FIX-&lt;P_1&gt;&amp;&quot; · 1</td></tr><tr><td>Consulta simulada indisponível — Falha simulada &lt;rede&gt;</td><td>fora do N efetivo</td><td>—</td><td>—</td></tr></tbody></table></div><p class=\"ens-nota\">Apo ou holo é um indício pela presença de HETATM de ligante. Não confirma o estado biológico.</p><div class=\"ens-caixas\"><section><h3>Caixa do ensemble</h3><p class=\"rotulo-fixo\">Sugestão editável de caixa. Não é uma caixa validada e não é resultado de docking. O texto da caixa segue o mesmo formato da ficha de preparo. Continua sendo sugestão editável e não substitui a conferência daquela ficha. PEKI Fold não é ferramenta de docking.</p><p class=\"ens-nota\">Evidência: envelope dos centroides, na estrutura de referência, dos grupos com pelo menos 2 estruturas e faixa ≥ 50%. A margem é 4 Å de cada lado. Hipótese: que esta caixa serve para um ensaio.</p><div class=\"ens-grade\"><label>center_x <input id=\"ens-box-cx\" type=\"number\" step=\"0.001\" value=\"28.029\"></label><label>center_y <input id=\"ens-box-cy\" type=\"number\" step=\"0.001\" value=\"29.224\"></label><label>center_z <input id=\"ens-box-cz\" type=\"number\" step=\"0.001\" value=\"39.359\"></label><label>size_x <input id=\"ens-box-sx\" type=\"number\" step=\"0.1\" value=\"17.1\"></label><label>size_y <input id=\"ens-box-sy\" type=\"number\" step=\"0.1\" value=\"10.7\"></label><label>size_z <input id=\"ens-box-sz\" type=\"number\" step=\"0.1\" value=\"14.3\"></label></div><textarea id=\"ens-box-txt\" class=\"ens-cfg\" rows=\"6\">center_x = 28.029\ncenter_y = 29.224\ncenter_z = 39.359\nsize_x = 17.1\nsize_y = 10.7\nsize_z = 14.3</textarea><div class=\"ens-acoes\"><button type=\"button\" class=\"ghost-btn\" id=\"ens-aplicar-ens\">Aplicar texto</button><button type=\"button\" class=\"ghost-btn\" id=\"ens-restaurar-ens\">Restaurar sugestão</button><button type=\"button\" class=\"primary-btn\" id=\"ens-caixa-ens\">Desenhar no 3D</button></div></section><section><h3>Caixa desta estrutura</h3><p class=\"ens-nota\">Evidência: centro na média dos átomos do arquivo de resíduos do DoGSite e tamanho na extensão mais a margem, como na ficha de preparo. O referencial é o desta estrutura.</p><label>Estrutura <select id=\"ens-est\"><option value=\"1CRN\">1CRN público</option><option value=\"4HHB\" selected>4HHB &lt;público&gt; &amp; &quot;local&quot;</option></select></label><label>Bolsão <select id=\"ens-bolsao\"><option value=\"FIX-P_0\">FIX-P_0</option><option value=\"FIX-&lt;P_1&gt;&amp;&quot;\" selected>FIX-&lt;P_1&gt;&amp;&quot;</option></select></label><div class=\"ens-grade\"><label>center_x <input id=\"ens-est-cx\" type=\"number\" step=\"0.001\" value=\"32.572\"></label><label>center_y <input id=\"ens-est-cy\" type=\"number\" step=\"0.001\" value=\"27.863\"></label><label>center_z <input id=\"ens-est-cz\" type=\"number\" step=\"0.001\" value=\"36.208\"></label><label>size_x <input id=\"ens-est-sx\" type=\"number\" step=\"0.1\" value=\"14.9\"></label><label>size_y <input id=\"ens-est-sy\" type=\"number\" step=\"0.1\" value=\"16.1\"></label><label>size_z <input id=\"ens-est-sz\" type=\"number\" step=\"0.1\" value=\"12.5\"></label></div><textarea id=\"ens-est-txt\" class=\"ens-cfg\" rows=\"6\">center_x = 32.572\ncenter_y = 27.863\ncenter_z = 36.208\nsize_x = 14.9\nsize_y = 16.1\nsize_z = 12.5</textarea><div class=\"ens-acoes\"><button type=\"button\" class=\"ghost-btn\" id=\"ens-aplicar-est\">Aplicar texto</button><button type=\"button\" class=\"ghost-btn\" id=\"ens-restaurar-est\">Restaurar sugestão</button><button type=\"button\" class=\"primary-btn\" id=\"ens-caixa-est\">Desenhar no 3D</button></div></section></div><div class=\"ens-viewer-controles\"><label>Referência do 3D <select id=\"ens-ref\"><option value=\"1CRN\">1CRN público</option><option value=\"4HHB\" selected>4HHB &lt;público&gt; &amp; &quot;local&quot;</option></select></label><label>Grupo <select id=\"ens-grupo\"><option value=\"G1\">G1 (2 de 2)</option><option value=\"G2\" selected>G2 (2 de 2)</option></select></label><button type=\"button\" class=\"primary-btn\" id=\"ens-ver\">Ver centroide na referência</button><button type=\"button\" class=\"ghost-btn\" id=\"ens-limpar\">Limpar marcas</button></div><section class=\"ens-leitura\"><h3>Evidência</h3><ul><li>Evidência: dado medido no arquivo ou descritor vindo do DoGSiteScorer.</li><li>N efetivo = 2. Cada recorrência desta página traz k de N efetivo.</li><li>Jaccard mínimo usado: 0.5.</li><li>O drugScore e o volume são descritores do DoGSiteScorer. Não são afinidade nem previsão de ligação.</li><li>Apo ou holo é um indício pela presença de HETATM de ligante. Não confirma o estado biológico.</li></ul><h3>Hipótese</h3><ul><li>Hipótese: interpretação que esses dados não provam.</li><li>Persistência indica recorrência do bolsão no conjunto, não druggability nem ligação de composto.</li><li>Ensemble de estruturas cristalográficas não representa dinâmica real.</li><li>Resultado exploratório: é hipótese, não conclusão.</li><li>PEKI Fold não é ferramenta de docking.</li><li>Estruturas redundantes inflam a contagem. Entradas quase iguais aumentam n sem informação nova, e esta aba não remove essa redundância.</li><li>Resultados de motores diferentes não devem ser misturados. Esta aba usa somente o DoGSiteScorer. O drugScore daqui não entra na mesma conta que o escore de outro programa.</li></ul></section>",
+      "depois": {
+        "sessao": {
+          "referenciaId": "4HHB",
+          "grupoId": "G2",
+          "estruturaCaixa": "4HHB",
+          "bolsaoCaixa": "FIX-<P_1>&\"",
+          "sigEns": "28.029|29.224|39.359|17.1|10.7|14.3",
+          "sigEst": "4HHB|FIX-<P_1>&\"|32.572|27.863|36.208|14.9|16.1|12.5",
+          "editEns": {
+            "ok": true,
+            "margem": 4,
+            "nCentroides": 2,
+            "formula": "envelope-dos-centroides",
+            "center_x": 28.029,
+            "center_y": 29.224,
+            "center_z": 39.359,
+            "size_x": 17.1,
+            "size_y": 10.7,
+            "size_z": 14.3,
+            "grupos": [
+              "G1",
+              "G2"
+            ],
+            "faixa": 50
+          },
+          "editEst": {
+            "ok": true,
+            "nAtomos": 16,
+            "margem": 4,
+            "formula": "media-dos-atomos",
+            "center_x": 32.572,
+            "center_y": 27.863,
+            "center_z": 36.208,
+            "size_x": 14.9,
+            "size_y": 16.1,
+            "size_z": 12.5
+          },
+          "sugEns": {
+            "ok": true,
+            "margem": 4,
+            "nCentroides": 2,
+            "formula": "envelope-dos-centroides",
+            "center_x": 28.029,
+            "center_y": 29.224,
+            "center_z": 39.359,
+            "size_x": 17.1,
+            "size_y": 10.7,
+            "size_z": 14.3,
+            "grupos": [
+              "G1",
+              "G2"
+            ],
+            "faixa": 50
+          },
+          "sugEst": {
+            "ok": true,
+            "nAtomos": 16,
+            "margem": 4,
+            "formula": "media-dos-atomos",
+            "center_x": 32.572,
+            "center_y": 27.863,
+            "center_z": 36.208,
+            "size_x": 14.9,
+            "size_y": 16.1,
+            "size_z": 12.5
+          }
+        },
+        "geracao": 0,
+        "cancelado": false,
+        "ouvintes": false,
+        "avisoCache": "Sem espaço no localStorage; o resultado desta sessão fica só na memória.",
+        "memoria": [
+          [
+            "fixture",
+            []
+          ]
+        ],
+        "modeloId": null
+      },
+      "aliases": {
+        "editEnsSugEns": true,
+        "sugEnsRelatorio": true,
+        "editEstSugEst": true
+      },
+      "relatorioAntes": {
+        "bytes": 11785,
+        "sha256": "bcf44271f4c2c4583753a4b2c535385f158f8a330c5ad3f96daf2a30884f5531"
+      },
+      "relatorioDepois": {
+        "bytes": 11785,
+        "sha256": "bcf44271f4c2c4583753a4b2c535385f158f8a330c5ad3f96daf2a30884f5531"
+      }
+    },
+    {
+      "nome": "pocket-e-grupo-obsoletos",
+      "antes": {
+        "sessao": {
+          "referenciaId": "4HHB",
+          "grupoId": "GRUPO_REMOVIDO",
+          "estruturaCaixa": "4HHB",
+          "bolsaoCaixa": "POCKET_REMOVIDO",
+          "sigEns": "28.029|29.224|39.359|17.1|10.7|14.3",
+          "sigEst": "4HHB|FIX-<P_1>&\"|32.572|27.863|36.208|14.9|16.1|12.5",
+          "editEns": {
+            "ok": true,
+            "margem": 4,
+            "nCentroides": 2,
+            "formula": "envelope-dos-centroides",
+            "center_x": 28.029,
+            "center_y": 29.224,
+            "center_z": 39.359,
+            "size_x": 17.1,
+            "size_y": 10.7,
+            "size_z": 14.3,
+            "grupos": [
+              "G1",
+              "G2"
+            ],
+            "faixa": 50
+          },
+          "editEst": {
+            "ok": true,
+            "nAtomos": 16,
+            "margem": 4,
+            "formula": "media-dos-atomos",
+            "center_x": 32.572,
+            "center_y": 27.863,
+            "center_z": 36.208,
+            "size_x": 14.9,
+            "size_y": 16.1,
+            "size_z": 12.5
+          },
+          "sugEns": {
+            "ok": true,
+            "margem": 4,
+            "nCentroides": 2,
+            "formula": "envelope-dos-centroides",
+            "center_x": 28.029,
+            "center_y": 29.224,
+            "center_z": 39.359,
+            "size_x": 17.1,
+            "size_y": 10.7,
+            "size_z": 14.3,
+            "grupos": [
+              "G1",
+              "G2"
+            ],
+            "faixa": 50
+          },
+          "sugEst": {
+            "ok": true,
+            "nAtomos": 16,
+            "margem": 4,
+            "formula": "media-dos-atomos",
+            "center_x": 32.572,
+            "center_y": 27.863,
+            "center_z": 36.208,
+            "size_x": 14.9,
+            "size_y": 16.1,
+            "size_z": 12.5
+          }
+        },
+        "geracao": 0,
+        "cancelado": false,
+        "ouvintes": false,
+        "avisoCache": "Sem espaço no localStorage; o resultado desta sessão fica só na memória.",
+        "memoria": [
+          [
+            "fixture",
+            []
+          ]
+        ],
+        "modeloId": null
+      },
+      "html": "<p id=\"ens-n-efetivo\"><strong>N efetivo = 2</strong> (pedidas nesta execução: 3; carregadas: 4). N efetivo é o número de estruturas que de fato entraram no agrupamento. A recorrência aparece como k de N efetivo.</p><p class=\"ens-nota\">Critério de agrupamento: Jaccard de resíduos ≥ 0.5. Guloso, na ordem recebida. Um bolsão entra num grupo se a estrutura ainda não está nele e o Jaccard de resíduos com o membro de maior Jaccard atinge o limiar. G1 é o primeiro grupo aberto, não um ranking.</p><p class=\"ens-nota\">A distância entre centroides foi pedida, mas não entrou no agrupamento: as estruturas não compartilham referencial e não houve sobreposição.</p><p class=\"ens-nota\">Alinhamento por número de resíduo e pela letra da cadeia. A cadeia A de uma estrutura só encontra a cadeia A de outra com o mesmo número. Não há sobreposição de coordenadas. Se a numeração ou a letra da cadeia mudou, resíduos do mesmo lugar podem ficar separados, e resíduos diferentes podem cair no mesmo número.</p><p class=\"ens-nota\">Sem espaço no localStorage; o resultado desta sessão fica só na memória.</p><div class=\"ens-scroll\"><table class=\"ens-tabela\"><thead><tr><th>Grupo</th><th>Persistência</th><th>drugScore DoGSite</th><th>Volume DoGSite (Å³)</th><th>Estruturas</th><th>Apo / holo</th></tr></thead><tbody><tr data-grupo=\"G1\"><td><strong>G1</strong></td><td>2 de 2 (100%) <span class=\"ens-faixa ens-faixa-75\">≥ 75%</span> <span class=\"ens-n\">N efetivo = 2</span></td><td>0.5 (0.5–0.5)</td><td>100 (100–100)</td><td class=\"ens-wrap\">1CRN (apo), 4HHB (holo)</td><td class=\"ens-wrap\">misto.  Há estrutura com ligante e estrutura sem ligante. Evidência: HETATM. Hipótese: o bolsão existe nos dois estados.</td></tr><tr data-grupo=\"G2\"><td><strong>G2</strong></td><td>2 de 2 (100%) <span class=\"ens-faixa ens-faixa-75\">≥ 75%</span> <span class=\"ens-n\">N efetivo = 2</span></td><td>—</td><td>—</td><td class=\"ens-wrap\">1CRN (apo), 4HHB (holo)</td><td class=\"ens-wrap\">misto.  Há estrutura com ligante e estrutura sem ligante. Evidência: HETATM. Hipótese: o bolsão existe nos dois estados.</td></tr></tbody></table></div><p class=\"ens-nota\">O drugScore e o volume são descritores do DoGSiteScorer. Não são afinidade nem previsão de ligação. Persistência indica recorrência do bolsão no conjunto, não druggability nem ligação de composto.</p><section class=\"ens-grupo\"><h3>G1 — resíduos, 2 de 2</h3><p><span class=\"ens-faixa ens-faixa-75\">≥ 75%</span> THR/VAL A 1 (2 de 2, 100%); LEU/THR A 2 (2 de 2, 100%); CYS/SER A 3 (2 de 2, 100%)</p><p><span class=\"ens-faixa ens-faixa-50\">≥ 50% e &lt; 75%</span> nenhum</p><p><span class=\"ens-faixa ens-faixa-25\">≥ 25% e &lt; 50%</span> nenhum</p><p><span class=\"ens-faixa ens-faixa-0\">&lt; 25%</span> nenhum</p><p class=\"ens-nota\">Evidência: o nome do aminoácido não é o mesmo em todas as estruturas (THR/VAL A 1; LEU/THR A 2; CYS/SER A 3). Hipótese: numeração diferente ou mutação; o arquivo não decide qual.</p></section><section class=\"ens-grupo\"><h3>G2 — resíduos, 2 de 2</h3><p><span class=\"ens-faixa ens-faixa-75\">≥ 75%</span> ARG/VAL A 10 (2 de 2, 100%); LYS/SER A 11 (2 de 2, 100%)</p><p><span class=\"ens-faixa ens-faixa-50\">≥ 50% e &lt; 75%</span> nenhum</p><p><span class=\"ens-faixa ens-faixa-25\">≥ 25% e &lt; 50%</span> nenhum</p><p><span class=\"ens-faixa ens-faixa-0\">&lt; 25%</span> nenhum</p><p class=\"ens-nota\">Evidência: o nome do aminoácido não é o mesmo em todas as estruturas (ARG/VAL A 10; LYS/SER A 11). Hipótese: numeração diferente ou mutação; o arquivo não decide qual.</p></section><h3>Estrutura × bolsão</h3><p id=\"ens-matriz-titulo\"><strong>N efetivo = 2.</strong> Cada célula é o bolsão do DoGSite naquela estrutura, ou ausência.</p><div class=\"ens-scroll\"><table class=\"ens-tabela\"><thead><tr><th>Estrutura</th><th>Apo / holo</th><th>G1<br>2 de 2</th><th>G2<br>2 de 2</th></tr></thead><tbody><tr><td>1CRN público</td><td>apo (indício)</td><td>FIX-P_0 (semente)</td><td>FIX-&lt;P_1&gt;&amp;&quot; (semente)</td></tr><tr><td>4HHB &lt;público&gt; &amp; &quot;local&quot;</td><td>holo (indício)</td><td>FIX-P_0 · 1</td><td>FIX-&lt;P_1&gt;&amp;&quot; · 1</td></tr><tr><td>Consulta simulada indisponível — Falha simulada &lt;rede&gt;</td><td>fora do N efetivo</td><td>—</td><td>—</td></tr></tbody></table></div><p class=\"ens-nota\">Apo ou holo é um indício pela presença de HETATM de ligante. Não confirma o estado biológico.</p><div class=\"ens-caixas\"><section><h3>Caixa do ensemble</h3><p class=\"rotulo-fixo\">Sugestão editável de caixa. Não é uma caixa validada e não é resultado de docking. O texto da caixa segue o mesmo formato da ficha de preparo. Continua sendo sugestão editável e não substitui a conferência daquela ficha. PEKI Fold não é ferramenta de docking.</p><p class=\"ens-nota\">Evidência: envelope dos centroides, na estrutura de referência, dos grupos com pelo menos 2 estruturas e faixa ≥ 50%. A margem é 4 Å de cada lado. Hipótese: que esta caixa serve para um ensaio.</p><div class=\"ens-grade\"><label>center_x <input id=\"ens-box-cx\" type=\"number\" step=\"0.001\" value=\"11.925\"></label><label>center_y <input id=\"ens-box-cy\" type=\"number\" step=\"0.001\" value=\"7.734\"></label><label>center_z <input id=\"ens-box-cz\" type=\"number\" step=\"0.001\" value=\"7.292\"></label><label>size_x <input id=\"ens-box-sx\" type=\"number\" step=\"0.1\" value=\"14\"></label><label>size_y <input id=\"ens-box-sy\" type=\"number\" step=\"0.1\" value=\"15.9\"></label><label>size_z <input id=\"ens-box-sz\" type=\"number\" step=\"0.1\" value=\"9.1\"></label></div><textarea id=\"ens-box-txt\" class=\"ens-cfg\" rows=\"6\">center_x = 11.925\ncenter_y = 7.734\ncenter_z = 7.292\nsize_x = 14.0\nsize_y = 15.9\nsize_z = 9.1</textarea><div class=\"ens-acoes\"><button type=\"button\" class=\"ghost-btn\" id=\"ens-aplicar-ens\">Aplicar texto</button><button type=\"button\" class=\"ghost-btn\" id=\"ens-restaurar-ens\">Restaurar sugestão</button><button type=\"button\" class=\"primary-btn\" id=\"ens-caixa-ens\">Desenhar no 3D</button></div></section><section><h3>Caixa desta estrutura</h3><p class=\"ens-nota\">Evidência: centro na média dos átomos do arquivo de resíduos do DoGSite e tamanho na extensão mais a margem, como na ficha de preparo. O referencial é o desta estrutura.</p><label>Estrutura <select id=\"ens-est\"><option value=\"1CRN\">1CRN público</option><option value=\"4HHB\" selected>4HHB &lt;público&gt; &amp; &quot;local&quot;</option></select></label><label>Bolsão <select id=\"ens-bolsao\"><option value=\"FIX-P_0\" selected>FIX-P_0</option><option value=\"FIX-&lt;P_1&gt;&amp;&quot;\">FIX-&lt;P_1&gt;&amp;&quot;</option></select></label><div class=\"ens-grade\"><label>center_x <input id=\"ens-est-cx\" type=\"number\" step=\"0.001\" value=\"23.486\"></label><label>center_y <input id=\"ens-est-cy\" type=\"number\" step=\"0.001\" value=\"30.585\"></label><label>center_z <input id=\"ens-est-cz\" type=\"number\" step=\"0.001\" value=\"42.511\"></label><label>size_x <input id=\"ens-est-sx\" type=\"number\" step=\"0.1\" value=\"16.9\"></label><label>size_y <input id=\"ens-est-sy\" type=\"number\" step=\"0.1\" value=\"13.4\"></label><label>size_z <input id=\"ens-est-sz\" type=\"number\" step=\"0.1\" value=\"15.6\"></label></div><textarea id=\"ens-est-txt\" class=\"ens-cfg\" rows=\"6\">center_x = 23.486\ncenter_y = 30.585\ncenter_z = 42.511\nsize_x = 16.9\nsize_y = 13.4\nsize_z = 15.6</textarea><div class=\"ens-acoes\"><button type=\"button\" class=\"ghost-btn\" id=\"ens-aplicar-est\">Aplicar texto</button><button type=\"button\" class=\"ghost-btn\" id=\"ens-restaurar-est\">Restaurar sugestão</button><button type=\"button\" class=\"primary-btn\" id=\"ens-caixa-est\">Desenhar no 3D</button></div></section></div><div class=\"ens-viewer-controles\"><label>Referência do 3D <select id=\"ens-ref\"><option value=\"1CRN\">1CRN público</option><option value=\"4HHB\" selected>4HHB &lt;público&gt; &amp; &quot;local&quot;</option></select></label><label>Grupo <select id=\"ens-grupo\"><option value=\"G1\">G1 (2 de 2)</option><option value=\"G2\">G2 (2 de 2)</option></select></label><button type=\"button\" class=\"primary-btn\" id=\"ens-ver\">Ver centroide na referência</button><button type=\"button\" class=\"ghost-btn\" id=\"ens-limpar\">Limpar marcas</button></div><section class=\"ens-leitura\"><h3>Evidência</h3><ul><li>Evidência: dado medido no arquivo ou descritor vindo do DoGSiteScorer.</li><li>N efetivo = 2. Cada recorrência desta página traz k de N efetivo.</li><li>Jaccard mínimo usado: 0.5.</li><li>O drugScore e o volume são descritores do DoGSiteScorer. Não são afinidade nem previsão de ligação.</li><li>Apo ou holo é um indício pela presença de HETATM de ligante. Não confirma o estado biológico.</li></ul><h3>Hipótese</h3><ul><li>Hipótese: interpretação que esses dados não provam.</li><li>Persistência indica recorrência do bolsão no conjunto, não druggability nem ligação de composto.</li><li>Ensemble de estruturas cristalográficas não representa dinâmica real.</li><li>Resultado exploratório: é hipótese, não conclusão.</li><li>PEKI Fold não é ferramenta de docking.</li><li>Estruturas redundantes inflam a contagem. Entradas quase iguais aumentam n sem informação nova, e esta aba não remove essa redundância.</li><li>Resultados de motores diferentes não devem ser misturados. Esta aba usa somente o DoGSiteScorer. O drugScore daqui não entra na mesma conta que o escore de outro programa.</li></ul></section>",
+      "depois": {
+        "sessao": {
+          "referenciaId": "4HHB",
+          "grupoId": "GRUPO_REMOVIDO",
+          "estruturaCaixa": "4HHB",
+          "bolsaoCaixa": "POCKET_REMOVIDO",
+          "sigEns": "11.925|7.734|7.292|14|15.9|9.1",
+          "sigEst": "4HHB|FIX-P_0|23.486|30.585|42.511|16.9|13.4|15.6",
+          "editEns": {
+            "ok": true,
+            "margem": 4,
+            "nCentroides": 2,
+            "formula": "envelope-dos-centroides",
+            "center_x": 11.925,
+            "center_y": 7.734,
+            "center_z": 7.292,
+            "size_x": 14,
+            "size_y": 15.9,
+            "size_z": 9.1,
+            "grupos": [
+              "G1",
+              "G2"
+            ],
+            "faixa": 50
+          },
+          "editEst": {
+            "ok": true,
+            "nAtomos": 21,
+            "margem": 4,
+            "formula": "media-dos-atomos",
+            "center_x": 23.486,
+            "center_y": 30.585,
+            "center_z": 42.511,
+            "size_x": 16.9,
+            "size_y": 13.4,
+            "size_z": 15.6
+          },
+          "sugEns": {
+            "ok": true,
+            "margem": 4,
+            "nCentroides": 2,
+            "formula": "envelope-dos-centroides",
+            "center_x": 11.925,
+            "center_y": 7.734,
+            "center_z": 7.292,
+            "size_x": 14,
+            "size_y": 15.9,
+            "size_z": 9.1,
+            "grupos": [
+              "G1",
+              "G2"
+            ],
+            "faixa": 50
+          },
+          "sugEst": {
+            "ok": true,
+            "nAtomos": 21,
+            "margem": 4,
+            "formula": "media-dos-atomos",
+            "center_x": 23.486,
+            "center_y": 30.585,
+            "center_z": 42.511,
+            "size_x": 16.9,
+            "size_y": 13.4,
+            "size_z": 15.6
+          }
+        },
+        "geracao": 0,
+        "cancelado": false,
+        "ouvintes": false,
+        "avisoCache": "Sem espaço no localStorage; o resultado desta sessão fica só na memória.",
+        "memoria": [
+          [
+            "fixture",
+            []
+          ]
+        ],
+        "modeloId": null
+      },
+      "aliases": {
+        "editEnsSugEns": true,
+        "sugEnsRelatorio": true,
+        "editEstSugEst": true
+      },
+      "relatorioAntes": {
+        "bytes": 11774,
+        "sha256": "acd8a69d993079df184129b8478384e8f97c47613230e114f63fec39d9760e09"
+      },
+      "relatorioDepois": {
+        "bytes": 11774,
+        "sha256": "acd8a69d993079df184129b8478384e8f97c47613230e114f63fec39d9760e09"
+      }
+    },
+    {
+      "nome": "4HHB-removido-referencia-corrigida-caixa-obsoleta",
+      "antes": {
+        "sessao": {
+          "referenciaId": "4HHB",
+          "grupoId": "GRUPO_REMOVIDO",
+          "estruturaCaixa": "4HHB",
+          "bolsaoCaixa": "POCKET_REMOVIDO",
+          "sigEns": "11.925|7.734|7.292|14|15.9|9.1",
+          "sigEst": "4HHB|FIX-P_0|23.486|30.585|42.511|16.9|13.4|15.6",
+          "editEns": {
+            "ok": true,
+            "margem": 4,
+            "nCentroides": 2,
+            "formula": "envelope-dos-centroides",
+            "center_x": 11.925,
+            "center_y": 7.734,
+            "center_z": 7.292,
+            "size_x": 14,
+            "size_y": 15.9,
+            "size_z": 9.1,
+            "grupos": [
+              "G1",
+              "G2"
+            ],
+            "faixa": 50
+          },
+          "editEst": {
+            "ok": true,
+            "nAtomos": 21,
+            "margem": 4,
+            "formula": "media-dos-atomos",
+            "center_x": 23.486,
+            "center_y": 30.585,
+            "center_z": 42.511,
+            "size_x": 16.9,
+            "size_y": 13.4,
+            "size_z": 15.6
+          },
+          "sugEns": {
+            "ok": true,
+            "margem": 4,
+            "nCentroides": 2,
+            "formula": "envelope-dos-centroides",
+            "center_x": 11.925,
+            "center_y": 7.734,
+            "center_z": 7.292,
+            "size_x": 14,
+            "size_y": 15.9,
+            "size_z": 9.1,
+            "grupos": [
+              "G1",
+              "G2"
+            ],
+            "faixa": 50
+          },
+          "sugEst": {
+            "ok": true,
+            "nAtomos": 21,
+            "margem": 4,
+            "formula": "media-dos-atomos",
+            "center_x": 23.486,
+            "center_y": 30.585,
+            "center_z": 42.511,
+            "size_x": 16.9,
+            "size_y": 13.4,
+            "size_z": 15.6
+          }
+        },
+        "geracao": 0,
+        "cancelado": false,
+        "ouvintes": false,
+        "avisoCache": "Sem espaço no localStorage; o resultado desta sessão fica só na memória.",
+        "memoria": [
+          [
+            "fixture",
+            []
+          ]
+        ],
+        "modeloId": null
+      },
+      "html": "<p id=\"ens-n-efetivo\"><strong>N efetivo = 1</strong> (pedidas nesta execução: 1). N efetivo é o número de estruturas que de fato entraram no agrupamento. A recorrência aparece como k de N efetivo.</p><p class=\"ens-nota\">Critério de agrupamento: Jaccard de resíduos ≥ 0.5. Guloso, na ordem recebida. Um bolsão entra num grupo se a estrutura ainda não está nele e o Jaccard de resíduos com o membro de maior Jaccard atinge o limiar. G1 é o primeiro grupo aberto, não um ranking.</p><p class=\"ens-nota\">A distância entre centroides foi pedida, mas não entrou no agrupamento: as estruturas não compartilham referencial e não houve sobreposição.</p><p class=\"ens-nota\">Alinhamento por número de resíduo e pela letra da cadeia. A cadeia A de uma estrutura só encontra a cadeia A de outra com o mesmo número. Não há sobreposição de coordenadas. Se a numeração ou a letra da cadeia mudou, resíduos do mesmo lugar podem ficar separados, e resíduos diferentes podem cair no mesmo número.</p><p class=\"ens-nota\">Sem espaço no localStorage; o resultado desta sessão fica só na memória.</p><div class=\"ens-scroll\"><table class=\"ens-tabela\"><thead><tr><th>Grupo</th><th>Persistência</th><th>drugScore DoGSite</th><th>Volume DoGSite (Å³)</th><th>Estruturas</th><th>Apo / holo</th></tr></thead><tbody><tr data-grupo=\"G1\"><td><strong>G1</strong></td><td>1 de 1 (100%) <span class=\"ens-faixa ens-faixa-75\">≥ 75%</span> <span class=\"ens-n\">N efetivo = 1</span></td><td>0.5 (0.5–0.5)</td><td>100 (100–100)</td><td class=\"ens-wrap\">1CRN (apo)</td><td class=\"ens-wrap\">ver estruturas</td></tr><tr data-grupo=\"G2\"><td><strong>G2</strong></td><td>1 de 1 (100%) <span class=\"ens-faixa ens-faixa-75\">≥ 75%</span> <span class=\"ens-n\">N efetivo = 1</span></td><td>—</td><td>—</td><td class=\"ens-wrap\">1CRN (apo)</td><td class=\"ens-wrap\">ver estruturas</td></tr></tbody></table></div><p class=\"ens-nota\">O drugScore e o volume são descritores do DoGSiteScorer. Não são afinidade nem previsão de ligação. Persistência indica recorrência do bolsão no conjunto, não druggability nem ligação de composto.</p><section class=\"ens-grupo\"><h3>G1 — resíduos, 1 de 1</h3><p><span class=\"ens-faixa ens-faixa-75\">≥ 75%</span> THR A 1 (1 de 1, 100%); THR A 2 (1 de 1, 100%); CYS A 3 (1 de 1, 100%)</p><p><span class=\"ens-faixa ens-faixa-50\">≥ 50% e &lt; 75%</span> nenhum</p><p><span class=\"ens-faixa ens-faixa-25\">≥ 25% e &lt; 50%</span> nenhum</p><p><span class=\"ens-faixa ens-faixa-0\">&lt; 25%</span> nenhum</p></section><section class=\"ens-grupo\"><h3>G2 — resíduos, 1 de 1</h3><p><span class=\"ens-faixa ens-faixa-75\">≥ 75%</span> ARG A 10 (1 de 1, 100%); SER A 11 (1 de 1, 100%)</p><p><span class=\"ens-faixa ens-faixa-50\">≥ 50% e &lt; 75%</span> nenhum</p><p><span class=\"ens-faixa ens-faixa-25\">≥ 25% e &lt; 50%</span> nenhum</p><p><span class=\"ens-faixa ens-faixa-0\">&lt; 25%</span> nenhum</p></section><h3>Estrutura × bolsão</h3><p id=\"ens-matriz-titulo\"><strong>N efetivo = 1.</strong> Cada célula é o bolsão do DoGSite naquela estrutura, ou ausência.</p><div class=\"ens-scroll\"><table class=\"ens-tabela\"><thead><tr><th>Estrutura</th><th>Apo / holo</th><th>G1<br>1 de 1</th><th>G2<br>1 de 1</th></tr></thead><tbody><tr><td>1CRN público</td><td>apo (indício)</td><td>FIX-P_0 (semente)</td><td>FIX-&lt;P_1&gt;&amp;&quot; (semente)</td></tr></tbody></table></div><p class=\"ens-nota\">Apo ou holo é um indício pela presença de HETATM de ligante. Não confirma o estado biológico.</p><div class=\"ens-caixas\"><section><h3>Caixa do ensemble</h3><p class=\"rotulo-fixo\">Sugestão editável de caixa. Não é uma caixa validada e não é resultado de docking. O texto da caixa segue o mesmo formato da ficha de preparo. Continua sendo sugestão editável e não substitui a conferência daquela ficha. PEKI Fold não é ferramenta de docking.</p><p class=\"ens-nota\">Evidência: envelope dos centroides, na estrutura de referência, dos grupos com pelo menos 2 estruturas e faixa ≥ 50%. A margem é 4 Å de cada lado. Hipótese: que esta caixa serve para um ensaio.</p><p class=\"ens-nota\">Nenhum centroide persistente no referencial da estrutura de referência.</p><textarea id=\"ens-box-txt\" class=\"ens-cfg\" rows=\"6\">center_x = NaN\ncenter_y = NaN\ncenter_z = NaN\nsize_x = NaN\nsize_y = NaN\nsize_z = NaN</textarea><div class=\"ens-acoes\"><button type=\"button\" class=\"ghost-btn\" id=\"ens-aplicar-ens\">Aplicar texto</button><button type=\"button\" class=\"ghost-btn\" id=\"ens-restaurar-ens\">Restaurar sugestão</button><button type=\"button\" class=\"primary-btn\" id=\"ens-caixa-ens\">Desenhar no 3D</button></div></section><section><h3>Caixa desta estrutura</h3><p class=\"ens-nota\">Evidência: centro na média dos átomos do arquivo de resíduos do DoGSite e tamanho na extensão mais a margem, como na ficha de preparo. O referencial é o desta estrutura.</p><label>Estrutura <select id=\"ens-est\"><option value=\"1CRN\">1CRN público</option></select></label><label>Bolsão <select id=\"ens-bolsao\"></select></label><p class=\"ens-nota\">Esta estrutura não tem bolsão neste agrupamento.</p><textarea id=\"ens-est-txt\" class=\"ens-cfg\" rows=\"6\">center_x = NaN\ncenter_y = NaN\ncenter_z = NaN\nsize_x = NaN\nsize_y = NaN\nsize_z = NaN</textarea><div class=\"ens-acoes\"><button type=\"button\" class=\"ghost-btn\" id=\"ens-aplicar-est\">Aplicar texto</button><button type=\"button\" class=\"ghost-btn\" id=\"ens-restaurar-est\">Restaurar sugestão</button><button type=\"button\" class=\"primary-btn\" id=\"ens-caixa-est\">Desenhar no 3D</button></div></section></div><div class=\"ens-viewer-controles\"><label>Referência do 3D <select id=\"ens-ref\"><option value=\"1CRN\" selected>1CRN público</option></select></label><label>Grupo <select id=\"ens-grupo\"><option value=\"G1\">G1 (1 de 1)</option><option value=\"G2\">G2 (1 de 1)</option></select></label><button type=\"button\" class=\"primary-btn\" id=\"ens-ver\">Ver centroide na referência</button><button type=\"button\" class=\"ghost-btn\" id=\"ens-limpar\">Limpar marcas</button></div><section class=\"ens-leitura\"><h3>Evidência</h3><ul><li>Evidência: dado medido no arquivo ou descritor vindo do DoGSiteScorer.</li><li>N efetivo = 1. Cada recorrência desta página traz k de N efetivo.</li><li>Jaccard mínimo usado: 0.5.</li><li>O drugScore e o volume são descritores do DoGSiteScorer. Não são afinidade nem previsão de ligação.</li><li>Apo ou holo é um indício pela presença de HETATM de ligante. Não confirma o estado biológico.</li></ul><h3>Hipótese</h3><ul><li>Hipótese: interpretação que esses dados não provam.</li><li>Persistência indica recorrência do bolsão no conjunto, não druggability nem ligação de composto.</li><li>Ensemble de estruturas cristalográficas não representa dinâmica real.</li><li>Resultado exploratório: é hipótese, não conclusão.</li><li>PEKI Fold não é ferramenta de docking.</li><li>Estruturas redundantes inflam a contagem. Entradas quase iguais aumentam n sem informação nova, e esta aba não remove essa redundância.</li><li>Resultados de motores diferentes não devem ser misturados. Esta aba usa somente o DoGSiteScorer. O drugScore daqui não entra na mesma conta que o escore de outro programa.</li></ul></section>",
+      "depois": {
+        "sessao": {
+          "referenciaId": "1CRN",
+          "grupoId": "GRUPO_REMOVIDO",
+          "estruturaCaixa": "4HHB",
+          "bolsaoCaixa": "POCKET_REMOVIDO",
+          "sigEns": "",
+          "sigEst": "",
+          "editEns": null,
+          "editEst": null,
+          "sugEns": {
+            "ok": false,
+            "erro": "Nenhum centroide persistente no referencial da estrutura de referência.",
+            "grupos": [],
+            "faixa": 50
+          },
+          "sugEst": {
+            "ok": false,
+            "erro": "Esta estrutura não tem bolsão neste agrupamento."
+          }
+        },
+        "geracao": 0,
+        "cancelado": false,
+        "ouvintes": false,
+        "avisoCache": "Sem espaço no localStorage; o resultado desta sessão fica só na memória.",
+        "memoria": [
+          [
+            "fixture",
+            []
+          ]
+        ],
+        "modeloId": null
+      },
+      "aliases": {
+        "editEnsSugEns": false,
+        "sugEnsRelatorio": true,
+        "editEstSugEst": false
+      },
+      "relatorioAntes": {
+        "bytes": 9814,
+        "sha256": "98400ef93d3291f66a8bca6a9f885a1a24bfff32734d4b81e4851d2655547aa1"
+      },
+      "relatorioDepois": {
+        "bytes": 9814,
+        "sha256": "98400ef93d3291f66a8bca6a9f885a1a24bfff32734d4b81e4851d2655547aa1"
+      }
+    },
+    {
+      "nome": "sem-bolso",
+      "antes": {
+        "sessao": {
+          "referenciaId": "1CRN",
+          "grupoId": "GRUPO_REMOVIDO",
+          "estruturaCaixa": "4HHB",
+          "bolsaoCaixa": "POCKET_REMOVIDO",
+          "sigEns": "",
+          "sigEst": "",
+          "editEns": null,
+          "editEst": null,
+          "sugEns": {
+            "ok": false,
+            "erro": "Nenhum centroide persistente no referencial da estrutura de referência.",
+            "grupos": [],
+            "faixa": 50
+          },
+          "sugEst": {
+            "ok": false,
+            "erro": "Esta estrutura não tem bolsão neste agrupamento."
+          }
+        },
+        "geracao": 0,
+        "cancelado": false,
+        "ouvintes": false,
+        "avisoCache": "Sem espaço no localStorage; o resultado desta sessão fica só na memória.",
+        "memoria": [
+          [
+            "fixture",
+            []
+          ]
+        ],
+        "modeloId": null
+      },
+      "html": "<p id=\"ens-n-efetivo\"><strong>N efetivo = 1</strong> (pedidas nesta execução: 1). N efetivo é o número de estruturas que de fato entraram no agrupamento. A recorrência aparece como k de N efetivo.</p><p class=\"ens-nota\">Critério de agrupamento: Jaccard de resíduos ≥ 0.5. Guloso, na ordem recebida. Um bolsão entra num grupo se a estrutura ainda não está nele e o Jaccard de resíduos com o membro de maior Jaccard atinge o limiar. G1 é o primeiro grupo aberto, não um ranking.</p><p class=\"ens-nota\">A distância entre centroides foi pedida, mas não entrou no agrupamento: as estruturas não compartilham referencial e não houve sobreposição.</p><p class=\"ens-nota\">Alinhamento por número de resíduo e pela letra da cadeia. A cadeia A de uma estrutura só encontra a cadeia A de outra com o mesmo número. Não há sobreposição de coordenadas. Se a numeração ou a letra da cadeia mudou, resíduos do mesmo lugar podem ficar separados, e resíduos diferentes podem cair no mesmo número.</p><p class=\"ens-nota\">Sem espaço no localStorage; o resultado desta sessão fica só na memória.</p><div class=\"ens-scroll\"><table class=\"ens-tabela\"><thead><tr><th>Grupo</th><th>Persistência</th><th>drugScore DoGSite</th><th>Volume DoGSite (Å³)</th><th>Estruturas</th><th>Apo / holo</th></tr></thead><tbody><tr><td colspan=\"6\">Nenhum bolsão para agrupar.</td></tr></tbody></table></div><p class=\"ens-nota\">O drugScore e o volume são descritores do DoGSiteScorer. Não são afinidade nem previsão de ligação. Persistência indica recorrência do bolsão no conjunto, não druggability nem ligação de composto.</p><h3>Estrutura × bolsão</h3><p id=\"ens-matriz-titulo\"><strong>N efetivo = 1.</strong> Cada célula é o bolsão do DoGSite naquela estrutura, ou ausência.</p><div class=\"ens-scroll\"><table class=\"ens-tabela\"><thead><tr><th>Estrutura</th><th>Apo / holo</th></tr></thead><tbody><tr><td>1CRN público</td><td>apo (indício)</td></tr></tbody></table></div><p class=\"ens-nota\">Apo ou holo é um indício pela presença de HETATM de ligante. Não confirma o estado biológico.</p><div class=\"ens-caixas\"><section><h3>Caixa do ensemble</h3><p class=\"rotulo-fixo\">Sugestão editável de caixa. Não é uma caixa validada e não é resultado de docking. O texto da caixa segue o mesmo formato da ficha de preparo. Continua sendo sugestão editável e não substitui a conferência daquela ficha. PEKI Fold não é ferramenta de docking.</p><p class=\"ens-nota\">Evidência: envelope dos centroides, na estrutura de referência, dos grupos com pelo menos 2 estruturas e faixa ≥ 50%. A margem é 4 Å de cada lado. Hipótese: que esta caixa serve para um ensaio.</p><p class=\"ens-nota\">Nenhum centroide persistente no referencial da estrutura de referência.</p><textarea id=\"ens-box-txt\" class=\"ens-cfg\" rows=\"6\">center_x = NaN\ncenter_y = NaN\ncenter_z = NaN\nsize_x = NaN\nsize_y = NaN\nsize_z = NaN</textarea><div class=\"ens-acoes\"><button type=\"button\" class=\"ghost-btn\" id=\"ens-aplicar-ens\">Aplicar texto</button><button type=\"button\" class=\"ghost-btn\" id=\"ens-restaurar-ens\">Restaurar sugestão</button><button type=\"button\" class=\"primary-btn\" id=\"ens-caixa-ens\">Desenhar no 3D</button></div></section><section><h3>Caixa desta estrutura</h3><p class=\"ens-nota\">Evidência: centro na média dos átomos do arquivo de resíduos do DoGSite e tamanho na extensão mais a margem, como na ficha de preparo. O referencial é o desta estrutura.</p><label>Estrutura <select id=\"ens-est\"><option value=\"1CRN\">1CRN público</option></select></label><label>Bolsão <select id=\"ens-bolsao\"></select></label><p class=\"ens-nota\">Esta estrutura não tem bolsão neste agrupamento.</p><textarea id=\"ens-est-txt\" class=\"ens-cfg\" rows=\"6\">center_x = NaN\ncenter_y = NaN\ncenter_z = NaN\nsize_x = NaN\nsize_y = NaN\nsize_z = NaN</textarea><div class=\"ens-acoes\"><button type=\"button\" class=\"ghost-btn\" id=\"ens-aplicar-est\">Aplicar texto</button><button type=\"button\" class=\"ghost-btn\" id=\"ens-restaurar-est\">Restaurar sugestão</button><button type=\"button\" class=\"primary-btn\" id=\"ens-caixa-est\">Desenhar no 3D</button></div></section></div><div class=\"ens-viewer-controles\"><label>Referência do 3D <select id=\"ens-ref\"><option value=\"1CRN\" selected>1CRN público</option></select></label><label>Grupo <select id=\"ens-grupo\"></select></label><button type=\"button\" class=\"primary-btn\" id=\"ens-ver\">Ver centroide na referência</button><button type=\"button\" class=\"ghost-btn\" id=\"ens-limpar\">Limpar marcas</button></div><section class=\"ens-leitura\"><h3>Evidência</h3><ul><li>Evidência: dado medido no arquivo ou descritor vindo do DoGSiteScorer.</li><li>N efetivo = 1. Cada recorrência desta página traz k de N efetivo.</li><li>Jaccard mínimo usado: 0.5.</li><li>O drugScore e o volume são descritores do DoGSiteScorer. Não são afinidade nem previsão de ligação.</li><li>Apo ou holo é um indício pela presença de HETATM de ligante. Não confirma o estado biológico.</li></ul><h3>Hipótese</h3><ul><li>Hipótese: interpretação que esses dados não provam.</li><li>Persistência indica recorrência do bolsão no conjunto, não druggability nem ligação de composto.</li><li>Ensemble de estruturas cristalográficas não representa dinâmica real.</li><li>Resultado exploratório: é hipótese, não conclusão.</li><li>PEKI Fold não é ferramenta de docking.</li><li>Estruturas redundantes inflam a contagem. Entradas quase iguais aumentam n sem informação nova, e esta aba não remove essa redundância.</li><li>Resultados de motores diferentes não devem ser misturados. Esta aba usa somente o DoGSiteScorer. O drugScore daqui não entra na mesma conta que o escore de outro programa.</li></ul></section>",
+      "depois": {
+        "sessao": {
+          "referenciaId": "1CRN",
+          "grupoId": "GRUPO_REMOVIDO",
+          "estruturaCaixa": "4HHB",
+          "bolsaoCaixa": "POCKET_REMOVIDO",
+          "sigEns": "",
+          "sigEst": "",
+          "editEns": null,
+          "editEst": null,
+          "sugEns": {
+            "ok": false,
+            "erro": "Nenhum centroide persistente no referencial da estrutura de referência.",
+            "grupos": [],
+            "faixa": 50
+          },
+          "sugEst": {
+            "ok": false,
+            "erro": "Esta estrutura não tem bolsão neste agrupamento."
+          }
+        },
+        "geracao": 0,
+        "cancelado": false,
+        "ouvintes": false,
+        "avisoCache": "Sem espaço no localStorage; o resultado desta sessão fica só na memória.",
+        "memoria": [
+          [
+            "fixture",
+            []
+          ]
+        ],
+        "modeloId": null
+      },
+      "aliases": {
+        "editEnsSugEns": false,
+        "sugEnsRelatorio": true,
+        "editEstSugEst": false
+      },
+      "relatorioAntes": {
+        "bytes": 6532,
+        "sha256": "adeac866c6a3e82f6d8a37f60101a47246711e8b2b408ee5c8f56ca2029c0ec8"
+      },
+      "relatorioDepois": {
+        "bytes": 6532,
+        "sha256": "adeac866c6a3e82f6d8a37f60101a47246711e8b2b408ee5c8f56ca2029c0ec8"
+      }
+    },
+    {
+      "nome": "ensemble-vazio",
+      "antes": {
+        "sessao": {
+          "referenciaId": "1CRN",
+          "grupoId": "GRUPO_REMOVIDO",
+          "estruturaCaixa": "4HHB",
+          "bolsaoCaixa": "POCKET_REMOVIDO",
+          "sigEns": "",
+          "sigEst": "",
+          "editEns": null,
+          "editEst": null,
+          "sugEns": {
+            "ok": false,
+            "erro": "Nenhum centroide persistente no referencial da estrutura de referência.",
+            "grupos": [],
+            "faixa": 50
+          },
+          "sugEst": {
+            "ok": false,
+            "erro": "Esta estrutura não tem bolsão neste agrupamento."
+          }
+        },
+        "geracao": 0,
+        "cancelado": false,
+        "ouvintes": false,
+        "avisoCache": "Sem espaço no localStorage; o resultado desta sessão fica só na memória.",
+        "memoria": [
+          [
+            "fixture",
+            []
+          ]
+        ],
+        "modeloId": null
+      },
+      "html": "<p id=\"ens-n-efetivo\"><strong>N efetivo = 0</strong> (pedidas nesta execução: 0). N efetivo é o número de estruturas que de fato entraram no agrupamento. A recorrência aparece como k de N efetivo.</p><p class=\"ens-nota\">Critério de agrupamento: Jaccard de resíduos ≥ 0.5. Guloso, na ordem recebida. Um bolsão entra num grupo se a estrutura ainda não está nele e o Jaccard de resíduos com o membro de maior Jaccard atinge o limiar. G1 é o primeiro grupo aberto, não um ranking.</p><p class=\"ens-nota\">Alinhamento por número de resíduo e pela letra da cadeia. A cadeia A de uma estrutura só encontra a cadeia A de outra com o mesmo número. Não há sobreposição de coordenadas. Se a numeração ou a letra da cadeia mudou, resíduos do mesmo lugar podem ficar separados, e resíduos diferentes podem cair no mesmo número.</p><p class=\"ens-nota\">Sem espaço no localStorage; o resultado desta sessão fica só na memória.</p><div class=\"ens-scroll\"><table class=\"ens-tabela\"><thead><tr><th>Grupo</th><th>Persistência</th><th>drugScore DoGSite</th><th>Volume DoGSite (Å³)</th><th>Estruturas</th><th>Apo / holo</th></tr></thead><tbody><tr><td colspan=\"6\">Nenhum bolsão para agrupar.</td></tr></tbody></table></div><p class=\"ens-nota\">O drugScore e o volume são descritores do DoGSiteScorer. Não são afinidade nem previsão de ligação. Persistência indica recorrência do bolsão no conjunto, não druggability nem ligação de composto.</p><h3>Estrutura × bolsão</h3><p id=\"ens-matriz-titulo\"><strong>N efetivo = 0.</strong> Cada célula é o bolsão do DoGSite naquela estrutura, ou ausência.</p><div class=\"ens-scroll\"><table class=\"ens-tabela\"><thead><tr><th>Estrutura</th><th>Apo / holo</th></tr></thead><tbody></tbody></table></div><p class=\"ens-nota\">Apo ou holo é um indício pela presença de HETATM de ligante. Não confirma o estado biológico.</p><div class=\"ens-caixas\"><section><h3>Caixa do ensemble</h3><p class=\"rotulo-fixo\">Sugestão editável de caixa. Não é uma caixa validada e não é resultado de docking. O texto da caixa segue o mesmo formato da ficha de preparo. Continua sendo sugestão editável e não substitui a conferência daquela ficha. PEKI Fold não é ferramenta de docking.</p><p class=\"ens-nota\">Evidência: envelope dos centroides, na estrutura de referência, dos grupos com pelo menos 2 estruturas e faixa ≥ 50%. A margem é 4 Å de cada lado. Hipótese: que esta caixa serve para um ensaio.</p><p class=\"ens-nota\">Nenhum centroide persistente no referencial da estrutura de referência.</p><textarea id=\"ens-box-txt\" class=\"ens-cfg\" rows=\"6\">center_x = NaN\ncenter_y = NaN\ncenter_z = NaN\nsize_x = NaN\nsize_y = NaN\nsize_z = NaN</textarea><div class=\"ens-acoes\"><button type=\"button\" class=\"ghost-btn\" id=\"ens-aplicar-ens\">Aplicar texto</button><button type=\"button\" class=\"ghost-btn\" id=\"ens-restaurar-ens\">Restaurar sugestão</button><button type=\"button\" class=\"primary-btn\" id=\"ens-caixa-ens\">Desenhar no 3D</button></div></section><section><h3>Caixa desta estrutura</h3><p class=\"ens-nota\">Evidência: centro na média dos átomos do arquivo de resíduos do DoGSite e tamanho na extensão mais a margem, como na ficha de preparo. O referencial é o desta estrutura.</p><label>Estrutura <select id=\"ens-est\"></select></label><label>Bolsão <select id=\"ens-bolsao\"></select></label><p class=\"ens-nota\">Esta estrutura não tem bolsão neste agrupamento.</p><textarea id=\"ens-est-txt\" class=\"ens-cfg\" rows=\"6\">center_x = NaN\ncenter_y = NaN\ncenter_z = NaN\nsize_x = NaN\nsize_y = NaN\nsize_z = NaN</textarea><div class=\"ens-acoes\"><button type=\"button\" class=\"ghost-btn\" id=\"ens-aplicar-est\">Aplicar texto</button><button type=\"button\" class=\"ghost-btn\" id=\"ens-restaurar-est\">Restaurar sugestão</button><button type=\"button\" class=\"primary-btn\" id=\"ens-caixa-est\">Desenhar no 3D</button></div></section></div><div class=\"ens-viewer-controles\"><label>Referência do 3D <select id=\"ens-ref\"></select></label><label>Grupo <select id=\"ens-grupo\"></select></label><button type=\"button\" class=\"primary-btn\" id=\"ens-ver\">Ver centroide na referência</button><button type=\"button\" class=\"ghost-btn\" id=\"ens-limpar\">Limpar marcas</button></div><section class=\"ens-leitura\"><h3>Evidência</h3><ul><li>Evidência: dado medido no arquivo ou descritor vindo do DoGSiteScorer.</li><li>N efetivo = 0. Cada recorrência desta página traz k de N efetivo.</li><li>Jaccard mínimo usado: 0.5.</li><li>O drugScore e o volume são descritores do DoGSiteScorer. Não são afinidade nem previsão de ligação.</li><li>Apo ou holo é um indício pela presença de HETATM de ligante. Não confirma o estado biológico.</li></ul><h3>Hipótese</h3><ul><li>Hipótese: interpretação que esses dados não provam.</li><li>Persistência indica recorrência do bolsão no conjunto, não druggability nem ligação de composto.</li><li>Ensemble de estruturas cristalográficas não representa dinâmica real.</li><li>Resultado exploratório: é hipótese, não conclusão.</li><li>PEKI Fold não é ferramenta de docking.</li><li>Estruturas redundantes inflam a contagem. Entradas quase iguais aumentam n sem informação nova, e esta aba não remove essa redundância.</li><li>Resultados de motores diferentes não devem ser misturados. Esta aba usa somente o DoGSiteScorer. O drugScore daqui não entra na mesma conta que o escore de outro programa.</li></ul></section>",
+      "depois": {
+        "sessao": {
+          "referenciaId": null,
+          "grupoId": "GRUPO_REMOVIDO",
+          "estruturaCaixa": "4HHB",
+          "bolsaoCaixa": "POCKET_REMOVIDO",
+          "sigEns": "",
+          "sigEst": "",
+          "editEns": null,
+          "editEst": null,
+          "sugEns": {
+            "ok": false,
+            "erro": "Nenhum centroide persistente no referencial da estrutura de referência.",
+            "grupos": [],
+            "faixa": 50
+          },
+          "sugEst": {
+            "ok": false,
+            "erro": "Esta estrutura não tem bolsão neste agrupamento."
+          }
+        },
+        "geracao": 0,
+        "cancelado": false,
+        "ouvintes": false,
+        "avisoCache": "Sem espaço no localStorage; o resultado desta sessão fica só na memória.",
+        "memoria": [
+          [
+            "fixture",
+            []
+          ]
+        ],
+        "modeloId": null
+      },
+      "aliases": {
+        "editEnsSugEns": false,
+        "sugEnsRelatorio": true,
+        "editEstSugEst": false
+      },
+      "relatorioAntes": {
+        "bytes": 5832,
+        "sha256": "3ccc29123395adf4199d676cdc1c04566721a997dee51e2c0bea67c615509eed"
+      },
+      "relatorioDepois": {
+        "bytes": 5832,
+        "sha256": "3ccc29123395adf4199d676cdc1c04566721a997dee51e2c0bea67c615509eed"
+      }
+    }
+  ]
+}

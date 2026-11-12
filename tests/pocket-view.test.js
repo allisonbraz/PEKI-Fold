@@ -193,7 +193,9 @@ global.window = global;
 global.$3Dmol = { SurfaceType: { SAS: "SAS" } };
 window.Plotly = { newPlot() {}, Plots: { resize() {} } };
 
-const App = require("../docs/app.js");
+require("node:vm").runInThisContext(fs.readFileSync(path.join(__dirname, "../docs/dogsite-client.js"), "utf8"), { filename: "dogsite-client.js" });
+require("node:vm").runInThisContext(fs.readFileSync(path.join(__dirname, "../docs/libs-loader.js"), "utf8"), { filename: "libs-loader.js" });
+const App = require("./helpers/viewer-app.js");
 
 function viewerFalso() {
   const calls = [];
@@ -209,7 +211,8 @@ function viewerFalso() {
 }
 
 function atomo(chain, resi) {
-  return "ATOM  ".padEnd(21, " ") + chain + String(resi).padStart(4, " ");
+  return "ATOM      1  CA  GLY " + chain + String(resi).padStart(4, " ")
+    + "       1.000   2.000   3.000  1.00 20.00           C  ";
 }
 
 function drenar() {

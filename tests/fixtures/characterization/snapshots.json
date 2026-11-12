@@ -1,0 +1,812 @@
+{
+  "snapshot": {
+    "schema": "peki-analise-1",
+    "versaoApp": "peki-fold-web",
+    "geradoEm": "2026-11-12T15:00:00.000Z",
+    "id": "SIN-CARACTERIZACAO",
+    "rotulo": "1ABC",
+    "origem": {
+      "tipo": "rcsb",
+      "pdbId": "1ABC",
+      "nomeArquivo": "sintetica.pdb",
+      "formato": "pdb",
+      "fonte": "RCSB PDB",
+      "url": "https://files.rcsb.org/download/1ABC.pdb",
+      "titulo": "SYNTHETIC GEOMETRY; NOT AN EXPERIMENTAL DEPOSIT",
+      "metodo": "X-RAY DIFFRACTION",
+      "resolucaoArquivo": {
+        "valor": 2,
+        "unidade": "Å",
+        "origem": "REMARK 2"
+      },
+      "sintetico": false,
+      "nota": "O PDB original não foi embutido. Este arquivo guarda a leitura usada na comparação e fica no computador de quem o baixou."
+    },
+    "modelo": {
+      "selecionado": 1,
+      "total": 1,
+      "criterio": "arquivo sem registro MODEL"
+    },
+    "cadeias": [
+      {
+        "id": "A",
+        "auth": "A",
+        "label": null,
+        "sequencia": "CCNHGA",
+        "residuos": [
+          {
+            "resname": "CYS",
+            "seq": 1,
+            "icode": "",
+            "classe": "proteina"
+          },
+          {
+            "resname": "CYS",
+            "seq": 2,
+            "icode": "",
+            "classe": "proteina"
+          },
+          {
+            "resname": "ASN",
+            "seq": 4,
+            "icode": "",
+            "classe": "proteina"
+          },
+          {
+            "resname": "HIS",
+            "seq": 5,
+            "icode": "",
+            "classe": "proteina"
+          },
+          {
+            "resname": "GLY",
+            "seq": 10,
+            "icode": "A",
+            "classe": "proteina"
+          },
+          {
+            "resname": "ALA",
+            "seq": 11,
+            "icode": "",
+            "classe": "proteina"
+          }
+        ]
+      },
+      {
+        "id": "_",
+        "auth": null,
+        "label": null,
+        "sequencia": "G",
+        "residuos": [
+          {
+            "resname": "GLY",
+            "seq": 1,
+            "icode": "",
+            "classe": "proteina"
+          }
+        ]
+      }
+    ],
+    "cobertura": {
+      "polimerosModelados": 7
+    },
+    "lacunas": {
+      "determinado": false,
+      "resumo": "Não determinado. Não há fonte explícita cobrindo todas as cadeias com polímero (REMARK 465 com a seção MISSING RESIDUES, categoria mmCIF de não observados, esquema de sequência ou SEQRES com alinhamento único). Saltos de numeração não foram contados como resíduos ausentes.",
+      "naoResolvidos": [],
+      "saltosNumeracao": [
+        {
+          "cadeia": "A",
+          "de": 2,
+          "para": 4,
+          "interpretacao": "nao_determinado"
+        },
+        {
+          "cadeia": "A",
+          "de": 5,
+          "para": 10,
+          "interpretacao": "nao_determinado"
+        }
+      ],
+      "foraDoConstructo": "A sequência completa no UniProt não foi consultada. O intervalo citado em DBREF ou _struct_ref_seq não foi expandido em resíduos fora do constructo."
+    },
+    "componentes": {
+      "proteinas": {
+        "posicoes": 7,
+        "padrao": 7,
+        "modificadas": 0
+      },
+      "hetero": [
+        {
+          "codigo": "NAG",
+          "instancias": 1,
+          "nome": null
+        }
+      ],
+      "ions": [
+        {
+          "codigo": "ZN",
+          "instancias": 1,
+          "nome": null
+        }
+      ],
+      "modificados": [],
+      "aguas": {
+        "instancias": 1,
+        "nota": "Contagem de registros HOH, WAT, H2O ou DOD no modelo selecionado. Ausência de registro não significa ausência de água na amostra."
+      },
+      "holo": {
+        "estado": "nao_determinado",
+        "motivo": "HETATM e o inventário de componentes não estabelecem estado holo ou apo."
+      },
+      "anotacoesCcd": [],
+      "ccdEstado": "nao_consultado"
+    },
+    "qualidade": {
+      "estado": "pendente",
+      "motivo": "A consulta ao relatório wwPDB ainda não concluiu nesta análise. Os indicadores não foram inventados nem zerados.",
+      "classe": null,
+      "consulta": null,
+      "fonte": null,
+      "metricas": [],
+      "omitidos": [],
+      "local": {
+        "estado": "pendente",
+        "motivo": "A consulta ao relatório wwPDB ainda não concluiu nesta análise. Os indicadores não foram inventados nem zerados."
+      }
+    },
+    "pockets": {
+      "fonte": null,
+      "aviso": "O drugScore é descritor geométrico do DoGSiteScorer. Não é afinidade, não identifica sítio funcional e não corresponde a um pocket alinhado entre estruturas.",
+      "itens": [],
+      "estado": "nao_solicitado",
+      "motivo": "A detecção não foi executada nesta análise. Não há drugScore para converter em zero."
+    },
+    "preparo": {
+      "estado": "nao_calculado",
+      "motivo": "A ficha de preparo não foi registrada neste guardado.",
+      "versao": null,
+      "predita": null,
+      "contagens": null,
+      "selecao": null,
+      "anotacoes": null,
+      "caixaVina": null
+    },
+    "uniprot": {
+      "correspondenciaResiduo": "nao_estabelecida",
+      "motivo": "DBREF e _struct_ref_seq são intervalos declarados no arquivo. Esta versão não os expande em pares resíduo a resíduo e não consulta a sequência completa no UniProt.",
+      "declaracoes": []
+    },
+    "anotacoes": {
+      "motivoSequencia": null
+    },
+    "limitacoes": [
+      "O PDB original não foi embutido. A comparação usa este snapshot, não uma nova leitura do depósito.",
+      "Não há mapa resíduo a resíduo com UniProt nem sobreposição estrutural.",
+      "Componente observado no snapshot não prova estado holo, apo nem função biológica.",
+      "O drugScore é descritor geométrico do DoGSiteScorer. Não é afinidade, não identifica sítio funcional e não corresponde a um pocket alinhado entre estruturas.",
+      "O relatório wwPDB global não garante a qualidade do sítio.",
+      "Resíduos sem coordenadas não são desenhados nem destacados no viewer.",
+      "A leitura peki-estrutura-1 não calcula R, Rfree, clashscore nem qualidade local. Com ID do PDB, a aba Qualidade consulta o relatório wwPDB à parte.",
+      "Reconstrução de coordenadas e SWISS-MODEL não entram nesta versão.",
+      "Mapa resíduo a resíduo PDB–UniProt fica pendente.",
+      "Regiões fora do constructo não foram separadas das ausências no experimento.",
+      "REMARK 470 e átomos faltando dentro de um resíduo resolvido não entram nesta versão.",
+      "O drugScore do DoGSite continua descritor geométrico, não afinidade."
+    ]
+  },
+  "arquivo": "1ABC-analise.json",
+  "jsonSalvo": {
+    "bytes": 6197,
+    "sha256": "e4317e6b87fc34d87bb4a086823fc45d61c9da31071b5d61418f912a7c3db3d7"
+  },
+  "status": {
+    "pendente": {
+      "qualidade": {
+        "estado": "pendente",
+        "motivo": "fixture pendente",
+        "classe": null,
+        "consulta": null,
+        "fonte": null,
+        "metricas": [],
+        "omitidos": [],
+        "local": {
+          "estado": "pendente",
+          "motivo": "Indicador por resíduo não registrado neste snapshot."
+        }
+      },
+      "pockets": {
+        "fonte": "DoGSiteScorer/ProteinsPlus",
+        "aviso": "O drugScore é descritor geométrico do DoGSiteScorer. Não é afinidade, não identifica sítio funcional e não corresponde a um pocket alinhado entre estruturas.",
+        "itens": [],
+        "estado": "pendente",
+        "motivo": "fixture pendente"
+      }
+    },
+    "erro": {
+      "qualidade": {
+        "estado": "erro",
+        "motivo": "fixture erro",
+        "classe": null,
+        "consulta": null,
+        "fonte": null,
+        "metricas": [],
+        "omitidos": [],
+        "local": {
+          "estado": "pendente",
+          "motivo": "Indicador por resíduo não registrado neste snapshot."
+        }
+      },
+      "pockets": {
+        "fonte": "DoGSiteScorer/ProteinsPlus",
+        "aviso": "O drugScore é descritor geométrico do DoGSiteScorer. Não é afinidade, não identifica sítio funcional e não corresponde a um pocket alinhado entre estruturas.",
+        "itens": [],
+        "estado": "erro",
+        "motivo": "fixture erro"
+      }
+    },
+    "ausente": {
+      "qualidade": {
+        "estado": "ausente",
+        "motivo": "fixture ausente",
+        "classe": null,
+        "consulta": null,
+        "fonte": null,
+        "metricas": [],
+        "omitidos": [],
+        "local": {
+          "estado": "pendente",
+          "motivo": "Indicador por resíduo não registrado neste snapshot."
+        }
+      },
+      "pockets": {
+        "fonte": null,
+        "aviso": "O drugScore é descritor geométrico do DoGSiteScorer. Não é afinidade, não identifica sítio funcional e não corresponde a um pocket alinhado entre estruturas.",
+        "itens": [],
+        "estado": "nao_solicitado",
+        "motivo": "A detecção não foi executada nesta análise. Não há drugScore para converter em zero."
+      }
+    },
+    "rede": {
+      "qualidade": {
+        "estado": "rede",
+        "motivo": "fixture rede",
+        "classe": null,
+        "consulta": null,
+        "fonte": null,
+        "metricas": [],
+        "omitidos": [],
+        "local": {
+          "estado": "pendente",
+          "motivo": "Indicador por resíduo não registrado neste snapshot."
+        }
+      },
+      "pockets": {
+        "fonte": null,
+        "aviso": "O drugScore é descritor geométrico do DoGSiteScorer. Não é afinidade, não identifica sítio funcional e não corresponde a um pocket alinhado entre estruturas.",
+        "itens": [],
+        "estado": "nao_solicitado",
+        "motivo": "A detecção não foi executada nesta análise. Não há drugScore para converter em zero."
+      }
+    },
+    "parcial": {
+      "qualidade": {
+        "estado": "parcial",
+        "motivo": "fixture parcial",
+        "classe": null,
+        "consulta": null,
+        "fonte": null,
+        "metricas": [],
+        "omitidos": [],
+        "local": {
+          "estado": "pendente",
+          "motivo": "Indicador por resíduo não registrado neste snapshot."
+        }
+      },
+      "pockets": {
+        "fonte": null,
+        "aviso": "O drugScore é descritor geométrico do DoGSiteScorer. Não é afinidade, não identifica sítio funcional e não corresponde a um pocket alinhado entre estruturas.",
+        "itens": [],
+        "estado": "nao_solicitado",
+        "motivo": "A detecção não foi executada nesta análise. Não há drugScore para converter em zero."
+      }
+    },
+    "ok": {
+      "qualidade": {
+        "estado": "ok",
+        "motivo": "fixture ok",
+        "classe": null,
+        "consulta": null,
+        "fonte": null,
+        "metricas": [],
+        "omitidos": [],
+        "local": {
+          "estado": "pendente",
+          "motivo": "Indicador por resíduo não registrado neste snapshot."
+        }
+      },
+      "pockets": {
+        "fonte": null,
+        "aviso": "O drugScore é descritor geométrico do DoGSiteScorer. Não é afinidade, não identifica sítio funcional e não corresponde a um pocket alinhado entre estruturas.",
+        "itens": [],
+        "estado": "nao_solicitado",
+        "motivo": "A detecção não foi executada nesta análise. Não há drugScore para converter em zero."
+      }
+    },
+    "nao_aplica": {
+      "qualidade": {
+        "estado": "nao_aplica",
+        "motivo": "fixture nao_aplica",
+        "classe": null,
+        "consulta": null,
+        "fonte": null,
+        "metricas": [],
+        "omitidos": [],
+        "local": {
+          "estado": "pendente",
+          "motivo": "Indicador por resíduo não registrado neste snapshot."
+        }
+      },
+      "pockets": {
+        "fonte": null,
+        "aviso": "O drugScore é descritor geométrico do DoGSiteScorer. Não é afinidade, não identifica sítio funcional e não corresponde a um pocket alinhado entre estruturas.",
+        "itens": [],
+        "estado": "nao_solicitado",
+        "motivo": "A detecção não foi executada nesta análise. Não há drugScore para converter em zero."
+      }
+    }
+  },
+  "nulosAtuais": {
+    "pockets": {
+      "fonte": "DoGSiteScorer/ProteinsPlus",
+      "aviso": "O drugScore é descritor geométrico do DoGSiteScorer. Não é afinidade, não identifica sítio funcional e não corresponde a um pocket alinhado entre estruturas.",
+      "itens": [
+        {
+          "name": "P_0",
+          "volume": null,
+          "surface": null,
+          "depth": null,
+          "hydrophobicity": null,
+          "drugScore": null
+        }
+      ],
+      "estado": "ok",
+      "motivo": null
+    },
+    "qualidade": {
+      "estado": "ok",
+      "motivo": null,
+      "classe": null,
+      "consulta": null,
+      "fonte": null,
+      "metricas": [],
+      "omitidos": [],
+      "local": {
+        "estado": "pendente",
+        "motivo": "Indicador por resíduo não registrado neste snapshot."
+      }
+    }
+  },
+  "mmcifLocal": {
+    "schema": "peki-analise-1",
+    "versaoApp": "peki-fold-web",
+    "geradoEm": "2026-11-12T15:00:00.000Z",
+    "id": "1CRN-20261112T150000000Z",
+    "rotulo": "1CRN",
+    "origem": {
+      "tipo": "arquivo",
+      "pdbId": null,
+      "nomeArquivo": "1CRN.cif",
+      "formato": "mmcif",
+      "fonte": "arquivo local",
+      "url": null,
+      "titulo": "WATER STRUCTURE OF A HYDROPHOBIC PROTEIN AT ATOMIC RESOLUTION. PENTAGON RINGS OF WATER MOLECULES IN CRYSTALS OF CRAMBIN",
+      "metodo": "X-RAY DIFFRACTION",
+      "resolucaoArquivo": {
+        "valor": 1.5,
+        "unidade": "Å",
+        "origem": "_refine.ls_d_res_high"
+      },
+      "sintetico": false,
+      "nota": "O PDB original não foi embutido. Este arquivo guarda a leitura usada na comparação e fica no computador de quem o baixou."
+    },
+    "modelo": {
+      "selecionado": 1,
+      "total": 1,
+      "criterio": "menor pdbx_PDB_model_num presente em _atom_site"
+    },
+    "cadeias": [
+      {
+        "id": "A",
+        "auth": "A",
+        "label": "A",
+        "sequencia": "TTCCPSIVARSNFNVCRLPGTPEAICATYTGCIIIPGATCPGDYAN",
+        "residuos": [
+          {
+            "resname": "THR",
+            "seq": 1,
+            "icode": "",
+            "classe": "proteina"
+          },
+          {
+            "resname": "THR",
+            "seq": 2,
+            "icode": "",
+            "classe": "proteina"
+          },
+          {
+            "resname": "CYS",
+            "seq": 3,
+            "icode": "",
+            "classe": "proteina"
+          },
+          {
+            "resname": "CYS",
+            "seq": 4,
+            "icode": "",
+            "classe": "proteina"
+          },
+          {
+            "resname": "PRO",
+            "seq": 5,
+            "icode": "",
+            "classe": "proteina"
+          },
+          {
+            "resname": "SER",
+            "seq": 6,
+            "icode": "",
+            "classe": "proteina"
+          },
+          {
+            "resname": "ILE",
+            "seq": 7,
+            "icode": "",
+            "classe": "proteina"
+          },
+          {
+            "resname": "VAL",
+            "seq": 8,
+            "icode": "",
+            "classe": "proteina"
+          },
+          {
+            "resname": "ALA",
+            "seq": 9,
+            "icode": "",
+            "classe": "proteina"
+          },
+          {
+            "resname": "ARG",
+            "seq": 10,
+            "icode": "",
+            "classe": "proteina"
+          },
+          {
+            "resname": "SER",
+            "seq": 11,
+            "icode": "",
+            "classe": "proteina"
+          },
+          {
+            "resname": "ASN",
+            "seq": 12,
+            "icode": "",
+            "classe": "proteina"
+          },
+          {
+            "resname": "PHE",
+            "seq": 13,
+            "icode": "",
+            "classe": "proteina"
+          },
+          {
+            "resname": "ASN",
+            "seq": 14,
+            "icode": "",
+            "classe": "proteina"
+          },
+          {
+            "resname": "VAL",
+            "seq": 15,
+            "icode": "",
+            "classe": "proteina"
+          },
+          {
+            "resname": "CYS",
+            "seq": 16,
+            "icode": "",
+            "classe": "proteina"
+          },
+          {
+            "resname": "ARG",
+            "seq": 17,
+            "icode": "",
+            "classe": "proteina"
+          },
+          {
+            "resname": "LEU",
+            "seq": 18,
+            "icode": "",
+            "classe": "proteina"
+          },
+          {
+            "resname": "PRO",
+            "seq": 19,
+            "icode": "",
+            "classe": "proteina"
+          },
+          {
+            "resname": "GLY",
+            "seq": 20,
+            "icode": "",
+            "classe": "proteina"
+          },
+          {
+            "resname": "THR",
+            "seq": 21,
+            "icode": "",
+            "classe": "proteina"
+          },
+          {
+            "resname": "PRO",
+            "seq": 22,
+            "icode": "",
+            "classe": "proteina"
+          },
+          {
+            "resname": "GLU",
+            "seq": 23,
+            "icode": "",
+            "classe": "proteina"
+          },
+          {
+            "resname": "ALA",
+            "seq": 24,
+            "icode": "",
+            "classe": "proteina"
+          },
+          {
+            "resname": "ILE",
+            "seq": 25,
+            "icode": "",
+            "classe": "proteina"
+          },
+          {
+            "resname": "CYS",
+            "seq": 26,
+            "icode": "",
+            "classe": "proteina"
+          },
+          {
+            "resname": "ALA",
+            "seq": 27,
+            "icode": "",
+            "classe": "proteina"
+          },
+          {
+            "resname": "THR",
+            "seq": 28,
+            "icode": "",
+            "classe": "proteina"
+          },
+          {
+            "resname": "TYR",
+            "seq": 29,
+            "icode": "",
+            "classe": "proteina"
+          },
+          {
+            "resname": "THR",
+            "seq": 30,
+            "icode": "",
+            "classe": "proteina"
+          },
+          {
+            "resname": "GLY",
+            "seq": 31,
+            "icode": "",
+            "classe": "proteina"
+          },
+          {
+            "resname": "CYS",
+            "seq": 32,
+            "icode": "",
+            "classe": "proteina"
+          },
+          {
+            "resname": "ILE",
+            "seq": 33,
+            "icode": "",
+            "classe": "proteina"
+          },
+          {
+            "resname": "ILE",
+            "seq": 34,
+            "icode": "",
+            "classe": "proteina"
+          },
+          {
+            "resname": "ILE",
+            "seq": 35,
+            "icode": "",
+            "classe": "proteina"
+          },
+          {
+            "resname": "PRO",
+            "seq": 36,
+            "icode": "",
+            "classe": "proteina"
+          },
+          {
+            "resname": "GLY",
+            "seq": 37,
+            "icode": "",
+            "classe": "proteina"
+          },
+          {
+            "resname": "ALA",
+            "seq": 38,
+            "icode": "",
+            "classe": "proteina"
+          },
+          {
+            "resname": "THR",
+            "seq": 39,
+            "icode": "",
+            "classe": "proteina"
+          },
+          {
+            "resname": "CYS",
+            "seq": 40,
+            "icode": "",
+            "classe": "proteina"
+          },
+          {
+            "resname": "PRO",
+            "seq": 41,
+            "icode": "",
+            "classe": "proteina"
+          },
+          {
+            "resname": "GLY",
+            "seq": 42,
+            "icode": "",
+            "classe": "proteina"
+          },
+          {
+            "resname": "ASP",
+            "seq": 43,
+            "icode": "",
+            "classe": "proteina"
+          },
+          {
+            "resname": "TYR",
+            "seq": 44,
+            "icode": "",
+            "classe": "proteina"
+          },
+          {
+            "resname": "ALA",
+            "seq": 45,
+            "icode": "",
+            "classe": "proteina"
+          },
+          {
+            "resname": "ASN",
+            "seq": 46,
+            "icode": "",
+            "classe": "proteina"
+          }
+        ]
+      }
+    ],
+    "cobertura": {
+      "polimerosModelados": 46
+    },
+    "lacunas": {
+      "determinado": true,
+      "resumo": "Nenhum resíduo não resolvido segundo a fonte explícita. Isso não avalia trechos fora do constructo e não afirma completude em relação ao UniProt.",
+      "naoResolvidos": [],
+      "saltosNumeracao": [],
+      "foraDoConstructo": "A sequência completa no UniProt não foi consultada. O intervalo citado em DBREF ou _struct_ref_seq não foi expandido em resíduos fora do constructo."
+    },
+    "componentes": {
+      "proteinas": {
+        "posicoes": 46,
+        "padrao": 46,
+        "modificadas": 0
+      },
+      "hetero": [],
+      "ions": [],
+      "modificados": [],
+      "aguas": {
+        "instancias": 0,
+        "nota": "Contagem de registros HOH, WAT, H2O ou DOD no modelo selecionado. Ausência de registro não significa ausência de água na amostra."
+      },
+      "holo": {
+        "estado": "nao_determinado",
+        "motivo": "HETATM e o inventário de componentes não estabelecem estado holo ou apo."
+      },
+      "anotacoesCcd": [],
+      "ccdEstado": "nao_consultado"
+    },
+    "qualidade": {
+      "estado": "ausente",
+      "motivo": "Sem ID de depósito, o relatório wwPDB não foi consultado. Nenhum indicador foi preenchido.",
+      "classe": null,
+      "consulta": null,
+      "fonte": null,
+      "metricas": [],
+      "omitidos": [],
+      "local": {
+        "estado": "ausente",
+        "motivo": "Sem ID de depósito, o relatório wwPDB não foi consultado. Nenhum indicador foi preenchido."
+      }
+    },
+    "pockets": {
+      "fonte": null,
+      "aviso": "O drugScore é descritor geométrico do DoGSiteScorer. Não é afinidade, não identifica sítio funcional e não corresponde a um pocket alinhado entre estruturas.",
+      "itens": [],
+      "estado": "nao_aplica",
+      "motivo": "A detecção desta versão usa a API do DoGSiteScorer por ID de PDB. Este arquivo não teve detecção."
+    },
+    "preparo": {
+      "estado": "bloqueado",
+      "motivo": "A ficha de preparo lê colunas PDB. Este mmCIF não foi enviado a ela.",
+      "versao": null,
+      "predita": null,
+      "contagens": null,
+      "selecao": null,
+      "anotacoes": null,
+      "caixaVina": null
+    },
+    "uniprot": {
+      "correspondenciaResiduo": "nao_estabelecida",
+      "motivo": "DBREF e _struct_ref_seq são intervalos declarados no arquivo. Esta versão não os expande em pares resíduo a resíduo e não consulta a sequência completa no UniProt.",
+      "declaracoes": [
+        {
+          "cadeia": "A",
+          "accession": "P01542",
+          "db": "UNP",
+          "pdbInicio": 1,
+          "pdbFim": 46
+        }
+      ]
+    },
+    "anotacoes": {
+      "motivoSequencia": null
+    },
+    "limitacoes": [
+      "O PDB original não foi embutido. A comparação usa este snapshot, não uma nova leitura do depósito.",
+      "Não há mapa resíduo a resíduo com UniProt nem sobreposição estrutural.",
+      "Componente observado no snapshot não prova estado holo, apo nem função biológica.",
+      "O drugScore é descritor geométrico do DoGSiteScorer. Não é afinidade, não identifica sítio funcional e não corresponde a um pocket alinhado entre estruturas.",
+      "O relatório wwPDB global não garante a qualidade do sítio.",
+      "Resíduos sem coordenadas não são desenhados nem destacados no viewer.",
+      "A leitura peki-estrutura-1 não calcula R, Rfree, clashscore nem qualidade local. Com ID do PDB, a aba Qualidade consulta o relatório wwPDB à parte.",
+      "Reconstrução de coordenadas e SWISS-MODEL não entram nesta versão.",
+      "Mapa resíduo a resíduo PDB–UniProt fica pendente.",
+      "Regiões fora do constructo não foram separadas das ausências no experimento.",
+      "REMARK 470 e átomos faltando dentro de um resíduo resolvido não entram nesta versão.",
+      "O drugScore do DoGSite continua descritor geométrico, não afinidade.",
+      "Comparação e Ensemble desta versão continuam no PDB baixado pelo ID. O mmCIF não é encaminhado a essas rotinas.",
+      "O viewer recebe um mmCIF só com o modelo selecionado, gerado da leitura. Não é uma conversão para colunas PDB."
+    ]
+  },
+  "legado": {
+    "ok": true,
+    "erro": null,
+    "analise": {
+      "bytes": 38601,
+      "sha256": "8f3f3087724f15a1d6070d367a4251d81ed97f9ff61eb36450c0dd00cbe623d9"
+    }
+  },
+  "versaoFutura": {
+    "ok": false,
+    "erro": "Versão futura incompatível (peki-analise-2). Esta versão lê peki-analise-1. A comparação atual foi mantida.",
+    "colecao": [
+      "4HHB-20261106T160000000Z"
+    ]
+  }
+}

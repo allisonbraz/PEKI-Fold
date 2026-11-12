@@ -239,7 +239,7 @@ async function fluxosDeRede() {
 
   const lento = fetchQue([{ pendura: true }]);
   const tempo = await BuscaNome.pesquisar("NLRP3", { fetch: lento.fetchImpl, esperaMs: 30 });
-  assert(tempo.codigo === "tempo" && /segundos/.test(tempo.mensagem), "tempo esgotado: " + tempo.mensagem);
+  assert(tempo.codigo === "timeout" && tempo.estado === "erro" && /tempo-limite/.test(tempo.mensagem), "tempo esgotado: " + tempo.mensagem);
 
   const metaLimite = fetchQue([
     { status: 200, texto: JSON.stringify({ total_count: 2, result_set: [{ identifier: "6NPY" }, { identifier: "2NAQ" }] }) },
@@ -306,7 +306,8 @@ function arquivosDaInterface() {
   assert(/id="cmp-ids"/.test(html), "comparação por código permanece");
   assert(/id="file-input"/.test(html), "upload permanece");
   const app = fs.readFileSync(path.join(__dirname, "../docs/app.js"), "utf8");
-  assert(app.includes("Ocultar ${p.name} no 3D") && app.includes("Ocultar ${nome} no 3D"), "botão ver/ocultar do pocket permanece");
+  const viewer = fs.readFileSync(path.join(__dirname, "../docs/viewer.js"), "utf8");
+  assert(viewer.includes("Ocultar ${p.name} no 3D") && viewer.includes("Ocultar ${nome} no 3D"), "botão ver/ocultar do pocket permanece");
   assert(app.includes('data-busca-id') || app.includes("data-busca-id"), "clique da lista usa o código escolhido");
   assert(/acaoCampo\(pdbParam\)/.test(app), "link ?pdb= passa pelo mesmo classificador");
   const rodape = html.slice(html.indexOf('class="creditos"'));

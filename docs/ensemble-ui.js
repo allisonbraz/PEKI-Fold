@@ -137,9 +137,13 @@ const EnsembleUI = (() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  function aoFechar() {
+  function invalidarConsultas() {
     geracao += 1;
     cancelado = true;
+  }
+
+  function aoFechar() {
+    invalidarConsultas();
     const main = $("ensemble");
     if (main) main.hidden = true;
     const box = $("ens-progresso");
@@ -296,8 +300,7 @@ const EnsembleUI = (() => {
     return nomes.map((n) => "<option value=\"" + esc(n) + "\"" + (n === atual ? " selected" : "") + ">" + esc(n) + "</option>").join("");
   }
 
-  function htmlRelatorio(rel) {
-    const f = EnsembleAnalysis.FRASES;
+  function htmlResumoRelatorio(rel, f) {
     let html = "";
     if (rel.exemplo) html += "<p class=\"ens-exemplo-aviso\">" + esc(f.exemplo) + " Três estruturas inventadas, para ver a tabela sem chamar o DoGSiteScorer.</p>";
     html += "<p id=\"ens-n-efetivo\"><strong>N efetivo = " + rel.nEfetivo + "</strong> (pedidas nesta execução: " + rel.nPedidas;
@@ -307,8 +310,15 @@ const EnsembleUI = (() => {
     if (rel.avisoCentroide) html += "<p class=\"ens-nota\">" + esc(rel.avisoCentroide) + "</p>";
     else if (rel.centroideAplicado) html += "<p class=\"ens-nota\">A distância entre centroides também entrou, no máximo " + rel.parametros.distanciaMax + " Å, porque estas estruturas compartilham referencial.</p>";
     html += "<p class=\"ens-nota\">" + esc(rel.alinhamento.limitacao) + "</p>";
+    const descartadas = (sessao.bolsos || []).reduce((n, b) => n + (b.descartadas || 0), 0);
+    if (descartadas) html += "<p class=\"ens-nota\">" + esc(avisoLinhasPocket(descartadas).trim()) + "</p>";
     if (avisoCache) html += "<p class=\"ens-nota\">" + esc(avisoCache) + "</p>";
 
+    return html;
+  }
+
+  function htmlGruposRelatorio(rel, f) {
+    let html = "";
     html += "<div class=\"ens-scroll\"><table class=\"ens-tabela\"><thead><tr>";
     html += "<th>Grupo</th><th>Persistência</th><th>drugScore DoGSite</th><th>Volume DoGSite (Å³)</th><th>Estruturas</th><th>Apo / holo</th>";
     html += "</tr></thead><tbody>";
@@ -331,6 +341,11 @@ const EnsembleUI = (() => {
     html += "</tbody></table></div>";
     html += "<p class=\"ens-nota\">" + esc(f.descritor) + " " + esc(f.persistencia) + "</p>";
 
+    return html;
+  }
+
+  function htmlResiduosRelatorio(rel) {
+    let html = "";
     for (const g of rel.grupos) {
       const res = g.residuos;
       html += "<section class=\"ens-grupo\"><h3>" + esc(g.id) + " — resíduos, " + esc(g.persistencia.texto) + "</h3>";
@@ -345,6 +360,11 @@ const EnsembleUI = (() => {
       html += "</section>";
     }
 
+    return html;
+  }
+
+  function htmlMatrizRelatorio(rel, f) {
+    let html = "";
     html += "<h3>Estrutura × bolsão</h3>";
     html += "<p id=\"ens-matriz-titulo\"><strong>N efetivo = " + rel.nEfetivo + ".</strong> Cada célula é o bolsão do DoGSite naquela estrutura, ou ausência.</p>";
     html += "<div class=\"ens-scroll\"><table class=\"ens-tabela\"><thead><tr><th>Estrutura</th><th>Apo / holo</th>";
@@ -362,6 +382,10 @@ const EnsembleUI = (() => {
     html += "</tbody></table></div>";
     html += "<p class=\"ens-nota\">" + esc(f.apoHolo) + "</p>";
 
+    return html;
+  }
+
+  function atualizarSessaoRelatorio(rel) {
     const refAtual = sessao.referenciaId && rel.estruturas.some((e) => e.id === sessao.referenciaId && e.incluida)
       ? sessao.referenciaId
       : rel.referenciaId;
@@ -382,6 +406,11 @@ const EnsembleUI = (() => {
     sessao.sugEns = rel.caixaEnsemble;
     sessao.sugEst = estCaixa.caixa;
 
+    return { refAtual, estCaixa };
+  }
+
+  function htmlCaixasRelatorio(rel, f, estCaixa) {
+    let html = "";
     html += "<div class=\"ens-caixas\">";
     html += "<section><h3>Caixa do ensemble</h3>";
     html += "<p class=\"rotulo-fixo\">" + esc(f.vina) + " " + esc(f.preparo) + " " + esc(f.docking) + "</p>";
@@ -408,6 +437,11 @@ const EnsembleUI = (() => {
     html += "<button type=\"button\" class=\"primary-btn\" id=\"ens-caixa-est\">Desenhar no 3D</button></div></section>";
     html += "</div>";
 
+    return html;
+  }
+
+  function htmlControlesRelatorio(rel, refAtual) {
+    let html = "";
     html += "<div class=\"ens-viewer-controles\">";
     html += "<label>Referência do 3D <select id=\"ens-ref\">" + opcoesEstruturas(rel, refAtual) + "</select></label>";
     html += "<label>Grupo <select id=\"ens-grupo\">" + rel.grupos.map((g) =>
@@ -417,6 +451,11 @@ const EnsembleUI = (() => {
     html += "<button type=\"button\" class=\"ghost-btn\" id=\"ens-limpar\">Limpar marcas</button>";
     html += "</div>";
 
+    return html;
+  }
+
+  function htmlLeituraRelatorio(rel, f) {
+    let html = "";
     html += "<section class=\"ens-leitura\"><h3>Evidência</h3><ul>";
     html += "<li>" + esc(f.evidencia) + "</li>";
     html += "<li>N efetivo = " + rel.nEfetivo + ". Cada recorrência desta página traz k de N efetivo.</li>";
@@ -432,6 +471,20 @@ const EnsembleUI = (() => {
     html += "<li>" + esc(f.redundancia) + "</li>";
     html += "<li>" + esc(f.motor) + "</li>";
     html += "</ul></section>";
+    return html;
+  }
+
+  function htmlRelatorio(rel) {
+    const f = EnsembleAnalysis.FRASES;
+    let html = "";
+    html += htmlResumoRelatorio(rel, f);
+    html += htmlGruposRelatorio(rel, f);
+    html += htmlResiduosRelatorio(rel);
+    html += htmlMatrizRelatorio(rel, f);
+    const { refAtual, estCaixa } = atualizarSessaoRelatorio(rel);
+    html += htmlCaixasRelatorio(rel, f, estCaixa);
+    html += htmlControlesRelatorio(rel, refAtual);
+    html += htmlLeituraRelatorio(rel, f);
     return html;
   }
 
@@ -467,6 +520,7 @@ const EnsembleUI = (() => {
   }
 
   function abrirSessao(nova, mensagem) {
+    if (typeof invalidarConsultasEstrutura === "function") invalidarConsultasEstrutura();
     geracao += 1;
     cancelado = true;
     setRodando(false);
@@ -516,9 +570,12 @@ const EnsembleUI = (() => {
 
   async function abrirArquivo(file) {
     if (!ATIVO || typeof EnsembleAnalysis === "undefined") return;
+    if (typeof invalidarConsultasEstrutura === "function") invalidarConsultasEstrutura();
+    const g = ++geracao;
     let texto;
     try { texto = await file.text(); }
-    catch (e) { erroHome("Não foi possível ler o arquivo."); return; }
+    catch (e) { if (g === geracao) erroHome("Não foi possível ler o arquivo."); return; }
+    if (g !== geracao) return;
     if (typeof StructureModel !== "undefined" && StructureModel.pareceMmcif(texto)) {
       erroHome("O ensemble desta versão lê PDB com MODEL/ENDMDL. Este mmCIF não foi interpretado como colunas PDB nem enviado ao DoGSite.");
       return;
@@ -574,16 +631,23 @@ const EnsembleUI = (() => {
   }
 
   async function enviarModelo(texto, deveParar) {
+    return PekiRede.limitar((signal) => consultarEnvioModelo(texto, deveParar, signal), { chave: "uploadJob" });
+  }
+
+  async function consultarEnvioModelo(texto, deveParar, signal) {
+    const polling = PekiRede.config.polling.upload;
     const fd = new FormData();
     fd.append("pdb_file[pathvar]", new Blob([texto], { type: "chemical/x-pdb" }), "modelo.pdb");
     let resp;
     try {
-      resp = await fetch("https://proteins.plus/api/pdb_files_rest", {
+      resp = await PekiRede.fetch("https://proteins.plus/api/pdb_files_rest", {
+        signal,
         method: "POST",
         headers: { Accept: "application/json" },
         body: fd,
       });
     } catch (e) {
+      if (PekiRede.ehTimeout(e)) throw e;
       throw new Error("Sem conexão com a API ProteinsPlus (ou bloqueio de rede).");
     }
     if (resp.status === 429) throw new Error("Limite de uso da API atingido. Tente novamente em alguns minutos.");
@@ -591,13 +655,14 @@ const EnsembleUI = (() => {
     const data = await resp.json();
     if (resp.status === 200 && data.id) return String(data.id);
     if (!data.location) throw new Error("Resposta inesperada da API ProteinsPlus (sem 'location').");
-    for (let i = 0; i < 30; i++) {
+    for (let i = 0; i < polling.tentativas; i++) {
       if (deveParar()) throw new Error("Cálculo cancelado.");
-      await sleep(2000);
+      await sleep(polling.intervaloMs);
+      if (signal && signal.aborted) throw PekiRede.erroTimeout();
       if (deveParar()) throw new Error("Cálculo cancelado.");
       let r;
-      try { r = await fetch(data.location, { headers: { Accept: "application/json" } }); }
-      catch (e2) { throw new Error("Conexão perdida durante o envio do modelo."); }
+      try { r = await PekiRede.fetch(data.location, { signal, headers: { Accept: "application/json" } }); }
+      catch (e2) { if (PekiRede.ehTimeout(e2)) throw e2; throw new Error("Conexão perdida durante o envio do modelo."); }
       if (r.status === 429) throw new Error("Limite de uso da API atingido. Tente novamente em alguns minutos.");
       if (r.status === 200) {
         const d = await r.json();
@@ -606,7 +671,7 @@ const EnsembleUI = (() => {
         throw new Error("Erro ao enviar o modelo à API ProteinsPlus (" + r.status + ").");
       }
     }
-    throw new Error("Tempo esgotado aguardando o envio do modelo.");
+    throw PekiRede.erroTimeout();
   }
 
   async function comResiduos(pockets, deveParar) {
@@ -616,14 +681,16 @@ const EnsembleUI = (() => {
       let residuos = [];
       let extensao = null;
       let aviso = null;
+      const diagnostico = {};
       if (p.residuosUrl) {
         let r;
-        try { r = await fetch(p.residuosUrl); }
-        catch (e) { throw new Error("Conexão perdida durante o cálculo dos pockets."); }
+        try { r = await PekiRede.fetch(p.residuosUrl); }
+        catch (e) { if (PekiRede.ehTimeout(e)) throw e; throw new Error("Conexão perdida durante o cálculo dos pockets."); }
         if (r.status === 429) throw new Error("Limite de uso da API atingido. Tente novamente em alguns minutos.");
         if (!r.ok) aviso = "Não foi possível baixar os resíduos deste bolsão (HTTP " + r.status + ").";
         else {
-          const parsed = EnsembleAnalysis.parseArquivoResiduos(await r.text());
+          const parsed = EnsembleAnalysis.parseArquivoResiduos(await r.text(), diagnostico);
+          aviso = avisoLinhasPocket(diagnostico.descartadas).trim() || null;
           residuos = parsed.residuos;
           extensao = parsed.extensao;
         }
@@ -633,6 +700,7 @@ const EnsembleUI = (() => {
         hydrophobicity: p.hydrophobicity, accept: p.accept, donor: p.donor, drugScore: p.drugScore,
         residuos, extensao, aviso,
       });
+      if (diagnostico.descartadas) out[out.length - 1].descartadas = diagnostico.descartadas;
     }
     return out;
   }
@@ -640,7 +708,9 @@ const EnsembleUI = (() => {
   async function chamarUm(item, g, onMsg) {
     if (item.origem === "pdb" && !item.texto) {
       onMsg(item.rotulo + " — baixando coordenadas no RCSB");
-      item.texto = await baixarRCSB(item.id);
+      const texto = await baixarRCSB(item.id);
+      if (parar(g)) throw new Error("Cálculo cancelado.");
+      item.texto = texto;
       if (typeof StructureModel !== "undefined" && !StructureModel.pareceCoordenadaPdb(item.texto)) {
         throw new Error("O PDB baixado para o ensemble não tem coordenadas em colunas PDB. O texto não foi lido como PDB.");
       }
@@ -661,20 +731,29 @@ const EnsembleUI = (() => {
       onMsg(item.rotulo + " — enviando o modelo à ProteinsPlus");
       codigo = await enviarModelo(item.texto, () => parar(g));
     }
+    if (parar(g)) throw new Error("Cálculo cancelado.");
     onMsg(item.rotulo + " — na fila do DoGSiteScorer");
     let pacote;
     if (item.origem !== "modelo" && typeof obterPockets === "function") {
       pacote = await obterPockets(codigo, (n) => onMsg(item.rotulo + " — verificação " + n + " no DoGSiteScorer"), () => parar(g));
     } else {
       const location = await dogsiteSubmit(codigo, { preservarCaixa: true });
+      if (parar(g)) throw new Error("Cálculo cancelado.");
       const resultado = await dogsitePoll(location, (n) => onMsg(item.rotulo + " — verificação " + n + " no DoGSiteScorer"), () => parar(g));
-      const txt = await (await fetch(resultado.result_table)).text();
-      const pockets = parseTabelaPockets(txt);
-      pockets.forEach((p, i) => { p.residuosUrl = (resultado.residues || [])[i] || null; });
+      const txt = await (await PekiRede.fetch(resultado.result_table)).text();
+      const diagnostico = {};
+      const pockets = parseTabelaPockets(txt, diagnostico);
+      pockets.forEach((p, i) => { p.residuosUrl = (resultado.residues || [])[diagnostico.indices[i]] || null; });
       pacote = { pockets };
+      if (diagnostico.descartadas) pacote.descartadas = diagnostico.descartadas;
     }
-    if (!pacote.pockets.length) throw new Error("Nenhum pocket retornado pela API.");
+    if (!pacote.pockets.length) throw new Error("Nenhum pocket retornado pela API." + avisoLinhasPocket(pacote.descartadas));
     const resumo = await comResiduos(pacote.pockets, () => parar(g));
+    if (parar(g)) throw new Error("Cálculo cancelado.");
+    if (pacote.descartadas && resumo.length) {
+      resumo[0].descartadas = (resumo[0].descartadas || 0) + pacote.descartadas;
+      resumo[0].aviso = (resumo[0].aviso || "") + avisoLinhasPocket(pacote.descartadas);
+    }
     gravarCache(chave, resumo);
     item.usouRede = true;
     return resumo;
@@ -722,7 +801,7 @@ const EnsembleUI = (() => {
       item.estado = "calculando";
       renderLista(lista);
       try {
-        const pockets = await comBackoff(item, g, (msg) => setProgresso(i, lista.length, msg));
+        const pockets = await comBackoff(item, g, (msg) => { if (!parar(g)) setProgresso(i, lista.length, msg); });
         if (parar(g)) break;
         item.estado = item.usouRede ? "DoGSite concluído" : "cache";
         prontas.push({ ...item, erro: null, bolsos: pockets });
@@ -734,6 +813,7 @@ const EnsembleUI = (() => {
       }
       setProgresso(i + 1, lista.length, item.rotulo + " — " + item.estado + " (" + (i + 1) + " de " + lista.length + ")");
       if (item.usouRede && i < lista.length - 1 && !parar(g)) await esperar(params.pausaEntreChamadasMs, g);
+      if (g !== geracao) return;
       renderLista(lista);
     }
     if (g !== geracao) return;
@@ -776,7 +856,11 @@ const EnsembleUI = (() => {
     }
   }
 
+  let seqDesenho = 0;
   async function desenhar(extra) {
+    const g = geracao;
+    const seq = ++seqDesenho;
+    const atual = () => g === geracao && seq === seqDesenho;
     const est = estruturaRef();
     if (!est || !est.texto) {
       nota("Sem coordenadas da estrutura de referência para o 3D.");
@@ -785,6 +869,7 @@ const EnsembleUI = (() => {
     try {
       if (typeof lib3D !== "function") throw new Error("biblioteca 3D indisponível");
       await lib3D();
+      if (!atual()) return;
       const div = $("ens-viewer");
       if (!div) return;
       if (!viewer) {
@@ -824,6 +909,7 @@ const EnsembleUI = (() => {
       viewer.zoomTo();
       viewer.render();
     } catch (e) {
+      if (!atual()) return;
       const el = $("ens-viewer-nota");
       const base = el ? el.textContent : "";
       nota(base + " O 3D não abriu (" + e.message + "). Os números acima continuam válidos.");
@@ -990,7 +1076,7 @@ const EnsembleUI = (() => {
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
   else init();
 
-  return { ativo, aoFechar, abrirPorUrl, abrirExemplo };
+  return { ativo, invalidarConsultas, aoFechar, abrirPorUrl, abrirExemplo };
 })();
 
 if (typeof globalThis !== "undefined") globalThis.EnsembleUI = EnsembleUI;
