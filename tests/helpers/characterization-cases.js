@@ -207,7 +207,7 @@ function ensemble() {
 }
 
 function appBrowser() {
-  return browser(["pdb-analysis", "structure-model", "quality-model", "prep-analysis", "prep-ui", "analysis-snapshot", "analysis-ui", "busca-nome", "app"]);
+  return browser(["pdb-analysis", "structure-model", "quality-model", "prep-analysis", "prep-ui", "analysis-snapshot", "analysis-ui", "busca-nome", "libs-loader", "app"]);
 }
 
 async function pockets() {

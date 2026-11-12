@@ -193,6 +193,7 @@ global.window = global;
 global.$3Dmol = { SurfaceType: { SAS: "SAS" } };
 window.Plotly = { newPlot() {}, Plots: { resize() {} } };
 
+require("node:vm").runInThisContext(fs.readFileSync(path.join(__dirname, "../docs/libs-loader.js"), "utf8"), { filename: "libs-loader.js" });
 const App = require("../docs/app.js");
 
 function viewerFalso() {
