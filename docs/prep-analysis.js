@@ -951,19 +951,7 @@ const PrepAnalysis = (() => {
     return s;
   }
 
-  function limparPdb(texto, opcoes) {
-    const o = opcoes || {};
-    const pdb = primeiroModelo(texto);
-    const atomos = parseAtomos(pdb);
-    const cadeias = o.cadeias ? new Set(o.cadeias) : null;
-    const hets = o.hets ? new Set(o.hets) : null;
-    const aguasManter = new Set(o.aguasManter || []);
-    const removerAguas = o.removerAguas !== false;
-    const altloc = o.altloc === "ocupacao" ? "ocupacao" : "A";
-
-    let anisou = 0;
-    for (const l of pdb.split("\n")) if (l.startsWith("ANISOU")) anisou += 1;
-
+  function selecionarAtomosLimpeza(atomos, cadeias, hets, aguasManter, removerAguas) {
     const candidatos = [];
     let foraCadeia = 0;
     let aguasRemovidas = 0;
@@ -980,6 +968,10 @@ const PrepAnalysis = (() => {
       candidatos.push(a);
     }
 
+    return { candidatos, foraCadeia, aguasRemovidas, hetsRemovidos };
+  }
+
+  function selecionarAltlocLimpeza(candidatos, altloc) {
     const antes = new Set(candidatos.map((a) => a.chaveRes));
     let escolhidos;
     let altlocRemovidos = 0;
@@ -1003,6 +995,10 @@ const PrepAnalysis = (() => {
     const depois = new Set(escolhidos.map((a) => a.chaveRes));
     const sumiram = [...antes].filter((k) => !depois.has(k));
 
+    return { escolhidos, altlocRemovidos, sumiram };
+  }
+
+  function deduplicarLinhasLimpeza(escolhidos) {
     const vistos = new Set();
     const unicos = [];
     let duplicadas = 0;
@@ -1013,6 +1009,10 @@ const PrepAnalysis = (() => {
       unicos.push({ atom: a, linha });
     }
 
+    return { unicos, duplicadas };
+  }
+
+  function montarRegistrosLimpeza(unicos) {
     const out = [
       "REMARK   1 PEKI Fold. PDB filtrado no navegador (ficha de preparo).",
       "REMARK   1 Nao adiciona hidrogenio, nao protona e nao e entrada pronta de simulacao.",
@@ -1027,6 +1027,10 @@ const PrepAnalysis = (() => {
     if (unicos.length) out.push("TER");
     out.push("END");
 
+    return out;
+  }
+
+  function separarIonsLimpeza(unicos) {
     const contagemEl = {};
     const ions = [];
     for (const item of unicos) {
@@ -1045,6 +1049,10 @@ const PrepAnalysis = (() => {
         pdb: item.linha + "\nEND\n",
       });
     }
+    return ions;
+  }
+
+  function separarHetsLimpeza(unicos) {
     const hetArqs = [];
     const hetGrupos = new Map();
     for (const item of unicos) {
@@ -1063,6 +1071,35 @@ const PrepAnalysis = (() => {
         nAtomos: linhas.length,
       });
     }
+
+    return hetArqs;
+  }
+
+  function limparPdb(texto, opcoes) {
+    const o = opcoes || {};
+    const pdb = primeiroModelo(texto);
+    const atomos = parseAtomos(pdb);
+    const cadeias = o.cadeias ? new Set(o.cadeias) : null;
+    const hets = o.hets ? new Set(o.hets) : null;
+    const aguasManter = new Set(o.aguasManter || []);
+    const removerAguas = o.removerAguas !== false;
+    const altloc = o.altloc === "ocupacao" ? "ocupacao" : "A";
+
+    let anisou = 0;
+    for (const l of pdb.split("\n")) if (l.startsWith("ANISOU")) anisou += 1;
+
+    const { candidatos, foraCadeia, aguasRemovidas, hetsRemovidos } =
+      selecionarAtomosLimpeza(atomos, cadeias, hets, aguasManter, removerAguas);
+
+    const { escolhidos, altlocRemovidos, sumiram } = selecionarAltlocLimpeza(candidatos, altloc);
+
+    const { unicos, duplicadas } = deduplicarLinhasLimpeza(escolhidos);
+
+    const out = montarRegistrosLimpeza(unicos);
+
+    const ions = separarIonsLimpeza(unicos);
+
+    const hetArqs = separarHetsLimpeza(unicos);
 
     const linhasResumo = [
       `Átomos de proteína mantidos: ${unicos.filter((u) => u.atom.registro === "ATOM").length}.`,
