@@ -30,7 +30,7 @@ test("comportamento conhecido: validação interna aceita métricas com tipo inc
   assert.throws(() => AS.comparar([snapshot, { ...snapshot, id: "SIN-OUTRO" }], {}), /lista\.find is not a function/);
 });
 
-test("comportamento conhecido: XML em blocos perde subgrupo após 64 KiB", async () => {
+test("XML em blocos preserva subgrupo após 64 KiB", async () => {
   const QM = models().get("QualityModel");
   const xml = '<wwPDB-validation-information><Entry pdbid="1ABC" percentilebins="xray" clashscore="1"/><!--'
     + "x".repeat(70000)
@@ -45,7 +45,122 @@ test("comportamento conhecido: XML em blocos perde subgrupo após 64 KiB", async
   const streamed = await QM.consultarRelatorio("1ABC", { fetch: async () => response });
   assert.equal(direct.local.subgruposLidos, 1);
   assert.equal(streamed.estado, "ok");
-  assert.equal(streamed.local.subgruposLidos, 0);
+  assert.equal(streamed.local.subgruposLidos, 1);
+  assert.deepStrictEqual(json(streamed), json(direct));
+});
+
+test("XML público de 1CRN maior que 64 KiB é lido inteiro e reutilizado no cache", async () => {
+  const QM = models().get("QualityModel");
+  const original = fs.readFileSync(path.join(__dirname, "fixtures/qualidade/1CRN_validation.xml"), "utf8");
+  const xml = original.replace("<ModelledSubgroup", "<!--" + "é".repeat(70000) + "--><ModelledSubgroup");
+  const bytes = Buffer.from(xml);
+  let offset = 0, pedidos = 0;
+  const cache = QM.criarCache();
+  const resultado = await QM.consultarRelatorio("1CRN", { cache, fetch: async (url) => {
+    pedidos += 1;
+    assert.match(url, /1crn_validation\.xml$/);
+    return { status: 200, body: { getReader: () => ({
+      read: async () => {
+        if (offset === bytes.length) return { done: true };
+        const value = bytes.subarray(offset, offset + 65535);
+        offset += value.length;
+        return { done: false, value };
+      },
+      cancel: async () => assert.fail("XML abaixo do limite não deve ser cortado"),
+    }) } };
+  } });
+  assert(bytes.length > 65536);
+  assert.equal(offset, bytes.length);
+  assert.equal(resultado.consulta, "xml");
+  assert.equal(resultado.local.subgruposLidos, 46);
+  assert.deepStrictEqual(json(resultado), json(QM.lerXml(xml, { id: "1CRN" })));
+  assert.strictEqual(await QM.consultarRelatorio("1CRN", { cache }), resultado);
+  assert.equal(pedidos, 1, "XML completo dispensa a alternativa JSON");
+});
+
+test("limite explícito de 5 MiB aceita a fronteira e rejeita excesso sem cache parcial", async () => {
+  const QM = models().get("QualityModel");
+  assert.equal(QM.LIMITE_BYTES, 5 * 1024 * 1024);
+  const original = fs.readFileSync(path.join(__dirname, "fixtures/qualidade/1CRN_validation.xml"), "utf8");
+  const xmlNoLimite = original.replace("<ModelledSubgroup", "<!--"
+    + "x".repeat(QM.LIMITE_BYTES - Buffer.byteLength(original) - 7) + "--><ModelledSubgroup");
+  assert.equal(Buffer.byteLength(xmlNoLimite), QM.LIMITE_BYTES);
+  for (const emBlocos of [false, true]) {
+    for (const excesso of [false, true]) {
+      const xml = excesso ? xmlNoLimite.replace("<!--", "<!--é") : xmlNoLimite;
+      const bytes = Buffer.from(xml), cache = QM.criarCache();
+      let offset = 0, cancelamentos = 0, pedidos = 0;
+      const resultado = await QM.consultarRelatorio("1CRN", { cache, fetch: async () => {
+        pedidos += 1;
+        if (pedidos === 2) {
+          assert.equal(cache.lerRelatorio("1CRN"), null);
+          return { status: 503 };
+        }
+        return emBlocos ? { status: 200, body: { getReader: () => ({
+          read: async () => {
+            if (offset === bytes.length) return { done: true };
+            const value = bytes.subarray(offset, offset + 65536);
+            offset += value.length;
+            return { done: false, value };
+          },
+          cancel: async () => { cancelamentos += 1; },
+        }) } } : { status: 200, text: async () => xml };
+      } });
+      assert.equal(pedidos, excesso ? 2 : 1);
+      assert.equal(cancelamentos, emBlocos && excesso ? 1 : 0);
+      if (excesso) {
+        assert.equal(resultado.codigo, "xml_grande_demais");
+        assert.match(resultado.mensagem, /grande demais.*5242880 bytes/);
+        assert.deepStrictEqual(json(resultado.metricas), []);
+        assert.equal(cache.lerRelatorio("1CRN"), null);
+      } else {
+        assert.equal(resultado.estado, "ok");
+        assert.equal(resultado.local.subgruposLidos, 46);
+        assert.strictEqual(cache.lerRelatorio("1CRN"), resultado);
+      }
+    }
+  }
+});
+
+test("XML acima do limite tenta JSON e só mantém o erro de tamanho se a alternativa falhar", async () => {
+  const { context, get } = models();
+  const QM = get("QualityModel");
+  const xml = fs.readFileSync(path.join(__dirname, "fixtures/qualidade/1CRN_validation.xml"), "utf8");
+  const entry = JSON.parse(fs.readFileSync(path.join(__dirname, "fixtures/qualidade/rcsb_1CRN_entry.json"), "utf8"));
+  for (const cenario of ["ok", 404, 429, 503, "rede", "timeout", "invalido", "id_divergente", "cancelado"]) {
+    const cache = QM.criarCache(), ctrl = new AbortController(), pedidos = [], timers = [];
+    let serial = 0;
+    context.setTimeout = (_fn, ms) => { const id = ++serial; timers.push(["agendar", id, ms]); return id; };
+    context.clearTimeout = (id) => timers.push(["limpar", id]);
+    const resultado = await QM.consultarRelatorio("1CRN", { cache, signal: ctrl.signal, limite: 80, fetch: async (url) => {
+      pedidos.push(url);
+      if (pedidos.length === 1) return { status: 200, text: async () => xml };
+      assert.equal(cache.lerRelatorio("1CRN"), null, "XML parcial nunca entra no cache");
+      if (cenario === "rede") throw new TypeError("rede simulada");
+      if (cenario === "cancelado") ctrl.abort();
+      if (cenario === "timeout" || cenario === "cancelado") throw Object.assign(new Error("abort"), { name: "AbortError" });
+      if (typeof cenario === "number") return { status: cenario };
+      return { status: 200, json: async () => {
+        if (cenario === "invalido") throw new SyntaxError("JSON inválido");
+        return cenario === "id_divergente" ? { rcsb_entry_container_identifiers: { entry_id: "4HHB" } } : entry;
+      } };
+    } });
+    assert.deepStrictEqual(pedidos, [QM.urlsDe("1CRN").xml, QM.urlsDe("1CRN").json]);
+    assert.deepStrictEqual(timers, [["agendar", 1, 12000], ["limpar", 1], ["agendar", 2, 8000], ["limpar", 2]]);
+    assert(resultado.tentativas.some((t) => t.fonte === "pdbe-xml" && t.codigo === "xml_grande_demais"));
+    if (cenario !== "cancelado") assert(resultado.tentativas.some((t) => t.fonte === "rcsb-json"));
+    if (cenario === "ok") {
+      assert.equal(resultado.consulta, "rcsb-json");
+      const esperado = QM.lerResumoRcsb(entry, { id: "1CRN" });
+      esperado.tentativas = resultado.tentativas;
+      assert.deepStrictEqual(json(resultado), json(esperado));
+      assert.strictEqual(cache.lerRelatorio("1CRN"), resultado);
+    } else {
+      assert.equal(resultado.codigo, cenario === "cancelado" ? "cancelado" : "xml_grande_demais");
+      assert.deepStrictEqual(json(resultado.metricas), []);
+      assert.equal(cache.lerRelatorio("1CRN"), null);
+    }
+  }
 });
 
 test("comportamento conhecido: preparo aceita e renderiza caixa com tamanhos não positivos", async () => {

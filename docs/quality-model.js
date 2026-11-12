@@ -26,8 +26,7 @@
 
 const QualityModel = (() => {
   const SCHEMA = "peki-qualidade-1";
-  const LIMITE_BYTES = 2000000;
-  const PREFIXO_ENTRY = 65536;
+  const LIMITE_BYTES = 5 * 1024 * 1024;
   const XSD = "http://wwpdb.org/validation/schema/wwpdb_validation_v6.06.xsd";
   const AVISO_GLOBAL = "O relatório wwPDB e os indicadores globais não garantem a qualidade local do sítio. Um valor global pode conviver com problema no local de interesse.";
   const AVISO_LOCAL = "Indicador por resíduo só existe quando o relatório traz ModelledSubgroup com chain (auth_asym_id), resnum (auth_seq_id) e model, e essa posição tem coordenada no modelo selecionado. Lacuna sem coordenada não recebe qualidade local. Resíduo que não está no relatório não é preenchido com zero.";
@@ -711,18 +710,19 @@ const QualityModel = (() => {
         const passo = await reader.read();
         if (passo.done) break;
         total += passo.value.byteLength;
-        if (texto.length < PREFIXO_ENTRY) texto += dec.decode(passo.value, { stream: true });
         if (total > limite) {
           try { await reader.cancel(); } catch (e) { /* já fechado */ }
-          return { texto: texto.slice(0, PREFIXO_ENTRY), excedeu: true, total };
+          return { texto: "", excedeu: true, total };
         }
+        texto += dec.decode(passo.value, { stream: true });
       }
       texto += dec.decode();
       return { texto, excedeu: false, total };
     }
     const texto = await res.text();
-    if (texto.length > limite) return { texto: texto.slice(0, PREFIXO_ENTRY), excedeu: true, total: texto.length };
-    return { texto, excedeu: false, total: texto.length };
+    const total = new TextEncoder().encode(texto).byteLength;
+    if (total > limite) return { texto: "", excedeu: true, total };
+    return { texto, excedeu: false, total };
   }
 
   function statusDe(res) {
@@ -801,8 +801,9 @@ const QualityModel = (() => {
       return erroConsulta(up, "sem_fetch", "Não há função de consulta configurada.");
     }
     const tentativas = [];
+    let xmlGrandeDemais = null;
     const sinal = o.signal;
-    const limite = o.limite || LIMITE_BYTES;
+    const limite = Math.min(Number(o.limite) || LIMITE_BYTES, LIMITE_BYTES);
     const urls = urlsDe(up);
     if (sinal && sinal.aborted) {
       return erroConsulta(up, "cancelado", "A consulta ao relatório foi cancelada. Nenhum indicador foi preenchido.");
@@ -819,8 +820,13 @@ const QualityModel = (() => {
       tentativas.push({ fonte: "pdbe-xml", url: urls.xml, status });
       if (status === 200) {
         const lido = await textoLimitado(res, limite);
-        const rel = processarXmlConsultado(lido, up, o, cache, tentativas, urls);
-        if (rel) return rel;
+        if (lido.excedeu) {
+          xmlGrandeDemais = erroConsulta(up, "xml_grande_demais", "O relatório XML é grande demais: ultrapassa o limite de leitura de " + limite + " bytes. Nenhum indicador foi preenchido.", tentativas);
+          tentativas.push({ fonte: "pdbe-xml", url: urls.xml, status: "xml_grande_demais", codigo: "xml_grande_demais" });
+        } else {
+          const rel = processarXmlConsultado(lido, up, o, cache, tentativas, urls);
+          if (rel) return rel;
+        }
       }
     } catch (e) {
       if (sinal && sinal.aborted) {
@@ -842,22 +848,23 @@ const QualityModel = (() => {
       const status = statusDe(res);
       tentativas.push({ fonte: "rcsb-json", url: urls.json, status });
       if (status === 429) {
-        return erroConsulta(up, "429", "O RCSB respondeu 429 (limite de consultas). Nenhum indicador foi preenchido.", tentativas);
+        return xmlGrandeDemais || erroConsulta(up, "429", "O RCSB respondeu 429 (limite de consultas). Nenhum indicador foi preenchido.", tentativas);
       }
       if (status === 404) {
-        return erroConsulta(up, "404", "Não há relatório nem ficha na Data API para este ID (HTTP 404). Nenhum indicador foi preenchido.", tentativas);
+        return xmlGrandeDemais || erroConsulta(up, "404", "Não há relatório nem ficha na Data API para este ID (HTTP 404). Nenhum indicador foi preenchido.", tentativas);
       }
       if (status === 200) {
         const json = await res.json();
-        return processarJsonConsultado(json, up, o, cache, tentativas);
+        const rel = processarJsonConsultado(json, up, o, cache, tentativas);
+        return xmlGrandeDemais && rel.estado !== "ok" && rel.estado !== "parcial" ? xmlGrandeDemais : rel;
       }
-      return erroConsulta(up, "http_" + status, "A consulta ao relatório devolveu HTTP " + status + ". Nenhum indicador foi preenchido.", tentativas);
+      return xmlGrandeDemais || erroConsulta(up, "http_" + status, "A consulta ao relatório devolveu HTTP " + status + ". Nenhum indicador foi preenchido.", tentativas);
     } catch (e) {
       if (sinal && sinal.aborted) {
         return erroConsulta(up, "cancelado", "A consulta ao relatório foi cancelada. Nenhum indicador foi preenchido.", tentativas);
       }
       tentativas.push({ fonte: "rcsb-json", url: urls.json, status: e && e.name === "AbortError" ? "timeout" : "rede" });
-      return erroConsulta(up, "rede", "A consulta não devolveu dados (rede ou CORS). Nenhum indicador foi preenchido. Os links oficiais continuam disponíveis para abrir no navegador.", tentativas);
+      return xmlGrandeDemais || erroConsulta(up, "rede", "A consulta não devolveu dados (rede ou CORS). Nenhum indicador foi preenchido. Os links oficiais continuam disponíveis para abrir no navegador.", tentativas);
     }
   }
 

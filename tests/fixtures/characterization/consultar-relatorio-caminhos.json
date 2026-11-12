@@ -3206,19 +3206,17 @@
   "xmlTruncado": {
     "resultado": {
       "schema": "peki-qualidade-1",
-      "estado": "parcial",
-      "codigo": null,
-      "mensagem": null,
+      "estado": "erro",
+      "codigo": "xml_grande_demais",
+      "mensagem": "O relatório XML é grande demais: ultrapassa o limite de leitura de 80 bytes. Nenhum indicador foi preenchido.",
       "id": "1CRN",
-      "consulta": "xml",
-      "fonte": {
-        "nome": "wwPDB validation report",
-        "distribuicao": "PDBe entry-files",
-        "url": "https://www.ebi.ac.uk/pdbe/entry-files/download/1crn_validation.xml",
-        "schemaXsd": "http://wwpdb.org/validation/schema/wwpdb_validation_v6.06.xsd",
-        "pdbid": "1CRN",
-        "data": "Mar  5, 2026 -- 06:54 PM UTC",
-        "percentilebins": "all,1.5,xray"
+      "metricas": [],
+      "omitidos": [],
+      "naoAplicaveis": [],
+      "local": {
+        "estado": "pendente",
+        "motivo": "O relatório XML é grande demais: ultrapassa o limite de leitura de 80 bytes. Nenhum indicador foi preenchido.",
+        "itens": []
       },
       "links": {
         "xml": "https://www.ebi.ac.uk/pdbe/entry-files/download/1crn_validation.xml",
@@ -3231,124 +3229,29 @@
         "pdbeComp": "https://www.ebi.ac.uk/pdbe/api/pdb/compound/summary/",
         "ligante": "https://www.rcsb.org/ligand/"
       },
-      "metodo": {
-        "classe": "xray",
-        "arquivo": "xray",
-        "relatorio": "xray",
-        "conflito": false
-      },
-      "metricas": [
+      "tentativas": [
         {
-          "id": "resolucao",
-          "rotulo": "Resolução alta citada no relatório",
-          "unidade": "Å",
-          "grupo": "experimento",
-          "valor": 1.5,
-          "texto": "1.50",
-          "chave": "PDB-resolution"
+          "fonte": "pdbe-xml",
+          "url": "https://www.ebi.ac.uk/pdbe/entry-files/download/1crn_validation.xml",
+          "status": 200
         },
         {
-          "id": "clashscore",
-          "rotulo": "Clashscore",
-          "unidade": null,
-          "grupo": "geometria",
-          "valor": 0,
-          "texto": "0.00",
-          "chave": "clashscore"
+          "fonte": "pdbe-xml",
+          "url": "https://www.ebi.ac.uk/pdbe/entry-files/download/1crn_validation.xml",
+          "status": "xml_grande_demais",
+          "codigo": "xml_grande_demais"
         },
         {
-          "id": "rama",
-          "rotulo": "Ramachandran outliers",
-          "unidade": "%",
-          "grupo": "geometria",
-          "valor": 0,
-          "texto": "0.00",
-          "chave": "percent-rama-outliers"
+          "fonte": "rcsb-json",
+          "url": "https://data.rcsb.org/rest/v1/core/entry/1CRN",
+          "status": 200
         },
         {
-          "id": "rotamer",
-          "rotulo": "Rotâmeros outliers",
-          "unidade": "%",
-          "grupo": "geometria",
-          "valor": 0,
-          "texto": "0.00",
-          "chave": "percent-rota-outliers"
-        },
-        {
-          "id": "bonds_rmsz",
-          "rotulo": "RMSZ dos comprimentos de ligação",
-          "unidade": null,
-          "grupo": "geometria",
-          "valor": 1.5,
-          "texto": "1.50",
-          "chave": "bonds_rmsz"
-        },
-        {
-          "id": "angles_rmsz",
-          "rotulo": "RMSZ dos ângulos de ligação",
-          "unidade": null,
-          "grupo": "geometria",
-          "valor": 1.55,
-          "texto": "1.55",
-          "chave": "angles_rmsz"
+          "fonte": "rcsb-json",
+          "url": "https://data.rcsb.org/rest/v1/core/entry/1CRN",
+          "status": "rede"
         }
       ],
-      "omitidos": [
-        {
-          "id": "rwork",
-          "rotulo": "Rwork citado pelo relatório (refinamento depositado)",
-          "motivo": "o relatório marca NotAvailable"
-        },
-        {
-          "id": "rfree",
-          "rotulo": "Rfree citado pelo relatório (refinamento depositado)",
-          "motivo": "o relatório marca NotAvailable"
-        },
-        {
-          "id": "eds_r",
-          "rotulo": "R recalculado pelo EDS",
-          "motivo": "não informado no relatório"
-        },
-        {
-          "id": "dcc_r",
-          "rotulo": "R da verificação DCC",
-          "motivo": "não informado no relatório"
-        },
-        {
-          "id": "dcc_rfree",
-          "rotulo": "Rfree da verificação DCC",
-          "motivo": "não informado no relatório"
-        },
-        {
-          "id": "completude",
-          "rotulo": "Completude dos dados no relatório",
-          "motivo": "não informado no relatório"
-        },
-        {
-          "id": "rsrz",
-          "rotulo": "Resíduos com RSRZ outlier",
-          "motivo": "não informado no relatório"
-        },
-        {
-          "id": "fofc",
-          "rotulo": "Correlação Fo–Fc no relatório",
-          "motivo": "não informado no relatório"
-        },
-        {
-          "id": "reflexoes_livres",
-          "rotulo": "Reflexões livres na reanálise (num-free-reflections)",
-          "motivo": "não informado no relatório"
-        }
-      ],
-      "naoAplicaveis": [],
-      "avisos": [],
-      "local": {
-        "estado": "pendente",
-        "motivo": "O relatório passou do limite de leitura no navegador (2000000 bytes). Os indicadores por resíduo ficam pendentes. O resumo global acima veio só do início do XML.",
-        "itens": [],
-        "porCadeia": {},
-        "aviso": "Indicador por resíduo só existe quando o relatório traz ModelledSubgroup com chain (auth_asym_id), resnum (auth_seq_id) e model, e essa posição tem coordenada no modelo selecionado. Lacuna sem coordenada não recebe qualidade local. Resíduo que não está no relatório não é preenchido com zero."
-      },
       "avisoGlobal": "O relatório wwPDB e os indicadores globais não garantem a qualidade local do sítio. Um valor global pode conviver com problema no local de interesse.",
       "avisoVizinho": "Lista de resíduos próximos por distância não entra nesta versão."
     },
@@ -3357,6 +3260,14 @@
         "url": "https://www.ebi.ac.uk/pdbe/entry-files/download/1crn_validation.xml",
         "headers": {
           "Accept": "application/xml,text/xml,*/*"
+        },
+        "abortadoNaEntrada": false,
+        "cancelamentos": 0
+      },
+      {
+        "url": "https://data.rcsb.org/rest/v1/core/entry/1CRN",
+        "headers": {
+          "Accept": "application/json"
         },
         "abortadoNaEntrada": false,
         "cancelamentos": 0
@@ -3371,11 +3282,20 @@
       [
         "limpar",
         1
+      ],
+      [
+        "agendar",
+        2,
+        8000
+      ],
+      [
+        "limpar",
+        2
       ]
     ],
     "cancelado": false,
     "cache": {
-      "relatorios": 1,
+      "relatorios": 0,
       "componentes": 0
     }
   },

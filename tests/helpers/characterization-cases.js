@@ -25,7 +25,7 @@ class FixedDate extends Date {
 
 function browser(files = []) {
   const context = vm.createContext({
-    Date: FixedDate, console, setTimeout, clearTimeout, AbortController, TextDecoder,
+    Date: FixedDate, console, setTimeout, clearTimeout, AbortController, TextDecoder, TextEncoder,
     window: {},
     document: {
       readyState: "loading", addEventListener() {},

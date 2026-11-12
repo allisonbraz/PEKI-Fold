@@ -16,7 +16,7 @@ class FixedDate extends Date {
 }
 
 function models(extra = {}) {
-  const context = vm.createContext({ Date: FixedDate, console, AbortController, TextDecoder,
+  const context = vm.createContext({ Date: FixedDate, console, AbortController, TextDecoder, TextEncoder,
     fetch() { throw new Error("Rede real proibida nas caracterizações adicionais."); },
     setTimeout() { throw new Error("Timer real proibido nesta suíte."); }, clearTimeout() {}, ...extra });
   for (const name of ["pdb-analysis", "structure-model", "prep-analysis", "analysis-snapshot", "quality-model"]) {
