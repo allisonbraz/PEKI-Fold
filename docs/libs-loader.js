@@ -13,11 +13,20 @@ function carregarScript(src) {
   const prom = new Promise((resolve, reject) => {
     const s = document.createElement("script");
     s.src = src;
-    s.onload = () => resolve();
-    s.onerror = () => {
+    let encerrado = false;
+    const falhar = (e) => {
+      if (encerrado) return;
+      encerrado = true;
+      prazo.fim();
       pekiScript.delete(src);
-      reject(new Error("Não foi possível carregar uma biblioteca externa. Verifique a conexão e tente de novo."));
+      reject(e);
     };
+    const prazo = PekiRede.iniciarPrazo((e) => {
+      if (s.remove) s.remove();
+      falhar(e);
+    });
+    s.onload = () => { if (!encerrado) { encerrado = true; prazo.fim(); resolve(); } };
+    s.onerror = () => falhar(new Error("Não foi possível carregar uma biblioteca externa. Verifique a conexão e tente de novo."));
     document.head.appendChild(s);
   });
   pekiScript.set(src, prom);

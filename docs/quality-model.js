@@ -25,6 +25,7 @@
 "use strict";
 
 const QualityModel = (() => {
+  const Rede = typeof PekiRede !== "undefined" ? PekiRede : require("./network.js");
   const SCHEMA = "peki-qualidade-1";
   const LIMITE_BYTES = 2000000;
   const PREFIXO_ENTRY = 65536;
@@ -745,20 +746,6 @@ const QualityModel = (() => {
     };
   }
 
-  function criarControleConsultaRelatorio(sinal, ms) {
-    const child = new AbortController();
-    const timer = setTimeout(() => child.abort(), ms);
-    const cortar = () => child.abort();
-    if (sinal) sinal.addEventListener("abort", cortar, { once: true });
-    return {
-      signal: child.signal,
-      fim() {
-        clearTimeout(timer);
-        if (sinal) sinal.removeEventListener("abort", cortar);
-      },
-    };
-  }
-
   function processarXmlConsultado(lido, up, o, cache, tentativas, urls) {
     const rel = lerXml(lido.texto, {
       id: up,
@@ -808,13 +795,9 @@ const QualityModel = (() => {
       return erroConsulta(up, "cancelado", "A consulta ao relatório foi cancelada. Nenhum indicador foi preenchido.");
     }
     try {
-      const child = criarControleConsultaRelatorio(sinal, 12000);
-      let res;
-      try {
-        res = await fetchImpl(urls.xml, { signal: child.signal, headers: { Accept: "application/xml,text/xml,*/*" } });
-      } finally {
-        child.fim();
-      }
+      // O relatório já desvinculava o cancelamento externo antes do corpo.
+      const res = await Rede.fetch(urls.xml, { signal: sinal, headers: { Accept: "application/xml,text/xml,*/*" } },
+        { fetch: fetchImpl, chave: "qualidadeXml", cancelarCorpo: false });
       const status = statusDe(res);
       tentativas.push({ fonte: "pdbe-xml", url: urls.xml, status });
       if (status === 200) {
@@ -826,19 +809,15 @@ const QualityModel = (() => {
       if (sinal && sinal.aborted) {
         return erroConsulta(up, "cancelado", "A consulta ao relatório foi cancelada. Nenhum indicador foi preenchido.", tentativas);
       }
-      tentativas.push({ fonte: "pdbe-xml", url: urls.xml, status: e && e.name === "AbortError" ? "timeout" : "rede" });
+      tentativas.push({ fonte: "pdbe-xml", url: urls.xml, status: Rede.ehTimeout(e) || (e && e.name === "AbortError") ? "timeout" : "rede" });
     }
     if (sinal && sinal.aborted) {
       return erroConsulta(up, "cancelado", "A consulta ao relatório foi cancelada. Nenhum indicador foi preenchido.", tentativas);
     }
     try {
-      const child = criarControleConsultaRelatorio(sinal, 8000);
-      let res;
-      try {
-        res = await fetchImpl(urls.json, { signal: child.signal, headers: { Accept: "application/json" } });
-      } finally {
-        child.fim();
-      }
+      // O relatório já desvinculava o cancelamento externo antes do corpo.
+      const res = await Rede.fetch(urls.json, { signal: sinal, headers: { Accept: "application/json" } },
+        { fetch: fetchImpl, chave: "qualidadeJson", cancelarCorpo: false });
       const status = statusDe(res);
       tentativas.push({ fonte: "rcsb-json", url: urls.json, status });
       if (status === 429) {
@@ -856,7 +835,8 @@ const QualityModel = (() => {
       if (sinal && sinal.aborted) {
         return erroConsulta(up, "cancelado", "A consulta ao relatório foi cancelada. Nenhum indicador foi preenchido.", tentativas);
       }
-      tentativas.push({ fonte: "rcsb-json", url: urls.json, status: e && e.name === "AbortError" ? "timeout" : "rede" });
+      tentativas.push({ fonte: "rcsb-json", url: urls.json, status: Rede.ehTimeout(e) || (e && e.name === "AbortError") ? "timeout" : "rede" });
+      if (Rede.ehTimeout(e) || (e && e.name === "AbortError")) return erroConsulta(up, Rede.TIMEOUT.codigo, Rede.TIMEOUT.mensagem, tentativas);
       return erroConsulta(up, "rede", "A consulta não devolveu dados (rede ou CORS). Nenhum indicador foi preenchido. Os links oficiais continuam disponíveis para abrir no navegador.", tentativas);
     }
   }
@@ -955,7 +935,7 @@ const QualityModel = (() => {
     if (typeof fetchImpl !== "function") return { codigo: id, estado: "erro", mensagem: "Sem consulta." };
     const url = "https://data.rcsb.org/rest/v1/core/chemcomp/" + id;
     try {
-      const res = await fetchImpl(url, { signal: o.signal, headers: { Accept: "application/json" } });
+      const res = await Rede.fetch(url, { signal: o.signal, headers: { Accept: "application/json" } }, { fetch: fetchImpl });
       const status = statusDe(res);
       if (status === 429) return { codigo: id, estado: "erro", codigoErro: "429", mensagem: "RCSB respondeu 429 para " + id + ". A ficha não foi preenchida." };
       if (status === 200) {
@@ -970,7 +950,7 @@ const QualityModel = (() => {
     }
     const url2 = "https://www.ebi.ac.uk/pdbe/api/pdb/compound/summary/" + id;
     try {
-      const res = await fetchImpl(url2, { signal: o.signal, headers: { Accept: "application/json" } });
+      const res = await Rede.fetch(url2, { signal: o.signal, headers: { Accept: "application/json" } }, { fetch: fetchImpl });
       const status = statusDe(res);
       if (status === 429) return { codigo: id, estado: "erro", codigoErro: "429", mensagem: "PDBe respondeu 429 para " + id + ". A ficha não foi preenchida." };
       if (status === 404) return { codigo: id, estado: "erro", codigoErro: "404", mensagem: "Não há ficha CCD/PDBe para " + id + "." };
@@ -982,6 +962,7 @@ const QualityModel = (() => {
       return { codigo: id, estado: "erro", codigoErro: "http_" + status, mensagem: "Consulta de " + id + " devolveu HTTP " + status + "." };
     } catch (e) {
       if (e && e.name === "AbortError") return { codigo: id, estado: "cancelado", mensagem: "Consulta do componente cancelada." };
+      if (Rede.ehTimeout(e)) return { codigo: id, estado: Rede.TIMEOUT.estado, codigoErro: Rede.TIMEOUT.codigo, mensagem: Rede.TIMEOUT.mensagem };
       return { codigo: id, estado: "erro", codigoErro: "rede", mensagem: "Não foi possível ler o CCD de " + id + " (rede ou CORS). Nenhum dado foi inventado." };
     }
   }

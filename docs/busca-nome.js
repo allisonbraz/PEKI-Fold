@@ -5,8 +5,9 @@
 "use strict";
 
 const BuscaNome = (function () {
+  const Rede = typeof PekiRede !== "undefined" ? PekiRede : require("./network.js");
   const LIMITE = 12;
-  const ESPERA_MS = 20000;
+  const ESPERA_MS = Rede.config.padraoMs;
   const URL_BUSCA = "https://search.rcsb.org/rcsbsearch/v2/query";
   const URL_GRAPHQL = "https://data.rcsb.org/graphql";
   const ID_CLASSICO = /^[0-9][A-Z0-9]{3}$/;
@@ -298,13 +299,7 @@ const BuscaNome = (function () {
   }
 
   function falhaTransporte(e) {
-    if (e && e.codigo === "tempo") {
-      return {
-        ok: false,
-        codigo: "tempo",
-        mensagem: "A consulta ao RCSB passou de " + Math.round(ESPERA_MS / 1000) + " segundos. Tente de novo.",
-      };
-    }
+    if (Rede.ehTimeout(e)) return { ok: false, ...Rede.TIMEOUT };
     return {
       ok: false,
       codigo: "rede",
@@ -313,28 +308,13 @@ const BuscaNome = (function () {
   }
 
   function pedir(fetchImpl, url, options, esperaMs) {
-    const espera = typeof esperaMs === "number" ? esperaMs : ESPERA_MS;
-    const ctrl = typeof AbortController !== "undefined" ? new AbortController() : null;
-    let abortou = false;
-    const timer = setTimeout(() => {
-      abortou = true;
-      if (ctrl) ctrl.abort();
-    }, espera);
-    const opts = Object.assign({ credentials: "omit" }, options);
-    if (ctrl) opts.signal = ctrl.signal;
-    return Promise.resolve()
-      .then(() => fetchImpl(url, opts))
+    return Rede.fetch(url, Object.assign({ credentials: "omit" }, options), { fetch: fetchImpl, tempoMs: esperaMs })
       .catch((e) => {
-        if (abortou || (e && e.name === "AbortError")) {
-          const err = new Error("tempo");
-          err.codigo = "tempo";
-          throw err;
-        }
+        if (Rede.ehTimeout(e) || (e && e.name === "AbortError")) throw Rede.erroTimeout();
         const err = new Error("rede");
         err.codigo = "rede";
         throw err;
-      })
-      .finally(() => clearTimeout(timer));
+      });
   }
 
   async function textoResposta(resp) {
@@ -355,7 +335,7 @@ const BuscaNome = (function () {
     }
     const fetchImpl = (opcoes && opcoes.fetch) || (typeof fetch !== "undefined" ? fetch : null);
     if (!fetchImpl) return falhaTransporte({ codigo: "rede" });
-    const espera = opcoes && typeof opcoes.esperaMs === "number" ? opcoes.esperaMs : ESPERA_MS;
+    const espera = opcoes && typeof opcoes.esperaMs === "number" ? opcoes.esperaMs : Rede.config.padraoMs;
     let respBusca;
     try {
       respBusca = await pedir(fetchImpl, URL_BUSCA, {
@@ -366,11 +346,14 @@ const BuscaNome = (function () {
     } catch (e) {
       return falhaTransporte(e);
     }
-    const busca = lerBusca(respBusca && respBusca.status, await textoResposta(respBusca));
+    let busca;
+    try { busca = lerBusca(respBusca && respBusca.status, await textoResposta(respBusca)); }
+    catch (e) { if (Rede.ehTimeout(e)) return falhaTransporte(e); throw e; }
     if (!busca.ok) return busca;
 
     let porId = {};
     let avisoMetadados = null;
+    let falhaMetadados = null;
     try {
       const respMeta = await pedir(fetchImpl, URL_GRAPHQL, {
         method: "POST",
@@ -388,8 +371,9 @@ const BuscaNome = (function () {
         else porId = lido.porId;
       }
     } catch (e) {
-      avisoMetadados = e && e.codigo === "tempo"
-        ? "A consulta de metadados passou do tempo de espera. Os códigos abaixo vieram da busca; campos ausentes não foram preenchidos."
+      if (Rede.ehTimeout(e)) falhaMetadados = { ...Rede.TIMEOUT };
+      avisoMetadados = Rede.ehTimeout(e)
+        ? Rede.TIMEOUT.mensagem
         : "Sem conexão ao pedir os metadados. Os códigos abaixo vieram da busca; campos ausentes não foram preenchidos.";
     }
 
@@ -399,6 +383,7 @@ const BuscaNome = (function () {
       total: busca.total,
       limite: LIMITE,
       avisoMetadados,
+      ...(falhaMetadados ? { metadados: falhaMetadados } : {}),
       resultados: busca.ids.map((id) => porId[id] || { id }),
     };
   }

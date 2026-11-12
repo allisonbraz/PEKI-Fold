@@ -336,7 +336,7 @@ async function destacarPocket(idx) {
   sincronizarBotoesPocket();
   if (status) status.innerHTML = `<span class="spinner"></span> Carregando resíduos do ${esc(p.name)}…`;
   try {
-    const txt = await (await fetch(p.residuosUrl)).text();
+    const txt = await (await PekiRede.fetch(p.residuosUrl)).text();
     if (!vistaAindaVale(geracao, idx)) return;
     const sels = selecoesDosResiduos(txt);
     if (!vistaAindaVale(geracao, idx)) return;
@@ -355,7 +355,7 @@ async function destacarPocket(idx) {
     const falha = estado.vistaPocket;
     estado.vistaPocket = falha && falha.anteriorVista ? falha.anteriorVista : null;
     sincronizarBotoesPocket();
-    if (status) status.innerHTML = `❌ Falha ao destacar o pocket: ${e.message}`;
+    if (status) status.innerHTML = PekiRede.ehTimeout(e) ? `❌ ${e.message}` : `❌ Falha ao destacar o pocket: ${e.message}`;
   }
 }
 

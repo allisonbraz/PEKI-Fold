@@ -13,7 +13,7 @@ async function obterPockets(id, onTick, deveParar) {
   if (POCKETS_CACHE[chave]) return POCKETS_CACHE[chave];
   const location = await dogsiteSubmit(id);
   const resultado = await dogsitePoll(location, onTick, deveParar);
-  const txt = await (await fetch(resultado.result_table)).text();
+  const txt = await (await PekiRede.fetch(resultado.result_table)).text();
   const pockets = parseTabelaPockets(txt);
   pockets.forEach((p, i) => { p.residuosUrl = (resultado.residues || [])[i] || null; });
   POCKETS_CACHE[chave] = { pockets, residues: resultado.residues || [] };
@@ -31,7 +31,7 @@ async function dogsiteSubmit(pdbId, opcoes) {
   const codigo = opcoes && opcoes.preservarCaixa ? String(pdbId) : String(pdbId).toLowerCase();
   let resp;
   try {
-    resp = await fetch(DOGSITE_API, {
+    resp = await PekiRede.fetch(DOGSITE_API, {
       method: "POST",
       headers: { "Content-Type": "application/json", Accept: "application/json" },
       body: JSON.stringify({
@@ -44,6 +44,7 @@ async function dogsiteSubmit(pdbId, opcoes) {
       }),
     });
   } catch (e) {
+    if (PekiRede.ehTimeout(e)) throw e;
     throw new Error("Sem conexão com a API ProteinsPlus (ou bloqueio de rede).");
   }
   if (resp.status === 429) throw new Error("Limite de uso da API atingido. Tente novamente em alguns minutos.");
@@ -56,24 +57,31 @@ async function dogsiteSubmit(pdbId, opcoes) {
 }
 
 async function dogsitePoll(location, onTick, deveParar) {
+  return PekiRede.limitar((signal) => consultarJobDogsite(location, onTick, deveParar, signal), { chave: "dogsiteJob" });
+}
+
+async function consultarJobDogsite(location, onTick, deveParar, signal) {
+  const polling = PekiRede.config.polling.dogsite;
   const parar = () => typeof deveParar === "function" && deveParar();
-  for (let i = 0; i < 45; i++) { // ~3 min no maximo (45 x 4s)
+  for (let i = 0; i < polling.tentativas; i++) {
     if (parar()) throw new Error("Cálculo cancelado.");
+    if (signal && signal.aborted) throw PekiRede.erroTimeout();
     let r;
-    try { r = await fetch(location, { headers: { Accept: "application/json" } }); }
-    catch (e) { throw new Error("Conexão perdida durante o cálculo dos pockets."); }
+    try { r = await PekiRede.fetch(location, { signal, headers: { Accept: "application/json" } }); }
+    catch (e) { if (PekiRede.ehTimeout(e)) throw e; throw new Error("Conexão perdida durante o cálculo dos pockets."); }
     if (r.status === 429) throw new Error("Limite de uso da API atingido. Tente novamente em alguns minutos.");
     if (r.status === 200) {
       const d = await r.json();
       if (d.result_table) return d;
     }
+    if (signal && signal.aborted) throw PekiRede.erroTimeout();
     if (onTick) onTick(i + 1);
-    for (let s = 0; s < 4; s++) {
+    for (let s = 0; s < polling.passos; s++) {
       if (parar()) throw new Error("Cálculo cancelado.");
-      await sleep(1000);
+      await sleep(polling.intervaloMs);
     }
   }
-  throw new Error("Tempo esgotado aguardando o DoGSiteScorer.");
+  throw PekiRede.erroTimeout();
 }
 
 // Converte o TSV de descritores num array de objetos {name, volume, ...}.

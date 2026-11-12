@@ -33,7 +33,7 @@ function browser(files = []) {
     },
     fetch() { throw new Error("Rede real proibida nos testes de caracterização."); },
   });
-  for (const file of files) vm.runInContext(read("docs/" + file + ".js"), context, { filename: file + ".js" });
+  for (const file of ["network", ...files]) vm.runInContext(read("docs/" + file + ".js"), context, { filename: file + ".js" });
   return { context, get: (expression) => vm.runInContext(expression, context) };
 }
 

@@ -598,7 +598,7 @@ ${htmlVinaPreparo(F, pocketOpts, vinaCampos)}
     if (status) status.textContent = "Lendo os resíduos do pocket…";
     let txt = cacheRes.get(p.residuosUrl);
     if (!txt) {
-      const resp = await fetch(p.residuosUrl);
+      const resp = await PekiRede.fetch(p.residuosUrl);
       if (!resp.ok) throw new Error("Não foi possível baixar os resíduos do pocket (" + resp.status + ").");
       txt = await resp.text();
       cacheRes.set(p.residuosUrl, txt);

@@ -34,7 +34,7 @@ function harness() {
   // Deliberately no HTML parser: capture the exact returned string, not a
   // normalized DOM. No DOMContentLoaded handlers, layout or WebGL run here.
   const context = vm.createContext({
-    Date: FixedDate, console,
+    Date: FixedDate, console, AbortController, clearTimeout,
     document: {
       readyState: "loading", addEventListener() {},
       getElementById: (id) => elements.get(id) || null,
@@ -42,7 +42,7 @@ function harness() {
     },
     localStorage: { getItem: () => null, setItem() { throw new Error("fixture: quota"); } },
     fetch() { throw new Error("Rede real proibida na caracterização da interface."); },
-    setTimeout() { throw new Error("Timer inesperado na captura da interface."); },
+    setTimeout,
   });
   function load(file, marker, bridge) {
     let source = read("docs/" + file + ".js");
@@ -54,7 +54,7 @@ function harness() {
     }
     vm.runInContext(source, context, { filename: file + ".js" });
   }
-  for (const file of ["pdb-analysis", "structure-model", "prep-analysis", "ensemble-analysis"]) load(file);
+  for (const file of ["network", "pdb-analysis", "structure-model", "prep-analysis", "ensemble-analysis"]) load(file);
   return { context, element, load, get: (expression) => vm.runInContext(expression, context) };
 }
 

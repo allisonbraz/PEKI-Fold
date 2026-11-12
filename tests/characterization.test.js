@@ -139,7 +139,7 @@ test("comportamento conhecido: cache precede cancelamento e não remapeia novo c
   assert.equal(result.forcado.local.itens[0].mapeamento, "modelo");
 });
 
-test("comportamento conhecido: timeout e listener são removidos antes da leitura do corpo XML", async () => {
+test("prazo cobre o corpo sem alterar o cancelamento externo do relatório", async () => {
   const captured = await cases["consultar-relatorio-caminhos"]();
   const jsonBody = captured.canceladoDuranteJsonAceito;
   assert.equal(jsonBody.cancelado, true);
@@ -151,7 +151,7 @@ test("comportamento conhecido: timeout e listener são removidos antes da leitur
   assert.equal(result.resultado.estado, "ok");
   assert.equal(result.cache.relatorios, 1);
   assert.equal(result.pedidos[0].cancelamentos, 0);
-  assert.deepStrictEqual(result.timers, [["agendar", 1, 12000], ["limpar", 1]]);
+  assert.deepStrictEqual(result.timers, [["agendar", 1, 12000], ["limpar", 1], ["agendar", 2, 12000], ["limpar", 2]]);
 });
 
 test("consulta adicional: cancelamento, timeout, alternativa JSON e erros têm fronteiras simuladas", async () => {

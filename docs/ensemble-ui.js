@@ -621,16 +621,23 @@ const EnsembleUI = (() => {
   }
 
   async function enviarModelo(texto, deveParar) {
+    return PekiRede.limitar((signal) => consultarEnvioModelo(texto, deveParar, signal), { chave: "uploadJob" });
+  }
+
+  async function consultarEnvioModelo(texto, deveParar, signal) {
+    const polling = PekiRede.config.polling.upload;
     const fd = new FormData();
     fd.append("pdb_file[pathvar]", new Blob([texto], { type: "chemical/x-pdb" }), "modelo.pdb");
     let resp;
     try {
-      resp = await fetch("https://proteins.plus/api/pdb_files_rest", {
+      resp = await PekiRede.fetch("https://proteins.plus/api/pdb_files_rest", {
+        signal,
         method: "POST",
         headers: { Accept: "application/json" },
         body: fd,
       });
     } catch (e) {
+      if (PekiRede.ehTimeout(e)) throw e;
       throw new Error("Sem conexão com a API ProteinsPlus (ou bloqueio de rede).");
     }
     if (resp.status === 429) throw new Error("Limite de uso da API atingido. Tente novamente em alguns minutos.");
@@ -638,13 +645,14 @@ const EnsembleUI = (() => {
     const data = await resp.json();
     if (resp.status === 200 && data.id) return String(data.id);
     if (!data.location) throw new Error("Resposta inesperada da API ProteinsPlus (sem 'location').");
-    for (let i = 0; i < 30; i++) {
+    for (let i = 0; i < polling.tentativas; i++) {
       if (deveParar()) throw new Error("Cálculo cancelado.");
-      await sleep(2000);
+      await sleep(polling.intervaloMs);
+      if (signal && signal.aborted) throw PekiRede.erroTimeout();
       if (deveParar()) throw new Error("Cálculo cancelado.");
       let r;
-      try { r = await fetch(data.location, { headers: { Accept: "application/json" } }); }
-      catch (e2) { throw new Error("Conexão perdida durante o envio do modelo."); }
+      try { r = await PekiRede.fetch(data.location, { signal, headers: { Accept: "application/json" } }); }
+      catch (e2) { if (PekiRede.ehTimeout(e2)) throw e2; throw new Error("Conexão perdida durante o envio do modelo."); }
       if (r.status === 429) throw new Error("Limite de uso da API atingido. Tente novamente em alguns minutos.");
       if (r.status === 200) {
         const d = await r.json();
@@ -653,7 +661,7 @@ const EnsembleUI = (() => {
         throw new Error("Erro ao enviar o modelo à API ProteinsPlus (" + r.status + ").");
       }
     }
-    throw new Error("Tempo esgotado aguardando o envio do modelo.");
+    throw PekiRede.erroTimeout();
   }
 
   async function comResiduos(pockets, deveParar) {
@@ -665,8 +673,8 @@ const EnsembleUI = (() => {
       let aviso = null;
       if (p.residuosUrl) {
         let r;
-        try { r = await fetch(p.residuosUrl); }
-        catch (e) { throw new Error("Conexão perdida durante o cálculo dos pockets."); }
+        try { r = await PekiRede.fetch(p.residuosUrl); }
+        catch (e) { if (PekiRede.ehTimeout(e)) throw e; throw new Error("Conexão perdida durante o cálculo dos pockets."); }
         if (r.status === 429) throw new Error("Limite de uso da API atingido. Tente novamente em alguns minutos.");
         if (!r.ok) aviso = "Não foi possível baixar os resíduos deste bolsão (HTTP " + r.status + ").";
         else {
@@ -715,7 +723,7 @@ const EnsembleUI = (() => {
     } else {
       const location = await dogsiteSubmit(codigo, { preservarCaixa: true });
       const resultado = await dogsitePoll(location, (n) => onMsg(item.rotulo + " — verificação " + n + " no DoGSiteScorer"), () => parar(g));
-      const txt = await (await fetch(resultado.result_table)).text();
+      const txt = await (await PekiRede.fetch(resultado.result_table)).text();
       const pockets = parseTabelaPockets(txt);
       pockets.forEach((p, i) => { p.residuosUrl = (resultado.residues || [])[i] || null; });
       pacote = { pockets };

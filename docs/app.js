@@ -89,8 +89,9 @@ async function baixarRCSB(pdbId) {
   const url = `https://files.rcsb.org/download/${pdbId}.pdb`;
   let resp;
   try {
-    resp = await fetch(url);
+    resp = await PekiRede.fetch(url);
   } catch (e) {
+    if (PekiRede.ehTimeout(e)) throw e;
     throw new Error("Sem conexão com o RCSB (ou bloqueio de rede).");
   }
   if (resp.status === 404) throw new Error(`PDB '${pdbId}' não encontrado no RCSB.`);
@@ -108,20 +109,22 @@ async function baixarEntrada(pdbId) {
   let pdbTexto = "";
   let pdbStatus = 0;
   try {
-    const resp = await fetch(`https://files.rcsb.org/download/${pdbId}.pdb`);
+    const resp = await PekiRede.fetch(`https://files.rcsb.org/download/${pdbId}.pdb`);
     pdbStatus = resp.status;
     if (resp.ok) pdbTexto = await resp.text();
   } catch (e) {
+    if (PekiRede.ehTimeout(e)) throw e;
     throw new Error("Sem conexão com o RCSB (ou bloqueio de rede).");
   }
   if (StructureModel.pareceCoordenadaPdb(pdbTexto)) return { texto: pdbTexto, nome: `${pdbId}.pdb` };
   let cifTexto = "";
   let cifStatus = 0;
   try {
-    const resp = await fetch(`https://files.rcsb.org/download/${pdbId}.cif`);
+    const resp = await PekiRede.fetch(`https://files.rcsb.org/download/${pdbId}.cif`);
     cifStatus = resp.status;
     if (resp.ok) cifTexto = await resp.text();
   } catch (e) {
+    if (PekiRede.ehTimeout(e)) throw e;
     throw new Error("Sem conexão com o RCSB (ou bloqueio de rede).");
   }
   const escolha = StructureModel.escolherEntrada("", cifTexto);
@@ -297,7 +300,7 @@ function resumoCabecalho(dados, totalRes) {
 // ----- metadados (card "Sobre a estrutura") -----
 async function buscarMetaRCSB(id) {
   try {
-    const r = await fetch(`https://data.rcsb.org/rest/v1/core/entry/${id}`, { headers: { Accept: "application/json" } });
+    const r = await PekiRede.fetch(`https://data.rcsb.org/rest/v1/core/entry/${id}`, { headers: { Accept: "application/json" } });
     if (!r.ok) return null;
     const d = await r.json();
     return {
@@ -308,12 +311,21 @@ async function buscarMetaRCSB(id) {
       data: d.rcsb_accession_info?.deposit_date ? d.rcsb_accession_info.deposit_date.slice(0, 10) : null,
       classificacao: d.struct_keywords?.pdbx_keywords || null,
     };
-  } catch (e) { return null; }
+  } catch (e) { if (PekiRede.ehTimeout(e)) throw e; return null; }
 }
 
 async function enriquecerMetaRCSB(id) {
-  const rcsb = await buscarMetaRCSB(id);
+  let rcsb;
+  try { rcsb = await buscarMetaRCSB(id); }
+  catch (e) {
+    if (PekiRede.ehTimeout(e) && estado.meta && estado.pdbId === id) {
+      estado.meta.consultaRcsb = { ...PekiRede.TIMEOUT };
+      renderMeta();
+    }
+    return;
+  }
   if (!rcsb || !estado.meta || estado.pdbId !== id) return; // ignora se já trocou de análise
+  delete estado.meta.consultaRcsb;
   for (const k of ["titulo", "metodo", "resolucao", "peso", "data", "classificacao"]) {
     if (rcsb[k] != null) estado.meta[k] = rcsb[k];
   }
@@ -327,7 +339,7 @@ function renderMeta() {
   const avisoPrevTopo = (typeof PrepAnalysis !== "undefined" && estado.pdbText)
     ? PrepAnalysis.avisoPredita(estado.pdbText, m) : null;
   const temClassico = !!(m && (m.titulo || m.classificacao || m.organismos?.length || m.ligantes?.length || avisoPrevTopo));
-  if (!temClassico && !estado.estrutura) { el.hidden = true; return; }
+  if (!temClassico && !estado.estrutura && !m?.consultaRcsb) { el.hidden = true; return; }
 
   const tags = [];
   if (m.metodo) tags.push(esc(m.metodo));
@@ -352,7 +364,7 @@ function renderMeta() {
     (tags.length ? `<div class="meta-tags">${tags.map((t) => `<span class="meta-tag">${t}</span>`).join("")}</div>` : "") +
     (ligs ? `<div class="muted small">Heterocomponentes no modelo: ${esc(ligs)}. A presença deles não estabelece estado holo.</div>` : "") +
     (avisoPrev ? `<p class="aviso-predita">${esc(avisoPrev)}</p>` : "") +
-    leitura;
+    leitura + (m.consultaRcsb ? `<p class="muted small">${esc(m.consultaRcsb.mensagem)}</p>` : "");
   el.hidden = false;
 }
 
@@ -974,6 +986,7 @@ async function detectarPockets() {
   } catch (e) {
     estado.pockets = null;
     estado.pocketsInfo = { estado: "erro", motivo: e.message };
+    if (PekiRede.ehTimeout(e)) estado.pocketsInfo.codigo = PekiRede.TIMEOUT.codigo;
     status.innerHTML = `❌ ${e.message}`;
     btn.disabled = false;
   }

@@ -1194,6 +1194,15 @@
       [
         "limpar",
         1
+      ],
+      [
+        "agendar",
+        2,
+        12000
+      ],
+      [
+        "limpar",
+        2
       ]
     ],
     "cancelado": false,
@@ -1575,6 +1584,15 @@
       [
         "limpar",
         2
+      ],
+      [
+        "agendar",
+        3,
+        8000
+      ],
+      [
+        "limpar",
+        3
       ]
     ],
     "cancelado": false,
@@ -1786,6 +1804,15 @@
       [
         "limpar",
         2
+      ],
+      [
+        "agendar",
+        3,
+        8000
+      ],
+      [
+        "limpar",
+        3
       ]
     ],
     "cancelado": false,
@@ -2989,6 +3016,15 @@
       [
         "limpar",
         1
+      ],
+      [
+        "agendar",
+        2,
+        12000
+      ],
+      [
+        "limpar",
+        2
       ]
     ],
     "cancelado": true,
@@ -3195,6 +3231,15 @@
       [
         "limpar",
         2
+      ],
+      [
+        "agendar",
+        3,
+        8000
+      ],
+      [
+        "limpar",
+        3
       ]
     ],
     "cancelado": true,
@@ -3371,6 +3416,15 @@
       [
         "limpar",
         1
+      ],
+      [
+        "agendar",
+        2,
+        12000
+      ],
+      [
+        "limpar",
+        2
       ]
     ],
     "cancelado": false,
@@ -3577,11 +3631,29 @@
       [
         "agendar",
         2,
-        8000
+        12000
       ],
       [
         "limpar",
         2
+      ],
+      [
+        "agendar",
+        3,
+        8000
+      ],
+      [
+        "limpar",
+        3
+      ],
+      [
+        "agendar",
+        4,
+        8000
+      ],
+      [
+        "limpar",
+        4
       ]
     ],
     "cancelado": false,
@@ -4012,6 +4084,15 @@
       [
         "limpar",
         2
+      ],
+      [
+        "agendar",
+        3,
+        8000
+      ],
+      [
+        "limpar",
+        3
       ]
     ],
     "cancelado": false,
@@ -8800,6 +8881,24 @@
       [
         "limpar",
         2
+      ],
+      [
+        "agendar",
+        3,
+        12000
+      ],
+      [
+        "limpar",
+        3
+      ],
+      [
+        "agendar",
+        4,
+        12000
+      ],
+      [
+        "limpar",
+        4
       ]
     ],
     "tamanho": {

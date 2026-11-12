@@ -39,12 +39,14 @@
           "Content-Type": "application/json",
           "Accept": "application/json"
         },
-        "body": "{\"dogsite\":{\"pdbCode\":\"1abc\",\"analysisDetail\":\"0\",\"bindingSitePredictionGranularity\":\"1\",\"ligand\":\"\",\"chain\":\"\"}}"
+        "body": "{\"dogsite\":{\"pdbCode\":\"1abc\",\"analysisDetail\":\"0\",\"bindingSitePredictionGranularity\":\"1\",\"ligand\":\"\",\"chain\":\"\"}}",
+        "signal": {}
       }
     },
     {
       "url": "https://fixture.invalid/job",
       "options": {
+        "signal": {},
         "headers": {
           "Accept": "application/json"
         }
@@ -52,7 +54,9 @@
     },
     {
       "url": "https://fixture.invalid/table",
-      "options": null
+      "options": {
+        "signal": {}
+      }
     }
   ],
   "cacheNaoRepetePedido": true,

@@ -8,10 +8,11 @@ const { test } = require("node:test");
 
 function loader(window = {}) {
   const scripts = [];
-  const context = vm.createContext({ window, document: {
+  const context = vm.createContext({ window, setTimeout, clearTimeout, AbortController, document: {
     createElement(tag) { assert.equal(tag, "script"); return {}; },
     head: { appendChild(script) { scripts.push(script); } },
   } });
+  vm.runInContext(fs.readFileSync(path.join(__dirname, "../docs/network.js"), "utf8"), context, { filename: "network.js" });
   const source = fs.readFileSync(path.join(__dirname, "../docs/libs-loader.js"), "utf8");
   vm.runInContext(source, context, { filename: "libs-loader.js" });
   return { scripts, window, get: (expression) => vm.runInContext(expression, context) };
