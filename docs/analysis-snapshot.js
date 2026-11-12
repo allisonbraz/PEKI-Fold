@@ -57,6 +57,8 @@ const AnalysisSnapshot = (() => {
     return Math.trunc(v);
   }
   function decimal(v) {
+    if (v == null || (typeof v === "string" && !v.trim())) return null;
+    if (typeof v !== "number" && typeof v !== "string") return null;
     const n = typeof v === "number" ? v : Number(v);
     return Number.isFinite(n) ? n : null;
   }

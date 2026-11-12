@@ -363,11 +363,11 @@
       "itens": [
         {
           "name": "P_0",
-          "volume": 0,
-          "surface": 0,
-          "depth": 0,
-          "hydrophobicity": 0,
-          "drugScore": 0
+          "volume": null,
+          "surface": null,
+          "depth": null,
+          "hydrophobicity": null,
+          "drugScore": null
         }
       ],
       "estado": "ok",
@@ -379,14 +379,7 @@
       "classe": null,
       "consulta": null,
       "fonte": null,
-      "metricas": [
-        {
-          "id": "rfree",
-          "rotulo": "rfree",
-          "valor": 0,
-          "unidade": null
-        }
-      ],
+      "metricas": [],
       "omitidos": [],
       "local": {
         "estado": "pendente",

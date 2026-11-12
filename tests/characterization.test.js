@@ -14,14 +14,52 @@ for (const [name, capture] of Object.entries(cases)) {
   });
 }
 
-// These are deliberate records of existing defects, not desired behavior.
-// A future bug fix should change these tests in its own reviewed change.
-test("comportamento conhecido: null vira zero no JSON salvo", () => {
+test("snapshot preserva valores ausentes sem inventar zero", () => {
   const { nulosAtuais } = cases.snapshots();
-  assert.equal(nulosAtuais.pockets.itens[0].drugScore, 0);
-  assert.equal(nulosAtuais.qualidade.metricas[0].valor, 0);
+  assert.equal(nulosAtuais.pockets.itens[0].drugScore, null);
+  assert.deepStrictEqual(json(nulosAtuais.qualidade.metricas), []);
 });
 
+test("decimal no snapshot aceita apenas números finitos e strings numéricas", () => {
+  const { get } = models();
+  const AS = get("AnalysisSnapshot");
+  const estrutura = get("StructureModel").ler(fs.readFileSync(path.join(__dirname, "fixtures/ui-render/1CRN.pdb"), "utf8")).estrutura;
+  const invalidos = [null, undefined, "", " \t", "texto", "NaN", "Infinity", NaN, Infinity, -Infinity,
+    false, true, [], [0], {}, { valueOf: () => 0 }];
+  const validos = [[0, 0], [1.25, 1.25], [-2.5, -2.5], ["0", 0], [" 2.5 ", 2.5], ["1e2", 100]];
+  for (const [valor, esperado] of [...invalidos.map((v) => [v, null]), ...validos]) {
+    const snap = AS.montarDeWorkspace({ estrutura, pdbId: "1CRN", pockets: [{ name: "P_0",
+      volume: valor, surface: valor, depth: valor, hydrophobicity: valor, drugScore: valor }],
+      qualidade: { relatorio: { estado: "ok", metricas: [{ id: "rfree", valor }] } },
+    }, { agora: "2026-11-12T15:00:00.000Z", id: "CRN-DECIMAL" });
+    assert.deepStrictEqual(json(snap.pockets.itens[0]), {
+      name: "P_0", volume: esperado, surface: esperado, depth: esperado, hydrophobicity: esperado, drugScore: esperado,
+    });
+    assert.deepStrictEqual(json(snap.qualidade.metricas.map((m) => m.valor)), esperado === null ? [] : [esperado]);
+    assert.equal(JSON.parse(JSON.stringify(snap)).pockets.itens[0].drugScore, esperado);
+  }
+});
+
+test("snapshots antigos e export de referência continuam sendo reimportados sem alteração", () => {
+  const AS = models().get("AnalysisSnapshot");
+  const exportLegado = JSON.parse(fs.readFileSync(path.join(GOLDENS, "exports.json"), "utf8")).snapshot;
+  // Zeros já gravados pela versão anterior continuam sendo dados importados.
+  Object.assign(exportLegado.pockets.itens[1], { volume: 0, hydrophobicity: 0, drugScore: 0 });
+  const antigos = [
+    JSON.parse(fs.readFileSync(path.join(__dirname, "fixtures/analises/4HHB-analise.json"), "utf8")),
+    JSON.parse(fs.readFileSync(path.join(GOLDENS, "snapshots.json"), "utf8")).snapshot,
+    exportLegado,
+  ];
+  for (const antigo of antigos) {
+    const resultado = AS.importar(JSON.stringify(antigo), []);
+    assert.equal(resultado.ok, true, resultado.erro);
+    assert.deepStrictEqual(json(resultado.analise), antigo);
+    assert.deepStrictEqual(json(resultado.colecao), [antigo]);
+  }
+});
+
+// These are deliberate records of existing defects, not desired behavior.
+// A future bug fix should change these tests in its own reviewed change.
 test("comportamento conhecido: validação interna aceita métricas com tipo incorreto", () => {
   const AS = models().get("AnalysisSnapshot");
   const snapshot = cases.snapshots().snapshot;
