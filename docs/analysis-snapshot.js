@@ -813,8 +813,7 @@ const AnalysisSnapshot = (() => {
     return (valor - norma.min) / (norma.max - norma.min);
   }
 
-  function comparar(snaps, entrada) {
-    const lista = Array.isArray(snaps) ? snaps : [];
+  function criarBaseComparacao(lista) {
     const base = {
       schema: SCHEMA_COMPARACAO,
       versaoApp: VERSAO_APP,
@@ -842,32 +841,10 @@ const AnalysisSnapshot = (() => {
       analises: lista.map(resumoAnalise),
       escolha: null,
     };
-    if (lista.length < MIN_ANALISES || lista.length > MAX_ANALISES) {
-      base.motivo = "A comparação precisa de 2 a 5 análises. Agora há " + lista.length + ".";
-      base.alertas.push(base.motivo);
-      return base;
-    }
-    const norm = normalizarPergunta(entrada);
-    base.pergunta = norm.pergunta;
-    if (!norm.ok) {
-      base.motivo = norm.erros[0];
-      base.alertas = norm.erros.slice();
-      return base;
-    }
-    const pergunta = norm.pergunta;
-    const regiao = norm.regiao;
-    const numeracao = numeracaoComparavel(lista, regiao);
-    base.numeracao = numeracao;
-    if (regiao.ok && !regiao.vazia && !numeracao.comparavel) base.alertas.push(numeracao.motivo);
-    if (pergunta.regiaoEssencial && !regiao.vazia && !numeracao.comparavel) {
-      base.ok = true;
-      base.motivo = "A região é essencial e a numeração não é comparável. Não há ranking para não tratar números diferentes como o mesmo sítio.";
-      base.alertas.unshift(base.motivo);
-      base.candidatos = lista.map((snap) => candidatoVazio(snap, "nao_pontuado", [base.motivo]));
-      base.insights = insightsDe(lista, pergunta, regiao, numeracao, [], null);
-      return base;
-    }
+    return base;
+  }
 
+  function listarCriteriosComparacao(pergunta, base) {
     const criterios = [];
     if (pergunta.pesos.cobertura > 0) criterios.push({ id: "cobertura", rotulo: "Cobertura do modelo", peso: pergunta.pesos.cobertura });
     if (pergunta.pesos.qualidade > 0) criterios.push({ id: "qualidade", rotulo: "Qualidade e confiabilidade", peso: pergunta.pesos.qualidade });
@@ -876,19 +853,10 @@ const AnalysisSnapshot = (() => {
       base.alertas.push("O peso do componente foi ignorado porque nenhum código ou nome foi informado.");
     }
     if (pergunta.pesos.pocket > 0) criterios.push({ id: "pocket", rotulo: "Pocket e drugScore", peso: pergunta.pesos.pocket });
-    if (!criterios.length) {
-      base.ok = true;
-      base.motivo = "Informe ao menos um peso maior que zero. Peso zero exclui o critério e, sem critério, não há ranking.";
-      base.alertas.push(base.motivo);
-      base.candidatos = lista.map((snap) => candidatoVazio(snap, "nao_pontuado", [base.motivo]));
-      return base;
-    }
+    return criterios;
+  }
 
-    const usarRegiao = !!(regiao.ok && !regiao.vazia && numeracao.comparavel);
-    const avaliacoes = new Map(lista.map((snap) => [snap.id, avaliarRegiao(snap, regiao)]));
-    const presencas = new Map(lista.map((snap) => [snap.id, presenciaComponente(snap, pergunta.componente)]));
-    const pockets = new Map(lista.map((snap) => [snap.id, melhorPocket(snap)]));
-
+  function criarCandidatosComparacao(lista, pergunta, regiao, presencas, pockets, avaliacoes) {
     const candidatos = lista.map((snap) => {
       const motivos = [];
       let situacao = "ranqueado";
@@ -925,6 +893,10 @@ const AnalysisSnapshot = (() => {
       };
     });
 
+    return candidatos;
+  }
+
+  function normalizarPontuacoesComparacao(candidatos, pockets, pergunta, base) {
     const ativos = candidatos.filter((c) => c.situacao !== "desclassificado");
     const normasQualidade = {};
     for (const def of METRICAS_MENOR_MELHOR) {
@@ -942,6 +914,10 @@ const AnalysisSnapshot = (() => {
       base.alertas.push("Nenhuma métrica de qualidade é comparável entre pelo menos duas análises. Ela não entrou como zero.");
     }
 
+    return { normasQualidade, normaPocket };
+  }
+
+  function pontuarCandidatosComparacao(candidatos, pergunta, usarRegiao, avaliacoes, presencas, pockets, normasQualidade, normaPocket) {
     for (const c of candidatos) {
       if (c.situacao === "desclassificado") continue;
       const subs = [];
@@ -1002,6 +978,70 @@ const AnalysisSnapshot = (() => {
       }
     }
 
+  }
+
+  function classificarEmpatesComparacao(pontuados) {
+    pontuados.sort((a, b) => b.pontuacao - a.pontuacao || texto(a.id).localeCompare(texto(b.id)));
+    let pos = 1;
+    for (let i = 0; i < pontuados.length; i++) {
+      if (i > 0 && Math.abs(pontuados[i].pontuacao - pontuados[i - 1].pontuacao) > 1e-9) pos = i + 1;
+      pontuados[i].posicao = pos;
+    }
+    const primeiro = pontuados[0].pontuacao;
+    const lideres = pontuados.filter((c) => Math.abs(c.pontuacao - primeiro) <= 1e-9);
+    for (const c of pontuados) c.empate = lideres.length > 1 && lideres.some((l) => l.id === c.id) ? true : pontuados.filter((o) => o.posicao === c.posicao).length > 1;
+    return lideres;
+  }
+
+  function comparar(snaps, entrada) {
+    const lista = Array.isArray(snaps) ? snaps : [];
+    const base = criarBaseComparacao(lista);
+    if (lista.length < MIN_ANALISES || lista.length > MAX_ANALISES) {
+      base.motivo = "A comparação precisa de 2 a 5 análises. Agora há " + lista.length + ".";
+      base.alertas.push(base.motivo);
+      return base;
+    }
+    const norm = normalizarPergunta(entrada);
+    base.pergunta = norm.pergunta;
+    if (!norm.ok) {
+      base.motivo = norm.erros[0];
+      base.alertas = norm.erros.slice();
+      return base;
+    }
+    const pergunta = norm.pergunta;
+    const regiao = norm.regiao;
+    const numeracao = numeracaoComparavel(lista, regiao);
+    base.numeracao = numeracao;
+    if (regiao.ok && !regiao.vazia && !numeracao.comparavel) base.alertas.push(numeracao.motivo);
+    if (pergunta.regiaoEssencial && !regiao.vazia && !numeracao.comparavel) {
+      base.ok = true;
+      base.motivo = "A região é essencial e a numeração não é comparável. Não há ranking para não tratar números diferentes como o mesmo sítio.";
+      base.alertas.unshift(base.motivo);
+      base.candidatos = lista.map((snap) => candidatoVazio(snap, "nao_pontuado", [base.motivo]));
+      base.insights = insightsDe(lista, pergunta, regiao, numeracao, [], null);
+      return base;
+    }
+
+    const criterios = listarCriteriosComparacao(pergunta, base);
+    if (!criterios.length) {
+      base.ok = true;
+      base.motivo = "Informe ao menos um peso maior que zero. Peso zero exclui o critério e, sem critério, não há ranking.";
+      base.alertas.push(base.motivo);
+      base.candidatos = lista.map((snap) => candidatoVazio(snap, "nao_pontuado", [base.motivo]));
+      return base;
+    }
+
+    const usarRegiao = !!(regiao.ok && !regiao.vazia && numeracao.comparavel);
+    const avaliacoes = new Map(lista.map((snap) => [snap.id, avaliarRegiao(snap, regiao)]));
+    const presencas = new Map(lista.map((snap) => [snap.id, presenciaComponente(snap, pergunta.componente)]));
+    const pockets = new Map(lista.map((snap) => [snap.id, melhorPocket(snap)]));
+
+    const candidatos = criarCandidatosComparacao(lista, pergunta, regiao, presencas, pockets, avaliacoes);
+
+    const { normasQualidade, normaPocket } = normalizarPontuacoesComparacao(candidatos, pockets, pergunta, base);
+
+    pontuarCandidatosComparacao(candidatos, pergunta, usarRegiao, avaliacoes, presencas, pockets, normasQualidade, normaPocket);
+
     const pontuados = candidatos.filter((c) => c.situacao === "ranqueado" && c.pontuacao != null);
     if (!pontuados.length) {
       base.ok = true;
@@ -1014,15 +1054,7 @@ const AnalysisSnapshot = (() => {
       base.insights = insightsDe(lista, pergunta, regiao, numeracao, candidatos, usarRegiao);
       return base;
     }
-    pontuados.sort((a, b) => b.pontuacao - a.pontuacao || texto(a.id).localeCompare(texto(b.id)));
-    let pos = 1;
-    for (let i = 0; i < pontuados.length; i++) {
-      if (i > 0 && Math.abs(pontuados[i].pontuacao - pontuados[i - 1].pontuacao) > 1e-9) pos = i + 1;
-      pontuados[i].posicao = pos;
-    }
-    const primeiro = pontuados[0].pontuacao;
-    const lideres = pontuados.filter((c) => Math.abs(c.pontuacao - primeiro) <= 1e-9);
-    for (const c of pontuados) c.empate = lideres.length > 1 && lideres.some((l) => l.id === c.id) ? true : pontuados.filter((o) => o.posicao === c.posicao).length > 1;
+    const lideres = classificarEmpatesComparacao(pontuados);
     base.ok = true;
     base.ranqueado = true;
     base.lideres = lideres.map((c) => ({ id: c.id, rotulo: c.rotulo, pontuacao: c.pontuacao }));
