@@ -4,7 +4,7 @@ const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
 const { test } = require("node:test");
-const { cases, GOLDENS, json, models } = require("./helpers/characterization-cases.js");
+const { cases, GOLDENS, json, models, browser } = require("./helpers/characterization-cases.js");
 
 // Expected files are checked in. A normal test run never writes or updates them.
 for (const [name, capture] of Object.entries(cases)) {
@@ -168,4 +168,107 @@ test("consulta adicional: cancelamento, timeout, alternativa JSON e erros têm f
   }
   assert.equal(result.rede.resultado.estado, "rede");
   assert.equal(result.jsonInvalido.resultado.estado, "rede");
+});
+
+
+function viewerComInsercoes() {
+  const { context, get } = browser(["pdb-analysis", "structure-model", "viewer"]);
+  const linha = (serial, chain, seq, icode, nome) => "ATOM  " + String(serial).padStart(5)
+    + " " + nome.padStart(4) + " GLY " + chain + String(seq).padStart(4) + (icode || " ")
+    + "      0.000   0.000   0.000  1.00 20.00           C  ";
+  const pdb = ["HEADER    SYNTHETIC INSERTION SELECTION TEST", linha(1, "A", 10, "", "CA"),
+    linha(2, "A", 10, "", "N"), linha(3, "A", 10, "A", "CA"), linha(4, "A", 10, "A", "N"),
+    linha(5, "A", 10, "B", "CA"), linha(6, "B", 10, "A", "CA"), linha(7, "B", 10, "", "CA"),
+    linha(8, "A", 11, "", "CA"), "END", ""].join("\n");
+  const atomos = pdb.split("\n").filter((l) => l.startsWith("ATOM  ")).map((l) => ({
+    serial: Number(l.slice(6, 11)), chain: l[21], resi: Number(l.slice(22, 26)), icode: l[26], atom: l.slice(12, 16).trim(),
+  }));
+  const calls = [];
+  // Correspondência de propriedades do AtomSelectionSpec: AND entre campos,
+  // qualquer valor do array. O número resi e o campo icode são independentes.
+  const selecionados = (sel) => atomos.filter((a) => Object.entries(sel).every(([k, v]) =>
+    Array.isArray(v) ? v.includes(a[k]) : a[k] === v)).map((a) => a.serial);
+  const estado = { viewerFormato: "pdb", dados: { cadeias: ["A", "B"] }, cadeiasOcultas: new Set(), viewer: {
+    setStyle: (sel, spec) => calls.push({ op: "estilo", sel, spec, atomos: selecionados(sel) }),
+    addSurface: (_type, _opts, sel) => calls.push({ op: "superficie", sel, atomos: selecionados(sel) }),
+    removeAllSurfaces() {}, render() {},
+  } };
+  Object.assign(context, { estado, $3Dmol: { SurfaceType: { SAS: "SAS" } } });
+  return { context, get, estado, pdb, atomos, calls };
+}
+
+test("pocket e motivo distinguem cadeia, número e inserção em PDB sintético pequeno", () => {
+  const { get, estado, pdb, calls } = viewerComInsercoes();
+  const linhas = pdb.split("\n").filter((l) => l.startsWith("ATOM  "));
+  for (const [cadeia, codigo, esperados] of [["A", "", [1, 2]], ["A", "A", [3, 4]], ["A", "B", [5]], ["B", "A", [6]], ["B", "", [7]]]) {
+    const trecho = linhas.filter((l) => l[21] === cadeia && Number(l.slice(22, 26)) === 10 && l[26].trim() === codigo).join("\n");
+    const sels = get("selecoesDosResiduos")(trecho);
+    assert.deepStrictEqual(json(sels), [{ chain: cadeia, resi: [10], icode: codigo || " " }]);
+    calls.length = 0;
+    get("pintarResiduosPocket")(sels);
+    assert.deepStrictEqual(calls.filter((c) => c.op === "estilo").flatMap((c) => c.atomos), esperados);
+    estado.superficie = { sels, color: "magenta", opacity: 0.8 };
+    get("aplicarSuperficie")();
+    assert.deepStrictEqual(calls.filter((c) => c.op === "superficie").flatMap((c) => c.atomos), esperados);
+    calls.length = 0;
+    get("pintarMotivo")([{ cadeia, residuos: ["10" + codigo] }]);
+    assert.deepStrictEqual(calls.flatMap((c) => c.atomos), esperados);
+  }
+  calls.length = 0;
+  get("pintarMotivo")([{ cadeia: "A", residuos: ["10", "10A"] }]);
+  assert.deepStrictEqual(calls.flatMap((c) => c.atomos), [1, 2, 3, 4]);
+  assert.equal(get("selecoesDosResiduos")(pdb).reduce((n, s) => n + s.resi.length, 0), 6, "átomos repetidos não duplicam o resíduo");
+});
+
+test("destaque do preparo preserva inserção e nome do átomo", () => {
+  const { get, estado, calls } = viewerComInsercoes();
+  const marcador = "  return { ativo, temFicha, reiniciar, aoCarregar, aposEstilo, aoMostrar, markdown, anexarPdf, resumoAnalise };";
+  const fonte = fs.readFileSync(path.join(__dirname, "../docs/prep-ui.js"), "utf8");
+  assert.equal(fonte.split(marcador).length, 2);
+  get(fonte.replace(marcador, "  globalThis.destaqueTeste = (itens) => { destaque = itens; };\n" + marcador));
+  for (const [icode, esperados] of [["", [1]], ["A", [3]], ["B", [5]]]) {
+    calls.length = 0;
+    get("destaqueTeste")([{ cadeia: "A", resseq: 10, icode, atom: "CA", color: "yellow", radius: 0.5 }]);
+    get("PrepUI").aposEstilo(estado);
+    assert.deepStrictEqual(calls.flatMap((c) => c.atomos), esperados);
+  }
+});
+
+test("motivo sem inserção mantém a seleção numérica em mmCIF", () => {
+  const { get, estado, atomos, calls } = viewerComInsercoes();
+  estado.viewerFormato = "cif";
+  for (const a of atomos) delete a.icode;
+  get("pintarMotivo")([{ cadeia: "A", residuos: ["10", "11"] }]);
+  assert.deepStrictEqual(json(calls[0].sel), { chain: "A", resi: [10, 11] });
+});
+
+
+test("PDB sem inserções mantém os mesmos átomos no pocket e no motivo", () => {
+  const { get, pdb, atomos, calls } = viewerComInsercoes();
+  atomos.splice(0, atomos.length, ...atomos.filter((a) => a.icode === " "));
+  const semInsercoes = pdb.split("\n").filter((l) => l.startsWith("ATOM  ") && l[26] === " ").join("\n");
+  get("pintarResiduosPocket")(get("selecoesDosResiduos")(semInsercoes));
+  assert.deepStrictEqual(calls.flatMap((c) => c.atomos), [1, 2, 8, 7]);
+  calls.length = 0;
+  get("pintarMotivo")([{ cadeia: "A", residuos: ["10", "11"] }]);
+  assert.deepStrictEqual(calls.flatMap((c) => c.atomos), [1, 2, 8]);
+});
+
+
+test("destaque do preparo em mmCIF sem icode encontra os átomos", () => {
+  const { get, estado, atomos, calls } = viewerComInsercoes();
+  estado.viewerFormato = "cif";
+  atomos.splice(0, atomos.length, ...atomos.filter((a) => a.icode === " "));
+  for (const a of atomos) delete a.icode;
+  const marcador = "  return { ativo, temFicha, reiniciar, aoCarregar, aposEstilo, aoMostrar, markdown, anexarPdf, resumoAnalise };";
+  const fonte = fs.readFileSync(path.join(__dirname, "../docs/prep-ui.js"), "utf8");
+  assert.equal(fonte.split(marcador).length, 2);
+  get(fonte.replace(marcador, "  globalThis.destaqueTeste = (itens) => { destaque = itens; };\n" + marcador));
+  for (const icode of [undefined, "", " "]) {
+    calls.length = 0;
+    get("destaqueTeste")([{ cadeia: "A", resseq: 10, icode, atom: "CA", color: "yellow", radius: 0.5 }]);
+    get("PrepUI").aposEstilo(estado);
+    assert.deepStrictEqual(json(calls[0].sel), { chain: "A", resi: 10, atom: "CA" });
+    assert.deepStrictEqual(calls[0].atomos, [1], "encontra CA de A10 sem incluir N, A11 ou B10");
+  }
 });

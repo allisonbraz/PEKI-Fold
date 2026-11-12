@@ -984,11 +984,13 @@ ${htmlVinaPreparo(F, pocketOpts, vinaCampos)}
     if (!v) return;
     if (destaque && destaque.length) {
       for (const item of destaque) {
+        const icode = item.icode || " ";
         const sel = {
           chain: item.cadeia === "_" ? "" : item.cadeia,
-          resi: item.icode ? String(item.resseq) + item.icode : item.resseq,
+          resi: item.resseq,
           atom: item.atom,
         };
+        if (estado.viewerFormato !== "cif" || icode !== " ") sel.icode = icode;
         v.setStyle(sel, { sphere: { color: item.color, radius: item.radius } });
       }
     }
