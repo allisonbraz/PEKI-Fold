@@ -264,7 +264,10 @@ function metaLinhas() {
 // --- specs de gráficos (reutilizados na exportação) ---
 function specAAChain(cid) {
   const freq = estado.dados.frequencias[cid];
-  const cor = estado.corPorCadeia[cid] || "#2a5599";
+  const cor = freq.itens.map((i) => {
+    const grupo = typeof ProtAnalysis !== "undefined" && ProtAnalysis.grupoAminoacido(i.aa);
+    return grupo ? grupo.cor : (estado.corPorCadeia[cid] || "#2a5599");
+  });
   return { data: [{ x: freq.itens.map((i) => i.aa), y: freq.itens.map((i) => i.porcentagem), type: "bar", marker: { color: cor } }],
     layout: { title: `Frequência de aminoácidos — cadeia ${cid}`, xaxis: { title: "Aminoácido" }, yaxis: { title: "Porcentagem (%)" } } };
 }

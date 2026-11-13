@@ -18,6 +18,56 @@ const ProtAnalysis = (() => {
     GLY: "G", HIS: "H", ILE: "I", LEU: "L", LYS: "K", MET: "M", PHE: "F",
     PRO: "P", SER: "S", THR: "T", TRP: "W", TYR: "Y", VAL: "V",
   };
+  // Cinco grupos químicos das barras de frequência. A cor é estável nos dois temas
+  // (contraste de pelo menos 3:1 no cartão claro e no escuro). Gly, Pro e Cys
+  // ficam em "especial" para não misturar polaridade com o efeito estrutural.
+  const GRUPOS_AA = [
+    {
+      id: "hidro",
+      nome: "Hidrofóbico / apolar",
+      cor: "#C47B00",
+      residuos: ["ALA", "VAL", "LEU", "ILE", "MET", "PHE", "TRP"],
+      detalhe: "Alanina, valina, leucina, isoleucina, metionina, fenilalanina e triptofano. A cadeia lateral é apolar.",
+    },
+    {
+      id: "polar",
+      nome: "Polar não carregado",
+      cor: "#0E8A6A",
+      residuos: ["SER", "THR", "ASN", "GLN", "TYR"],
+      detalhe: "Serina, treonina, asparagina, glutamina e tirosina. A tirosina fica aqui pela hidroxila do anel, e não no grupo apolar.",
+    },
+    {
+      id: "positivo",
+      nome: "Positivo (básico)",
+      cor: "#3B6FD8",
+      residuos: ["LYS", "ARG", "HIS"],
+      detalhe: "Lisina, arginina e histidina. A histidina entra pelo caráter básico, não pelo estado de protonação deste modelo, que a ferramenta não calcula.",
+    },
+    {
+      id: "negativo",
+      nome: "Negativo (ácido)",
+      cor: "#DC3D4A",
+      residuos: ["ASP", "GLU"],
+      detalhe: "Aspartato e glutamato.",
+    },
+    {
+      id: "especial",
+      nome: "Especial",
+      cor: "#8B5CF6",
+      residuos: ["GLY", "PRO", "CYS"],
+      detalhe: "Glicina, sem cadeia lateral; prolina, com anel no esqueleto; cisteína, com tiol e possível ponte dissulfeto. Ficam fora dos grupos de polaridade para não misturar esse critério com o efeito estrutural.",
+    },
+  ];
+  const GRUPO_POR_AA = Object.create(null);
+  for (const grupo of GRUPOS_AA) {
+    for (const aa of grupo.residuos) GRUPO_POR_AA[aa] = grupo;
+  }
+  const TEXTO_GRUPOS_AA = "A cor da barra indica o grupo químico do aminoácido. A mesma paleta vale para a soma de todas as cadeias e para uma cadeia só, e não é a cor da cadeia no visualizador 3D. A contagem e a porcentagem não mudam: continuam a soma dos resíduos modelados dos 20 aminoácidos padrão no escopo escolhido.";
+
+  function grupoAminoacido(codigo) {
+    return GRUPO_POR_AA[String(codigo || "").trim().toUpperCase()] || null;
+  }
+
   // Rótulos dos mesmos 20 códigos. Código de fora desta tabela não ganha nome inventado.
   const NOMES_AA = {
     ALA: "alanina", ARG: "arginina", ASN: "asparagina", ASP: "aspartato",
@@ -306,7 +356,7 @@ const ProtAnalysis = (() => {
   }
 
   return {
-    AMINOACIDOS_PADRAO, TRES_PARA_UMA, NOMES_AA,
+    AMINOACIDOS_PADRAO, TRES_PARA_UMA, NOMES_AA, GRUPOS_AA, TEXTO_GRUPOS_AA, grupoAminoacido,
     listarCadeias, separarCadeias, estatisticas, frequenciaAminoacidos,
     frequenciaConsolidada, catalogoResiduos, tokensMotivo, validarMotivoTexto,
     sequenciaUmaLetra, buscarMotivo, analisarCompleto, validar, extrairMetadados,
