@@ -74,9 +74,8 @@
         <textarea id="ens-ids" class="ens-ids" rows="2" placeholder="ex.: 4EYL 1GZM"></textarea>
         <div class="ens-home-acoes">
           <button id="ens-abrir" class="primary-btn" type="button">Abrir ensemble</button>
-          <label class="ghost-btn ens-file-lbl">Arquivo multimodelo
-            <input id="ens-file" type="file" accept=".pdb,.ent" hidden>
-          </label>
+          <button id="btn-ens-file" class="ghost-btn ens-file-lbl" type="button">Arquivo multimodelo</button>
+          <input id="ens-file" type="file" accept=".pdb,.ent" hidden>
           <button id="ens-exemplo-home" class="ghost-btn" type="button">Exemplo sintético</button>
         </div>
         <p id="ens-erro-home" class="erro" role="alert" hidden></p>
@@ -149,21 +148,21 @@
 
       <div class="card painel">
         <nav class="abas" role="tablist" aria-label="Seções da estrutura">
-          <button class="aba ativa" type="button" role="tab" aria-selected="true" id="aba-visao" aria-controls="tab-visao" data-tab="visao">Visão geral</button>
-          <button class="aba" type="button" role="tab" aria-selected="false" id="aba-qualidade" aria-controls="tab-qualidade" data-tab="qualidade">Qualidade</button>
-          <button class="aba" type="button" role="tab" aria-selected="false" data-tab="cadeias">Cadeias</button>
-          <button class="aba" type="button" role="tab" aria-selected="false" data-tab="stats">Estatísticas</button>
-          <button class="aba" type="button" role="tab" aria-selected="false" data-tab="aa">Aminoácidos</button>
-          <button class="aba" type="button" role="tab" aria-selected="false" data-tab="motivos">Motivos</button>
-          <button class="aba" type="button" role="tab" aria-selected="false" data-tab="pockets">Pockets</button>
-          <button class="aba" type="button" role="tab" aria-selected="false" data-tab="preparo">Preparo</button>
+          <button class="aba ativa" type="button" role="tab" aria-selected="true" tabindex="0" id="aba-visao" aria-controls="tab-visao" data-tab="visao">Visão geral</button>
+          <button class="aba" type="button" role="tab" aria-selected="false" tabindex="-1" id="aba-qualidade" aria-controls="tab-qualidade" data-tab="qualidade">Qualidade</button>
+          <button class="aba" type="button" role="tab" aria-selected="false" tabindex="-1" id="aba-cadeias" aria-controls="tab-cadeias" data-tab="cadeias">Cadeias</button>
+          <button class="aba" type="button" role="tab" aria-selected="false" tabindex="-1" id="aba-stats" aria-controls="tab-stats" data-tab="stats">Estatísticas</button>
+          <button class="aba" type="button" role="tab" aria-selected="false" tabindex="-1" id="aba-aa" aria-controls="tab-aa" data-tab="aa">Aminoácidos</button>
+          <button class="aba" type="button" role="tab" aria-selected="false" tabindex="-1" id="aba-motivos" aria-controls="tab-motivos" data-tab="motivos">Motivos</button>
+          <button class="aba" type="button" role="tab" aria-selected="false" tabindex="-1" id="aba-pockets" aria-controls="tab-pockets" data-tab="pockets">Pockets</button>
+          <button class="aba" type="button" role="tab" aria-selected="false" tabindex="-1" id="aba-preparo" aria-controls="tab-preparo" data-tab="preparo">Preparo</button>
         </nav>
 
-        <div class="aba-conteudo" id="tab-visao" role="tabpanel" aria-labelledby="aba-visao"></div>
-        <div class="aba-conteudo" id="tab-qualidade" role="tabpanel" aria-labelledby="aba-qualidade" hidden></div>
-        <div class="aba-conteudo" id="tab-cadeias" hidden></div>
-        <div class="aba-conteudo" id="tab-stats" hidden></div>
-        <div class="aba-conteudo" id="tab-aa" hidden data-escopo="todas">
+        <div class="aba-conteudo" id="tab-visao" role="tabpanel" aria-labelledby="aba-visao" tabindex="0"></div>
+        <div class="aba-conteudo" id="tab-qualidade" role="tabpanel" aria-labelledby="aba-qualidade" tabindex="0" hidden></div>
+        <div class="aba-conteudo" id="tab-cadeias" role="tabpanel" aria-labelledby="aba-cadeias" tabindex="0" hidden></div>
+        <div class="aba-conteudo" id="tab-stats" role="tabpanel" aria-labelledby="aba-stats" tabindex="0" hidden></div>
+        <div class="aba-conteudo" id="tab-aa" role="tabpanel" aria-labelledby="aba-aa" tabindex="0" hidden data-escopo="todas">
           <p id="aa-escopo" class="aa-escopo" data-escopo="todas" aria-live="polite"></p>
           <div class="aa-controls">
             <label for="aa-cadeia">Escopo
@@ -177,12 +176,14 @@
               </select>
             </label>
             <button id="btn-aa-csv" class="dl-btn" type="button">⬇ CSV</button>
+            <button id="btn-aa-tabela" class="ghost-btn" type="button" aria-expanded="false" aria-controls="aa-tabela">Ver dados em tabela</button>
           </div>
+          <div id="aa-tabela" class="dados-scroll" role="region" aria-label="Dados de aminoácidos" tabindex="0" hidden></div>
           <div id="aa-grafico" class="grafico"></div>
           <p id="aa-atalho-nota" class="muted small"></p>
           <div id="aa-atalho" class="motivo-chips" role="group" aria-label="Adicionar aminoácido do escopo selecionado ao motivo"></div>
         </div>
-        <div class="aba-conteudo" id="tab-motivos" hidden>
+        <div class="aba-conteudo" id="tab-motivos" role="tabpanel" aria-labelledby="aba-motivos" tabindex="0" hidden>
           <p class="motivo-def">Um motivo aqui é uma <strong>sequência curta de resíduos</strong>, na ordem em que eles se seguem no modelo. Não é um aminoácido isolado.</p>
           <p class="motivo-def">A busca exige correspondência <strong>exata e contígua</strong>: os códigos precisam aparecer juntos, nessa ordem. Três resíduos iguais espalhados pela cadeia não contam.</p>
           <p class="muted small">Isto é motivo de sequência local. Não é motivo estrutural (hélice ou folha), não é sítio funcional e não é pocket.</p>
@@ -200,7 +201,7 @@
           <p id="motivo-aviso" class="erro" role="alert" hidden></p>
           <div id="motivo-resultado"></div>
         </div>
-        <div class="aba-conteudo" id="tab-pockets" hidden>
+        <div class="aba-conteudo" id="tab-pockets" role="tabpanel" aria-labelledby="aba-pockets" tabindex="0" hidden>
           <p class="muted small">
             Detecção de pockets (cavidades) com <strong>DoGSiteScorer</strong>
             (ProteinsPlus — ZBH, Universidade de Hamburgo). Requer um
@@ -212,7 +213,7 @@
           <div id="pockets-status" class="muted small" style="margin-top:10px"></div>
           <div id="pockets-resultado"></div>
         </div>
-        <div class="aba-conteudo" id="tab-preparo" hidden></div>
+        <div class="aba-conteudo" id="tab-preparo" role="tabpanel" aria-labelledby="aba-preparo" tabindex="0" hidden></div>
       </div>
     </div>
   </main>
@@ -245,15 +246,15 @@
     </div>
 
     <div class="card painel cmp-painel">
-      <nav class="abas">
-        <button class="aba ativa" data-ctab="stats">Estatísticas</button>
-        <button class="aba" data-ctab="aa">Aminoácidos</button>
-        <button class="aba" data-ctab="pockets">Pockets</button>
+      <nav class="abas" role="tablist" aria-label="Seções da comparação">
+        <button class="aba ativa" type="button" role="tab" id="caba-stats" aria-controls="ctab-stats" aria-selected="true" tabindex="0" data-ctab="stats">Estatísticas</button>
+        <button class="aba" type="button" role="tab" id="caba-aa" aria-controls="ctab-aa" aria-selected="false" tabindex="-1" data-ctab="aa">Aminoácidos</button>
+        <button class="aba" type="button" role="tab" id="caba-pockets" aria-controls="ctab-pockets" aria-selected="false" tabindex="-1" data-ctab="pockets">Pockets</button>
       </nav>
 
-      <div class="aba-conteudo" id="ctab-stats"></div>
-      <div class="aba-conteudo" id="ctab-aa" hidden></div>
-      <div class="aba-conteudo" id="ctab-pockets" hidden>
+      <div class="aba-conteudo" id="ctab-stats" role="tabpanel" aria-labelledby="caba-stats" tabindex="0"></div>
+      <div class="aba-conteudo" id="ctab-aa" role="tabpanel" aria-labelledby="caba-aa" tabindex="0" hidden></div>
+      <div class="aba-conteudo" id="ctab-pockets" role="tabpanel" aria-labelledby="caba-pockets" tabindex="0" hidden>
         <p class="muted small">
           Detecta os pockets de cada proteína via <strong>DoGSiteScorer</strong>
           e compara entre elas, respondendo às 5 perguntas do trabalho. Roda no
@@ -283,9 +284,8 @@
       <p class="rotulo-fixo">O ranking é apoio calculado com os critérios e os pesos que você definir. Não é verdade biológica, não é nota universal de qualidade e não substitui a sua decisão.</p>
       <p class="muted small">Não há mapa resíduo a resíduo com o UniProt nem sobreposição de estruturas. Um heterocomponente observado não prova estado holo. O drugScore não identifica sítio funcional nem pocket equivalente entre análises.</p>
       <div class="an-importar">
-        <label class="primary-btn an-file" for="an-arquivo">Importar JSON
-          <input id="an-arquivo" type="file" accept="application/json,.json" multiple hidden>
-        </label>
+        <button id="btn-an-arquivo" class="primary-btn an-file" type="button">Importar JSON</button>
+        <input id="an-arquivo" type="file" accept="application/json,.json" multiple hidden>
         <button id="an-limpar" class="ghost-btn" type="button">Limpar comparação</button>
       </div>
       <p id="an-erro" class="erro" role="alert" hidden></p>
@@ -441,14 +441,14 @@
   </main>
 
   <!-- Modal de exportação -->
-  <div id="export-modal" class="modal-overlay" hidden>
-    <div class="modal">
-      <h3>Exportar análise</h3>
+  <dialog id="export-modal" class="modal" aria-labelledby="exp-titulo">
+      <h3 id="exp-titulo">Exportar análise</h3>
 
+      <div class="modal-corpo">
       <div class="modal-secao">
         <span class="modal-label">Formato</span>
         <div class="radio-row">
-          <label><input type="radio" name="exp-fmt" value="pdf" checked /> PDF</label>
+          <label><input type="radio" name="exp-fmt" value="pdf" checked autofocus /> PDF</label>
           <label><input type="radio" name="exp-fmt" value="md" /> Markdown</label>
         </div>
       </div>
@@ -459,14 +459,14 @@
         <div id="exp-itens" class="exp-itens"></div>
         <button type="button" id="exp-so-pockets" class="link-btn exp-preset" hidden>Só pockets</button>
       </div>
+      </div>
 
       <div class="modal-acoes">
         <button id="exp-cancelar" class="ghost-btn">Cancelar</button>
         <button id="exp-confirmar" class="primary-btn">Exportar</button>
       </div>
-      <div id="exp-status" class="muted small"></div>
-    </div>
-  </div>
+      <div id="exp-status" class="muted small" role="status"></div>
+  </dialog>
 
   <footer class="rodape">
     <p class="creditos">
