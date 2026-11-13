@@ -721,6 +721,19 @@ const PrepAnalysis = (() => {
     return { pares, registros, raio };
   }
 
+  // Texto informativo. Não escolhe qual par entra numa simulação.
+  function resumoDissulfetos(dissulfetos) {
+    const pares = (dissulfetos && dissulfetos.pares) || [];
+    const n = pares.length;
+    const cabeca = n === 1
+      ? "1 par de cisteína candidato"
+      : n + " pares de cisteína candidatos";
+    if (!n) return cabeca + ".";
+    const um = (a) => "Cadeia " + rotuloCadeia(a.cadeia) + " " + a.resname + " " + a.resseq + (a.icode || "");
+    const itens = pares.map((p) => um(p.a) + " – " + um(p.b) + " (d = " + Number(p.distancia).toFixed(2) + " Å)");
+    return cabeca + ": " + itens.join("; ") + ".";
+  }
+
   function glicosilacao(atomos, links, hetnomes, raio, maxResProteina) {
     function ehAcucarRes(resname) {
       return ACUCARES.has(resname) || hetnamPareceAcucar(hetnomes[resname]);
@@ -1249,6 +1262,7 @@ const PrepAnalysis = (() => {
     inventario,
     vizinhosMetal,
     paresSS,
+    resumoDissulfetos,
     glicosilacao,
     histidinas,
     linhasBond,

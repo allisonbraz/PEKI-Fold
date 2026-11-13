@@ -106,6 +106,9 @@ function testeSintetico() {
   ].join("\n");
   const ss = Prep.paresSS(Prep.parseAtomos(ssTxt), Prep.parseSsbond(ssTxt), 2.5);
   assert(ss.pares.length === 1 && ss.registros[0].coberto === true, "par SG–SG casa com SSBOND");
+  const resumoSs = Prep.resumoDissulfetos(ss);
+  assert(resumoSs === "1 par de cisteína candidato: Cadeia A CYS 10 – Cadeia A CYS 20 (d = 2.00 Å).", "resumo copiável: " + resumoSs);
+  assert(Prep.resumoDissulfetos({ pares: [] }) === "0 pares de cisteína candidatos.", "resumo sem pares");
 
   const ssSim = [
     "SSBOND   1 CYS A   10    CYS A   20                          1555   2555  2.00",

@@ -47,6 +47,20 @@ const PrepUI = (() => {
     return String(v ?? "").replace(/\|/g, "/").replace(/\r?\n/g, " ");
   }
 
+  function copiarTexto(texto, okMsg) {
+    const valor = String(texto || "");
+    const avisar = (msg) => {
+      const st = document.getElementById("prep-vina-status") || document.getElementById("prep-previa");
+      if (st) st.textContent = msg;
+    };
+    if (!valor) { avisar("Não há texto para copiar."); return; }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(valor).then(() => avisar(okMsg), () => avisar("A cópia automática não ficou disponível. Selecione o texto e copie."));
+      return;
+    }
+    avisar("A cópia automática não ficou disponível. Selecione o texto e copie.");
+  }
+
   function baixar(nome, conteudo, mime) {
     const blob = new Blob([conteudo], { type: mime || "text/plain;charset=utf-8" });
     const url = URL.createObjectURL(blob);
@@ -406,6 +420,12 @@ const PrepUI = (() => {
       <section class="prep-secao">
         <h3>Pontes dissulfeto</h3>
         <p class="rotulo-fixo">${esc(F.contato)} Pares SG–SG de CYS ou CYX até ${esc(raios.ss)} Å, comparados ao SSBOND.</p>
+        <h4>Resumo copiável</h4>
+        <p class="muted small">Informativo. O texto repete os pares já calculados e não escolhe qual ponte manter.</p>
+        <textarea id="prep-ss-resumo" class="prep-cfg" rows="3" readonly>${esc(PrepAnalysis.resumoDissulfetos(resultado.dissulfetos))}</textarea>
+        <div class="prep-linha">
+          <button type="button" class="dl-btn" data-acao="copiar-ss">Copiar resumo</button>
+        </div>
         ${tabela(["Cisteína 1", "Cisteína 2", "Distância (Å)", "Consta no SSBOND?"], linhasSS().map((row, i) => {
           const copia = row.slice();
           copia[0] = { html: `${esc(row[0])} <button type="button" class="link-btn" data-acao="ver-ss" data-idx="${i}">ver</button>` };
@@ -688,7 +708,7 @@ ${htmlVinaPreparo(F, pocketOpts, vinaCampos)}
         },
         {
           id: "dissulfetos", titulo: "Pontes dissulfeto",
-          paragrafos: [F.contato, F.tleap],
+          paragrafos: [F.contato, PrepAnalysis.resumoDissulfetos(resultado.dissulfetos), "Este resumo não decide quais pares entram na simulação.", F.tleap],
           tabelas: [{ head: ["Cisteína 1", "Cisteína 2", "Distância (Å)", "SSBOND"], rows: linhasSS() }],
           pre: resultado.bonds,
         },
@@ -887,6 +907,11 @@ ${htmlVinaPreparo(F, pocketOpts, vinaCampos)}
       if (estado && estado.viewer) estado.viewer.removeAllShapes();
       const estilo = document.getElementById("estilo-3d");
       if (estilo) estilo.dispatchEvent(new Event("change"));
+      return;
+    }
+    if (acao === "copiar-ss") {
+      const ta = document.getElementById("prep-ss-resumo");
+      copiarTexto(ta && ta.value, "Resumo das pontes copiado. Ele não escolhe o par.");
       return;
     }
     if (acao === "bonds") baixar("rascunho_bond_tleap.txt", resultado.bonds);
