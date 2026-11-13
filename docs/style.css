@@ -394,6 +394,8 @@ tr.pocket-visto td:first-child { box-shadow: inset 3px 0 0 var(--primary); }
 
 .rodape { text-align: center; padding: 20px; color: var(--muted); font-size: .85rem; }
 .rodape .creditos { margin: 0 0 8px; color: var(--text); font-size: .92rem; line-height: 1.6; }
+.rodape a { color: var(--muted); font-weight: 600; }
+.rodape a:hover { color: var(--primary); }
 
 /* Ensemble (prefixo ens-). Não altera o viewer principal. */
 #ensemble { min-width: 0; }
