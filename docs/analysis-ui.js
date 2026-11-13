@@ -15,6 +15,7 @@ const AnalysisUI = (() => {
   function $(id) { return document.getElementById(id); }
 
   function abrir() {
+    if (typeof memorizarEntrada === "function") memorizarEntrada();
     if (typeof invalidarConsultasEstrutura === "function") invalidarConsultasEstrutura();
     const entrada = $("entrada");
     const workspace = $("workspace");
@@ -27,7 +28,9 @@ const AnalysisUI = (() => {
     if (ensemble) ensemble.hidden = true;
     if (painel) painel.hidden = false;
     render();
-    if (typeof window !== "undefined" && window.scrollTo) window.scrollTo({ top: 0, behavior: "smooth" });
+    if (typeof atualizarURL === "function" && typeof history !== "undefined") atualizarURL("analises", "1");
+    if (typeof abrirTela === "function") abrirTela("analises", "an-titulo");
+    else if (typeof window !== "undefined" && window.scrollTo) window.scrollTo({ top: 0, behavior: "auto" });
   }
 
   function aoFechar() {

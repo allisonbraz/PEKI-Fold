@@ -65,9 +65,24 @@ button { font: inherit; cursor: pointer; border-radius: 8px; border: none; }
 .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; box-shadow: var(--shadow); padding: 18px; }
 
 /* Entrada */
-.entrada { display: flex; justify-content: center; padding: 48px 20px; }
+.entrada { display: flex; justify-content: center; padding: 24px 20px; }
 .entrada-card { width: 100%; max-width: 680px; text-align: center; }
-.hero-logo { display: block; width: min(320px, 85%); height: auto; margin: 0 auto 18px; border-radius: 12px; }
+.hero-logo { display: block; width: min(140px, 85%); height: auto; margin: 0 auto 8px; border-radius: 12px; }
+.feedback-acao { text-align: left; }
+.feedback-acao:empty, .feedback-acao p:empty, .visual-status:empty { display: none; }
+.visual-status { padding: 10px 12px; color: var(--text); font-size: .9rem; }
+.visual-status button { margin-top: 8px; }
+.viewer-atalhos { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; padding: 10px 12px; }
+.viewer-atalhos a { color: var(--primary); }
+.resultados-atalho { display: inline-flex; align-items: center; color: var(--primary); }
+#viewer-conteudo { min-height: 0; overflow: auto; }
+#resultados-titulo, #cmp-resultados-titulo { margin: 0 0 20px; scroll-margin-top: 16px; }
+.grafico:empty { display: none; }
+@media (max-width: 700px) {
+  .entrada { padding: 16px 12px; }
+  .hero-logo { width: 64px; }
+  #viewer.viewer, .cmp-viewer { height: 45vh !important; min-height: 260px; }
+}
 .entrada-lbl { display: block; text-align: left; font-weight: 600; margin: 16px 0 0; }
 .entrada-dica { text-align: left; margin: 0 0 4px; }
 .entrada-row { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 10px; }
@@ -231,6 +246,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible, summary:focus
   outline: 2px solid var(--primary);
   outline-offset: 2px;
 }
+[tabindex="-1"]:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
 
 /* Tabelas */
 table { width: 100%; border-collapse: collapse; font-size: .9rem; }

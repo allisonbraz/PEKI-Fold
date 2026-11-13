@@ -99,10 +99,12 @@ test("biblioteca 3D atrasada e retorno à home não reabrem a estrutura antiga",
   h.context.lib3D = () => lib.promise;
   const old = h.get('analisar({ pdbId: "1CRN" })');
   await tick();
+  assert.equal(h.get("estado.pdbId"), "1CRN", "texto abre antes da biblioteca 3D");
+  assert.equal(h.element("workspace").hidden, false);
   h.get("irParaHome()");
   lib.resolve();
   await old;
-  assert.equal(h.get("estado.pdbId"), null);
+  assert.equal(h.get("estado.pdbId"), "1CRN");
   assert.equal(h.element("workspace").hidden, true);
   assert.equal(h.element("entrada").hidden, false);
   assert.equal(h.element("loading").hidden, true);

@@ -52,7 +52,8 @@ function invalidarConsultasEstrutura() {
 }
 
 // Volta para a tela inicial (home), limpando a análise e a URL.
-function irParaHome() {
+function irParaHome({ registrar = true } = {}) {
+  if (registrar) memorizarEntrada();
   invalidarConsultasEstrutura();
   if (typeof EnsembleUI !== "undefined" && EnsembleUI.aoFechar) EnsembleUI.aoFechar();
   const ens = $("#ensemble");
@@ -69,15 +70,84 @@ function irParaHome() {
   limparPainelBusca();
   atualizarRotuloEntrada();
   limparErro();
-  atualizarURL();
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  if (registrar) atualizarURL();
+  abrirTela("entrada", "entrada-titulo");
 }
 
-// Atualiza a query string para permitir compartilhar/recarregar a análise por link.
+// O histórico guarda apenas entradas da aba atual; a URL continua compartilhável.
+const telasHistorico = new Map();
+let proximaTela = 0;
+let substituirHistoricoInicial = false;
+let restaurandoHistorico = false;
+
+function memorizarEntrada() {
+  if (typeof history === "undefined") return;
+  const tela = telasHistorico.get(history.state && history.state.pekiFluxo);
+  if (!tela || tela.chave) return;
+  tela.entrada = {
+    pdb: $("#pdb-id").value, comparacao: $("#cmp-ids").value,
+    busca: buscaNomeAtual,
+  };
+}
+
+function prepararHistorico() {
+  if (typeof history === "undefined" || typeof location.href !== "string") return;
+  substituirHistoricoInicial = !!location.search;
+  const id = ++proximaTela;
+  telasHistorico.set(id, { chave: null, entrada: { pdb: "", comparacao: "", busca: null } });
+  history.replaceState({ pekiFluxo: id }, "", location.href);
+  window.addEventListener("popstate", restaurarHistorico);
+}
+
 function atualizarURL(chave, valor) {
+  if (restaurandoHistorico || typeof history === "undefined") return;
   const u = new URL(location.href);
-  u.search = valor ? `?${chave}=${valor}` : "";
-  history.replaceState(null, "", u);
+  u.search = "";
+  if (valor) u.searchParams.set(chave, valor);
+  const id = ++proximaTela;
+  const tela = { chave, valor, dados: estado.dados, comparacao: estado.comparacao };
+  if (!chave) tela.entrada = { pdb: $("#pdb-id").value, comparacao: $("#cmp-ids").value, busca: buscaNomeAtual };
+  telasHistorico.set(id, tela);
+  const substituir = substituirHistoricoInicial || u.href === location.href;
+  history[substituir ? "replaceState" : "pushState"]({ pekiFluxo: id }, "", u);
+  substituirHistoricoInicial = false;
+}
+
+async function restaurarHistorico(ev) {
+  const tela = telasHistorico.get(ev.state && ev.state.pekiFluxo);
+  const g = invalidarConsultasEstrutura();
+  if ($("#export-modal")?.open && typeof fecharExport === "function") fecharExport(false);
+  try {
+    if (tela && tela.chave === "pdb" && tela.dados) {
+      await iniciarWorkspace(tela.dados, g);
+      if (g === geracaoEstrutura && estado.pdbId) enriquecerMetaRCSB(estado.pdbId);
+    } else if (tela && tela.chave === "compare" && tela.comparacao) {
+      estado.comparacao = tela.comparacao;
+      await iniciarComparacao(g);
+    } else if (tela && tela.chave === "ensemble" && typeof EnsembleUI !== "undefined") {
+      restaurandoHistorico = true;
+      EnsembleUI.abrirPorUrl(tela.valor);
+    } else if (tela && tela.chave === "analises" && typeof AnalysisUI !== "undefined") {
+      restaurandoHistorico = true;
+      AnalysisUI.abrir();
+    } else {
+      irParaHome({ registrar: false });
+      if (tela && tela.entrada) {
+        $("#pdb-id").value = tela.entrada.pdb;
+        $("#cmp-ids").value = tela.entrada.comparacao;
+        buscaNomeAtual = tela.entrada.busca;
+        if (buscaNomeAtual && typeof BuscaNome !== "undefined") {
+          $("#busca-nome").innerHTML = BuscaNome.htmlResultados(buscaNomeAtual);
+          $("#busca-nome").hidden = false;
+        }
+        atualizarRotuloEntrada();
+      }
+    }
+  } catch (e) {
+    if (g !== geracaoEstrutura) return;
+    irParaHome({ registrar: false });
+    mostrarErro("Não foi possível reabrir esta tela. Informe o código ou selecione o arquivo de novo.");
+  } finally { restaurandoHistorico = false; }
 }
 
 const $ = (sel) => document.querySelector(sel);
@@ -88,9 +158,114 @@ function esc(s) {
     "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
   }[c]));
 }
-function mostrarErro(msg) { const el = $("#erro"); el.textContent = msg; el.hidden = false; }
-function limparErro() { $("#erro").hidden = true; }
-function setLoading(on) { $("#loading").hidden = !on; }
+let entradaAcao = "busca";
+function prepararAcao(tipo) {
+  entradaAcao = tipo;
+  const zona = $("#feedback-" + tipo);
+  if (zona) ["erro", "loading", "sucesso"].forEach((id) => { const el = $("#" + id); if (el) zona.appendChild(el); });
+  const campos = [["pdb-id", "entrada-dica", "busca"], ["cmp-ids", "cmp-ajuda", "comparacao"], ["file-input", "upload-dica", "arquivo"], ["btn-file", "upload-dica", "arquivo"]];
+  campos.forEach(([id, dica, origem]) => {
+    const el = $("#" + id);
+    if (el) el.setAttribute("aria-describedby", dica + (origem === tipo ? " erro loading sucesso" : ""));
+  });
+  limparErro();
+}
+function campoDaAcao() { return $(entradaAcao === "comparacao" ? "#cmp-ids" : entradaAcao === "arquivo" ? "#file-input" : "#pdb-id"); }
+function mostrarErro(msg, invalido = false) {
+  const el = $("#erro"); el.textContent = msg; el.hidden = false;
+  const campo = campoDaAcao(); if (campo) campo.setAttribute("aria-invalid", invalido ? "true" : "false");
+}
+function limparErro() {
+  $("#erro").hidden = true;
+  const sucesso = $("#sucesso"); if (sucesso) sucesso.textContent = "";
+  const campo = campoDaAcao(); if (campo) campo.setAttribute("aria-invalid", "false");
+}
+function setLoading(on) {
+  const el = $("#loading"); el.hidden = !on;
+  if (on) el.innerHTML = '<span class="spinner" aria-hidden="true"></span> ' + (entradaAcao === "comparacao" ? "Carregando estruturas para comparar…" : "Lendo estrutura…");
+  const campo = campoDaAcao(); if (campo) campo.setAttribute("aria-busy", on ? "true" : "false");
+}
+
+function focarTitulo(id) {
+  const el = $("#" + id);
+  if (el && typeof el.focus === "function") el.focus({ preventScroll: true });
+}
+function abrirTela(id, titulo) {
+  ["entrada", "workspace", "comparacao", "analises", "ensemble"].forEach((nome) => { const el = $("#" + nome); if (el) el.hidden = nome !== id; });
+  focarTitulo(titulo);
+  window.scrollTo({ top: 0, behavior: "auto" });
+}
+
+function htmlStatusVisual(id) { return `<div id="${id}-status" class="visual-status" role="status" aria-live="polite"></div>`; }
+async function executarVisual(id, carregar, desenhar, atual, tentar) {
+  const status = $("#" + id + "-status");
+  const visual = $("#" + id);
+  if (visual) visual.hidden = false;
+  if (status) { status.textContent = "Carregando visualização…"; status.dataset.estado = "carregando"; }
+  try {
+    await carregar();
+    if (!atual()) return false;
+    await desenhar();
+    if (!atual()) return false;
+    if (status) { status.textContent = ""; status.dataset.estado = "ok"; }
+    return true;
+  } catch (e) {
+    if (!atual()) return false;
+    if (visual) { visual.innerHTML = ""; visual.hidden = true; }
+    if (id === "viewer") estado.viewer = null;
+    if (id === "cmp-viewers") estado.cmpViewers = [];
+    if (status) {
+      status.dataset.estado = "erro";
+      status.innerHTML = '<p>Não foi possível abrir a visualização. Os resultados em texto e tabela continuam disponíveis.</p><button class="ghost-btn" type="button">Tentar de novo</button>';
+      const btn = status.querySelector("button");
+      if (btn) btn.addEventListener("click", async () => {
+        if (!atual()) return;
+        const g = geracaoEstrutura;
+        const ok = await tentar();
+        if (g !== geracaoEstrutura) return;
+        const aviso = $("#" + id + "-status");
+        if (!aviso) return;
+        if (ok) {
+          aviso.textContent = "Visualização carregada.";
+          aviso.setAttribute("tabindex", "-1");
+          if (aviso.focus) aviso.focus({ preventScroll: true });
+        } else if (aviso.dataset.estado === "erro") {
+          const repetir = aviso.querySelector("button"); if (repetir && repetir.focus) repetir.focus();
+        }
+      });
+    }
+    const tabela = id === "aa-grafico" ? ["aa-tabela", "btn-aa-tabela"] : id === "cmp-graf-aa" ? ["cmp-aa-tabela", "btn-cmp-aa-tabela"] : null;
+    if (tabela && $("#" + tabela[0])) {
+      $("#" + tabela[0]).hidden = false;
+      $("#" + tabela[1])?.setAttribute("aria-expanded", "true");
+    }
+    return false;
+  }
+}
+
+function iniciar3D(comparacao = false) {
+  const atual = novaConsulta(comparacao ? "viewerComparacao" : "viewerPrincipal");
+  return executarVisual(comparacao ? "cmp-viewers" : "viewer", lib3D,
+    comparacao ? renderCmpViewers : renderViewer, atual, () => iniciar3D(comparacao));
+}
+
+function alternar3D(botao, conteudo, recolher = null) {
+  const el = $("#" + conteudo);
+  const btn = $("#" + botao);
+  if (!el || !btn) return;
+  el.hidden = recolher == null ? !el.hidden : recolher;
+  btn.setAttribute("aria-expanded", el.hidden ? "false" : "true");
+  btn.textContent = el.hidden ? "Mostrar 3D" : "Recolher 3D";
+  if (!el.hidden) {
+    const viewers = conteudo === "viewer-conteudo" ? [estado.viewer] : (estado.cmpViewers || []).map((v) => v.v);
+    viewers.forEach((v) => { if (v) { v.resize(); v.render(); } });
+  }
+}
+
+function irParaResultados(id) {
+  focarTitulo(id);
+  const el = $("#" + id); if (el && el.scrollIntoView) el.scrollIntoView({ block: "start", behavior: "auto" });
+}
 
 // ----- entrada de dados -----
 function lerArquivo(file) {
@@ -157,9 +332,12 @@ async function baixarEntrada(pdbId) {
 }
 
 async function analisar({ pdbId, file }) {
+  memorizarEntrada();
+  prepararAcao(file ? "arquivo" : "busca");
   const g = invalidarConsultasEstrutura();
   limparErro();
   setLoading(true);
+  let entradaInvalida = false;
   try {
     let texto, nome, id = null;
     if (file) {
@@ -177,7 +355,7 @@ async function analisar({ pdbId, file }) {
     if (g !== geracaoEstrutura) return;
     if (typeof StructureModel === "undefined") throw new Error("Leitor de estrutura indisponível.");
     const lido = StructureModel.ler(texto);
-    if (!lido.ok) throw new Error(lido.erro.mensagem);
+    if (!lido.ok) { entradaInvalida = true; throw new Error(lido.erro.mensagem); }
     const dados = lido.analise;
     dados.nome = nome;
     dados.pdb_text = lido.textoPdb;
@@ -188,9 +366,10 @@ async function analisar({ pdbId, file }) {
     dados.viewerFormato = lido.viewerFormato;
     await iniciarWorkspace(dados, g);
     if (g !== geracaoEstrutura) return;
-    if (id) { enriquecerMetaRCSB(id); atualizarURL("pdb", id); } // enriquece + URL compartilhável
+    if (id) enriquecerMetaRCSB(id);
+    atualizarURL("pdb", id || "arquivo");
   } catch (e) {
-    if (g === geracaoEstrutura) mostrarErro(e.message);
+    if (g === geracaoEstrutura) mostrarErro(e.message, entradaInvalida);
   } finally {
     if (g === geracaoEstrutura) setLoading(false);
   }
@@ -198,8 +377,9 @@ async function analisar({ pdbId, file }) {
 
 // ----- workspace -----
 async function iniciarWorkspace(dados, g = geracaoEstrutura) {
-  await lib3D();
   if (g !== geracaoEstrutura) return;
+  estado.viewer = null;
+  $("#viewer").innerHTML = "";
   estado.pdbText = dados.pdb_text;
   estado.textoViewer = dados.textoViewer || dados.pdb_text;
   estado.viewerFormato = dados.viewerFormato || "pdb";
@@ -238,7 +418,8 @@ async function iniciarWorkspace(dados, g = geracaoEstrutura) {
   renderMeta();
   renderVisao();
   if (typeof PrepUI !== "undefined") PrepUI.reiniciar();
-  renderViewer();
+  alternar3D("btn-recolher-3d", "viewer-conteudo", false);
+  iniciar3D();
   renderCadeias();
   if (estado.viewer) { estado.viewer.resize(); estado.viewer.render(); }
   renderStats();
@@ -266,7 +447,8 @@ async function iniciarWorkspace(dados, g = geracaoEstrutura) {
       });
     } catch (e) { /* a aba Qualidade permanece utilizável nas outras seções */ }
   }
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  abrirTela("workspace", "ws-nome");
+  const status = $("#ws-status"); if (status) status.textContent = `Estrutura ${dados.nome} aberta. Resultados disponíveis.`;
 }
 
 function metaVazio() {
@@ -786,41 +968,40 @@ async function plotAA() {
   renderAtalhoMotivo(freq);
   renderTabelaAA(freq);
   if (!freq) return;
-  try { await libPlotly(); }
-  catch (e) { if (!atual()) return; throw e; }
-  if (!atual()) return;
+  return executarVisual("aa-grafico", libPlotly, async () => {
 
-  const itens = itensAAOrdenados(freq);
-  const x = itens.map((i) => i.aa);
-  const y = itens.map((i) => i.porcentagem);
-  const cor = freq.escopo === "todas" ? "#5c6b82" : (estado.corPorCadeia[freq.cadeia] || "#2a5599");
-  const escuro = document.body.dataset.theme === "dark";
-  const titulo = freq.escopo === "todas"
-    ? "Frequência de aminoácidos — todas as cadeias"
-    : `Frequência de aminoácidos — cadeia ${freq.cadeia}`;
+    const itens = itensAAOrdenados(freq);
+    const x = itens.map((i) => i.aa);
+    const y = itens.map((i) => i.porcentagem);
+    const cor = freq.escopo === "todas" ? "#5c6b82" : (estado.corPorCadeia[freq.cadeia] || "#2a5599");
+    const escuro = document.body.dataset.theme === "dark";
+    const titulo = freq.escopo === "todas"
+      ? "Frequência de aminoácidos — todas as cadeias"
+      : `Frequência de aminoácidos — cadeia ${freq.cadeia}`;
 
-  await Plotly.newPlot("aa-grafico", [{
-    x, y, customdata: itens.map((i) => i.contagem), type: "bar", marker: { color: cor },
-    hovertemplate: "%{x}: %{y}% (%{customdata} resíduos)<extra></extra>",
-  }], {
-    title: titulo,
-    xaxis: { title: "Aminoácido" },
-    yaxis: { title: "Porcentagem (%)" },
-    margin: { t: 40, r: 10, b: 50, l: 50 },
-    paper_bgcolor: "transparent",
-    plot_bgcolor: "transparent",
-    font: { color: escuro ? "#e7edf7" : "#1c2433" },
-  }, { responsive: true, displayModeBar: false });
+    await Plotly.newPlot("aa-grafico", [{
+      x, y, customdata: itens.map((i) => i.contagem), type: "bar", marker: { color: cor },
+      hovertemplate: "%{x}: %{y}% (%{customdata} resíduos)<extra></extra>",
+    }], {
+      title: titulo,
+      xaxis: { title: "Aminoácido" },
+      yaxis: { title: "Porcentagem (%)" },
+      margin: { t: 40, r: 10, b: 50, l: 50 },
+      paper_bgcolor: "transparent",
+      plot_bgcolor: "transparent",
+      font: { color: escuro ? "#e7edf7" : "#1c2433" },
+    }, { responsive: true, displayModeBar: false });
 
-  if (!atual()) return;
-  const graf = document.getElementById("aa-grafico");
-  if (graf && graf.on && !graf._pekiAaClick) {
-    graf._pekiAaClick = true;
-    graf.on("plotly_click", (ev) => {
-      const aa = ev && ev.points && ev.points[0] && ev.points[0].x;
-      if (aa) adicionarAaAoMotivo(aa);
-    });
-  }
+    if (!atual()) return;
+    const graf = document.getElementById("aa-grafico");
+    if (graf && graf.on && !graf._pekiAaClick) {
+      graf._pekiAaClick = true;
+      graf.on("plotly_click", (ev) => {
+        const aa = ev && ev.points && ev.points[0] && ev.points[0].x;
+        if (aa) adicionarAaAoMotivo(aa);
+      });
+    }
+  }, atual, plotAA);
 }
 
 function renderAtalhoMotivo(freq) {
@@ -913,6 +1094,7 @@ function limparMotivoCampo() {
 }
 
 function mostrarAvisoMotivo(msg) {
+  const campo = $("#motivo-input"); if (campo) campo.setAttribute("aria-invalid", msg ? "true" : "false");
   const el = $("#motivo-aviso");
   if (!el) return;
   if (!msg) { el.hidden = true; el.textContent = ""; return; }
@@ -1166,7 +1348,7 @@ function renderTabelaPockets(pockets) {
     </details>
     <p class="rotulo-fixo">${AVISO_DESCRITOR}</p>
   </div>
-  <div id="pockets-graf-volume" class="grafico"></div>
+  ${htmlStatusVisual("pockets-graf-volume")}<div id="pockets-graf-volume" class="grafico"></div>
   <div id="pockets-graf-depth" class="grafico"></div>`;
 
   cont.innerHTML = html;
@@ -1191,28 +1373,34 @@ function renderTabelaPockets(pockets) {
 
 async function plotPockets(pockets) {
   const atual = novaConsulta("graficoPockets");
-  try { await libPlotly(); }
-  catch (e) { if (!atual()) return; throw e; }
-  if (!atual()) return;
-  const escuro = document.body.dataset.theme === "dark";
-  const nomes = pockets.map((p) => p.name);
-  const layoutBase = (titulo, ytitulo) => ({
-    title: titulo,
-    xaxis: { title: "Pocket" },
-    yaxis: { title: ytitulo },
-    margin: { t: 40, r: 10, b: 50, l: 60 },
-    paper_bgcolor: "transparent", plot_bgcolor: "transparent",
-    font: { color: escuro ? "#e7edf7" : "#1c2433" },
-  });
-  Plotly.newPlot("pockets-graf-volume", [{
-    x: nomes, y: pockets.map((p) => p.volume), type: "bar", name: "Volume",
-    marker: { color: "#2a5599" }, hovertemplate: "%{x}: %{y:.1f} Å³<extra></extra>",
-  }], layoutBase("Volume por pocket — " + estado.pdbId, "Volume (Å³)"), { responsive: true, displayModeBar: false });
+  return executarVisual("pockets-graf-volume", libPlotly, async () => {
+    const escuro = document.body.dataset.theme === "dark";
+    const nomes = pockets.map((p) => p.name);
+    const layoutBase = (titulo, ytitulo) => ({
+      title: titulo,
+      xaxis: { title: "Pocket" },
+      yaxis: { title: ytitulo },
+      margin: { t: 40, r: 10, b: 50, l: 60 },
+      paper_bgcolor: "transparent", plot_bgcolor: "transparent",
+      font: { color: escuro ? "#e7edf7" : "#1c2433" },
+    });
+    await Plotly.newPlot("pockets-graf-volume", [{
+      x: nomes, y: pockets.map((p) => p.volume), type: "bar", name: "Volume",
+      marker: { color: "#2a5599" }, hovertemplate: "%{x}: %{y:.1f} Å³<extra></extra>",
+    }], layoutBase("Volume por pocket — " + estado.pdbId, "Volume (Å³)"), { responsive: true, displayModeBar: false });
 
-  Plotly.newPlot("pockets-graf-depth", [{
-    x: nomes, y: pockets.map((p) => p.depth), type: "bar", name: "Profundidade",
-    marker: { color: "#e8513a" }, hovertemplate: "%{x}: %{y:.2f}<extra></extra>",
-  }], layoutBase("Profundidade por pocket — " + estado.pdbId, "Profundidade"), { responsive: true, displayModeBar: false });
+    if (!atual()) return;
+    await Plotly.newPlot("pockets-graf-depth", [{
+      x: nomes, y: pockets.map((p) => p.depth), type: "bar", name: "Profundidade",
+      marker: { color: "#e8513a" }, hovertemplate: "%{x}: %{y:.2f}<extra></extra>",
+    }], layoutBase("Profundidade por pocket — " + estado.pdbId, "Profundidade"), { responsive: true, displayModeBar: false });
+  }, atual, () => plotPockets(pockets));
+}
+
+function redimensionarGrafico(id) {
+  const el = $("#" + id);
+  if (!el || !el.data || !window.Plotly?.Plots) return;
+  try { const p = Plotly.Plots.resize(el); if (p && p.catch) p.catch(() => {}); } catch (e) { /* gráfico ainda indisponível */ }
 }
 
 // ----- abas / tema -----
@@ -1244,12 +1432,12 @@ function configurarTecladoAbas(seletor) {
 function trocarAba(nome) {
   selecionarAbas("#workspace .aba", "tab", nome);
   $$("#workspace .aba-conteudo").forEach((c) => (c.hidden = c.id !== `tab-${nome}`));
-  if (nome === "aa" && window.Plotly) setTimeout(() => Plotly.Plots.resize("aa-grafico"), 50);
+  if (nome === "aa" && window.Plotly) setTimeout(() => redimensionarGrafico("aa-grafico"), 50);
   if (nome === "preparo" && typeof PrepUI !== "undefined") PrepUI.aoMostrar();
   if (nome === "pockets" && estado.pockets && window.Plotly) {
     setTimeout(() => {
-      Plotly.Plots.resize("pockets-graf-volume");
-      Plotly.Plots.resize("pockets-graf-depth");
+      redimensionarGrafico("pockets-graf-volume");
+      redimensionarGrafico("pockets-graf-depth");
     }, 50);
   }
 }
@@ -1303,6 +1491,8 @@ function atualizarRotuloEntrada() {
 }
 
 function acaoCampo(valor) {
+  memorizarEntrada();
+  prepararAcao("busca");
   if (typeof BuscaNome === "undefined") {
     const id = String(valor || "").trim().toUpperCase();
     if (/^[0-9][A-Z0-9]{3}$/.test(id)) {
@@ -1310,12 +1500,12 @@ function acaoCampo(valor) {
       analisar({ pdbId: id });
       return;
     }
-    mostrarErro("Informe um código PDB de 4 caracteres (ex.: 1A00).");
+    mostrarErro("Informe um código PDB de 4 caracteres (ex.: 1A00).", true);
     return;
   }
   const d = BuscaNome.decidir(valor);
   if (d.acao === "erro") {
-    mostrarErro(d.mensagem);
+    mostrarErro(d.mensagem, true);
     return;
   }
   if (d.acao === "carregar") {
@@ -1327,7 +1517,9 @@ function acaoCampo(valor) {
 }
 
 async function listarPorNome(nome) {
+  prepararAcao("busca");
   invalidarConsultasEstrutura();
+  setLoading(true);
   const seq = ++buscaNomeSeq;
   limparErro();
   const painel = $("#busca-nome");
@@ -1344,6 +1536,7 @@ async function listarPorNome(nome) {
     resp = { ok: false, mensagem: "Sem conexão com o RCSB (ou bloqueio de rede)." };
   } finally {
     if (btn && seq === buscaNomeSeq) btn.disabled = false;
+    if (seq === buscaNomeSeq) setLoading(false);
   }
   if (seq !== buscaNomeSeq) return;
   if (!campoAindaBusca(nome)) {
@@ -1364,6 +1557,7 @@ async function listarPorNome(nome) {
     return;
   }
   buscaNomeAtual = resp;
+  const sucesso = $("#sucesso"); if (sucesso) sucesso.textContent = "Busca concluída. Escolha uma estrutura na lista.";
   if (painel) {
     painel.hidden = false;
     painel.innerHTML = BuscaNome.htmlResultados(resp);
@@ -1390,6 +1584,7 @@ function syncAbaPreparo() {
 }
 
 function init() {
+  prepararHistorico();
   syncAbaPreparo();
   // restaura o tema salvo
   try {
@@ -1401,7 +1596,8 @@ function init() {
 
   $("#btn-id").addEventListener("click", () => acaoCampo($("#pdb-id").value));
   $("#pdb-id").addEventListener("keydown", (e) => { if (e.key === "Enter") $("#btn-id").click(); });
-  $("#pdb-id").addEventListener("input", atualizarRotuloEntrada);
+  $("#pdb-id").addEventListener("input", () => { atualizarRotuloEntrada(); $("#pdb-id").setAttribute("aria-invalid", "false"); });
+  $("#cmp-ids").addEventListener("input", () => $("#cmp-ids").setAttribute("aria-invalid", "false"));
   const painelBusca = $("#busca-nome");
   if (painelBusca) painelBusca.addEventListener("click", aoClicarResultadoBusca);
   atualizarRotuloEntrada();
@@ -1437,6 +1633,13 @@ function init() {
   $("#surf-toggle").addEventListener("change", (e) => aoAlternarSuperficie(e.target.checked));
   $("#viewer-tam").addEventListener("change", ajustarTamViewer);
   $("#cmp-tam").addEventListener("change", ajustarTamCmp);
+  const recolher = $("#btn-recolher-3d");
+  if (recolher) recolher.addEventListener("click", () => alternar3D("btn-recolher-3d", "viewer-conteudo"));
+  const recolherCmp = $("#btn-cmp-recolher-3d");
+  if (recolherCmp) recolherCmp.addEventListener("click", () => alternar3D("btn-cmp-recolher-3d", "cmp-viewer-conteudo"));
+  [["ir-resultados", "resultados-titulo"], ["ir-cmp-resultados", "cmp-resultados-titulo"]].forEach(([id, titulo]) => {
+    const atalho = $("#" + id); if (atalho) atalho.addEventListener("click", (ev) => { ev.preventDefault(); irParaResultados(titulo); });
+  });
   let timerTam = 0;
   window.addEventListener("resize", () => {
     clearTimeout(timerTam);
@@ -1495,10 +1698,15 @@ function init() {
   const pdbParam = params.get("pdb");
   if (ensParam && typeof EnsembleUI !== "undefined" && EnsembleUI.ativo()) EnsembleUI.abrirPorUrl(ensParam);
   else if (cmpParam) compararProteinas(cmpParam);
-  else if (pdbParam) {
+  else if (params.get("analises") && typeof AnalysisUI !== "undefined") AnalysisUI.abrir();
+  else if (pdbParam && pdbParam !== "arquivo") {
     if ($("#pdb-id")) $("#pdb-id").value = pdbParam;
     atualizarRotuloEntrada();
     acaoCampo(pdbParam);
+  }
+  else {
+    focarTitulo("entrada-titulo");
+    if (pdbParam === "arquivo") mostrarErro("Selecione novamente o arquivo local para reabrir a estrutura.");
   }
 }
 
