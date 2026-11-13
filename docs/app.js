@@ -116,7 +116,8 @@ function atualizarURL(chave, valor) {
 async function restaurarHistorico(ev) {
   const tela = telasHistorico.get(ev.state && ev.state.pekiFluxo);
   const g = invalidarConsultasEstrutura();
-  if ($("#export-modal")?.open && typeof fecharExport === "function") fecharExport(false);
+  const fechouModal = !!$("#export-modal")?.open;
+  if (fechouModal && typeof fecharExport === "function") fecharExport(false);
   try {
     if (tela && tela.chave === "pdb" && tela.dados) {
       await iniciarWorkspace(tela.dados, g);
@@ -147,7 +148,10 @@ async function restaurarHistorico(ev) {
     if (g !== geracaoEstrutura) return;
     irParaHome({ registrar: false });
     mostrarErro("Não foi possível reabrir esta tela. Informe o código ou selecione o arquivo de novo.");
-  } finally { restaurandoHistorico = false; }
+  } finally {
+    restaurandoHistorico = false;
+    if (fechouModal && typeof restaurarFocoExport === "function") restaurarFocoExport();
+  }
 }
 
 const $ = (sel) => document.querySelector(sel);
@@ -171,24 +175,33 @@ function prepararAcao(tipo) {
   limparErro();
 }
 function campoDaAcao() { return $(entradaAcao === "comparacao" ? "#cmp-ids" : entradaAcao === "arquivo" ? "#file-input" : "#pdb-id"); }
+function estadoDaAcao(atributo, valor) {
+  const campos = entradaAcao === "arquivo" ? [$("#file-input"), $("#btn-file")] : [campoDaAcao()];
+  campos.forEach((campo) => { if (campo) campo.setAttribute(atributo, valor); });
+}
 function mostrarErro(msg, invalido = false) {
   const el = $("#erro"); el.textContent = msg; el.hidden = false;
-  const campo = campoDaAcao(); if (campo) campo.setAttribute("aria-invalid", invalido ? "true" : "false");
+  estadoDaAcao("aria-invalid", invalido ? "true" : "false");
 }
 function limparErro() {
   $("#erro").hidden = true;
   const sucesso = $("#sucesso"); if (sucesso) sucesso.textContent = "";
-  const campo = campoDaAcao(); if (campo) campo.setAttribute("aria-invalid", "false");
+  estadoDaAcao("aria-invalid", "false");
 }
 function setLoading(on) {
   const el = $("#loading"); el.hidden = !on;
   if (on) el.innerHTML = '<span class="spinner" aria-hidden="true"></span> ' + (entradaAcao === "comparacao" ? "Carregando estruturas para comparar…" : "Lendo estrutura…");
-  const campo = campoDaAcao(); if (campo) campo.setAttribute("aria-busy", on ? "true" : "false");
+  estadoDaAcao("aria-busy", on ? "true" : "false");
 }
 
 function focarTitulo(id) {
   const el = $("#" + id);
   if (el && typeof el.focus === "function") el.focus({ preventScroll: true });
+}
+function focarTituloAtual() {
+  const titulos = [["entrada", "entrada-titulo"], ["workspace", "ws-nome"], ["comparacao", "cmp-titulo"], ["analises", "an-titulo"], ["ensemble", "ens-titulo"]];
+  const atual = titulos.find(([id]) => { const tela = $("#" + id); return tela && !tela.hidden; });
+  if (atual) focarTitulo(atual[1]);
 }
 function abrirTela(id, titulo) {
   ["entrada", "workspace", "comparacao", "analises", "ensemble"].forEach((nome) => { const el = $("#" + nome); if (el) el.hidden = nome !== id; });
@@ -849,7 +862,7 @@ function renderStats() {
       <div class="resumo-card"><div class="num">${totalAt}</div><div class="lbl">átomos</div></div>
       <div class="resumo-card"><div class="num">${totalRes}</div><div class="lbl">resíduos</div></div>
     </div>
-    <table><thead><tr>
+    <div class="dados-scroll" role="region" aria-label="Estatísticas por cadeia" tabindex="0"><table><thead><tr>
       <th>Cadeia</th><th>Átomos</th><th>Resíduos</th><th>Aa diferentes</th>
     </tr></thead><tbody>`;
 
@@ -859,7 +872,7 @@ function renderStats() {
     if (st.menor && c.cadeia === st.menor.cadeia && st.maior.cadeia !== st.menor.cadeia) cls = "destaque-menor";
     html += `<tr class="${cls}"><td><strong>${esc(c.cadeia)}</strong></td><td>${c.atomos}</td><td>${c.residuos}</td><td>${c.aminoacidos_diferentes}</td></tr>`;
   }
-  html += `</tbody></table>`;
+  html += `</tbody></table></div>`;
 
   if (st.maior && st.menor) {
     html += `<p class="muted small" style="margin-top:10px">

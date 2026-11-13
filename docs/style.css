@@ -526,3 +526,28 @@ tr.pocket-visto td:first-child { box-shadow: inset 3px 0 0 var(--primary); }
   .ql-grade dd { margin-bottom: 8px; }
   .abas { margin-left: -12px; margin-right: -12px; }
 }
+
+/* Áreas de toque em celulares e tablets; o rótulo amplia checkboxes e rádios. */
+@media (max-width: 980px) {
+  button, a[href], summary, [role="button"],
+  input:not([type="hidden"]):not([type="file"]):not([type="checkbox"]):not([type="radio"]),
+  select, textarea {
+    min-width: 44px;
+    min-height: 44px;
+    box-sizing: border-box;
+  }
+  button { max-width: 100%; overflow-wrap: anywhere; }
+  a[href] { display: inline-flex; align-items: center; max-width: 100%; overflow-wrap: anywhere; }
+  summary { padding-top: 10px; padding-bottom: 10px; }
+  label:has(> input[type="checkbox"]), label:has(> input[type="radio"]) {
+    display: inline-flex; flex-direction: row; align-items: center; gap: 8px;
+    min-width: 44px; min-height: 44px; max-width: 100%; cursor: pointer;
+  }
+  label > input[type="checkbox"], label > input[type="radio"] {
+    flex: 0 0 auto; width: 20px; height: 20px; margin: 0;
+  }
+  .radio-row, .viewer-controls { flex-wrap: wrap; }
+  .exemplos { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+  .exemplos .chip { margin: 0; }
+  .entrada-row .primary-btn { white-space: normal; }
+}

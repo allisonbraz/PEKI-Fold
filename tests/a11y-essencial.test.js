@@ -15,6 +15,7 @@ test("exportação usa dialog nativo nomeado, foca o primeiro controle e devolve
   assert.equal(modal.getAttribute("aria-labelledby"), "exp-titulo");
   assert.equal(modal.hidden, false);
   for (const id of ["btn-export", "btn-cmp-export"]) {
+    h.get(id === "btn-export" ? 'abrirTela("workspace", "ws-nome")' : 'abrirTela("comparacao", "cmp-titulo")');
     const opener = h.el(id);
     opener.focus(); opener.click();
     assert.equal(modal.open, true);
@@ -35,6 +36,7 @@ test("modal sem showModal/close: open, ciclo de foco, Esc, Cancelar e retorno ao
   for (const el of [pdf, md]) { el.type = "radio"; el.name = "exp-fmt"; }
   modal.querySelectorAll = () => [pdf, md, last];
   for (const id of ["btn-export", "btn-cmp-export"]) {
+    h.get(id === "btn-export" ? 'abrirTela("workspace", "ws-nome")' : 'abrirTela("comparacao", "cmp-titulo")');
     const opener = h.el(id);
     opener.focus(); opener.click();
     assert.equal(modal.getAttribute("open"), "");

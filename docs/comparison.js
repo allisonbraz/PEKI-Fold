@@ -10,7 +10,7 @@ async function compararProteinas(idsRaw) {
   )];
 
   if (ids.length < 2) { mostrarErro("Informe pelo menos 2 IDs de PDB para comparar.", true); return; }
-  if (ids.length > 4) { mostrarErro("Compare no máximo 4 proteínas por vez.", true); return; }
+  if (ids.length > 4) { mostrarErro("Compare no máximo 4 estruturas por vez.", true); return; }
   const invalido = ids.find((id) => !/^[0-9][A-Z0-9]{3}$/.test(id));
   if (invalido) { mostrarErro(`ID de PDB inválido: '${invalido}' (ex.: 1A00).`, true); return; }
 
@@ -52,7 +52,7 @@ async function iniciarComparacao(g = geracaoEstrutura) {
   if (painelAnalises) painelAnalises.hidden = true;
 
   $("#cmp-titulo").textContent = "Comparação: " + ps.map((p) => p.id).join(" · ");
-  $("#cmp-resumo").textContent = `${ps.length} proteínas`;
+  $("#cmp-resumo").textContent = `${ps.length} estruturas`;
 
   alternar3D("btn-cmp-recolher-3d", "cmp-viewer-conteudo", false);
   iniciar3D(true);
@@ -179,7 +179,7 @@ async function detectarPocketsComparacao() {
       resultado.push({ id: p.id, pockets });
     }
     estado.cmpPockets = resultado;
-    status.textContent = `✓ Pockets detectados para ${resultado.length} proteínas.` + avisoLinhasPocket(descartadas);
+    status.textContent = `✓ Pockets detectados para ${resultado.length} estruturas.` + avisoLinhasPocket(descartadas);
     renderCmpPockets(resultado);
   } catch (e) {
     if (!atual()) return;
