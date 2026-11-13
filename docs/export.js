@@ -43,6 +43,9 @@ function baixarCsvAA() {
 // e do que já foi calculado. Imagens vêm do viewer 3D (3Dmol) e dos gráficos
 // (Plotly.toImage a partir de specs, para não depender da aba estar visível).
 let exportContexto = "single";
+let exportAcionador = null;
+let exportFecharTimer = null;
+let exportFallback = false;
 
 const EXPORT_SECOES = {
   single: () => [
@@ -65,7 +68,9 @@ const EXPORT_SECOES = {
   ],
 };
 
-function abrirExport(ctx) {
+function abrirExport(ctx, acionador = document.activeElement) {
+  clearTimeout(exportFecharTimer);
+  exportAcionador = acionador;
   exportContexto = ctx;
   const itens = EXPORT_SECOES[ctx]().filter((s) => s.on());
   $("#exp-itens").innerHTML = itens.map((s) =>
@@ -74,10 +79,67 @@ function abrirExport(ctx) {
   $("#exp-full").checked = true;
   $("#exp-so-pockets").hidden = !itens.some((s) => s.id === "pockets");
   $("#exp-status").textContent = "";
-  $("#export-modal").hidden = false;
+  const dialogo = $("#export-modal");
+  if (!dialogo.open) {
+    exportFallback = typeof dialogo.showModal !== "function";
+    if (exportFallback) {
+      dialogo.setAttribute("open", "");
+      dialogo.setAttribute("data-fallback", "");
+      dialogo.setAttribute("role", "dialog");
+      dialogo.setAttribute("aria-modal", "true");
+      document.addEventListener("focusin", manterFocoExportFallback);
+    } else dialogo.showModal();
+  }
+  dialogo.querySelector("input").focus();
 }
 
-function fecharExport() { $("#export-modal").hidden = true; }
+function fecharExport() {
+  const dialogo = $("#export-modal");
+  if (exportFallback) {
+    dialogo.removeAttribute("open");
+    aoFecharExport();
+  } else dialogo.close();
+}
+
+function aoFecharExport() {
+  clearTimeout(exportFecharTimer);
+  if (exportFallback) {
+    document.removeEventListener("focusin", manterFocoExportFallback);
+    const dialogo = $("#export-modal");
+    ["data-fallback", "role", "aria-modal"].forEach((atributo) => dialogo.removeAttribute(atributo));
+    exportFallback = false;
+  }
+  if (exportAcionador && exportAcionador.isConnected) exportAcionador.focus();
+  exportAcionador = null;
+}
+
+function manterFocoExportFallback(ev) {
+  const dialogo = $("#export-modal");
+  if (exportFallback && !dialogo.contains(ev.target)) dialogo.querySelector("input").focus();
+}
+
+function conterFocoExport(ev) {
+  if (ev.key === "Escape" && exportFallback) {
+    ev.preventDefault();
+    fecharExport();
+    return;
+  }
+  if (ev.key !== "Tab") return;
+  const visiveis = Array.from(ev.currentTarget.querySelectorAll("input, select, textarea, button, a[href], [tabindex]"))
+    .filter((el) => !el.disabled && el.tabIndex !== -1 && el.getClientRects().length > 0);
+  // Um grupo de rádio ocupa uma única posição na navegação por Tab.
+  const controles = visiveis.filter((el) => el.type !== "radio" || el.checked
+    || !visiveis.some((outro) => outro.type === "radio" && outro.name === el.name && outro.checked));
+  const i = controles.indexOf(document.activeElement);
+  if (!controles.length) return;
+  if (ev.shiftKey && i <= 0) {
+    ev.preventDefault();
+    controles[controles.length - 1].focus();
+  } else if (!ev.shiftKey && (i < 0 || i === controles.length - 1)) {
+    ev.preventDefault();
+    controles[0].focus();
+  }
+}
 
 async function confirmarExport() {
   const fmt = document.querySelector('input[name="exp-fmt"]:checked').value;
@@ -91,7 +153,7 @@ async function confirmarExport() {
       fmt === "pdf" ? await exportarPdfCmp(secoes) : await exportarMdCmp(secoes);
     }
     $("#exp-status").textContent = "✓ Arquivo gerado.";
-    setTimeout(fecharExport, 800);
+    exportFecharTimer = setTimeout(fecharExport, 800);
   } catch (e) {
     $("#exp-status").innerHTML = `❌ ${e.message}`;
   }

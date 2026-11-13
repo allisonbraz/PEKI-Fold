@@ -2,7 +2,7 @@
   --bg: #f4f6fb;
   --card: #ffffff;
   --text: #1c2433;
-  --muted: #6b7689;
+  --muted: #596579;
   --primary: #2a5599;
   --primary-dark: #1a3d6d;
   --accent: #e8513a;
@@ -13,9 +13,9 @@
   --bg: #0f1623;
   --card: #1a2436;
   --text: #e7edf7;
-  --muted: #93a0b5;
-  --primary: #5b8def;
-  --primary-dark: #3a6fd6;
+  --muted: #a6b2c6;
+  --primary: #82a7ef;
+  --primary-dark: #a6c3ff;
   --accent: #ff6b52;
   --border: #2a3850;
   --shadow: 0 2px 14px rgba(0, 0, 0, 0.4);
@@ -35,6 +35,7 @@ h1, h2, h3 { margin: 0 0 .2em; }
 code { background: rgba(127,127,127,.15); padding: 1px 5px; border-radius: 4px; font-size: .9em; }
 .muted { color: var(--muted); }
 .small { font-size: .85rem; }
+input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
 
 /* Topbar */
 .topbar {
@@ -51,7 +52,7 @@ code { background: rgba(127,127,127,.15); padding: 1px 5px; border-radius: 4px; 
 button { font: inherit; cursor: pointer; border-radius: 8px; border: none; }
 .primary-btn { background: var(--primary); color: #fff; padding: 10px 18px; font-weight: 600; }
 .primary-btn:hover { background: var(--primary-dark); }
-/* No escuro, branco sobre #5b8def fica em 3,23:1. O azul já usado no hover (#3a6fd6) passa de 4,5:1. */
+/* O botão usa um azul mais escuro que o texto para manter contraste com branco. */
 [data-theme="dark"] .primary-btn { background: #3a6fd6; }
 [data-theme="dark"] .primary-btn:hover { background: #2a5599; }
 .ghost-btn { background: transparent; border: 1px solid var(--border); color: var(--text); padding: 8px 14px; }
@@ -225,14 +226,15 @@ button { font: inherit; cursor: pointer; border-radius: 8px; border: none; }
 .aba { background: none; color: var(--muted); padding: 14px 16px; border-bottom: 2px solid transparent; font-weight: 600; }
 .aba.ativa { color: var(--primary); border-bottom-color: var(--primary); }
 .aba:hover { color: var(--text); }
-.aba:focus-visible, .ghost-btn:focus-visible, .primary-btn:focus-visible, a:focus-visible, .pocket-3d:focus-visible, .cadeia-3d:focus-visible, .motivo-chip:focus-visible {
+button:focus-visible, .pocket-3d:focus-visible, .cadeia-3d:focus-visible, .motivo-chip:focus-visible,
+input:focus-visible, select:focus-visible, textarea:focus-visible, summary:focus-visible, a:focus-visible, [tabindex="0"]:focus-visible {
   outline: 2px solid var(--primary);
   outline-offset: 2px;
 }
 
 /* Tabelas */
 table { width: 100%; border-collapse: collapse; font-size: .9rem; }
-th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); }
+th, td { --cell-padding: 8px 10px; text-align: left; padding: var(--cell-padding); border-bottom: 1px solid var(--border); }
 th { color: var(--muted); font-weight: 600; }
 tr.destaque-maior td { background: rgba(46,160,90,.12); }
 tr.destaque-menor td { background: rgba(232,81,58,.10); }
@@ -300,8 +302,10 @@ tr.destaque-menor td { background: rgba(232,81,58,.10); }
 .pocket-3d:hover { color: var(--primary-dark); }
 .pocket-3d[aria-pressed="true"] { font-weight: 700; }
 tr.pocket-visto td:first-child { box-shadow: inset 3px 0 0 var(--primary); }
-.th-sort { cursor: pointer; user-select: none; white-space: nowrap; }
+.th-sort-cell { padding: 0; height: 1px; }
+.th-sort { display: block; width: 100%; height: 100%; cursor: pointer; user-select: none; white-space: nowrap; background: transparent; color: inherit; font-weight: inherit; padding: var(--cell-padding); text-align: inherit; border-radius: 0; }
 .th-sort:hover { color: var(--primary); }
+.th-sort:focus-visible { outline-offset: -2px; }
 .tab-acoes { display: flex; justify-content: flex-end; margin: 10px 0; }
 
 /* Comparação */
@@ -319,8 +323,13 @@ tr.pocket-visto td:first-child { box-shadow: inset 3px 0 0 var(--primary); }
 /* Ações do workspace + modal de exportação */
 .ws-acoes { display: flex; gap: 10px; flex-wrap: wrap; }
 .guardar-status { margin: 0 0 12px; }
-.modal-overlay { position: fixed; inset: 0; background: rgba(8, 14, 28, .55); display: flex; align-items: center; justify-content: center; padding: 20px; z-index: 100; }
-.modal { background: var(--card); color: var(--text); border: 1px solid var(--border); border-radius: 14px; box-shadow: var(--shadow); padding: 22px; width: 100%; max-width: 440px; }
+.modal { background: var(--card); color: var(--text); border: 1px solid var(--border); border-radius: 14px; box-shadow: var(--shadow); padding: 22px; width: calc(100% - 2rem); max-width: 440px; max-height: calc(100vh - 2rem); max-height: calc(100dvh - 2rem); overflow: hidden; }
+.modal[open] { display: flex; flex-direction: column; }
+.modal:not([open]) { display: none; }
+.modal[data-fallback] { position: fixed; inset: 0; margin: auto; z-index: 100; }
+.modal::backdrop { background: rgba(8, 14, 28, .55); }
+.modal-corpo { min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 4px; }
+.modal > h3, .modal-acoes, #exp-status { flex: 0 0 auto; }
 .modal h3 { margin: 0 0 14px; color: var(--primary-dark); }
 .modal-secao { margin-bottom: 16px; }
 .modal-label { display: block; font-weight: 600; font-size: .85rem; color: var(--muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: .03em; }
@@ -331,6 +340,9 @@ tr.pocket-visto td:first-child { box-shadow: inset 3px 0 0 var(--primary); }
 .exp-preset { margin-top: 10px; font-size: .85rem; }
 .modal-acoes { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; }
 #exp-status { margin-top: 10px; text-align: right; }
+
+.dados-scroll { max-width: 100%; overflow-x: auto; margin-bottom: 12px; }
+.dados-scroll caption { text-align: left; font-weight: 600; padding: 8px 0; }
 
 .escopo { text-align: left; margin: 16px 0 4px; padding: 12px 14px; background: var(--bg); border-radius: 10px; }
 .escopo p { margin: 0 0 8px; font-size: .9rem; }

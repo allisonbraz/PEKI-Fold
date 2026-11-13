@@ -378,6 +378,8 @@ const AnalysisUI = (() => {
     ligado = true;
     abrirBtn.addEventListener("click", abrir);
     const input = $("an-arquivo");
+    const importarBtn = $("btn-an-arquivo");
+    if (importarBtn && input) importarBtn.addEventListener("click", () => input.click());
     if (input) {
       input.addEventListener("change", () => {
         const files = [...(input.files || [])];

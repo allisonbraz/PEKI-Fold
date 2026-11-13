@@ -114,19 +114,26 @@ async function renderCmpStats() {
 function renderCmpAA() {
   const cont = $("#ctab-aa");
   cont.innerHTML = `<p class="muted small">Porcentagem dos 20 aminoácidos por proteína (todas as cadeias).</p>
+    <button id="btn-cmp-aa-tabela" class="ghost-btn" type="button" aria-expanded="false" aria-controls="cmp-aa-tabela">Ver dados em tabela</button>
+    <div id="cmp-aa-tabela" class="dados-scroll" role="region" aria-label="Dados de aminoácidos da comparação" tabindex="0" hidden></div>
     <div id="cmp-graf-aa" class="grafico" style="height:420px"></div>`;
+  $("#btn-cmp-aa-tabela").addEventListener("click", (ev) => alternarTabelaAA(ev.currentTarget, $("#cmp-aa-tabela")));
   plotCmpAA();
 }
 
 async function plotCmpAA() {
   const atual = novaConsulta("plotCmpAA");
+  const frequencias = estado.comparacao.map((p) => ({ p, freq: ProtAnalysis.frequenciaAminoacidos(p.pdbText) }));
+  const tabela = $("#cmp-aa-tabela");
+  if (tabela) tabela.innerHTML = htmlTabelaAA(frequencias.map(({ p, freq }) => ({
+    nome: p.id, escopo: "Todas as cadeias", itens: freq.itens,
+  })));
   try { await libPlotly(); }
   catch (e) { if (!atual()) return; throw e; }
   if (!atual()) return;
   const escuro = document.body.dataset.theme === "dark";
   const aas = ProtAnalysis.AMINOACIDOS_PADRAO;
-  const traces = estado.comparacao.map((p, i) => {
-    const freq = ProtAnalysis.frequenciaAminoacidos(p.pdbText);
+  const traces = frequencias.map(({ p, freq }, i) => {
     const mapa = {};
     freq.itens.forEach((it) => (mapa[it.aa] = it.porcentagem));
     return {
@@ -265,7 +272,7 @@ async function plotCmpPockets(principais) {
 }
 
 function trocarAbaCmp(nome) {
-  $$("#comparacao .aba").forEach((a) => a.classList.toggle("ativa", a.dataset.ctab === nome));
+  selecionarAbas("#comparacao .aba", "ctab", nome);
   $$("#comparacao .aba-conteudo").forEach((c) => (c.hidden = c.id !== `ctab-${nome}`));
   setTimeout(() => {
     if (!window.Plotly) return;

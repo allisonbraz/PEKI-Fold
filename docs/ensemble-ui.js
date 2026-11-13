@@ -1066,6 +1066,8 @@ const EnsembleUI = (() => {
     document.body.addEventListener("click", onClick);
     document.body.addEventListener("change", onChange);
     const file = $("ens-file");
+    const abrirFile = $("btn-ens-file");
+    if (abrirFile && file) abrirFile.addEventListener("click", () => file.click());
     if (file) file.addEventListener("change", () => {
       const f = file.files && file.files[0];
       file.value = "";

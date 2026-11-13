@@ -746,6 +746,31 @@ function itensAAOrdenados(freq) {
   return itens; // "alpha" = ordem natural (já alfabética)
 }
 
+// Usa as mesmas contagens e porcentagens do gráfico, sem outra análise.
+function htmlTabelaAA(grupos) {
+  const linhas = grupos.flatMap((g) => g.itens.map((i) => `<tr>
+    <th scope="row">${esc(g.nome)}</th><td>${esc(g.escopo)}</td><td>${esc(i.aa)}</td>
+    <td>${i.contagem}</td><td>${i.porcentagem}</td></tr>`)).join("");
+  return `<table><caption>Frequência de aminoácidos por escopo</caption>
+    <thead><tr><th scope="col">Proteína</th><th scope="col">Escopo</th><th scope="col">Aminoácido</th>
+    <th scope="col">Contagem</th><th scope="col">Percentual (%)</th></tr></thead><tbody>${linhas}</tbody></table>`;
+}
+
+function alternarTabelaAA(botao, tabela) {
+  tabela.hidden = !tabela.hidden;
+  botao.setAttribute("aria-expanded", tabela.hidden ? "false" : "true");
+}
+
+function renderTabelaAA(freq) {
+  const tabela = $("#aa-tabela");
+  if (!tabela) return;
+  tabela.innerHTML = freq ? htmlTabelaAA([{
+    nome: estado.nome,
+    escopo: freq.escopo === "todas" ? "Todas as cadeias" : `Cadeia ${freq.cadeia}`,
+    itens: itensAAOrdenados(freq),
+  }]) : "";
+}
+
 async function plotAA() {
   const atual = novaConsulta("graficoAA");
   const sel = $("#aa-cadeia");
@@ -759,6 +784,7 @@ async function plotAA() {
     faixa.textContent = textoEscopoAA(freq);
   }
   renderAtalhoMotivo(freq);
+  renderTabelaAA(freq);
   if (!freq) return;
   try { await libPlotly(); }
   catch (e) { if (!atual()) return; throw e; }
@@ -1086,7 +1112,8 @@ function renderTabelaPockets(pockets) {
   const s = estado.pocketSort;
   const th = POCKET_TABELA.map((c) => {
     const seta = s && s.col === c.key ? (s.dir === 1 ? " ▲" : " ▼") : "";
-    return `<th class="th-sort" data-col="${c.key}" title="${c.dica}">${c.label}${seta}</th>`;
+    const ordem = s && s.col === c.key ? (s.dir === 1 ? "ascending" : "descending") : "none";
+    return `<th class="th-sort-cell" scope="col" aria-sort="${ordem}"><button type="button" id="pocket-sort-${c.key}" class="th-sort" data-col="${c.key}" title="${c.dica}" aria-label="Ordenar por ${c.label}">${c.label}<span aria-hidden="true">${seta}</span></button></th>`;
   }).join("");
 
   let html = `<div class="tab-acoes"><button id="btn-pockets-csv" class="dl-btn">⬇ CSV</button></div>`;
@@ -1153,6 +1180,7 @@ function renderTabelaPockets(pockets) {
       const cur = estado.pocketSort;
       estado.pocketSort = cur && cur.col === col ? { col, dir: -cur.dir } : { col, dir: 1 };
       renderTabelaPockets(estado.pockets);
+      $(`#pocket-sort-${col}`).focus();
     });
   });
   $("#btn-pockets-csv").addEventListener("click", baixarCsvPockets);
@@ -1188,12 +1216,33 @@ async function plotPockets(pockets) {
 }
 
 // ----- abas / tema -----
-function trocarAba(nome) {
-  $$("#workspace .aba").forEach((a) => {
-    const on = a.dataset.tab === nome;
-    a.classList.toggle("ativa", on);
-    a.setAttribute("aria-selected", on ? "true" : "false");
+function selecionarAbas(seletor, atributo, nome) {
+  $$(seletor).forEach((aba) => {
+    const ativa = aba.dataset[atributo] === nome;
+    aba.classList.toggle("ativa", ativa);
+    aba.setAttribute("aria-selected", ativa ? "true" : "false");
+    aba.setAttribute("tabindex", ativa ? "0" : "-1");
   });
+}
+
+function configurarTecladoAbas(seletor) {
+  const lista = $(seletor);
+  if (!lista) return;
+  lista.addEventListener("keydown", (ev) => {
+    if (!["ArrowRight", "ArrowLeft", "Home", "End"].includes(ev.key)) return;
+    const abas = Array.from(lista.querySelectorAll(".aba")).filter((a) => !a.hidden && !a.disabled);
+    const i = abas.indexOf(document.activeElement);
+    if (i < 0) return;
+    ev.preventDefault();
+    const n = ev.key === "Home" ? 0 : ev.key === "End" ? abas.length - 1
+      : (i + (ev.key === "ArrowRight" ? 1 : -1) + abas.length) % abas.length;
+    abas[n].focus();
+    abas[n].click();
+  });
+}
+
+function trocarAba(nome) {
+  selecionarAbas("#workspace .aba", "tab", nome);
   $$("#workspace .aba-conteudo").forEach((c) => (c.hidden = c.id !== `tab-${nome}`));
   if (nome === "aa" && window.Plotly) setTimeout(() => Plotly.Plots.resize("aa-grafico"), 50);
   if (nome === "preparo" && typeof PrepUI !== "undefined") PrepUI.aoMostrar();
@@ -1380,19 +1429,8 @@ function init() {
   $("#btn-cmp-novo").addEventListener("click", irParaHome);
   $$("#comparacao .aba").forEach((a) => a.addEventListener("click", () => trocarAbaCmp(a.dataset.ctab)));
   $$("#workspace .aba").forEach((a) => a.addEventListener("click", () => trocarAba(a.dataset.tab)));
-  const listaAbas = document.querySelector("#workspace .abas");
-  if (listaAbas) {
-    listaAbas.addEventListener("keydown", (ev) => {
-      if (ev.key !== "ArrowRight" && ev.key !== "ArrowLeft") return;
-      const abas = $$("#workspace .aba").filter((a) => !a.hidden);
-      const i = abas.indexOf(document.activeElement);
-      if (i < 0) return;
-      ev.preventDefault();
-      const n = ev.key === "ArrowRight" ? (i + 1) % abas.length : (i - 1 + abas.length) % abas.length;
-      abas[n].focus();
-      abas[n].click();
-    });
-  }
+  configurarTecladoAbas("#workspace .abas");
+  configurarTecladoAbas("#comparacao .abas");
   $("#estilo-3d").addEventListener("change", aplicarEstiloMantendoPocket);
   $("#spin").addEventListener("change", (e) => { if (estado.viewer) estado.viewer.spin(e.target.checked ? "y" : false); });
   $("#lig-toggle").addEventListener("change", aplicarEstiloMantendoPocket);
@@ -1416,6 +1454,7 @@ function init() {
   });
   $("#aa-ordem").addEventListener("change", plotAA);
   $("#btn-aa-csv").addEventListener("click", baixarCsvAA);
+  $("#btn-aa-tabela").addEventListener("click", (ev) => alternarTabelaAA(ev.currentTarget, $("#aa-tabela")));
   $("#btn-motivo").addEventListener("click", buscarMotivo);
   $("#motivo-input").addEventListener("keydown", (e) => { if (e.key === "Enter") buscarMotivo(); });
   $("#motivo-input").addEventListener("input", atualizarFormacaoMotivo);
@@ -1430,8 +1469,10 @@ function init() {
   $("#btn-guardar-analise").addEventListener("click", guardarAnalise);
   const voltarAnalises = $("#btn-an-voltar");
   if (voltarAnalises) voltarAnalises.addEventListener("click", irParaHome);
-  $("#btn-export").addEventListener("click", () => abrirExport("single"));
-  $("#btn-cmp-export").addEventListener("click", () => abrirExport("cmp"));
+  $("#btn-export").addEventListener("click", (ev) => abrirExport("single", ev.currentTarget));
+  $("#btn-cmp-export").addEventListener("click", (ev) => abrirExport("cmp", ev.currentTarget));
+  $("#export-modal").addEventListener("close", aoFecharExport);
+  $("#export-modal").addEventListener("keydown", conterFocoExport);
   $("#exp-cancelar").addEventListener("click", fecharExport);
   $("#exp-confirmar").addEventListener("click", confirmarExport);
   $("#exp-full").addEventListener("change", (e) => { $$(".exp-item").forEach((c) => (c.checked = e.target.checked)); });
@@ -1440,7 +1481,12 @@ function init() {
     $$(".exp-item").forEach((c) => (c.checked = c.value === "pockets"));
     $("#exp-full").checked = false;
   });
-  $("#export-modal").addEventListener("click", (e) => { if (e.target.id === "export-modal") fecharExport(); });
+  $("#export-modal").addEventListener("click", (e) => {
+    // Só o backdrop fecha: espaços vazios dentro do diálogo continuam interativos.
+    if (e.target.id !== "export-modal") return;
+    const r = e.currentTarget.getBoundingClientRect();
+    if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) fecharExport();
+  });
 
   // deep-link: abre direto a análise a partir da URL (?pdb=1A00 ou ?compare=1A00,4HHB)
   const params = new URLSearchParams(location.search);
