@@ -520,6 +520,7 @@ const EnsembleUI = (() => {
   }
 
   function abrirSessao(nova, mensagem) {
+    if (typeof memorizarEntrada === "function") memorizarEntrada();
     if (typeof invalidarConsultasEstrutura === "function") invalidarConsultasEstrutura();
     geracao += 1;
     cancelado = true;
@@ -542,6 +543,7 @@ const EnsembleUI = (() => {
       if (resumo) resumo.textContent = (sessao.disponiveis || []).length + " estrutura(s) carregada(s). N efetivo ainda não foi calculado.";
     }
     status(mensagem || "");
+    if (typeof abrirTela === "function") abrirTela("ensemble", "ens-titulo");
   }
 
   function abrirIds(texto) {
@@ -866,6 +868,9 @@ const EnsembleUI = (() => {
       nota("Sem coordenadas da estrutura de referência para o 3D.");
       return;
     }
+    const visualStatus = $("ens-viewer-status");
+    if (visualStatus) visualStatus.textContent = "Carregando visualização…";
+    const visual = $("ens-viewer"); if (visual) visual.hidden = false;
     try {
       if (typeof lib3D !== "function") throw new Error("biblioteca 3D indisponível");
       await lib3D();
@@ -908,8 +913,17 @@ const EnsembleUI = (() => {
       }
       viewer.zoomTo();
       viewer.render();
+      if (visualStatus) visualStatus.textContent = "";
     } catch (e) {
       if (!atual()) return;
+      viewer = null;
+      modeloId = null;
+      if (visual) { visual.innerHTML = ""; visual.hidden = true; }
+      if (visualStatus) {
+        visualStatus.innerHTML = '<p>O 3D não abriu. Os resultados em texto e tabela continuam disponíveis.</p><button class="ghost-btn" type="button">Tentar de novo</button>';
+        const btn = visualStatus.querySelector("button");
+        if (btn) btn.addEventListener("click", () => { if (atual()) desenhar(extra); });
+      }
       const el = $("ens-viewer-nota");
       const base = el ? el.textContent : "";
       nota(base + " O 3D não abriu (" + e.message + "). Os números acima continuam válidos.");

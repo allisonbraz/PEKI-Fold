@@ -456,6 +456,7 @@ async function compararArquivosLocais(arquivos) {
   const erros = [], pedidos = [], loading = [], urls = [], downloads = [];
   Object.assign(context, {
     estado: get("estado"), iniciadas: 0, downloads,
+    prepararAcao() {},
     limparErro() {}, mostrarErro: (erro) => erros.push(erro), setLoading: (valor) => loading.push(valor),
     atualizarURL: (...args) => urls.push(args),
     baixarRCSB: async (id) => { pedidos.push(id); return arquivos[id]; },

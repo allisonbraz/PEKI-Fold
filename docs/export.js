@@ -93,7 +93,8 @@ function abrirExport(ctx, acionador = document.activeElement) {
   dialogo.querySelector("input").focus();
 }
 
-function fecharExport() {
+function fecharExport(devolverFoco = true) {
+  if (devolverFoco === false) exportAcionador = null;
   const dialogo = $("#export-modal");
   if (exportFallback) {
     dialogo.removeAttribute("open");

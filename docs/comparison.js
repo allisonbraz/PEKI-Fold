@@ -2,15 +2,17 @@
 
 // ----- comparação de proteínas (2 a 4 PDBs) -----
 async function compararProteinas(idsRaw) {
+  memorizarEntrada();
+  prepararAcao("comparacao");
   limparErro();
   const ids = [...new Set(
     idsRaw.split(/[\s,;]+/).map((s) => s.trim().toUpperCase()).filter(Boolean)
   )];
 
-  if (ids.length < 2) { mostrarErro("Informe pelo menos 2 IDs de PDB para comparar."); return; }
-  if (ids.length > 4) { mostrarErro("Compare no máximo 4 proteínas por vez."); return; }
+  if (ids.length < 2) { mostrarErro("Informe pelo menos 2 IDs de PDB para comparar.", true); return; }
+  if (ids.length > 4) { mostrarErro("Compare no máximo 4 proteínas por vez.", true); return; }
   const invalido = ids.find((id) => !/^[0-9][A-Z0-9]{3}$/.test(id));
-  if (invalido) { mostrarErro(`ID de PDB inválido: '${invalido}' (ex.: 1A00).`); return; }
+  if (invalido) { mostrarErro(`ID de PDB inválido: '${invalido}' (ex.: 1A00).`, true); return; }
 
   const g = invalidarConsultasEstrutura();
   setLoading(true);
@@ -39,8 +41,9 @@ async function compararProteinas(idsRaw) {
 }
 
 async function iniciarComparacao(g = geracaoEstrutura) {
-  await lib3D();
   if (g !== geracaoEstrutura) return;
+  estado.cmpViewers = [];
+  $("#cmp-viewers").innerHTML = "";
   const ps = estado.comparacao;
   $("#entrada").hidden = true;
   $("#workspace").hidden = true;
@@ -51,7 +54,8 @@ async function iniciarComparacao(g = geracaoEstrutura) {
   $("#cmp-titulo").textContent = "Comparação: " + ps.map((p) => p.id).join(" · ");
   $("#cmp-resumo").textContent = `${ps.length} proteínas`;
 
-  renderCmpViewers();
+  alternar3D("btn-cmp-recolher-3d", "cmp-viewer-conteudo", false);
+  iniciar3D(true);
   trocarAbaCmp("stats");
   renderCmpStats();
   renderCmpAA();
@@ -59,7 +63,8 @@ async function iniciarComparacao(g = geracaoEstrutura) {
   $("#cmp-pockets-resultado").innerHTML = "";
   $("#btn-cmp-pockets").disabled = false;
 
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  abrirTela("comparacao", "cmp-titulo");
+  const status = $("#cmp-status"); if (status) status.textContent = `Comparação de ${ps.length} estruturas aberta. Resultados disponíveis.`;
 }
 
 // estatística agregada da proteína inteira
@@ -89,26 +94,25 @@ async function renderCmpStats() {
     html += `<tr class="${cls}"><td><strong>${r.id}</strong></td><td>${r.cadeias}</td>
       <td>${r.atomos}</td><td>${r.residuos}</td><td>${r.aaDiferentes}</td></tr>`;
   }
-  html += `</tbody></table><div class="tab-acoes"><button id="btn-cmp-stats-csv" class="dl-btn">⬇ CSV</button></div><div id="cmp-graf-stats" class="grafico"></div>`;
+  html += `</tbody></table><div class="tab-acoes"><button id="btn-cmp-stats-csv" class="dl-btn">⬇ CSV</button></div>${htmlStatusVisual("cmp-graf-stats")}<div id="cmp-graf-stats" class="grafico"></div>`;
   cont.innerHTML = html;
   $("#btn-cmp-stats-csv").addEventListener("click", baixarCsvCmpStats);
 
-  try { await libPlotly(); }
-  catch (e) { if (!atual()) return; throw e; }
-  if (!atual()) return;
-  const escuro = document.body.dataset.theme === "dark";
-  Plotly.newPlot("cmp-graf-stats", [
-    { x: resumos.map((r) => r.id), y: resumos.map((r) => r.residuos), type: "bar",
-      marker: { color: resumos.map((_, i) => CORES_CADEIA[i % CORES_CADEIA.length]) },
-      hovertemplate: "%{x}: %{y} resíduos<extra></extra>" },
-  ], {
-    title: "Resíduos por proteína",
-    xaxis: { title: "Proteína" },
-    yaxis: { title: "Resíduos" },
-    margin: { t: 50, r: 10, b: 50, l: 60 },
-    paper_bgcolor: "transparent", plot_bgcolor: "transparent",
-    font: { color: escuro ? "#e7edf7" : "#1c2433" },
-  }, { responsive: true, displayModeBar: false });
+  return executarVisual("cmp-graf-stats", libPlotly, async () => {
+    const escuro = document.body.dataset.theme === "dark";
+    await Plotly.newPlot("cmp-graf-stats", [
+      { x: resumos.map((r) => r.id), y: resumos.map((r) => r.residuos), type: "bar",
+        marker: { color: resumos.map((_, i) => CORES_CADEIA[i % CORES_CADEIA.length]) },
+        hovertemplate: "%{x}: %{y} resíduos<extra></extra>" },
+    ], {
+      title: "Resíduos por proteína",
+      xaxis: { title: "Proteína" },
+      yaxis: { title: "Resíduos" },
+      margin: { t: 50, r: 10, b: 50, l: 60 },
+      paper_bgcolor: "transparent", plot_bgcolor: "transparent",
+      font: { color: escuro ? "#e7edf7" : "#1c2433" },
+    }, { responsive: true, displayModeBar: false });
+  }, atual, renderCmpStats);
 }
 
 function renderCmpAA() {
@@ -116,7 +120,7 @@ function renderCmpAA() {
   cont.innerHTML = `<p class="muted small">Porcentagem dos 20 aminoácidos por proteína (todas as cadeias).</p>
     <button id="btn-cmp-aa-tabela" class="ghost-btn" type="button" aria-expanded="false" aria-controls="cmp-aa-tabela">Ver dados em tabela</button>
     <div id="cmp-aa-tabela" class="dados-scroll" role="region" aria-label="Dados de aminoácidos da comparação" tabindex="0" hidden></div>
-    <div id="cmp-graf-aa" class="grafico" style="height:420px"></div>`;
+    ${htmlStatusVisual("cmp-graf-aa")}<div id="cmp-graf-aa" class="grafico" style="height:420px"></div>`;
   $("#btn-cmp-aa-tabela").addEventListener("click", (ev) => alternarTabelaAA(ev.currentTarget, $("#cmp-aa-tabela")));
   plotCmpAA();
 }
@@ -128,30 +132,29 @@ async function plotCmpAA() {
   if (tabela) tabela.innerHTML = htmlTabelaAA(frequencias.map(({ p, freq }) => ({
     nome: p.id, escopo: "Todas as cadeias", itens: freq.itens,
   })));
-  try { await libPlotly(); }
-  catch (e) { if (!atual()) return; throw e; }
-  if (!atual()) return;
-  const escuro = document.body.dataset.theme === "dark";
-  const aas = ProtAnalysis.AMINOACIDOS_PADRAO;
-  const traces = frequencias.map(({ p, freq }, i) => {
-    const mapa = {};
-    freq.itens.forEach((it) => (mapa[it.aa] = it.porcentagem));
-    return {
-      x: aas, y: aas.map((a) => mapa[a] || 0), type: "bar", name: p.id,
-      marker: { color: CORES_CADEIA[i % CORES_CADEIA.length] },
-      hovertemplate: `${p.id} — %{x}: %{y}%<extra></extra>`,
-    };
-  });
-  Plotly.newPlot("cmp-graf-aa", traces, {
-    title: "Composição de aminoácidos por proteína",
-    barmode: "group",
-    xaxis: { title: "Aminoácido" },
-    yaxis: { title: "Porcentagem (%)" },
-    legend: { orientation: "h", y: 1.12 },
-    margin: { t: 50, r: 10, b: 50, l: 50 },
-    paper_bgcolor: "transparent", plot_bgcolor: "transparent",
-    font: { color: escuro ? "#e7edf7" : "#1c2433" },
-  }, { responsive: true, displayModeBar: false });
+  return executarVisual("cmp-graf-aa", libPlotly, async () => {
+    const escuro = document.body.dataset.theme === "dark";
+    const aas = ProtAnalysis.AMINOACIDOS_PADRAO;
+    const traces = frequencias.map(({ p, freq }, i) => {
+      const mapa = {};
+      freq.itens.forEach((it) => (mapa[it.aa] = it.porcentagem));
+      return {
+        x: aas, y: aas.map((a) => mapa[a] || 0), type: "bar", name: p.id,
+        marker: { color: CORES_CADEIA[i % CORES_CADEIA.length] },
+        hovertemplate: `${p.id} — %{x}: %{y}%<extra></extra>`,
+      };
+    });
+    await Plotly.newPlot("cmp-graf-aa", traces, {
+      title: "Composição de aminoácidos por proteína",
+      barmode: "group",
+      xaxis: { title: "Aminoácido" },
+      yaxis: { title: "Porcentagem (%)" },
+      legend: { orientation: "h", y: 1.12 },
+      margin: { t: 50, r: 10, b: 50, l: 50 },
+      paper_bgcolor: "transparent", plot_bgcolor: "transparent",
+      font: { color: escuro ? "#e7edf7" : "#1c2433" },
+    }, { responsive: true, displayModeBar: false });
+  }, atual, plotCmpAA);
 }
 
 async function detectarPocketsComparacao() {
@@ -241,7 +244,7 @@ function renderCmpPockets(resultado) {
     </ol>
     <p class="rotulo-fixo">${AVISO_DESCRITOR}</p>
   </div>
-  <div id="cmp-graf-pvol" class="grafico"></div>
+  ${htmlStatusVisual("cmp-graf-pvol")}<div id="cmp-graf-pvol" class="grafico"></div>
   <div id="cmp-graf-pdepth" class="grafico"></div>
   <div id="cmp-graf-phydro" class="grafico"></div>`;
 
@@ -252,23 +255,24 @@ function renderCmpPockets(resultado) {
 
 async function plotCmpPockets(principais) {
   const atual = novaConsulta("plotCmpPockets");
-  try { await libPlotly(); }
-  catch (e) { if (!atual()) return; throw e; }
-  if (!atual()) return;
-  const escuro = document.body.dataset.theme === "dark";
-  const ids = principais.map((p) => p.prot);
-  const barra = (div, ys, titulo, ytit, cor, hint) => Plotly.newPlot(div, [{
-    x: ids, y: ys, type: "bar", marker: { color: cor }, hovertemplate: `%{x}: %{y}${hint}<extra></extra>`,
-  }], {
-    title: titulo, xaxis: { title: "Proteína" }, yaxis: { title: ytit },
-    margin: { t: 40, r: 10, b: 50, l: 60 },
-    paper_bgcolor: "transparent", plot_bgcolor: "transparent",
-    font: { color: escuro ? "#e7edf7" : "#1c2433" },
-  }, { responsive: true, displayModeBar: false });
+  return executarVisual("cmp-graf-pvol", libPlotly, async () => {
+    const escuro = document.body.dataset.theme === "dark";
+    const ids = principais.map((p) => p.prot);
+    const barra = (div, ys, titulo, ytit, cor, hint) => Plotly.newPlot(div, [{
+      x: ids, y: ys, type: "bar", marker: { color: cor }, hovertemplate: `%{x}: %{y}${hint}<extra></extra>`,
+    }], {
+      title: titulo, xaxis: { title: "Proteína" }, yaxis: { title: ytit },
+      margin: { t: 40, r: 10, b: 50, l: 60 },
+      paper_bgcolor: "transparent", plot_bgcolor: "transparent",
+      font: { color: escuro ? "#e7edf7" : "#1c2433" },
+    }, { responsive: true, displayModeBar: false });
 
-  barra("cmp-graf-pvol", principais.map((p) => p.volume), "Volume do pocket principal por proteína", "Volume (Å³)", "#2a5599", " Å³");
-  barra("cmp-graf-pdepth", principais.map((p) => p.depth), "Profundidade do pocket principal por proteína", "Profundidade", "#e8513a", "");
-  barra("cmp-graf-phydro", principais.map((p) => p.hydrophobicity), "Hidrofobicidade do pocket principal por proteína", "Hidrofobicidade", "#9b59b6", "");
+    await barra("cmp-graf-pvol", principais.map((p) => p.volume), "Volume do pocket principal por proteína", "Volume (Å³)", "#2a5599", " Å³");
+    if (!atual()) return;
+    await barra("cmp-graf-pdepth", principais.map((p) => p.depth), "Profundidade do pocket principal por proteína", "Profundidade", "#e8513a", "");
+    if (!atual()) return;
+    await barra("cmp-graf-phydro", principais.map((p) => p.hydrophobicity), "Hidrofobicidade do pocket principal por proteína", "Hidrofobicidade", "#9b59b6", "");
+  }, atual, () => plotCmpPockets(principais));
 }
 
 function trocarAbaCmp(nome) {
@@ -276,10 +280,10 @@ function trocarAbaCmp(nome) {
   $$("#comparacao .aba-conteudo").forEach((c) => (c.hidden = c.id !== `ctab-${nome}`));
   setTimeout(() => {
     if (!window.Plotly) return;
-    if (nome === "stats") Plotly.Plots.resize("cmp-graf-stats");
-    if (nome === "aa") Plotly.Plots.resize("cmp-graf-aa");
+    if (nome === "stats") redimensionarGrafico("cmp-graf-stats");
+    if (nome === "aa") redimensionarGrafico("cmp-graf-aa");
     if (nome === "pockets" && estado.cmpPockets) {
-      ["cmp-graf-pvol", "cmp-graf-pdepth", "cmp-graf-phydro"].forEach((d) => Plotly.Plots.resize(d));
+      ["cmp-graf-pvol", "cmp-graf-pdepth", "cmp-graf-phydro"].forEach(redimensionarGrafico);
     }
   }, 50);
 }

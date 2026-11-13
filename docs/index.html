@@ -24,27 +24,36 @@
   <section id="entrada" class="entrada">
     <div class="card entrada-card">
       <img class="hero-logo" src="peki-fold.png" width="640" height="427" alt="PEKI Fold — Protein Exploration Kit for Insights" />
-      <h2>Comece por aqui</h2>
+      <h2 id="entrada-titulo" tabindex="-1">Comece por aqui</h2>
       <p class="muted">Informe um código PDB ou o nome da proteína, ou envie um arquivo <code>.pdb</code> ou <code>.cif</code>. A leitura acontece no seu navegador.</p>
-      <div class="escopo">
-        <p><strong>O que o PEKI Fold faz:</strong> mostra a estrutura, separa cadeias, conta estatísticas, busca motivos, detecta cavidades com o DoGSiteScorer e monta uma ficha geométrica de preparo.</p>
-        <p><strong>O que não faz:</strong> docking, dinâmica molecular, minimização, protonação e cálculo de afinidade. Contato geométrico não é contribuição energética. Escore de docking não é afinidade.</p>
-      </div>
-
       <label for="pdb-id" class="entrada-lbl">Código PDB ou nome da proteína</label>
       <div class="entrada-row entrada-id">
-        <input id="pdb-id" type="text" maxlength="80" placeholder="ex.: 1A00 ou hemoglobin" autocomplete="off" spellcheck="false" aria-describedby="entrada-dica" />
+        <input id="pdb-id" type="text" maxlength="80" placeholder="ex.: 1A00 ou hemoglobin" autocomplete="off" spellcheck="false" aria-describedby="entrada-dica erro loading sucesso" aria-invalid="false" />
         <button id="btn-id" class="primary-btn" type="button">Analisar código</button>
       </div>
-      <p id="entrada-dica" class="muted small entrada-dica">Código de estrutura: 4 caracteres começando por número (1A00) abre direto. Nome de proteína (hemoglobin) não é código e não é cortado. O RCSB busca em inglês e lista depósitos experimentais; a estrutura só carrega o que você escolher.</p>
+      <div id="feedback-busca" class="feedback-acao">
+        <div id="erro" class="erro" role="alert" aria-live="assertive" hidden></div>
+        <div id="loading" class="loading" role="status" aria-live="polite" hidden><span class="spinner" aria-hidden="true"></span> Processando…</div>
+        <p id="sucesso" class="muted small" role="status" aria-live="polite"></p>
+      </div>
+      <p id="entrada-dica" class="muted small entrada-dica">Código PDB: 4 caracteres, começando por número, como 4HHB. O RCSB busca em inglês: use um nome como hemoglobin e escolha uma estrutura nos resultados.</p>
+      <details class="ajuda"><summary>Sobre a busca e os limites da ferramenta</summary>
+        <p>O código abre a estrutura diretamente. O nome completo é preservado e busca depósitos experimentais no RCSB; a estrutura só abre após sua escolha.</p>
+        <div class="escopo">
+          <p><strong>O que o PEKI Fold faz:</strong> mostra a estrutura, separa cadeias, conta estatísticas, busca motivos, detecta cavidades com o DoGSiteScorer e monta uma ficha geométrica de preparo.</p>
+          <p><strong>O que não faz:</strong> docking, dinâmica molecular, minimização, protonação e cálculo de afinidade. Contato geométrico não é contribuição energética. Escore de docking não é afinidade.</p>
+        </div>
+      </details>
       <div id="busca-nome" class="busca-nome" hidden aria-live="polite"></div>
 
       <div class="ou">— ou —</div>
 
       <div id="dropzone" class="dropzone">
-        <input id="file-input" type="file" accept=".pdb,.ent,.cif,.mmcif" hidden />
-        <p>📁 Arraste um arquivo aqui ou <button id="btn-file" class="link-btn" type="button">selecione</button></p>
-        <p class="muted small">Sem limite de tamanho — o arquivo não sai do seu computador. mmCIF é lido pela categoria <code>_atom_site</code>, não como colunas de PDB.</p>
+        <input id="file-input" type="file" accept=".pdb,.ent,.cif,.mmcif" aria-describedby="upload-dica" hidden />
+        <p>📁 Arraste um arquivo aqui ou <button id="btn-file" class="link-btn" type="button" aria-describedby="upload-dica">selecione</button></p>
+        <p id="upload-dica" class="muted small">Leitura local, sem envio do arquivo. Arquivos grandes dependem da memória disponível.</p>
+        <details class="ajuda"><summary>Formatos e limites da leitura</summary><p>Não há limite fixo de tamanho. O mmCIF é lido pela categoria <code>_atom_site</code>, não como colunas de PDB.</p></details>
+        <div id="feedback-arquivo" class="feedback-acao"></div>
       </div>
 
       <div class="exemplos">
@@ -55,11 +64,13 @@
       </div>
 
       <div class="ou">— ou compare proteínas —</div>
+      <label class="entrada-lbl" for="cmp-ids">Códigos PDB para comparar</label>
       <div class="entrada-row">
-        <input id="cmp-ids" type="text" placeholder="IDs separados por espaço (ex.: 1A00 4HHB 1CRN)" />
+        <input id="cmp-ids" type="text" placeholder="ex.: 4HHB 1CRN" aria-describedby="cmp-ajuda" aria-invalid="false" />
         <button id="btn-cmp" class="primary-btn">Comparar</button>
       </div>
-      <p class="muted small">De 2 a 4 PDBs, lidos na hora. Compara estatísticas, aminoácidos e pockets.</p>
+      <div id="feedback-comparacao" class="feedback-acao"></div>
+      <p id="cmp-ajuda" class="muted small">De 2 a 4 PDBs, lidos na hora. Compara estatísticas, aminoácidos e pockets.</p>
 
       <div class="ou">— ou compare análises guardadas —</div>
       <p class="muted small">De 2 a 5 arquivos JSON baixados por Guardar análise. Eles ficam no seu computador; a comparação roda neste navegador e não envia os arquivos a um servidor.</p>
@@ -98,8 +109,6 @@
         </ul>
       </details>
 
-      <div id="erro" class="erro" role="alert" hidden></div>
-      <div id="loading" class="loading" hidden><span class="spinner"></span> Processando…</div>
     </div>
   </section>
 
@@ -107,21 +116,27 @@
   <main id="workspace" class="workspace" hidden>
     <div class="ws-header">
       <div>
-        <h2 id="ws-nome">—</h2>
+        <h2 id="ws-nome" tabindex="-1">—</h2>
         <p class="muted small" id="ws-resumo">—</p>
       </div>
       <div class="ws-acoes">
         <button id="btn-guardar-analise" class="ghost-btn" type="button">Guardar análise</button>
         <button id="btn-export" class="ghost-btn">⬇ Exportar</button>
         <button id="btn-novo" class="ghost-btn">↻ Nova análise</button>
+        <a id="ir-resultados" class="ghost-btn resultados-atalho" href="#resultados-titulo">Ir para resultados</a>
       </div>
     </div>
 
+    <p id="ws-status" class="muted small" role="status" aria-live="polite"></p>
     <p id="guardar-status" class="muted small guardar-status" aria-live="polite"></p>
     <section id="ws-meta" class="ws-meta card" hidden></section>
 
     <div class="ws-grid">
       <div class="card viewer-card">
+        <div class="viewer-atalhos">
+          <button id="btn-recolher-3d" class="ghost-btn" type="button" aria-expanded="true" aria-controls="viewer-conteudo">Recolher 3D</button>
+        </div>
+        <div id="viewer-conteudo">
         <div class="viewer-controls">
           <label>Estilo:
             <select id="estilo-3d">
@@ -142,11 +157,14 @@
             </select>
           </label>
         </div>
+        <div id="viewer-status" class="visual-status" role="status" aria-live="polite"></div>
         <div id="viewer" class="viewer" data-tam="m"></div>
         <div id="cadeias-legenda" class="legenda"></div>
+        </div>
       </div>
 
       <div class="card painel">
+        <h3 id="resultados-titulo" tabindex="-1">Resultados</h3>
         <nav class="abas" role="tablist" aria-label="Seções da estrutura">
           <button class="aba ativa" type="button" role="tab" aria-selected="true" tabindex="0" id="aba-visao" aria-controls="tab-visao" data-tab="visao">Visão geral</button>
           <button class="aba" type="button" role="tab" aria-selected="false" tabindex="-1" id="aba-qualidade" aria-controls="tab-qualidade" data-tab="qualidade">Qualidade</button>
@@ -179,6 +197,7 @@
             <button id="btn-aa-tabela" class="ghost-btn" type="button" aria-expanded="false" aria-controls="aa-tabela">Ver dados em tabela</button>
           </div>
           <div id="aa-tabela" class="dados-scroll" role="region" aria-label="Dados de aminoácidos" tabindex="0" hidden></div>
+          <div id="aa-grafico-status" class="visual-status" role="status" aria-live="polite"></div>
           <div id="aa-grafico" class="grafico"></div>
           <p id="aa-atalho-nota" class="muted small"></p>
           <div id="aa-atalho" class="motivo-chips" role="group" aria-label="Adicionar aminoácido do escopo selecionado ao motivo"></div>
@@ -192,14 +211,14 @@
           <p id="motivo-formacao" class="motivo-formacao" aria-live="polite"></p>
           <div class="motivo-row">
             <label class="motivo-campo" for="motivo-input">Motivo na ordem</label>
-            <input id="motivo-input" type="text" placeholder="ex.: GLY-LYS-SER" aria-describedby="motivo-ajuda motivo-formacao" autocomplete="off" spellcheck="false" />
+            <input id="motivo-input" type="text" placeholder="ex.: GLY-LYS-SER" aria-describedby="motivo-ajuda motivo-formacao motivo-aviso motivo-resultado" aria-invalid="false" autocomplete="off" spellcheck="false" />
             <button id="btn-motivo-ultimo" type="button" class="ghost-btn">Remover último</button>
             <button id="btn-motivo-limpar" type="button" class="ghost-btn">Limpar</button>
             <button id="btn-motivo" class="primary-btn" type="button">Buscar</button>
           </div>
           <p id="motivo-ajuda" class="muted small">Os botões acrescentam o código de 3 letras na ordem dos cliques. Nada vem selecionado. Dá para apagar só o último, limpar o campo ou editar o texto.</p>
           <p id="motivo-aviso" class="erro" role="alert" hidden></p>
-          <div id="motivo-resultado"></div>
+          <div id="motivo-resultado" role="status" aria-live="polite"></div>
         </div>
         <div class="aba-conteudo" id="tab-pockets" role="tabpanel" aria-labelledby="aba-pockets" tabindex="0" hidden>
           <p class="muted small">
@@ -209,8 +228,8 @@
             no servidor da ProteinsPlus e leva alguns segundos.
           </p>
           <p class="rotulo-fixo">O drugScore e o volume são descritores geométricos da cavidade, não previsão de ligação. Escore de docking não é afinidade. Contato geométrico não é contribuição energética.</p>
-          <button id="btn-pockets" class="primary-btn">🔍 Detectar pockets</button>
-          <div id="pockets-status" class="muted small" style="margin-top:10px"></div>
+          <button id="btn-pockets" class="primary-btn" aria-describedby="pockets-status">🔍 Detectar pockets</button>
+          <div id="pockets-status" class="muted small" role="status" aria-live="polite" style="margin-top:10px"></div>
           <div id="pockets-resultado"></div>
         </div>
         <div class="aba-conteudo" id="tab-preparo" role="tabpanel" aria-labelledby="aba-preparo" tabindex="0" hidden></div>
@@ -222,16 +241,22 @@
   <main id="comparacao" class="workspace" hidden>
     <div class="ws-header">
       <div>
-        <h2 id="cmp-titulo">Comparação</h2>
+        <h2 id="cmp-titulo" tabindex="-1">Comparação</h2>
         <p class="muted small" id="cmp-resumo">—</p>
       </div>
       <div class="ws-acoes">
         <button id="btn-cmp-export" class="ghost-btn">⬇ Exportar</button>
         <button id="btn-cmp-novo" class="ghost-btn">↻ Nova análise</button>
+        <a id="ir-cmp-resultados" class="ghost-btn resultados-atalho" href="#cmp-resultados-titulo">Ir para resultados</a>
       </div>
     </div>
 
+    <p id="cmp-status" class="muted small" role="status" aria-live="polite"></p>
     <div class="card cmp-estruturas" data-tam="m">
+      <div class="viewer-atalhos">
+        <button id="btn-cmp-recolher-3d" class="ghost-btn" type="button" aria-expanded="true" aria-controls="cmp-viewer-conteudo">Recolher 3D</button>
+      </div>
+      <div id="cmp-viewer-conteudo">
       <div class="cmp-est-head">
         <strong>Estruturas 3D</strong>
         <label>Tamanho:
@@ -242,10 +267,13 @@
           </select>
         </label>
       </div>
+      <div id="cmp-viewers-status" class="visual-status" role="status" aria-live="polite"></div>
       <div id="cmp-viewers" class="cmp-viewers"></div>
+      </div>
     </div>
 
     <div class="card painel cmp-painel">
+      <h3 id="cmp-resultados-titulo" tabindex="-1">Resultados da comparação</h3>
       <nav class="abas" role="tablist" aria-label="Seções da comparação">
         <button class="aba ativa" type="button" role="tab" id="caba-stats" aria-controls="ctab-stats" aria-selected="true" tabindex="0" data-ctab="stats">Estatísticas</button>
         <button class="aba" type="button" role="tab" id="caba-aa" aria-controls="ctab-aa" aria-selected="false" tabindex="-1" data-ctab="aa">Aminoácidos</button>
@@ -261,8 +289,8 @@
           servidor da ProteinsPlus — leva alguns segundos por proteína.
         </p>
         <p class="rotulo-fixo">O drugScore e o volume são descritores geométricos da cavidade, não previsão de ligação. Escore de docking não é afinidade.</p>
-        <button id="btn-cmp-pockets" class="primary-btn">🔍 Detectar pockets (todas)</button>
-        <div id="cmp-pockets-status" class="muted small" style="margin-top:10px"></div>
+        <button id="btn-cmp-pockets" class="primary-btn" aria-describedby="cmp-pockets-status">🔍 Detectar pockets (todas)</button>
+        <div id="cmp-pockets-status" class="muted small" role="status" aria-live="polite" style="margin-top:10px"></div>
         <div id="cmp-pockets-resultado"></div>
       </div>
     </div>
@@ -271,7 +299,7 @@
   <main id="analises" class="workspace" hidden>
     <div class="ws-header">
       <div>
-        <h2>Comparar análises guardadas</h2>
+        <h2 id="an-titulo" tabindex="-1">Comparar análises guardadas</h2>
         <p class="muted small" id="an-contagem">0 de 5 análises neste navegador.</p>
       </div>
       <div class="ws-acoes">
@@ -348,7 +376,7 @@
   <main id="ensemble" class="workspace" hidden>
     <div class="ws-header">
       <div>
-        <h2>Ensemble</h2>
+        <h2 id="ens-titulo" tabindex="-1">Ensemble</h2>
         <p class="ens-nota" id="ens-resumo">Estruturas da mesma proteína, bolsões do DoGSiteScorer.</p>
       </div>
       <div class="ws-acoes">
@@ -357,7 +385,8 @@
     </div>
 
     <section class="card ens-painel">
-      <div class="ens-frases">
+      <details class="ens-frases ajuda">
+        <summary>Critérios, limites e referências do ensemble</summary>
         <p class="rotulo-fixo ens-rel">Trabalho relacionado: PockFlex (Rahali et al., Nucleic Acids Research 2026, 54(W1), W295–W300, https://doi.org/10.1093/nar/gkag453). Também analisa bolsões num conjunto de estruturas. Esta aba é a leitura do PEKI Fold, no navegador e em português, com a ficha de preparo e uma caixa editável. Não há comparação de desempenho com o PockFlex.</p>
         <p class="ens-nota"><a href="https://doi.org/10.1093/nar/gkag453">DOI 10.1093/nar/gkag453</a></p>
         <p class="rotulo-fixo">Persistência indica recorrência do bolsão no conjunto, não druggability nem ligação de composto.</p>
@@ -376,7 +405,7 @@
         <p class="rotulo-fixo">O app não confere se os IDs são a mesma proteína.</p>
         <p class="rotulo-fixo">Sugestão editável de caixa. Não é uma caixa validada e não é resultado de docking.</p>
         <p class="rotulo-fixo">O texto da caixa segue o mesmo formato da ficha de preparo. Continua sendo sugestão editável e não substitui a conferência daquela ficha.</p>
-      </div>
+      </details>
 
       <div class="ens-form">
         <label>Limite de estruturas (máx. 20)
@@ -434,6 +463,7 @@
       <div id="ens-resultado"></div>
 
       <div class="ens-viewer-bloco">
+        <div id="ens-viewer-status" class="visual-status" role="status" aria-live="polite"></div>
         <div id="ens-viewer" class="ens-viewer"></div>
         <p id="ens-viewer-nota" class="ens-nota">O ponto, quando pedido, é o centroide nesta estrutura de referência. Não é o centroide de outra estrutura colado aqui.</p>
       </div>
