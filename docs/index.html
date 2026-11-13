@@ -22,74 +22,108 @@
 
   <!-- Tela de entrada -->
   <section id="entrada" class="entrada">
-    <div class="card entrada-card">
-      <img class="hero-logo" src="peki-fold.png" width="640" height="427" alt="PEKI Fold — Protein Exploration Kit for Insights" />
-      <h2 id="entrada-titulo" tabindex="-1">Comece por aqui</h2>
-      <p class="muted">Informe um código PDB ou o nome da proteína, ou envie um arquivo <code>.pdb</code> ou <code>.cif</code>. A leitura acontece no seu navegador.</p>
-      <label for="pdb-id" class="entrada-lbl">Código PDB ou nome da proteína</label>
-      <div class="entrada-row entrada-id">
-        <input id="pdb-id" type="text" maxlength="80" placeholder="ex.: 1A00 ou hemoglobin" autocomplete="off" spellcheck="false" aria-describedby="entrada-dica erro loading sucesso" aria-invalid="false" />
-        <button id="btn-id" class="primary-btn" type="button">Analisar código</button>
-      </div>
-      <div id="feedback-busca" class="feedback-acao">
-        <div id="erro" class="erro" role="alert" aria-live="assertive" hidden></div>
-        <div id="loading" class="loading" role="status" aria-live="polite" hidden><span class="spinner" aria-hidden="true"></span> Processando…</div>
-        <p id="sucesso" class="muted small" role="status" aria-live="polite"></p>
-      </div>
-      <p id="entrada-dica" class="muted small entrada-dica">Código PDB: 4 caracteres, começando por número, como 4HHB. O RCSB busca em inglês: use um nome como hemoglobin e escolha uma estrutura nos resultados.</p>
-      <details class="ajuda"><summary>Sobre a busca e os limites da ferramenta</summary>
-        <p>O código abre a estrutura diretamente. O nome completo é preservado e busca depósitos experimentais no RCSB; a estrutura só abre após sua escolha.</p>
-        <div class="escopo">
-          <p><strong>O que o PEKI Fold faz:</strong> mostra a estrutura, separa cadeias, conta estatísticas, busca motivos, detecta cavidades com o DoGSiteScorer e monta uma ficha geométrica de preparo.</p>
-          <p><strong>O que não faz:</strong> docking, dinâmica molecular, minimização, protonação e cálculo de afinidade. Contato geométrico não é contribuição energética. Escore de docking não é afinidade.</p>
-        </div>
-      </details>
-      <div id="busca-nome" class="busca-nome" hidden aria-live="polite"></div>
-
-      <div class="ou">— ou —</div>
-
-      <div id="dropzone" class="dropzone">
-        <input id="file-input" type="file" accept=".pdb,.ent,.cif,.mmcif" aria-describedby="upload-dica" hidden />
-        <p>📁 Arraste um arquivo aqui ou <button id="btn-file" class="link-btn" type="button" aria-describedby="upload-dica" aria-invalid="false" aria-busy="false">Selecionar arquivo</button></p>
-        <p id="upload-dica" class="muted small">Leitura local, sem envio do arquivo. Arquivos grandes dependem da memória disponível.</p>
-        <details class="ajuda"><summary>Formatos e limites da leitura</summary><p>Não há limite fixo de tamanho. O mmCIF é lido pela categoria <code>_atom_site</code>, não como colunas de PDB.</p></details>
-        <div id="feedback-arquivo" class="feedback-acao"></div>
+    <div class="entrada-card">
+      <div class="entrada-topo">
+        <img class="hero-logo" src="peki-fold.png" width="640" height="427" alt="PEKI Fold — Protein Exploration Kit for Insights" />
+        <h2 id="entrada-titulo" tabindex="-1">Comece por aqui</h2>
+        <p class="entrada-escolha">Escolha um caminho. Cada caixa é uma alternativa e funciona por conta própria.</p>
       </div>
 
-      <div class="exemplos">
-        Exemplos:
-        <button class="chip" data-id="1A00">1A00 (hemoglobina)</button>
-        <button class="chip" data-id="4HHB">4HHB</button>
-        <button class="chip" data-id="1CRN">1CRN (crambina)</button>
-      </div>
+      <div class="grupos">
+        <section class="grupo grupo-principal" aria-labelledby="grupo-analisar">
+          <div class="grupo-cabeca">
+            <p class="grupo-selo">Caminho principal</p>
+            <h3 id="grupo-analisar">Analisar uma estrutura</h3>
+            <p>Abra uma proteína pelo código, pelo nome ou por um arquivo local. Os dois modos levam à mesma tela.</p>
+          </div>
+          <div class="grupo-grade">
+            <article class="opcao" aria-labelledby="opcao-codigo">
+              <h4 id="opcao-codigo"><span class="opcao-icone" aria-hidden="true">🔎</span> Código ou nome</h4>
+              <p class="opcao-para">Para abrir um depósito do PDB ou buscar o nome da proteína em inglês.</p>
+              <label for="pdb-id" class="entrada-lbl">Código PDB ou nome da proteína</label>
+              <div class="entrada-row entrada-id">
+                <input id="pdb-id" type="text" maxlength="80" placeholder="ex.: 1A00 ou hemoglobin" autocomplete="off" spellcheck="false" aria-describedby="entrada-dica erro loading sucesso" aria-invalid="false" />
+                <button id="btn-id" class="primary-btn" type="button">Analisar código</button>
+              </div>
+              <div id="feedback-busca" class="feedback-acao">
+                <div id="erro" class="erro" role="alert" aria-live="assertive" hidden></div>
+                <div id="loading" class="loading" role="status" aria-live="polite" hidden><span class="spinner" aria-hidden="true"></span> Processando…</div>
+                <p id="sucesso" class="muted small" role="status" aria-live="polite"></p>
+              </div>
+              <p id="entrada-dica" class="muted small entrada-dica">Código PDB: 4 caracteres, começando por número, como 4HHB. O RCSB busca em inglês: use um nome como hemoglobin e escolha uma estrutura nos resultados.</p>
+              <div class="exemplos">
+                <span>Exemplos:</span>
+                <button class="chip" data-id="1A00">1A00 (hemoglobina)</button>
+                <button class="chip" data-id="4HHB">4HHB</button>
+                <button class="chip" data-id="1CRN">1CRN (crambina)</button>
+              </div>
+              <details class="ajuda"><summary>Sobre a busca e os limites da ferramenta</summary>
+                <p>O código abre a estrutura diretamente. O nome completo é preservado e busca depósitos experimentais no RCSB; a estrutura só abre após sua escolha.</p>
+                <div class="escopo">
+                  <p><strong>O que o PEKI Fold faz:</strong> mostra a estrutura, separa cadeias, conta estatísticas, busca motivos, detecta cavidades com o DoGSiteScorer e monta uma ficha geométrica de preparo.</p>
+                  <p><strong>O que não faz:</strong> docking, dinâmica molecular, minimização, protonação e cálculo de afinidade. Contato geométrico não é contribuição energética. Escore de docking não é afinidade.</p>
+                </div>
+              </details>
+              <div id="busca-nome" class="busca-nome" hidden aria-live="polite"></div>
+            </article>
 
-      <div class="ou">— ou compare estruturas —</div>
-      <label class="entrada-lbl" for="cmp-ids">Códigos PDB para comparar</label>
-      <div class="entrada-row">
-        <input id="cmp-ids" type="text" placeholder="ex.: 4HHB 1CRN" aria-describedby="cmp-ajuda" aria-invalid="false" />
-        <button id="btn-cmp" class="primary-btn">Comparar</button>
-      </div>
-      <div id="feedback-comparacao" class="feedback-acao"></div>
-      <p id="cmp-ajuda" class="muted small">De 2 a 4 PDBs, lidos na hora. Compara estatísticas, aminoácidos e pockets.</p>
+            <article class="opcao" aria-labelledby="opcao-arquivo">
+              <h4 id="opcao-arquivo"><span class="opcao-icone" aria-hidden="true">📁</span> Arquivo local</h4>
+              <p class="opcao-para">Para ler um <code>.pdb</code> ou <code>.cif</code> que já está no seu computador.</p>
+              <div id="dropzone" class="dropzone">
+                <input id="file-input" type="file" accept=".pdb,.ent,.cif,.mmcif" aria-describedby="upload-dica" hidden />
+                <p>Arraste um arquivo aqui ou <button id="btn-file" class="link-btn" type="button" aria-describedby="upload-dica" aria-invalid="false" aria-busy="false">Selecionar arquivo</button></p>
+                <p id="upload-dica" class="muted small">Leitura local, sem envio do arquivo. Arquivos grandes dependem da memória disponível.</p>
+                <details class="ajuda"><summary>Formatos e limites da leitura</summary><p>Não há limite fixo de tamanho. O mmCIF é lido pela categoria <code>_atom_site</code>, não como colunas de PDB.</p></details>
+                <div id="feedback-arquivo" class="feedback-acao"></div>
+              </div>
+            </article>
+          </div>
+        </section>
 
-      <div class="ou">— ou compare arquivos JSON —</div>
-      <p class="muted small">Reabra de 2 a 5 JSONs baixados por Salvar JSON. Os arquivos ficam no seu computador. A comparação roda neste navegador, sem enviar os arquivos a um servidor.</p>
-      <div class="entrada-row">
-        <button id="btn-abrir-analises" class="primary-btn" type="button">Comparar JSONs</button>
-      </div>
+        <section class="grupo grupo-comparar" aria-labelledby="grupo-comparar">
+          <div class="grupo-cabeca">
+            <h3 id="grupo-comparar">Comparar</h3>
+            <p>Três alternativas para ver estruturas lado a lado. Escolha uma.</p>
+          </div>
+          <div class="grupo-grade grupo-grade-3">
+            <article class="opcao" aria-labelledby="opcao-codigos">
+              <h4 id="opcao-codigos"><span class="opcao-icone" aria-hidden="true">⚖️</span> Códigos PDB</h4>
+              <p class="opcao-para">Para colocar de 2 a 4 depósitos lado a lado.</p>
+              <label class="entrada-lbl" for="cmp-ids">Códigos PDB para comparar</label>
+              <div class="entrada-row">
+                <input id="cmp-ids" type="text" placeholder="ex.: 4HHB 1CRN" aria-describedby="cmp-ajuda" aria-invalid="false" />
+                <button id="btn-cmp" class="primary-btn">Comparar</button>
+              </div>
+              <div id="feedback-comparacao" class="feedback-acao"></div>
+              <p id="cmp-ajuda" class="muted small">De 2 a 4 PDBs, lidos na hora. Compara estatísticas, aminoácidos e pockets.</p>
+            </article>
 
-      <div id="ens-entrada" class="ens-entrada">
-        <div class="ou">— ou analise um ensemble —</div>
-        <p class="ens-nota">Vários IDs da mesma proteína, ou um PDB com MODEL/ENDMDL. A fila chama o DoGSiteScorer uma estrutura por vez.</p>
-        <label for="ens-ids" class="ens-lbl">Códigos PDB da mesma proteína</label>
-        <textarea id="ens-ids" class="ens-ids" rows="2" placeholder="ex.: 1A00 4HHB"></textarea>
-        <div class="ens-home-acoes">
-          <button id="ens-abrir" class="primary-btn" type="button">Abrir ensemble</button>
-          <button id="btn-ens-file" class="ghost-btn ens-file-lbl" type="button">Arquivo multimodelo</button>
-          <input id="ens-file" type="file" accept=".pdb,.ent" hidden>
-          <button id="ens-exemplo-home" class="ghost-btn" type="button">Exemplo sintético</button>
-        </div>
-        <p id="ens-erro-home" class="erro" role="alert" hidden></p>
+            <article class="opcao" aria-labelledby="opcao-json">
+              <h4 id="opcao-json"><span class="opcao-icone" aria-hidden="true">📄</span> JSONs salvos</h4>
+              <p class="opcao-para">Para reabrir de 2 a 5 arquivos baixados por Salvar JSON.</p>
+              <p class="muted small">Os arquivos ficam no seu computador. A comparação roda neste navegador, sem enviar os arquivos a um servidor.</p>
+              <div class="entrada-row">
+                <button id="btn-abrir-analises" class="primary-btn" type="button">Comparar JSONs</button>
+              </div>
+            </article>
+
+            <article id="ens-entrada" class="opcao ens-entrada" aria-labelledby="opcao-ensemble">
+              <h4 id="opcao-ensemble"><span class="opcao-icone" aria-hidden="true">🧩</span> Ensemble</h4>
+              <p class="opcao-para">Para vários modelos da mesma proteína.</p>
+              <p class="ens-nota">Vários IDs da mesma proteína, ou um PDB com MODEL/ENDMDL. A fila chama o DoGSiteScorer uma estrutura por vez.</p>
+              <label for="ens-ids" class="ens-lbl">Códigos PDB da mesma proteína</label>
+              <textarea id="ens-ids" class="ens-ids" rows="2" placeholder="ex.: 1A00 4HHB"></textarea>
+              <div class="ens-home-acoes">
+                <button id="ens-abrir" class="primary-btn" type="button">Abrir ensemble</button>
+                <button id="btn-ens-file" class="ghost-btn ens-file-lbl" type="button">Arquivo multimodelo</button>
+                <input id="ens-file" type="file" accept=".pdb,.ent" hidden>
+                <button id="ens-exemplo-home" class="ghost-btn" type="button">Exemplo sintético</button>
+              </div>
+              <p id="ens-erro-home" class="erro" role="alert" hidden></p>
+            </article>
+          </div>
+        </section>
       </div>
 
       <details class="ajuda">
