@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="Roadmap e ideias do PEKI Fold: o que já está em desenvolvimento, o que entrou na fila e o que ainda será avaliado. Documento vivo, para consulta pública.">
+<meta name="description" content="Roadmap e ideias do PEKI Fold: o que já foi publicado, o que está em desenvolvimento, o que entrou na fila e o que ainda será avaliado. Documento vivo, para consulta pública.">
 <title>Roadmap e ideias do PEKI Fold</title>
 <link rel="icon" type="image/jpeg" href="favicon_peki.jpeg" />
 <style>
@@ -17,6 +17,7 @@
   --accent: #e8513a;
   --border: #e2e7f0;
   --shadow: 0 2px 10px rgba(20, 40, 80, 0.08);
+  --pub: #0c6e62;
   --dev: #2a5599;
   --fila: #1e673a;
   --cand: #8a5a00;
@@ -35,6 +36,7 @@
     --accent: #ff6b52;
     --border: #2a3850;
     --shadow: 0 2px 14px rgba(0, 0, 0, 0.4);
+    --pub: #8ee0d2;
     --dev: #5b8def;
     --fila: #4dcc7e;
     --cand: #e0a800;
@@ -153,6 +155,7 @@ code {
   margin: 0 6px 0 0;
   vertical-align: middle;
 }
+.s-pub { background: rgba(12,110,98,.16); color: var(--pub); }
 .s-dev { background: rgba(42,85,153,.14); color: var(--dev); }
 .s-fila { background: rgba(46,160,90,.16); color: var(--fila); }
 .s-cand { background: rgba(224,168,0,.18); color: var(--cand); }
@@ -160,6 +163,7 @@ code {
 .s-orient { background: rgba(232,130,40,.18); color: var(--orient); }
 .s-desc { background: rgba(232,81,58,.14); color: var(--desc); }
 .idea { border-left: 4px solid var(--border); }
+.idea[data-status="publicado"] { border-left-color: var(--pub); }
 .idea[data-status="dev"] { border-left-color: var(--dev); }
 .idea[data-status="fila"] { border-left-color: var(--fila); }
 .idea[data-status="candidato"] { border-left-color: var(--cand); }
@@ -214,7 +218,7 @@ footer {
 <div class="wrap">
   <header class="hero">
     <h1>Roadmap e ideias do PEKI Fold</h1>
-    <p class="lead">Documento vivo com possibilidades da plataforma: o que já está em desenvolvimento, o que entrou na fila de implementação, o que ainda será avaliado e o que não cabe num site estático. Atualizado em 13 de novembro de 2026 (horário de Brasília).</p>
+    <p class="lead">Documento vivo com possibilidades da plataforma: o que já foi publicado, o que está em desenvolvimento, o que entrou na fila de implementação, o que ainda será avaliado e o que não cabe num site estático. Atualizado em 13 de novembro de 2026 (horário de Brasília).</p>
     <p class="meta">Ferramenta pública: <a href="index.html">PEKI Fold</a>. Exemplos de teste: 4HHB e 1CRN. Esta página não substitui o protocolo do laboratório e não faz afirmações de afinidade a partir de scores.</p>
   </header>
 
@@ -259,13 +263,14 @@ footer {
 
   <h2 id="situacao">Situação atual</h2>
   <div class="card">
-    <p>Em 13/11/2026 está em andamento um conjunto de melhorias (checklist e exportação do PDB, resumo das pontes, pocket em texto reutilizável, apoio a modelar lacunas e suporte a glicoproteínas), ainda <strong>sem publicação</strong> até haver revisão. A leitura de séries de RMSD e o preparo de ligante entram só como avaliação, sem implementação neste momento. Os testes previstos usam 4HHB e 1CRN.</p>
+    <p>Em 13/11/2026 foi publicado o conjunto que estava em desenvolvimento: resumo das pontes dissulfeto, resíduos do pocket em formato reutilizável, apoio a modelar lacunas, checklist e PDB pronto para a topologia, e suporte a glicoproteínas. A tela inicial segmentada em caixas também entrou no ar nesse dia. Em desenvolvimento ficaram as cores por polaridade e carga nas barras de frequência da aba Aminoácidos. A leitura de séries de RMSD e o preparo de ligante continuam só como avaliação, sem implementação neste momento. Os exemplos de teste são 4HHB e 1CRN.</p>
   </div>
 
   <h2 id="ideias">Ideias por status</h2>
   <p>Use os filtros para ver só um status. A lista completa permanece abaixo.</p>
   <div class="filters" role="group" aria-label="Filtrar ideias por status">
     <button type="button" class="filter" data-filter="all" aria-pressed="true">Todos</button>
+    <button type="button" class="filter" data-filter="publicado" aria-pressed="false">Publicado</button>
     <button type="button" class="filter" data-filter="dev" aria-pressed="false">Em desenvolvimento</button>
     <button type="button" class="filter" data-filter="fila" aria-pressed="false">Fila aprovada</button>
     <button type="button" class="filter" data-filter="candidato" aria-pressed="false">Candidato</button>
@@ -275,40 +280,48 @@ footer {
   </div>
   <p id="filtro-vazio" class="empty">Nenhuma ideia neste filtro.</p>
 
-  <h3 id="em-desenvolvimento">Já em desenvolvimento</h3>
+  <h3 id="publicado">Publicado</h3>
+  <p class="note">Publicado em 13/11/2026.</p>
 
-  <article class="card idea" data-status="dev">
-    <h3><span class="badge s-dev">Em desenvolvimento</span> Resumo das pontes dissulfeto</h3>
+  <article class="card idea" data-status="publicado">
+    <h3><span class="badge s-pub">Publicado</span> Resumo das pontes dissulfeto</h3>
     <p>Mostrar um resumo copiável dos pares de cisteína candidatos, com as distâncias já calculadas. Só informar. A ferramenta não escolhe a opção de preparação no lugar da pessoa usuária.</p>
   </article>
 
-  <article class="card idea" data-status="dev">
-    <h3><span class="badge s-dev">Em desenvolvimento</span> Resíduos do pocket em formato reutilizável</h3>
+  <article class="card idea" data-status="publicado">
+    <h3><span class="badge s-pub">Publicado</span> Resíduos do pocket em formato reutilizável</h3>
     <p>Além do download atual, exportar texto simples (cadeia, resíduo e número), com uma linha por resíduo e uma variante em lista separada por vírgula. O formato exato esperado pelo roteiro de análise do laboratório fica configurável até ser confirmado.</p>
   </article>
 
-  <article class="card idea" data-status="dev">
-    <h3><span class="badge s-dev">Em desenvolvimento</span> Apoio a modelar lacunas</h3>
+  <article class="card idea" data-status="publicado">
+    <h3><span class="badge s-pub">Publicado</span> Apoio a modelar lacunas</h3>
     <p>Quando a aba Qualidade encontrar lacunas, um botão copia a FASTA completa e abre o Swiss-Model em nova aba, com instruções curtas. A integração com o AlphaFold DB busca o modelo pelo UniProt, carrega-o ao lado ou sobreposto ao cristal, destaca as regiões das lacunas e mostra o pLDDT — se a API aceitar chamadas do navegador; senão, ficam só os links. Dá para reimportar o modelo e comparar com a estrutura original. O site não submete jobs ao Swiss-Model nem guarda tokens no navegador.</p>
   </article>
 
-  <article class="card idea" data-status="dev">
-    <h3><span class="badge s-dev">Em desenvolvimento</span> Checklist e PDB pronto para a topologia</h3>
+  <article class="card idea" data-status="publicado">
+    <h3><span class="badge s-pub">Publicado</span> Checklist e PDB pronto para a topologia</h3>
     <p>Na aba Preparo, um checklist aponta resíduos não padrão, hidrogênios, posições alternativas (altloc), numeração descontínua, lacunas, cadeias, heteroátomos e águas restantes. Ao baixar o PDB limpo, há opções para remover hidrogênios, manter só o altloc A (ou o de maior ocupação) e garantir as linhas TER/END. As regras seguem referências públicas de limpeza de PDB (por exemplo pdb-tools), reimplementadas em JavaScript. O formato exigido pelo cluster do laboratório permanece configurável até validação.</p>
   </article>
 
-  <article class="card idea" data-status="dev">
-    <h3><span class="badge s-dev">Em desenvolvimento</span> Suporte a glicoproteínas</h3>
+  <article class="card idea" data-status="publicado">
+    <h3><span class="badge s-pub">Publicado</span> Suporte a glicoproteínas</h3>
     <p>Detectar açúcares comuns e ligações a asparagina, serina ou treonina, listar sítios de glicosilação com numeração e cadeia, e avisar inconsistências. Em Preparo, a pessoa decide manter ou remover os glicanos, com o aviso de que a parametrização depende do campo de força. O PEKI não calcula protonação. O item permanece mesmo quando não é o caso de uso mais frequente, porque a ferramenta é multi-usuário.</p>
   </article>
 
-  <h3 id="fila">Aprovado para implementar (fila)</h3>
-  <p class="note">Estas ideias foram aprovadas em 13/11/2026 para implementação, depois do conjunto que já está em desenvolvimento, para não conflitar nos mesmos arquivos.</p>
-
-  <article class="card idea" data-status="fila">
-    <h3><span class="badge s-fila">Fila aprovada</span> Cores por polaridade e carga nas barras de frequência</h3>
-    <p>Sugestão do orientador. As barras da aba Aminoácidos passam a usar uma paleta estável (por exemplo hidrofóbico, polar, positivo, negativo e especial), com legenda. É um ajuste de interface sobre um gráfico que já existe.</p>
+  <article class="card idea" data-status="publicado">
+    <h3><span class="badge s-pub">Publicado</span> Tela inicial segmentada em caixas</h3>
+    <p>A entrada mostra caminhos independentes em cartões: analisar uma estrutura (código, nome ou arquivo) e comparar (códigos PDB, JSONs salvos ou ensemble). Cada caixa é um caminho; a pessoa usa só o que precisar.</p>
   </article>
+
+  <h3 id="em-desenvolvimento">Já em desenvolvimento</h3>
+
+  <article class="card idea" data-status="dev">
+    <h3><span class="badge s-dev">Em desenvolvimento</span> Cores por polaridade e carga nas barras de frequência</h3>
+    <p>Sugestão do orientador. As barras da aba Aminoácidos usam uma paleta estável em cinco grupos: hidrofóbico/apolar, polar não carregado, positivo (básico), negativo (ácido) e especial (glicina, prolina e cisteína), com legenda visível. A cor não segue a cadeia. A frequência por todas as cadeias permanece a soma dos resíduos modelados. Entrou em desenvolvimento em 13/11/2026.</p>
+  </article>
+
+  <h3 id="fila">Aprovado para implementar (fila)</h3>
+  <p class="note">Estas ideias foram aprovadas em 13/11/2026 para implementação, depois das cores por polaridade e carga, para não conflitar nos mesmos arquivos.</p>
 
   <article class="card idea" data-status="fila">
     <h3><span class="badge s-fila">Fila aprovada</span> Anotações do UniProt na estrutura</h3>
@@ -516,7 +529,7 @@ footer {
       <li>A detecção de pockets e o export de resíduos podem substituir a consulta manual a um servidor de cavidades? Qual o formato de lista esperado?</li>
       <li>O resumo de pares de cisteína candidatos, com distâncias, é suficiente para apoiar a preparação, sem o PEKI sugerir a opção?</li>
       <li>Vale tornar habitual anexar o dossiê (qualidade, JSON, relatório) a cada envio?</li>
-      <li>Confirma-se a paleta de cores por polaridade e carga nas barras de frequência?</li>
+      <li>A classificação das cores por polaridade e carga (glicina, prolina e cisteína no grupo especial; histidina com os básicos; tirosina com os polares não carregados) está adequada?</li>
       <li>Há interesse em projetar anotações do UniProt com numeração SIFTS?</li>
       <li>Superposição e RMSD, contatos entre cadeias e SASA por resíduo são leituras aceitáveis como apoio qualitativo, com as devidas ressalvas?</li>
       <li>Faz sentido exibir o relatório wwPDB como validação oficial da estrutura de partida?</li>
@@ -529,7 +542,7 @@ footer {
 
   <h2 id="acrescentar">Como acrescentar novas ideias</h2>
   <div class="card">
-    <p>Este é um documento vivo. Cada ideia nova deve entrar com data e com um destes status: já em desenvolvimento; aprovado para implementar (fila); candidato; avaliar no futuro; avaliar com o orientador; ou descartado por limitação. Ideias descartadas não são apagadas: ficam com o motivo.</p>
+    <p>Este é um documento vivo. Cada ideia nova deve entrar com data e com um destes status: publicado; já em desenvolvimento; aprovado para implementar (fila); candidato; avaliar no futuro; avaliar com o orientador; ou descartado por limitação. Ideias descartadas não são apagadas: ficam com o motivo.</p>
     <p>Modelo:</p>
     <ul>
       <li>Data (AAAA-MM-DD) e título curto</li>
@@ -538,7 +551,7 @@ footer {
       <li>Resumo em uma a três frases</li>
       <li>Restrições (site estático, permissões de rede, aval científico, privacidade)</li>
     </ul>
-    <p>A primeira entrada é de 13/11/2026: abertura deste roadmap, com o conjunto em desenvolvimento e a fila aprovada no mesmo dia. O pacote Python de apoio e o artigo de software permaneceram para avaliar com o orientador.</p>
+    <p>A primeira entrada é de 13/11/2026: abertura deste roadmap, com o conjunto em desenvolvimento e a fila aprovada no mesmo dia. Ainda em 13/11/2026, esse conjunto e a tela inicial segmentada em caixas passaram a Publicado, e as cores por polaridade e carga saíram da fila para Em desenvolvimento. O pacote Python de apoio e o artigo de software permaneceram para avaliar com o orientador.</p>
   </div>
 
   <footer>
