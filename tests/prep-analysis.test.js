@@ -141,6 +141,14 @@ function testeSintetico() {
   const gTxt = [link, asn, c1, "REMARK 465     ALA A     4", "REMARK 465     ALA A     5"].join("\n");
   const g = Prep.glicosilacao(Prep.parseAtomos(gTxt), Prep.parseLinks(gTxt), { NAG: "2-acetamido-2-deoxy-beta-D-glucopyranose" }, 1.8, 10);
   assert(g.pares.length === 1 && g.linksAsnC1[0].coberto === true, "ND2–C1 casa com LINK");
+  const ser = atomo({ serial: 3, nome: " OG ", res: "SER", seq: 5, el: " O", x: 0 });
+  const nag = atomo({ rec: "HETATM", serial: 4, nome: " C1 ", res: "NAG", seq: 5, el: " C", x: 1.5 });
+  const ala5 = atomo({ serial: 5, seq: 5, x: 8 });
+  const linkO = "LINK         OG  SER A   5                 C1  NAG A   5     1555   1555  1.50";
+  const gOtxt = [linkO, ser, nag, ala5].join("\n");
+  const gO = Prep.glicosilacao(Prep.parseAtomos(gOtxt), Prep.parseLinks(gOtxt), { NAG: "2-acetamido-2-deoxy-beta-D-glucopyranose" }, 1.8, 10);
+  assert(gO.pares.length === 0 && gO.sitiosO.length === 1 && gO.sitiosO[0].noLink === false, "OG–C1 de SER casa com LINK e não entra na lista de ASN");
+  assert(gO.avisosNumeracao.some((t) => t.includes("mesmo número")), "aviso de numeração coincidente: " + gO.avisosNumeracao.join(" | "));
 
   const gapTxt = [
     "REMARK 465     ALA A     3",

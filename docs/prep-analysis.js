@@ -770,6 +770,26 @@ const PrepAnalysis = (() => {
       if (hit) hit.coberto = true;
     }
 
+    const sitiosO = [];
+    const ligantesO = atomos.filter((a) => a.x != null && (
+      (a.resname === "SER" && a.nome === "OG") || (a.resname === "THR" && a.nome === "OG1")
+    ));
+    function considerarO(residuo, c1, conhecido) {
+      if (!altlocCompativel(residuo, c1)) return;
+      const distancia = dist(residuo, c1);
+      if (distancia <= raio + 1e-6) {
+        sitiosO.push({ residuo, acucar: c1, distancia, conhecido, noLink: true, tipo: "O" });
+      }
+    }
+    for (const residuo of ligantesO) {
+      for (const c1 of c1conhecidos) considerarO(residuo, c1, true);
+      for (const c1 of c1todos) {
+        if (ehAcucarRes(c1.resname)) continue;
+        considerarO(residuo, c1, false);
+      }
+    }
+    sitiosO.sort((a, b) => a.distancia - b.distancia);
+
     const residuos = new Map();
     for (const a of acucarAtomos) {
       if (!residuos.has(a.chaveRes)) {
@@ -824,7 +844,58 @@ const PrepAnalysis = (() => {
       return { id: idx + 1, residuos: itens };
     });
 
-    return { pares, linksAsnC1: linksAsn, arvores, raio, maxResProteina };
+    function fimProteina(f) { return f.resname === "ASN" || f.resname === "SER" || f.resname === "THR"; }
+    function fimAcucar(f) { return ehAcucarRes(f.resname); }
+    const linksProteina = links.filter((lk) => {
+      const protA = fimProteina(lk.a);
+      const protB = fimProteina(lk.b);
+      return (protA && fimAcucar(lk.b)) || (protB && fimAcucar(lk.a));
+    }).map((lk) => ({ ...lk, coberto: false }));
+    for (const p of sitiosO) {
+      const hit = linksProteina.find((lk) => lk.identidade && linkUne(lk, p.residuo, p.acucar));
+      p.noLink = !hit;
+      if (hit) hit.coberto = true;
+    }
+    for (const p of pares) {
+      const hit = linksProteina.find((lk) => lk.identidade && linkUne(lk, p.asn, p.acucar));
+      if (hit) hit.coberto = true;
+    }
+
+    const faixa = new Map();
+    const polimeros = new Set();
+    for (const a of atomos) {
+      if (a.registro !== "ATOM" || !AA.has(a.resname) || a.resseq == null) continue;
+      polimeros.add(a.cadeia + "|" + a.resseq + "|" + (a.icode || ""));
+      const atual = faixa.get(a.cadeia) || { min: a.resseq, max: a.resseq };
+      if (a.resseq < atual.min) atual.min = a.resseq;
+      if (a.resseq > atual.max) atual.max = a.resseq;
+      faixa.set(a.cadeia, atual);
+    }
+    const avisosNumeracao = [];
+    const vistosAcucar = new Map();
+    let numeracaoDiverge = false;
+    for (const arvore of arvores) {
+      for (const r of arvore.residuos) {
+        const chave = r.cadeia + "|" + r.resseq + "|" + (r.icode || "");
+        const rotulo = r.resname + " " + rotuloCadeia(r.cadeia) + " " + r.resseq + (r.icode || "");
+        if (polimeros.has(chave)) {
+          avisosNumeracao.push("O açúcar " + rotulo + " usa o mesmo número de um resíduo polimérico na mesma cadeia.");
+        }
+        const intervalo = faixa.get(r.cadeia);
+        if (intervalo && r.resseq >= intervalo.min && r.resseq <= intervalo.max && !polimeros.has(chave)) {
+          avisosNumeracao.push("O açúcar " + rotulo + " cai no intervalo numerado da cadeia (" + intervalo.min + "–" + intervalo.max + ").");
+        }
+        if (vistosAcucar.has(chave)) {
+          avisosNumeracao.push("Mais de um açúcar com a mesma cadeia e o mesmo número: " + rotulo + " e " + vistosAcucar.get(chave) + ".");
+        } else vistosAcucar.set(chave, rotulo);
+        if (r.numeroSugerido !== r.resseq) numeracaoDiverge = true;
+      }
+    }
+    if (numeracaoDiverge) {
+      avisosNumeracao.push("A numeração sugerida difere da atual em pelo menos um açúcar. Ela não é gravada no arquivo.");
+    }
+
+    return { pares, sitiosO, linksAsnC1: linksAsn, linksProteina, arvores, avisosNumeracao, raio, maxResProteina };
   }
 
   function histidinas(atomos, raio, raioMetal) {
@@ -918,7 +989,7 @@ const PrepAnalysis = (() => {
     linhas.push("# " + FRASES.tleap);
     linhas.push("# " + FRASES.contato);
     linhas.push("# A cadeia não entra no nome do átomo. Números iguais em cadeias diferentes ficam ambíguos.");
-    if (!ss.pares.length && !glic.pares.length) {
+    if (!ss.pares.length && !glic.pares.length && !(glic.sitiosO || []).length) {
       linhas.push("# Nenhum par SG–SG nem ND2–C1 dentro do raio.");
       return linhas.join("\n") + "\n";
     }
@@ -929,6 +1000,10 @@ const PrepAnalysis = (() => {
     for (const p of glic.pares) {
       linhas.push(`# ${rotuloRes(p.asn)} ND2 — ${rotuloRes(p.acucar)} C1, ${p.distancia.toFixed(2)} Å. ${p.conhecido ? "Açúcar da lista ou do HETNAM." : "C1 de HETATM fora da lista de açúcares."} ${p.noLink ? "Não consta em LINK de simetria 1555." : "Consta em LINK."}`);
       linhas.push(`bond <unidade>.${p.asn.resseq}${p.asn.icode}.ND2 <unidade>.${p.acucar.resseq}${p.acucar.icode}.C1`);
+    }
+    for (const p of glic.sitiosO || []) {
+      linhas.push(`# ${rotuloRes(p.residuo)} ${p.residuo.nome} — ${rotuloRes(p.acucar)} C1, ${p.distancia.toFixed(2)} Å. Sítio O. ${p.noLink ? "Não consta em LINK de simetria 1555." : "Consta em LINK."}`);
+      linhas.push(`bond <unidade>.${p.residuo.resseq}${p.residuo.icode}.${p.residuo.nome} <unidade>.${p.acucar.resseq}${p.acucar.icode}.C1`);
     }
     return linhas.join("\n") + "\n";
   }

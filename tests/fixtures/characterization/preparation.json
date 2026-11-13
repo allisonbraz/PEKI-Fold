@@ -485,7 +485,9 @@
           "noLink": true
         }
       ],
+      "sitiosO": [],
       "linksAsnC1": [],
+      "linksProteina": [],
       "arvores": [
         {
           "id": 1,
@@ -504,6 +506,9 @@
             }
           ]
         }
+      ],
+      "avisosNumeracao": [
+        "A numeração sugerida difere da atual em pelo menos um açúcar. Ela não é gravada no arquivo."
       ],
       "raio": 1.8,
       "maxResProteina": 11

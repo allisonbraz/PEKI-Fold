@@ -209,6 +209,26 @@ const PrepUI = (() => {
     ]);
   }
 
+  function linhasGlicO() {
+    return (resultado.glicosilacao.sitiosO || []).map((p) => [
+      res(p.residuo), res(p.acucar), num(p.distancia, 2),
+      p.conhecido ? "lista ou HETNAM" : "C1 fora da lista",
+      p.noLink ? "não" : "sim",
+    ]);
+  }
+
+  function linhasLinksGlicano() {
+    return (resultado.glicosilacao.linksProteina || []).map((l) => {
+      const prot = (l.a.resname === "ASN" || l.a.resname === "SER" || l.a.resname === "THR") ? l.a : l.b;
+      const acucar = prot === l.a ? l.b : l.a;
+      return [
+        fim(prot), fim(acucar), num(l.distancia, 2),
+        l.identidade ? "1555" : "simetria",
+        l.coberto ? "sim" : "não",
+      ];
+    });
+  }
+
   function linhasArvores() {
     const rows = [];
     for (const a of resultado.glicosilacao.arvores) {
@@ -370,7 +390,7 @@ const PrepUI = (() => {
       <div class="prep-controles">
         <label>Metais (Å) <input id="prep-raio-metal" data-raio="metal" type="number" min="0" max="15" step="0.1" value="${esc(raios.metal)}"/></label>
         <label>SG–SG (Å) <input id="prep-raio-ss" data-raio="ss" type="number" min="0" max="15" step="0.1" value="${esc(raios.ss)}"/></label>
-        <label>ND2–C1 (Å) <input id="prep-raio-glic" data-raio="glic" type="number" min="0" max="15" step="0.1" value="${esc(raios.glic)}"/></label>
+        <label>Açúcar (Å) <input id="prep-raio-glic" data-raio="glic" type="number" min="0" max="15" step="0.1" value="${esc(raios.glic)}"/></label>
         <label>Histidinas (Å) <input id="prep-raio-his" data-raio="his" type="number" min="0" max="15" step="0.1" value="${esc(raios.his)}"/></label>
         <button type="button" class="primary-btn" data-acao="raios">Atualizar raios</button>
       </div>
@@ -473,15 +493,31 @@ const PrepUI = (() => {
       </section>
 
       <section class="prep-secao">
-        <h3>Glicosilação (Asn–açúcar)</h3>
-        <p class="rotulo-fixo">${esc(F.contato)} ND2 de ASN até ${esc(raios.glic)} Å de um C1. ${esc(F.acucar)} Se o arquivo não traz o glicano, o módulo não o adiciona. Açúcares devem permanecer HETATM; um TER entre eles é decisão sua, não é gravado automaticamente.</p>
+        <h3>Glicosilação</h3>
+        <p class="rotulo-fixo">${esc(F.contato)} ND2 de ASN, OG de SER e OG1 de THR até ${esc(raios.glic)} Å de um C1, além dos registros LINK com ASN, SER ou THR. ${esc(F.acucar)} Se o arquivo não traz o glicano, o módulo não o adiciona. Esta ficha não calcula protonação.</p>
+        <p class="prep-aviso">Manter ou remover os glicanos não escolhe o campo de força. A parametrização depende do campo de força usado depois. Confirme com o responsável pelo seu protocolo de simulação.</p>
+        ${inv.hets.some((h) => h.classe === "acucar") ? `<div class="prep-linha">
+          <button type="button" class="ghost-btn" data-acao="glicanos-manter">Manter glicanos</button>
+          <button type="button" class="ghost-btn" data-acao="glicanos-remover">Remover glicanos</button>
+        </div>` : ""}
+        <h4>Sítios N (Asn)</h4>
         ${tabela(["ASN", "Açúcar C1", "Distância (Å)", "Origem do código", "Consta no LINK?"], linhasGlic().map((row, i) => {
           const copia = row.slice();
           copia[0] = { html: `${esc(row[0])} <button type="button" class="link-btn" data-acao="ver-glic" data-idx="${i}">ver</button>` };
           return copia;
         }))}
+        <h4>Sítios O (Ser/Thr)</h4>
+        ${tabela(["Ser ou Thr", "Açúcar C1", "Distância (Å)", "Origem do código", "Consta no LINK?"], linhasGlicO().map((row, i) => {
+          const copia = row.slice();
+          copia[0] = { html: `${esc(row[0])} <button type="button" class="link-btn" data-acao="ver-glic-o" data-idx="${i}">ver</button>` };
+          return copia;
+        }))}
+        <h4>LINK com ASN, SER ou THR</h4>
+        <p class="muted small">Inclui ligações anotadas fora do raio. "Par no raio" diz se a geometria também achou o par.</p>
+        ${tabela(["Proteína", "Açúcar", "Distância no LINK (Å)", "Simetria", "Par no raio?"], linhasLinksGlicano())}
+        ${(resultado.glicosilacao.avisosNumeracao || []).map((a) => `<p class="prep-aviso">${esc(a)}</p>`).join("")}
         <h4>Açúcares por árvore</h4>
-        <p class="muted small">A numeração sugerida continua depois do último resíduo polimérico (${inv.maxResProteina == null ? "nenhum" : inv.maxResProteina}). Ela não é aplicada ao arquivo.</p>
+        <p class="muted small">A numeração sugerida continua depois do último resíduo polimérico (${inv.maxResProteina == null ? "nenhum" : inv.maxResProteina}). Ela não é aplicada ao arquivo. Açúcares permanecem HETATM; um TER entre eles não é gravado automaticamente.</p>
         ${tabela(["Árvore", "Código", "Cadeia", "Número atual", "Número sugerido", "HETNAM", "ASN no raio"], linhasArvores())}
         ${campoDecisao("glicosilacao")}
       </section>
@@ -783,9 +819,11 @@ ${htmlVinaPreparo(F, pocketOpts, vinaCampos)}
         },
         {
           id: "glicosilacao", titulo: "Glicosilação",
-          paragrafos: [F.contato, F.acucar, "Açúcares permanecem HETATM. O módulo não insere TER entre eles."],
+          paragrafos: [F.contato, F.acucar, "Açúcares permanecem HETATM. O módulo não insere TER entre eles.", "A parametrização do glicano depende do campo de força. Esta ficha não calcula protonação."].concat(resultado.glicosilacao.avisosNumeracao || []),
           tabelas: [
             { head: ["ASN", "C1", "Distância (Å)", "Origem", "LINK"], rows: linhasGlic() },
+            { head: ["Ser ou Thr", "C1", "Distância (Å)", "Origem", "LINK"], rows: linhasGlicO() },
+            { head: ["Proteína", "Açúcar", "Distância no LINK", "Simetria", "Par no raio"], rows: linhasLinksGlicano() },
             { head: ["Árvore", "Código", "Cadeia", "Número atual", "Número sugerido", "HETNAM", "ASN"], rows: linhasArvores() },
           ],
         },
@@ -985,6 +1023,27 @@ ${htmlVinaPreparo(F, pocketOpts, vinaCampos)}
         itemEsfera({ ...p.asn, nome: "ND2" }, "#7dffb3", 0.45),
         itemEsfera({ ...p.acucar, nome: "C1" }, "#ff9d6e", 0.45),
       ]);
+      return;
+    }
+    if (acao === "ver-glic-o") {
+      const p = (resultado.glicosilacao.sitiosO || [])[Number(btn.dataset.idx)];
+      if (!p) return;
+      mostrar3d([
+        itemEsfera({ ...p.residuo, nome: p.residuo.nome }, "#7dffb3", 0.45),
+        itemEsfera({ ...p.acucar, nome: "C1" }, "#ff9d6e", 0.45),
+      ]);
+      return;
+    }
+    if (acao === "glicanos-manter" || acao === "glicanos-remover") {
+      for (const h of resultado.inventario.hets) {
+        if (h.classe !== "acucar") continue;
+        for (const cp of h.copias) {
+          if (acao === "glicanos-manter") selecao.hets.add(cp.chave);
+          else selecao.hets.delete(cp.chave);
+        }
+      }
+      lerDecisoes();
+      render();
       return;
     }
     if (acao === "limpar-3d") {
