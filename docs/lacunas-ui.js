@@ -414,16 +414,23 @@ const LacunasUI = (() => {
     const f = preencherFasta();
     if (!f || !f.letras) { status("Esta cadeia não tem sequência para copiar."); return; }
     const janela = window.open(LacunasModelo.SWISS_URL, "_blank", "noopener");
-    let copiou = false;
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      try { await navigator.clipboard.writeText(f.texto); copiou = true; } catch (e) { copiou = false; }
-    }
     const avisoSeq = f.avisos.length ? " " + f.avisos.join(" ") : "";
-    status((copiou ? "FASTA copiada. " : "Selecione a FASTA abaixo e copie. ") +
-      (janela ? "O Swiss-Model abriu em outra aba. " : "O navegador bloqueou a nova aba: use o link. ") +
-      "Cole a sequência no site. O PEKI Fold não enviou o texto." + avisoSeq);
     const mapa = $("lac-mapa");
     if (mapa) mapa.value = "fasta";
+    status("A FASTA está no campo abaixo. " +
+      (janela ? "O Swiss-Model foi pedido em outra aba. " : "Se a aba não abrir, use o link. ") +
+      "Cole a sequência no site. O PEKI Fold não enviou o texto." + avisoSeq);
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(f.texto).then(() => {
+        status("FASTA copiada. " +
+          (janela ? "Cole no Swiss-Model. " : "Se a aba não abriu, use o link. ") +
+          "O PEKI Fold não enviou o texto." + avisoSeq);
+      }, () => {
+        status("Não foi possível copiar automaticamente. Selecione a FASTA abaixo. " +
+          (janela ? "A aba do Swiss-Model foi pedida. " : "Use o link do Swiss-Model. ") +
+          "O PEKI Fold não enviou o texto." + avisoSeq);
+      });
+    }
   }
 
   function aoArquivo(file) {
