@@ -136,7 +136,7 @@
           <li>Na tela da estrutura: <strong>abas</strong> (visão geral, qualidade, cadeias, estatísticas, aminoácidos, motivos, pockets, preparo), <strong>visualizador 3D</strong>, <strong>Salvar JSON</strong> (arquivo local para reabrir) e <strong>Exportar relatório</strong> (PDF ou Markdown para compartilhar). Os botões CSV ficam nas tabelas.</li>
           <li><strong>Comparar JSONs</strong>: reabra de 2 a 5 JSON. O ranking segue os critérios e pesos que você informa. É apoio, não uma nota biológica. Sem UniProt resíduo a resíduo e sem alinhamento estrutural.</li>
           <li><strong>Cadeias</strong>: ver ou ocultar muda só o desenho 3D. Contagens, FASTA, PDB e exportação continuam com a cadeia. O arquivo não é regravado.</li>
-          <li><strong>Aminoácidos</strong>: “Todas as cadeias” soma os resíduos modelados dos 20 aminoácidos padrão. Uma cadeia deixa as outras de fora. Resíduo ausente não entra.</li>
+          <li><strong>Aminoácidos</strong>: “Todas as cadeias” soma os resíduos modelados dos 20 aminoácidos padrão. Uma cadeia deixa as outras de fora. Resíduo ausente não entra. A cor da barra é o grupo químico (hidrofóbico, polar, positivo, negativo ou especial), com a mesma paleta nos dois escopos. A legenda fica acima do gráfico.</li>
           <li><strong>Motivos</strong>: sequência curta e contígua, montada pelos resíduos do modelo. Não é motivo estrutural, sítio funcional nem pocket.</li>
           <li><strong>Qualidade</strong> lê o relatório wwPDB quando há ID do PDB. Métrica ausente não vira zero. O relatório global não garante o sítio. Sem ID, a consulta remota não roda. Se a leitura achar lacuna, <strong>Modelar lacunas</strong> copia a FASTA da cadeia e abre o Swiss-Model em outra aba, sem enviar a sequência. O AlphaFold DB é consultado pela API pública; se o navegador não ler o arquivo, ficam os links e a importação de um PDB local.</li>
           <li><strong>Preparo</strong> é uma ficha auxiliar. Ela não valida a estrutura e não substitui a conferência humana. O checklist antes do envio marca resíduos não padrão, hidrogênios, altloc, numeração, lacunas, cadeias, heteroátomos e águas. Na <code>proteina_limpa.pdb</code> dá para remover hidrogênios, manter um altloc e garantir TER/END. Glicanos (NAG, MAN, BMA e outros da lista) podem ser mantidos ou removidos na cópia filtrada; a parametrização depende do campo de força. Confirme com o responsável pelo seu protocolo de simulação. O resumo das pontes dissulfeto pode ser copiado e não escolhe o par. Os resíduos do pocket, além do PDB, saem em texto (uma linha por resíduo ou lista separada por vírgula) com o separador dos campos configurável. O drugScore dos pockets continua descritor geométrico, não afinidade.</li>
@@ -232,8 +232,9 @@
             <button id="btn-aa-tabela" class="ghost-btn" type="button" aria-expanded="false" aria-controls="aa-tabela">Ver dados em tabela</button>
           </div>
           <div id="aa-tabela" class="dados-scroll" role="region" aria-label="Dados de aminoácidos" tabindex="0" hidden></div>
+          <figure id="aa-legenda" class="aa-legenda" aria-label="Legenda das cores por grupo químico"></figure>
           <div id="aa-grafico-status" class="visual-status" role="status" aria-live="polite"></div>
-          <div id="aa-grafico" class="grafico"></div>
+          <div id="aa-grafico" class="grafico" aria-describedby="aa-legenda"></div>
           <p id="aa-atalho-nota" class="muted small"></p>
           <div id="aa-atalho" class="motivo-chips" role="group" aria-label="Adicionar aminoácido do escopo selecionado ao motivo"></div>
         </div>

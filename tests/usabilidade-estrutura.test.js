@@ -284,6 +284,7 @@ function prepararDom() {
   registrar("aa-cadeia", "select");
   registrar("aa-ordem", "select").value = "alpha";
   registrar("aa-escopo", "p");
+  registrar("aa-legenda", "figure");
   registrar("aa-grafico", "div");
   registrar("aa-atalho", "div");
   registrar("aa-atalho-nota", "p");
@@ -577,7 +578,16 @@ function testeAminoacidosEscopo() {
     assert(document.querySelector("#aa-escopo").dataset.escopo === "todas", "o painel marca o escopo consolidado");
     assert(document.querySelector("#tab-aa").dataset.escopo === "todas", "a aba inteira muda de escopo");
     assert(plots.at(-1).layout.title.includes("todas as cadeias"), "o gráfico diz o escopo");
-    assert(plots.at(-1).data[0].marker.color === "#5c6b82", "a molécula inteira não usa a cor de uma cadeia");
+    const coresTodas = plots.at(-1).data[0].marker.color;
+    assert(Array.isArray(coresTodas), "cada barra recebe a cor do grupo químico");
+    assert(coresTodas[plots.at(-1).data[0].x.indexOf("ALA")] === ProtAnalysis.grupoAminoacido("ALA").cor, "alanina usa o grupo hidrofóbico na soma");
+    assert(coresTodas[plots.at(-1).data[0].x.indexOf("GLY")] === ProtAnalysis.grupoAminoacido("GLY").cor, "glicina usa o grupo especial na soma");
+    assert(!coresTodas.includes("#e8513a") && !coresTodas.includes("#2a5599"), "a soma não pinta com a cor de uma cadeia: " + coresTodas.join(","));
+    const legenda = document.querySelector("#aa-legenda").textContent;
+    assert(legenda.includes("Hidrofóbico / apolar") && legenda.includes("Polar não carregado"), "a legenda nomeia os grupos");
+    assert(legenda.includes("Positivo (básico)") && legenda.includes("Negativo (ácido)") && legenda.includes("Especial"), "a legenda traz carga e o grupo especial");
+    assert(legenda.includes("GLY") && legenda.includes("PRO") && legenda.includes("CYS"), "a legenda lista Gly, Pro e Cys no grupo especial");
+    assert(legenda.includes("todas as cadeias"), "a legenda afirma que a paleta vale para a soma");
     const ala = plots.at(-1).data[0];
     const iAla = ala.x.indexOf("ALA");
     assert(ala.y[iAla] === 40 && ala.customdata[iAla] === 4, "o gráfico consolidado usa a soma");
@@ -595,7 +605,7 @@ function testeAminoacidosEscopo() {
     return sel.onchange().then(() => {
       assert(document.querySelector("#aa-escopo").textContent.includes("uma cadeia (B)"), "trocar para B muda o texto");
       assert(document.querySelector("#aa-escopo").dataset.escopo === "cadeia", "a faixa individual é outra");
-      assert(plots.at(-1).data[0].marker.color === "#e8513a", "a cor é a da cadeia B");
+      assert(JSON.stringify(plots.at(-1).data[0].marker.color) === JSON.stringify(coresTodas), "a cadeia B usa a mesma paleta de grupos da soma");
       assert(plots.at(-1).data[0].customdata[plots.at(-1).data[0].x.indexOf("ALA")] === 3, "B não herda a soma");
       const soB = document.querySelectorAll("#aa-atalho .aa-atalho").map((b) => b.dataset.aa);
       assert(soB.join(",") === "ALA", "no escopo B o atalho não oferece GLY");

@@ -214,6 +214,29 @@ function blend(fg, bg, alpha) {
   return fg.match(/../g).map((v, i) => Math.round(parseInt(v, 16) * alpha + parseInt(bg.slice(i * 2, i * 2 + 2), 16) * (1 - alpha)).toString(16).padStart(2, "0")).join("");
 }
 
+test("barras de aminoácidos: cinco grupos cobrem os 20 códigos e contrastam nos dois cartões", () => {
+  const PA = require("../docs/pdb-analysis.js");
+  assert.equal(new Set(PA.GRUPOS_AA.map((g) => g.cor)).size, PA.GRUPOS_AA.length);
+  const vistos = new Map();
+  for (const grupo of PA.GRUPOS_AA) {
+    for (const aa of grupo.residuos) {
+      assert.equal(vistos.has(aa), false, aa + " entra em um só grupo");
+      vistos.set(aa, grupo.id);
+      assert.equal(PA.grupoAminoacido(aa).id, grupo.id);
+    }
+    for (const fundo of ["ffffff", "f4f6fb", "1a2436", "0f1623"]) {
+      assert.ok(contrast(grupo.cor.slice(1), fundo) >= 3, grupo.id + " em #" + fundo + " = " + contrast(grupo.cor.slice(1), fundo).toFixed(2));
+    }
+  }
+  assert.deepEqual([...vistos.keys()].sort(), [...PA.AMINOACIDOS_PADRAO].sort());
+  assert.equal(vistos.get("GLY"), "especial");
+  assert.equal(vistos.get("PRO"), "especial");
+  assert.equal(vistos.get("CYS"), "especial");
+  assert.equal(vistos.get("TYR"), "polar");
+  assert.equal(vistos.get("HIS"), "positivo");
+  assert.equal(vistos.get("TRP"), "hidro");
+});
+
 test("contraste: texto secundário e títulos passam de 4,5:1 nos fundos e avisos dos dois temas", () => {
   const css = read("docs/style.css");
   const blocks = [css.match(/:root\s*\{([^}]+)\}/)[1], css.match(/\[data-theme="dark"\]\s*\{([^}]+)\}/)[1]];

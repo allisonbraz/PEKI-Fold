@@ -911,7 +911,27 @@ function textoEscopoAA(freq) {
   return `Escopo: uma cadeia (${nome}). ${regra} ${freq.total} resíduos padrão com coordenadas nesta cadeia. As outras cadeias ficam de fora deste gráfico.`;
 }
 
+function corBarraAminoacido(aa) {
+  const grupo = ProtAnalysis.grupoAminoacido(aa);
+  return grupo ? grupo.cor : "#5c6b82";
+}
+
+function renderLegendaAA() {
+  const box = $("#aa-legenda");
+  if (!box || box.dataset.pronta === "1") return;
+  const itens = ProtAnalysis.GRUPOS_AA.map((g) => `<li>
+    <span class="aa-swatch" style="background:${g.cor}" aria-hidden="true"></span>
+    <span><strong>${esc(g.nome)}</strong> — ${esc(g.residuos.join(", "))}</span>
+  </li>`).join("");
+  const notas = ProtAnalysis.GRUPOS_AA.map((g) => g.detalhe).join(" ");
+  box.innerHTML = `<figcaption>Cor por grupo químico</figcaption>
+    <ul>${itens}</ul>
+    <p>${esc(ProtAnalysis.TEXTO_GRUPOS_AA)} ${esc(notas)}</p>`;
+  box.dataset.pronta = "1";
+}
+
 function renderAA() {
+  renderLegendaAA();
   const sel = $("#aa-cadeia");
   if (!sel) return;
   const anterior = sel.value;
@@ -986,15 +1006,18 @@ async function plotAA() {
     const itens = itensAAOrdenados(freq);
     const x = itens.map((i) => i.aa);
     const y = itens.map((i) => i.porcentagem);
-    const cor = freq.escopo === "todas" ? "#5c6b82" : (estado.corPorCadeia[freq.cadeia] || "#2a5599");
+    const cor = itens.map((i) => corBarraAminoacido(i.aa));
     const escuro = document.body.dataset.theme === "dark";
     const titulo = freq.escopo === "todas"
       ? "Frequência de aminoácidos — todas as cadeias"
       : `Frequência de aminoácidos — cadeia ${freq.cadeia}`;
 
     await Plotly.newPlot("aa-grafico", [{
-      x, y, customdata: itens.map((i) => i.contagem), type: "bar", marker: { color: cor },
-      hovertemplate: "%{x}: %{y}% (%{customdata} resíduos)<extra></extra>",
+      x, y, customdata: itens.map((i) => i.contagem),
+      text: itens.map((i) => (ProtAnalysis.grupoAminoacido(i.aa) || {}).nome || ""),
+      textposition: "none",
+      type: "bar", marker: { color: cor },
+      hovertemplate: "%{x} (%{text}): %{y}% (%{customdata} resíduos)<extra></extra>",
     }], {
       title: titulo,
       xaxis: { title: "Aminoácido" },

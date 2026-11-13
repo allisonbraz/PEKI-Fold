@@ -23,8 +23,13 @@ function harness() {
   const h = browser(["pdb-analysis", "structure-model", "prep-analysis", "ensemble-analysis", "dogsite-client", "viewer", "comparison", "app"]);
   const elements = new Map();
   h.element = (id) => {
-    if (!elements.has(id)) elements.set(id, { innerHTML: "", textContent: "", value: "", dataset: {},
-      addEventListener() {}, querySelectorAll: () => [] });
+    if (!elements.has(id)) elements.set(id, {
+      innerHTML: "", textContent: "", value: "", dataset: {},
+      addEventListener() {},
+      // O checklist da ficha consulta o nó. Sem este método, aoCarregar apaga a ficha e a caixa não escreve o aviso.
+      querySelector() { return null; },
+      querySelectorAll: () => [],
+    });
     return elements.get(id);
   };
   h.context.document.getElementById = h.element;
