@@ -76,7 +76,7 @@ Pendente, de propósito:
 
 - Correspondência resíduo a resíduo PDB–UniProt e distinção do que ficou fora do constructo.
 - Qualidade global e local saíram da leitura do arquivo. Com ID do PDB, a aba Qualidade usa o contrato `peki-qualidade-1` ([qualidade.md](qualidade.md)). `REMARK 470` continua de fora.
-- Reconstrução de coordenadas e SWISS-MODEL.
+- Reconstrução automática de coordenadas. A aba Qualidade, quando há lacuna, só copia a FASTA, abre o Swiss-Model para uso manual e pode mostrar um modelo AlphaFold ou um PDB importado. Nenhum job é enviado.
 - Conversão mmCIF→PDB correta para a ficha de preparo.
 - Ensemble com alinhamento estrutural.
 - ID estendido do PDB, mmCIF 2 e formatos binários.

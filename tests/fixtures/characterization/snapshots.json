@@ -188,7 +188,7 @@
       "O relatório wwPDB global não garante a qualidade do sítio.",
       "Resíduos sem coordenadas não são desenhados nem destacados no viewer.",
       "A leitura peki-estrutura-1 não calcula R, Rfree, clashscore nem qualidade local. Com ID do PDB, a aba Qualidade consulta o relatório wwPDB à parte.",
-      "Reconstrução de coordenadas e SWISS-MODEL não entram nesta versão.",
+      "A leitura não reconstrói coordenadas. Se há lacuna, a aba Qualidade copia a FASTA e abre o Swiss-Model para uso manual. O modelo AlphaFold, quando a API responde, pode ser visto ao lado; se o arquivo não puder ser lido no navegador, ficam o",
       "Mapa resíduo a resíduo PDB–UniProt fica pendente.",
       "Regiões fora do constructo não foram separadas das ausências no experimento.",
       "REMARK 470 e átomos faltando dentro de um resíduo resolvido não entram nesta versão.",
@@ -197,8 +197,8 @@
   },
   "arquivo": "1ABC-analise.json",
   "jsonSalvo": {
-    "bytes": 6197,
-    "sha256": "e4317e6b87fc34d87bb4a086823fc45d61c9da31071b5d61418f912a7c3db3d7"
+    "bytes": 6371,
+    "sha256": "618dfcd9e5e90a67aaecaef045c5d92803b0c64b26d768168e23d6ba378faad5"
   },
   "status": {
     "pendente": {
@@ -785,7 +785,7 @@
       "O relatório wwPDB global não garante a qualidade do sítio.",
       "Resíduos sem coordenadas não são desenhados nem destacados no viewer.",
       "A leitura peki-estrutura-1 não calcula R, Rfree, clashscore nem qualidade local. Com ID do PDB, a aba Qualidade consulta o relatório wwPDB à parte.",
-      "Reconstrução de coordenadas e SWISS-MODEL não entram nesta versão.",
+      "A leitura não reconstrói coordenadas. Se há lacuna, a aba Qualidade copia a FASTA e abre o Swiss-Model para uso manual. O modelo AlphaFold, quando a API responde, pode ser visto ao lado; se o arquivo não puder ser lido no navegador, ficam o",
       "Mapa resíduo a resíduo PDB–UniProt fica pendente.",
       "Regiões fora do constructo não foram separadas das ausências no experimento.",
       "REMARK 470 e átomos faltando dentro de um resíduo resolvido não entram nesta versão.",

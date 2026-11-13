@@ -28,6 +28,14 @@ Para NMR entram geometria e os campos de ensemble que o relatório traz (medóid
 
 O texto fixo da aba diz que o relatório e os indicadores globais não garantem a qualidade local do sítio.
 
+## Lacunas e modelos externos
+
+Quando a leitura do arquivo traz resíduo não resolvido, salto de numeração ou a cobertura local conta lacuna sem coordenada, a aba mostra **Modelar lacunas**. O botão copia a FASTA da cadeia escolhida (SEQRES, se o alinhamento com as coordenadas é único; senão, resíduos com coordenada mais os não resolvidos que têm nome e número author) e abre `https://swissmodel.expasy.org/interactive` em outra aba. A sequência não é enviada e nenhum job é criado.
+
+O UniProt da cadeia sai do DBREF ou de `_struct_ref` já lidos. Se não houver, a aba consulta `https://www.ebi.ac.uk/pdbe/api/mappings/uniprot/{id}`, que envia CORS. Com o acesso, consulta `https://alphafold.ebi.ac.uk/api/prediction/{UniProt}`. A API e o PDB em `alphafold.ebi.ac.uk/files/` responderam com `Access-Control-Allow-Origin: *` num GET de navegador. Se a leitura do arquivo falhar, a aba deixa o link da entrada e aceita um PDB local (por exemplo o que o Swiss-Model devolveu no próprio site). O pLDDT mostrado é o da API ou o fator de temperatura do PDB AlphaFold. Não é medida experimental.
+
+O deslocamento PDB→UniProt é linear dentro do intervalo declarado. Não é mapa resíduo a resíduo validado. A sobreposição, se pedida, usa só os CA em comum e informa o RMSD desse encaixe. Não é RMSD de simulação.
+
 ## Qualidade local
 
 Ela só é montada com o XML completo, dentro do limite de 2 MB. Cada `ModelledSubgroup` precisa de `chain` (`_atom_site.auth_asym_id`), `resnum` (`auth_seq_id`) e `model`, como o esquema descreve. `icode` vem de `pdbx_PDB_ins_code`, `altcode` de `label_alt_id`, `said` de `label_asym_id`.

@@ -1677,7 +1677,7 @@ cadeias: cadeiasVisao(posicoes, analise),
     const lim = [
       "Resíduos sem coordenadas não são desenhados nem destacados no viewer.",
       "A leitura peki-estrutura-1 não calcula R, Rfree, clashscore nem qualidade local. Com ID do PDB, a aba Qualidade consulta o relatório wwPDB à parte.",
-      "Reconstrução de coordenadas e SWISS-MODEL não entram nesta versão.",
+      "A leitura não reconstrói coordenadas. Se há lacuna, a aba Qualidade copia a FASTA e abre o Swiss-Model para uso manual. O modelo AlphaFold, quando a API responde, pode ser visto ao lado; se o arquivo não puder ser lido no navegador, ficam os links e a importação de um PDB local.",
       "Mapa resíduo a resíduo PDB–UniProt fica pendente.",
       "Regiões fora do constructo não foram separadas das ausências no experimento.",
       "REMARK 470 e átomos faltando dentro de um resíduo resolvido não entram nesta versão.",
