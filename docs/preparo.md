@@ -8,7 +8,8 @@ Versão do módulo: `preparo-1`, em `docs/prep-analysis.js` e `docs/prep-ui.js`.
 
 - Inventário do primeiro MODEL: cadeias, ATOM, HETATM, águas, altloc, ANISOU, código de inserção, lacunas de numeração e REMARK 465.
 - Classificação grosseira dos HET (água, metal, íon não metálico, açúcar, aditivo frequente, ou não classificado). A lista de códigos foi conferida no Chemical Component Dictionary; o que não está nela fica como não classificado.
-- PDB filtrado, um arquivo por íon metálico e um arquivo por cópia de HET marcada. Sem hidrogênio novo e sem ANISOU.
+- Checklist antes do envio: resíduos ATOM fora dos 20 padrão, hidrogênios, altloc, numeração e inserção, lacunas, cadeias, heteroátomos marcados e águas. Os estados são Ok, Atenção ou Conferir. O texto pede confirmação com o responsável pelo protocolo de simulação e não aplica regra de um cluster.
+- PDB filtrado, um arquivo por íon metálico e um arquivo por cópia de HET marcada. Sem hidrogênio novo e sem ANISOU. Opções da `proteina_limpa.pdb`: remover hidrogênios já presentes, manter só altloc em branco/A ou o de maior ocupação, e garantir TER/END. Com as opções no padrão, o arquivo continua como antes: hidrogênios que já existiam permanecem e TER/END são gravados.
 - Vizinhos N, O e S de cada metal até 2,8 Å, comparados aos registros LINK. O elemento sai das colunas 77–78, para não tratar carbono alfa como cálcio.
 - Pares SG–SG de CYS/CYX até 2,5 Å, comparados ao SSBOND. O resumo copiável lista esses pares (`N pares de cisteína candidatos: Cadeia A CYS x – Cadeia A CYS y (d = z Å)`). Ele é informativo e não escolhe a ponte.
 - Pares ND2 de ASN com C1 de açúcar até 1,8 Å, comparados ao LINK, com uma numeração sequencial só sugerida.

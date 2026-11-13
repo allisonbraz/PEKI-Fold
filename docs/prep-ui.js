@@ -83,6 +83,8 @@ const PrepUI = (() => {
       aguasManter: [...selecao.aguas],
       removerAguas: selecao.removerAguas,
       altloc: selecao.altloc,
+      removerHidrogenios: !!selecao.removerHidrogenios,
+      garantirTerEnd: selecao.garantirTerEnd !== false,
     };
   }
 
@@ -129,7 +131,7 @@ const PrepUI = (() => {
       if (h.classe === "agua") continue;
       for (const cp of h.copias) hets.add(cp.chave);
     }
-    selecao = { cadeias, hets, aguas: new Set(), removerAguas: true, altloc: "A" };
+    selecao = { cadeias, hets, aguas: new Set(), removerAguas: true, altloc: "A", removerHidrogenios: false, garantirTerEnd: true };
   }
 
   function recalcular() {
@@ -410,6 +412,9 @@ const PrepUI = (() => {
         <p class="muted small">O viewer continua mostrando a estrutura original. Os arquivos abaixo são uma cópia filtrada, sem hidrogênios adicionados e sem ANISOU. ${esc(F.serial)}</p>
         <div class="prep-linha">${checksCadeia}</div>
         <label class="prep-check"><input type="checkbox" data-sel="aguas" ${selecao.removerAguas ? "checked" : ""}/> Remover águas (HOH e aliases), exceto as marcadas abaixo</label>
+        <label class="prep-check"><input type="checkbox" data-sel="hidrogenios" ${selecao.removerHidrogenios ? "checked" : ""}/> Remover hidrogênios já presentes no arquivo</label>
+        <label class="prep-check"><input type="checkbox" data-sel="terend" ${selecao.garantirTerEnd !== false ? "checked" : ""}/> Garantir registros TER e END</label>
+        <p class="muted small">Confirme com o responsável pelo seu protocolo de simulação. Estas opções não seguem a regra de um cluster. A regra de altloc mantém só um conjunto de coordenadas.</p>
         <div class="prep-linha">
           <label class="prep-check"><input type="radio" name="prep-altloc" data-sel="altloc" value="A" ${selecao.altloc === "A" ? "checked" : ""}/> Altloc em branco ou A</label>
           <label class="prep-check"><input type="radio" name="prep-altloc" data-sel="altloc" value="ocupacao" ${selecao.altloc === "ocupacao" ? "checked" : ""}/> Maior ocupação</label>
@@ -526,6 +531,7 @@ const PrepUI = (() => {
       ${resultado.nModelos > 1 ? `<p class="aviso-predita">A ficha usa só o primeiro MODEL (há ${resultado.nModelos}).</p>` : ""}
       <p class="muted small">${esc(cabecalhoTexto().slice(0, 4).join(" · "))}</p>
 ${htmlControlesPreparo()}
+${htmlChecklist()}
 ${htmlInventarioPreparo(F, inv, headCad, rowsCad, headHet, rowsHet)}
 ${htmlLimpezaPreparo(F, checksCadeia, hetHtml, aguasHtml)}
 ${htmlIonsPreparo(F, ionHtmlRows, nPares, nSem, linksId, linksCob)}
@@ -534,6 +540,28 @@ ${htmlVinaPreparo(F, pocketOpts, vinaCampos)}
 
       <p class="muted small">${esc(F.auxiliar)} ${esc(F.contato)} ${esc(F.escore)} ${esc(F.serial)} ${esc(F.protonacao)} ${esc(F.vina)}</p>
     `;
+  }
+
+  function htmlChecklist() {
+    const c = PrepAnalysis.checklistEnvio(estado.pdbText, resultado, selecao, estado && estado.estrutura);
+    const itens = c.itens.map((it) =>
+      `<li class="chk chk-${esc(it.status)}"><strong>${esc(it.titulo)}</strong> <span class="chk-status">${esc(PrepAnalysis.rotuloStatusChecklist(it.status))}</span> ${esc(it.texto)}</li>`
+    ).join("");
+    return `<section class="prep-secao" id="prep-checklist"><h3>Checklist antes do envio</h3><p class="muted small">${esc(c.nota)}</p><ul class="prep-checklista">${itens}</ul></section>`;
+  }
+
+  function atualizarChecklist() {
+    const raiz = document.getElementById("prep-checklist");
+    if (!raiz || !resultado || !selecao) return;
+    const c = PrepAnalysis.checklistEnvio(estado.pdbText, resultado, selecao, estado && estado.estrutura);
+    const ul = raiz.querySelector("ul");
+    const nota = raiz.querySelector("p");
+    if (nota) nota.textContent = c.nota;
+    if (ul) {
+      ul.innerHTML = c.itens.map((it) =>
+        `<li class="chk chk-${esc(it.status)}"><strong>${esc(it.titulo)}</strong> <span class="chk-status">${esc(PrepAnalysis.rotuloStatusChecklist(it.status))}</span> ${esc(it.texto)}</li>`
+      ).join("");
+    }
   }
 
   function atualizarPrevia() {
@@ -545,6 +573,7 @@ ${htmlVinaPreparo(F, pocketOpts, vinaCampos)}
     } catch (e) {
       el.textContent = e.message;
     }
+    atualizarChecklist();
   }
 
   function render() {
@@ -575,6 +604,8 @@ ${htmlVinaPreparo(F, pocketOpts, vinaCampos)}
     if (t.dataset.sel === "het") { if (on) selecao.hets.add(ch); else selecao.hets.delete(ch); }
     if (t.dataset.sel === "agua") { if (on) selecao.aguas.add(ch); else selecao.aguas.delete(ch); }
     if (t.dataset.sel === "aguas") selecao.removerAguas = on;
+    if (t.dataset.sel === "hidrogenios") selecao.removerHidrogenios = on;
+    if (t.dataset.sel === "terend") selecao.garantirTerEnd = on;
     if (t.dataset.sel === "altloc") selecao.altloc = t.value;
     atualizarPrevia();
   }
@@ -707,11 +738,20 @@ ${htmlVinaPreparo(F, pocketOpts, vinaCampos)}
     const F = PrepAnalysis.FRASES;
     const inv = resultado.inventario;
     const limpo = PrepAnalysis.limparPdb(estado.pdbText, opcoesLimpeza());
+    const chk = PrepAnalysis.checklistEnvio(estado.pdbText, resultado, selecao, estado && estado.estrutura);
     const decisao = (id) => decisoes[id] && decisoes[id].trim() ? decisoes[id].trim() : "(em branco)";
     return {
       titulo: `Ficha de preparo — ${baseNome()}`,
       cabecalho: cabecalhoTexto(),
       secoes: [
+        {
+          id: "checklist", titulo: "Checklist antes do envio",
+          paragrafos: [chk.nota].concat(chk.itens.map((it) => it.titulo + " (" + PrepAnalysis.rotuloStatusChecklist(it.status) + "): " + it.texto)).concat([
+            "Hidrogênios: " + (selecao.removerHidrogenios ? "removidos na exportação." : "não há remoção extra."),
+            "TER e END: " + (selecao.garantirTerEnd !== false ? "gravados." : "não acrescentados."),
+          ]),
+          tabelas: [],
+        },
         {
           id: "inventario", titulo: "Inventário",
           paragrafos: inv.alertas.concat([F.gap]),

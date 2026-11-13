@@ -964,6 +964,13 @@ const PrepAnalysis = (() => {
     return s;
   }
 
+  function ehHidrogenio(atomo) {
+    if (!atomo) return false;
+    if (atomo.elemento === "H" || atomo.elemento === "D") return true;
+    if (!atomo.elemento && /^(?:H|[0-9]+H)/.test(atomo.nome || "")) return true;
+    return false;
+  }
+
   function selecionarAtomosLimpeza(atomos, cadeias, hets, aguasManter, removerAguas) {
     const candidatos = [];
     let foraCadeia = 0;
@@ -1025,20 +1032,21 @@ const PrepAnalysis = (() => {
     return { unicos, duplicadas };
   }
 
-  function montarRegistrosLimpeza(unicos) {
+  function montarRegistrosLimpeza(unicos, garantirTerEnd) {
     const out = [
       "REMARK   1 PEKI Fold. PDB filtrado no navegador (ficha de preparo).",
       "REMARK   1 Nao adiciona hidrogenio, nao protona e nao e entrada pronta de simulacao.",
       "REMARK   1 " + FRASES.contato,
     ];
+    const ter = garantirTerEnd !== false;
     let prevCadeia = null;
     for (const item of unicos) {
-      if (prevCadeia != null && item.atom.cadeia !== prevCadeia) out.push("TER");
+      if (ter && prevCadeia != null && item.atom.cadeia !== prevCadeia) out.push("TER");
       out.push(item.linha);
       prevCadeia = item.atom.cadeia;
     }
-    if (unicos.length) out.push("TER");
-    out.push("END");
+    if (ter && unicos.length) out.push("TER");
+    if (ter) out.push("END");
 
     return out;
   }
@@ -1097,18 +1105,30 @@ const PrepAnalysis = (() => {
     const aguasManter = new Set(o.aguasManter || []);
     const removerAguas = o.removerAguas !== false;
     const altloc = o.altloc === "ocupacao" ? "ocupacao" : "A";
+    const removerHidrogenios = o.removerHidrogenios === true;
+    const garantirTerEnd = o.garantirTerEnd !== false;
 
     let anisou = 0;
     for (const l of pdb.split("\n")) if (l.startsWith("ANISOU")) anisou += 1;
 
-    const { candidatos, foraCadeia, aguasRemovidas, hetsRemovidos } =
-      selecionarAtomosLimpeza(atomos, cadeias, hets, aguasManter, removerAguas);
+    const selecaoInicial = selecionarAtomosLimpeza(atomos, cadeias, hets, aguasManter, removerAguas);
+    let candidatos = selecaoInicial.candidatos;
+    const { foraCadeia, aguasRemovidas, hetsRemovidos } = selecaoInicial;
+    let hidrogeniosRemovidos = 0;
+    if (removerHidrogenios) {
+      const semH = [];
+      for (const a of candidatos) {
+        if (ehHidrogenio(a)) hidrogeniosRemovidos += 1;
+        else semH.push(a);
+      }
+      candidatos = semH;
+    }
 
     const { escolhidos, altlocRemovidos, sumiram } = selecionarAltlocLimpeza(candidatos, altloc);
 
     const { unicos, duplicadas } = deduplicarLinhasLimpeza(escolhidos);
 
-    const out = montarRegistrosLimpeza(unicos);
+    const out = montarRegistrosLimpeza(unicos, garantirTerEnd);
 
     const ions = separarIonsLimpeza(unicos);
 
@@ -1125,6 +1145,8 @@ const PrepAnalysis = (() => {
       `Linhas duplicadas descartadas: ${duplicadas}.`,
       `Íons em arquivo próprio: ${ions.length}.`,
     ];
+    if (removerHidrogenios) linhasResumo.push("Hidrogênios removidos: " + hidrogeniosRemovidos + ".");
+    if (!garantirTerEnd) linhasResumo.push("TER e END não foram acrescentados.");
     if (sumiram.length) {
       linhasResumo.push(
         "Resíduos que sumiram por causa do altloc (não havia branco nem A, ou a ocupação ficou com outra cópia já contada): " +
@@ -1237,6 +1259,129 @@ const PrepAnalysis = (() => {
     ].join("\n");
   }
 
+  function rotuloStatusChecklist(status) {
+    if (status === "ok") return "Ok";
+    if (status === "atencao") return "Atenção";
+    return "Conferir";
+  }
+
+  function checklistEnvio(texto, resultado, selecao, estrutura) {
+    const inv = (resultado && resultado.inventario) || { cadeias: [], hets: [], lacunas: [], remark465: [], aguas: 0 };
+    const sel = selecao || {};
+    const cadeiasSel = sel.cadeias || new Set((inv.cadeias || []).map((c) => c.cadeia));
+    const hetsSel = sel.hets || new Set();
+    const aguasSel = sel.aguas || new Set();
+    const atomos = parseAtomos(primeiroModelo(texto || ""));
+    const itens = [];
+
+    const nao = new Map();
+    for (const a of atomos) {
+      if (a.registro !== "ATOM" || AA.has(a.resname) || a.agua) continue;
+      if (!nao.has(a.chaveRes)) nao.set(a.chaveRes, rotuloRes(a));
+    }
+    const listaNao = [...nao.values()];
+    itens.push({
+      id: "nao-padrao",
+      titulo: "Resíduos não padrão",
+      status: listaNao.length ? "atencao" : "ok",
+      texto: listaNao.length
+        ? listaNao.length + " resíduo(s) ATOM fora dos 20 aminoácidos padrão: " + listaNao.slice(0, 12).join(", ") + (listaNao.length > 12 ? "…" : "") + ". A exportação não os renomeia."
+        : "Nenhum resíduo ATOM fora dos 20 aminoácidos padrão.",
+    });
+
+    const nH = atomos.filter(ehHidrogenio).length;
+    const removeH = sel.removerHidrogenios === true;
+    itens.push({
+      id: "hidrogenios",
+      titulo: "Hidrogênios",
+      status: nH === 0 || removeH ? "ok" : "atencao",
+      texto: nH === 0
+        ? "Nenhum hidrogênio ou deutério encontrado nas coordenadas."
+        : nH + " átomo(s) de hidrogênio ou deutério. " + (removeH ? "A exportação está marcada para removê-los." : "A opção de removê-los na proteina_limpa.pdb está desligada."),
+    });
+
+    const alt = (inv.cadeias || []).reduce((s, c) => s + (c.altlocAtomos || 0), 0);
+    itens.push({
+      id: "altloc",
+      titulo: "Posições alternativas",
+      status: alt ? "atencao" : "ok",
+      texto: alt
+        ? alt + " átomo(s) com altloc. A exportação mantém só " + (sel.altloc === "ocupacao" ? "a maior ocupação" : "o altloc em branco ou A") + "."
+        : "Nenhum altloc nas coordenadas.",
+    });
+
+    const insercoes = (inv.cadeias || []).reduce((s, c) => s + ((c.insercoes && c.insercoes.length) || 0), 0);
+    const lacunasNum = (inv.lacunas || []).length;
+    itens.push({
+      id: "numeracao",
+      titulo: "Numeração e inserção",
+      status: insercoes || lacunasNum ? "atencao" : "ok",
+      texto: (insercoes || lacunasNum)
+        ? lacunasNum + " salto(s) interno(s) de numeração e " + insercoes + " código(s) de inserção. " + FRASES.gap
+        : "Nenhum salto interno de numeração nem código de inserção.",
+    });
+
+    const lacEst = estrutura && estrutura.lacunas;
+    const remarkN = (inv.remark465 || []).length;
+    const naoRes = lacEst && lacEst.naoResolvidos ? lacEst.naoResolvidos.length : 0;
+    let statusLac = "ok";
+    let textoLac = "Nenhum resíduo não resolvido no REMARK 465 nem na leitura da estrutura.";
+    if (lacEst && lacEst.determinado === false) {
+      statusLac = "conferir";
+      textoLac = lacEst.resumo || "O diagnóstico de resíduos ausentes não está determinado.";
+    } else if (remarkN || naoRes) {
+      statusLac = "atencao";
+      textoLac = remarkN + " linha(s) no REMARK 465 e " + naoRes + " resíduo(s) não resolvido(s) na leitura. " + FRASES.gap;
+    }
+    itens.push({ id: "lacunas", titulo: "Lacunas", status: statusLac, texto: textoLac });
+
+    const marcadas = (inv.cadeias || []).filter((c) => cadeiasSel.has(c.cadeia)).map((c) => rotuloCadeia(c.cadeia));
+    let statusCad = "ok";
+    let textoCad = "Uma cadeia marcada para a exportação: " + marcadas.join(", ") + ".";
+    if (!marcadas.length) {
+      statusCad = "atencao";
+      textoCad = "Nenhuma cadeia está marcada para a exportação.";
+    } else if ((inv.cadeias || []).length > 1) {
+      statusCad = "conferir";
+      textoCad = "Há " + inv.cadeias.length + " cadeias. A exportação inclui: " + marcadas.join(", ") + ".";
+    }
+    itens.push({ id: "cadeias", titulo: "Cadeias", status: statusCad, texto: textoCad });
+
+    const hetsMantidos = [];
+    for (const h of inv.hets || []) {
+      if (h.classe === "agua") continue;
+      for (const cp of h.copias || []) {
+        if (hetsSel.has(cp.chave)) hetsMantidos.push(h.resname + " " + rotuloCadeia(cp.cadeia) + " " + cp.resseq + (cp.icode || ""));
+      }
+    }
+    itens.push({
+      id: "hetero",
+      titulo: "Heteroátomos restantes",
+      status: hetsMantidos.length ? "atencao" : "ok",
+      texto: hetsMantidos.length
+        ? hetsMantidos.length + " heteroátomo(s) marcado(s) para permanecer: " + hetsMantidos.slice(0, 12).join(", ") + (hetsMantidos.length > 12 ? "…" : "") + "."
+        : "Nenhum heteroátomo, além de água, está marcado para permanecer.",
+    });
+
+    const aguasMantidas = aguasSel.size || 0;
+    const removeA = sel.removerAguas !== false;
+    let statusAg = "ok";
+    let textoAg = (inv.aguas || 0) + " água(s) no arquivo. A exportação está marcada para removê-las.";
+    if (!removeA) {
+      statusAg = "atencao";
+      textoAg = "A opção de remover águas está desligada. As águas do arquivo permanecem na exportação.";
+    } else if (aguasMantidas) {
+      statusAg = "atencao";
+      textoAg = aguasMantidas + " água(s) marcada(s) como exceção e permanecem. As demais saem.";
+    }
+    itens.push({ id: "aguas", titulo: "Águas restantes", status: statusAg, texto: textoAg });
+
+    return {
+      itens,
+      nota: "Confirme com o responsável pelo seu protocolo de simulação. Estas marcas descrevem o arquivo e as opções marcadas. Não são a regra de um cluster.",
+    };
+  }
+
   function analisar(texto, opcoes) {
     const o = opcoes || {};
     const bruto = normalizarTexto(texto);
@@ -1295,6 +1440,9 @@ const PrepAnalysis = (() => {
     histidinas,
     linhasBond,
     limparPdb,
+    ehHidrogenio,
+    checklistEnvio,
+    rotuloStatusChecklist,
     caixaPocket,
     formatarConfigVina,
     formatarResiduosPocket,

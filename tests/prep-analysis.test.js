@@ -97,6 +97,23 @@ function testeSintetico() {
   assert(regraO.pdb.includes(" B") || regraO.contagens.atom === 1, "maior ocupação fica com uma linha");
   const occ = Prep.parseAtomos(regraO.pdb);
   assert(occ.length === 1 && occ[0].altloc === "B", "maior ocupação escolhe B (0,75)");
+  assert(regraA.pdb.includes("\nTER\n") && regraA.pdb.trim().endsWith("END"), "padrão grava TER e END");
+  const h = atomo({ serial: 9, nome: " H  ", el: " H", x: 3 });
+  const comH = [altA, h, "END"].join("\n");
+  const semOpcao = Prep.limparPdb(comH, { removerAguas: true, altloc: "A", hets: [] });
+  assert(Prep.parseAtomos(semOpcao.pdb).some((a) => a.elemento === "H"), "sem a opção, o hidrogênio permanece");
+  const semH = Prep.limparPdb(comH, { removerAguas: true, altloc: "A", hets: [], removerHidrogenios: true });
+  assert(!Prep.parseAtomos(semH.pdb).some((a) => a.elemento === "H"), "opção remove hidrogênio");
+  assert(semH.linhasResumo.some((l) => l === "Hidrogênios removidos: 1."), "resumo conta o hidrogênio");
+  const semTer = Prep.limparPdb(bruto, { removerAguas: true, altloc: "A", hets: [], garantirTerEnd: false });
+  assert(!semTer.pdb.split("\n").some((l) => l === "TER" || l === "END"), "opção desligada não acrescenta TER nem END");
+  const chk = Prep.checklistEnvio(bruto, Prep.analisar(bruto), {
+    cadeias: new Set(["A"]), hets: new Set(), aguas: new Set(),
+    removerAguas: true, altloc: "A", removerHidrogenios: false, garantirTerEnd: true,
+  }, null);
+  assert(chk.itens.find((i) => i.id === "altloc").status === "atencao", "checklist marca altloc");
+  assert(chk.itens.find((i) => i.id === "hidrogenios").status === "ok", "checklist sem hidrogênio");
+  assert(chk.nota.includes("protocolo de simulação"), "nota genérica do protocolo");
 
   const cys1 = atomo({ serial: 1, nome: " SG ", res: "CYS", seq: 10, el: " S", x: 0, y: 0, z: 0 });
   const cys2 = atomo({ serial: 2, nome: " SG ", res: "CYS", seq: 20, el: " S", x: 2.0, y: 0, z: 0 });
