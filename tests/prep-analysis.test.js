@@ -150,6 +150,15 @@ function testeSintetico() {
   assert(caixa.size_x === 10 && caixa.size_y === 12 && caixa.size_z === 14, "tamanho com margem 4: " + [caixa.size_x, caixa.size_y, caixa.size_z]);
   const cfg = Prep.formatarConfigVina(caixa);
   assert(cfg.includes("center_x = 0.500") && cfg.includes("size_z = 14.0"), "texto no formato do Vina");
+  const pocketRes = [
+    atomo({ serial: 1, res: "ALA", seq: 12, x: 0 }),
+    atomo({ serial: 2, nome: " CB ", res: "ALA", seq: 12, x: 1 }),
+    atomo({ serial: 3, res: "HIS", chain: "B", seq: 63, icode: "A", x: 2 }),
+  ].join("\n");
+  const porLinha = Prep.formatarResiduosPocket(pocketRes, { modo: "linhas", sep: "espaco" });
+  assert(porLinha.n === 2 && porLinha.texto === "A ALA 12\nB HIS 63A\n", "linhas de resíduos: " + JSON.stringify(porLinha.texto));
+  const porVirgula = Prep.formatarResiduosPocket(pocketRes, { modo: "virgula", sep: "tab" });
+  assert(porVirgula.texto === "A\tALA\t12, B\tHIS\t63A", "lista com tabulação: " + JSON.stringify(porVirgula.texto));
 
   const af = "TITLE     ALPHAFOLD MONOMER V2.0 PREDICTION\nEXPDTA    THEORETICAL MODEL\n";
   assert(Prep.avisoPredita(af, null) === Prep.FRASES.predita, "aviso de estrutura predita");

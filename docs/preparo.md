@@ -28,7 +28,7 @@ Os raios são editáveis. A ficha sai em Markdown, CSV e PDF, e também entra no
 - Não usa o número de série do PDB original como identificador depois que outro programa renumerar o arquivo.
 - Não constrói contato de simetria cristalográfica (operador diferente de 1555) nem a montagem biológica.
 - Não lê mmCIF. Um arquivo mmCIF aberto na visão geral não é passado para esta ficha: o preparo continua nas colunas PDB, para não tratar o CIF como se fosse PDB. Não adiciona glicano que o arquivo não tenha.
-- Não grava o nome interno de arquivo de pocket usado em rotina de laboratório. Os resíduos do pocket, se baixados, saem como `pocket_residuos.pdb`.
+- Não grava o nome interno de arquivo de pocket usado em rotina de laboratório. Os resíduos do pocket, se baixados, saem como `pocket_residuos.pdb`. O mesmo conjunto também pode ser copiado em texto: cadeia, resíduo e número, uma linha por resíduo ou uma lista separada por vírgula. O separador entre os campos (espaço, tabulação ou vírgula) é escolhido na ficha.
 
 Estrutura predita (AlphaFold e equivalentes, pelo título, pelo método ou por pLDDT): a ficha avisa que o pLDDT é confiança por resíduo e não diz se o pocket está apo ou holo.
 

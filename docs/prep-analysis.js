@@ -1196,6 +1196,34 @@ const PrepAnalysis = (() => {
     };
   }
 
+  function residuosUnicosPocket(texto) {
+    const map = new Map();
+    for (const a of parseAtomos(texto)) {
+      const chave = [a.cadeia, a.resname, a.resseq, a.icode].join("|");
+      if (!map.has(chave)) {
+        map.set(chave, { cadeia: a.cadeia, resname: a.resname, resseq: a.resseq, icode: a.icode || "" });
+      }
+    }
+    return [...map.values()].sort((a, b) =>
+      String(a.cadeia).localeCompare(String(b.cadeia)) ||
+      a.resseq - b.resseq ||
+      String(a.icode).localeCompare(String(b.icode)) ||
+      String(a.resname).localeCompare(String(b.resname))
+    );
+  }
+
+  function formatarResiduosPocket(texto, opcoes) {
+    const o = opcoes || {};
+    const modo = o.modo === "virgula" ? "virgula" : "linhas";
+    const sepCampo = o.sep === "tab" ? "\t" : o.sep === "virgula" ? "," : " ";
+    const residuos = residuosUnicosPocket(texto);
+    const linhas = residuos.map((a) =>
+      [rotuloCadeia(a.cadeia), a.resname, String(a.resseq) + a.icode].join(sepCampo)
+    );
+    const corpo = modo === "virgula" ? linhas.join(", ") : linhas.join("\n") + (linhas.length ? "\n" : "");
+    return { texto: corpo, n: residuos.length, residuos };
+  }
+
   function formatarConfigVina(c) {
     if (!c) return "";
     const f = (n, d) => Number(n).toFixed(d);
@@ -1269,6 +1297,7 @@ const PrepAnalysis = (() => {
     limparPdb,
     caixaPocket,
     formatarConfigVina,
+    formatarResiduosPocket,
     avisoPredita,
     analisar,
     linhaIonMaiuscula,

@@ -16,7 +16,7 @@ const PrepUI = (() => {
   const decisoes = {};
   const cacheRes = new Map();
   const raios = { metal: 2.8, ss: 2.5, glic: 1.8, his: 3.2 };
-  const vina = { margem: 4, sugerida: null, editada: null, pocketIdx: "", residuosTxt: "" };
+  const vina = { margem: 4, sugerida: null, editada: null, pocketIdx: "", residuosTxt: "", formato: { modo: "linhas", sep: "espaco" } };
 
   function ativo() { return ATIVO; }
   function temFicha() { return !!(ATIVO && resultado); }
@@ -311,9 +311,38 @@ const PrepUI = (() => {
         <button type="button" class="primary-btn" data-acao="vina-desenhar">Desenhar caixa no 3D</button>
         <button type="button" class="ghost-btn" data-acao="vina-restaurar">Restaurar sugestão</button>
         ${vina.residuosTxt ? `<button type="button" class="dl-btn" data-acao="vina-residuos">Baixar resíduos do pocket</button>` : ""}
-      </div>` : "";
+      </div>
+      ${htmlResiduosPocket()}` : "";
 
     return { pocketOpts, vinaCampos };
+  }
+
+  function htmlResiduosPocket() {
+    if (!vina.residuosTxt) return "";
+    const fmt = vina.formato || { modo: "linhas", sep: "espaco" };
+    const saida = PrepAnalysis.formatarResiduosPocket(vina.residuosTxt, fmt);
+    const sel = (grupo, valor) => fmt[grupo] === valor ? " selected" : "";
+    return `
+      <h4>Resíduos em texto</h4>
+      <p class="muted small">Além do PDB, os mesmos resíduos saem como texto: cadeia, resíduo e número. Uma linha por resíduo, ou uma lista separada por vírgula. O separador dos campos é configurável. Não é uma lista validada de sítio.</p>
+      <div class="prep-linha">
+        <label>Formato
+          <select id="prep-res-modo">
+            <option value="linhas"${sel("modo", "linhas")}>Uma linha por resíduo</option>
+            <option value="virgula"${sel("modo", "virgula")}>Lista separada por vírgula</option>
+          </select>
+        </label>
+        <label>Campos
+          <select id="prep-res-sep">
+            <option value="espaco"${sel("sep", "espaco")}>espaço</option>
+            <option value="tab"${sel("sep", "tab")}>tabulação</option>
+            <option value="virgula"${sel("sep", "virgula")}>vírgula</option>
+          </select>
+        </label>
+        <button type="button" class="dl-btn" data-acao="copiar-residuos">Copiar resíduos</button>
+      </div>
+      <p class="muted small">${saida.n} resíduo(s) distinto(s).</p>
+      <textarea id="prep-res-txt" class="prep-cfg" rows="5" readonly>${esc(saida.texto)}</textarea>`;
   }
 
   function dadosIonsMontagem() {
@@ -727,7 +756,9 @@ ${htmlVinaPreparo(F, pocketOpts, vinaCampos)}
         },
         {
           id: "vina", titulo: "Caixa sugerida para o Vina",
-          paragrafos: [F.vina, F.descritor, F.escore, vina.editada ? "Valores editados no momento da exportação:" : "Nenhuma caixa calculada nesta exportação."],
+          paragrafos: [F.vina, F.descritor, F.escore, vina.editada ? "Valores editados no momento da exportação:" : "Nenhuma caixa calculada nesta exportação."].concat(
+            vina.residuosTxt ? ["Resíduos do pocket em texto (cadeia, resíduo, número). Não é uma lista validada de sítio.", PrepAnalysis.formatarResiduosPocket(vina.residuosTxt, vina.formato).texto] : []
+          ),
           pre: vina.editada ? PrepAnalysis.formatarConfigVina(vina.editada) : "",
           tabelas: [],
         },
@@ -836,6 +867,21 @@ ${htmlVinaPreparo(F, pocketOpts, vinaCampos)}
       return;
     }
     if (t.dataset && t.dataset.sel) atualizarSelecao(t);
+    if (t.id === "prep-res-modo" || t.id === "prep-res-sep") {
+      const modo = document.getElementById("prep-res-modo");
+      const sep = document.getElementById("prep-res-sep");
+      vina.formato = {
+        modo: modo && modo.value === "virgula" ? "virgula" : "linhas",
+        sep: sep && (sep.value === "tab" || sep.value === "virgula") ? sep.value : "espaco",
+      };
+      const ta = document.getElementById("prep-res-txt");
+      const nota = ta && ta.previousElementSibling;
+      if (vina.residuosTxt && ta) {
+        const saida = PrepAnalysis.formatarResiduosPocket(vina.residuosTxt, vina.formato);
+        ta.value = saida.texto;
+        if (nota) nota.textContent = saida.n + " resíduo(s) distinto(s).";
+      }
+    }
   }
 
   function onInput(e) {
@@ -951,6 +997,11 @@ ${htmlVinaPreparo(F, pocketOpts, vinaCampos)}
         size_x: vina.sugerida.size_x, size_y: vina.sugerida.size_y, size_z: vina.sugerida.size_z,
       };
       preencherNumeros();
+      return;
+    }
+    if (acao === "copiar-residuos") {
+      const ta = document.getElementById("prep-res-txt");
+      copiarTexto(ta && ta.value, "Resíduos do pocket copiados.");
       return;
     }
     if (acao === "vina-residuos" && vina.residuosTxt) {
