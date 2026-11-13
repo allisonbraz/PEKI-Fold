@@ -45,6 +45,7 @@ function baixarCsvAA() {
 let exportContexto = "single";
 let exportAcionador = null;
 let exportFecharTimer = null;
+let exportFallback = false;
 
 const EXPORT_SECOES = {
   single: () => [
@@ -79,19 +80,50 @@ function abrirExport(ctx, acionador = document.activeElement) {
   $("#exp-so-pockets").hidden = !itens.some((s) => s.id === "pockets");
   $("#exp-status").textContent = "";
   const dialogo = $("#export-modal");
-  if (!dialogo.open) dialogo.showModal();
+  if (!dialogo.open) {
+    exportFallback = typeof dialogo.showModal !== "function";
+    if (exportFallback) {
+      dialogo.setAttribute("open", "");
+      dialogo.setAttribute("data-fallback", "");
+      dialogo.setAttribute("role", "dialog");
+      dialogo.setAttribute("aria-modal", "true");
+      document.addEventListener("focusin", manterFocoExportFallback);
+    } else dialogo.showModal();
+  }
   dialogo.querySelector("input").focus();
 }
 
-function fecharExport() { $("#export-modal").close(); }
+function fecharExport() {
+  const dialogo = $("#export-modal");
+  if (exportFallback) {
+    dialogo.removeAttribute("open");
+    aoFecharExport();
+  } else dialogo.close();
+}
 
 function aoFecharExport() {
   clearTimeout(exportFecharTimer);
+  if (exportFallback) {
+    document.removeEventListener("focusin", manterFocoExportFallback);
+    const dialogo = $("#export-modal");
+    ["data-fallback", "role", "aria-modal"].forEach((atributo) => dialogo.removeAttribute(atributo));
+    exportFallback = false;
+  }
   if (exportAcionador && exportAcionador.isConnected) exportAcionador.focus();
   exportAcionador = null;
 }
 
+function manterFocoExportFallback(ev) {
+  const dialogo = $("#export-modal");
+  if (exportFallback && !dialogo.contains(ev.target)) dialogo.querySelector("input").focus();
+}
+
 function conterFocoExport(ev) {
+  if (ev.key === "Escape" && exportFallback) {
+    ev.preventDefault();
+    fecharExport();
+    return;
+  }
   if (ev.key !== "Tab") return;
   const visiveis = Array.from(ev.currentTarget.querySelectorAll("input, select, textarea, button, a[href], [tabindex]"))
     .filter((el) => !el.disabled && el.tabIndex !== -1 && el.getClientRects().length > 0);

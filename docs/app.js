@@ -1113,7 +1113,7 @@ function renderTabelaPockets(pockets) {
   const th = POCKET_TABELA.map((c) => {
     const seta = s && s.col === c.key ? (s.dir === 1 ? " ▲" : " ▼") : "";
     const ordem = s && s.col === c.key ? (s.dir === 1 ? "ascending" : "descending") : "none";
-    return `<th scope="col" aria-sort="${ordem}"><button type="button" id="pocket-sort-${c.key}" class="th-sort" data-col="${c.key}" title="${c.dica}" aria-label="Ordenar por ${c.label}">${c.label}<span aria-hidden="true">${seta}</span></button></th>`;
+    return `<th class="th-sort-cell" scope="col" aria-sort="${ordem}"><button type="button" id="pocket-sort-${c.key}" class="th-sort" data-col="${c.key}" title="${c.dica}" aria-label="Ordenar por ${c.label}">${c.label}<span aria-hidden="true">${seta}</span></button></th>`;
   }).join("");
 
   let html = `<div class="tab-acoes"><button id="btn-pockets-csv" class="dl-btn">⬇ CSV</button></div>`;

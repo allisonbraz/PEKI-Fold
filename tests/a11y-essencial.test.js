@@ -11,7 +11,7 @@ const html = read("docs/index.html");
 // também em navegador; este harness não tenta simular o comportamento do browser.
 function harness() {
   const h = browser(["pdb-analysis", "structure-model", "dogsite-client", "viewer", "comparison", "export", "app"]);
-  const nodes = new Map(), ready = [];
+  const nodes = new Map(), ready = [], docListeners = {};
   let all = [];
   class El {
     constructor(tag = "div") {
@@ -26,8 +26,15 @@ function harness() {
       if (k.startsWith("data-")) this.dataset[k.slice(5)] = v;
       if (["hidden", "disabled", "checked"].includes(k)) this[k] = true;
       if (k === "value") this.value = v;
+      if (k === "open") this.open = true;
     }
     getAttribute(k) { return this.attrs[k] ?? null; }
+    removeAttribute(k) {
+      delete this.attrs[k];
+      if (k === "open") this.open = false;
+      if (k.startsWith("data-")) delete this.dataset[k.slice(5)];
+    }
+    contains(el) { return this === el || this.children.includes(el); }
     get classList() { return { toggle: (c, on) => {
       const classes = new Set((this.className || "").split(/\s+/).filter(Boolean));
       if (on) classes.add(c); else classes.delete(c);
@@ -86,7 +93,12 @@ function harness() {
   doc.querySelectorAll = selectAll;
   doc.getElementById = (id) => nodes.get("#" + id) || null;
   doc.createElement = (tag) => new El(tag);
-  doc.addEventListener = (type, fn) => { if (type === "DOMContentLoaded") ready.push(fn); };
+  doc.addEventListener = (type, fn) => {
+    if (type === "DOMContentLoaded") ready.push(fn);
+    else (docListeners[type] ||= []).push(fn);
+  };
+  doc.removeEventListener = (type, fn) => { docListeners[type] = (docListeners[type] || []).filter((f) => f !== fn); };
+  doc.dispatch = (type, ev) => { for (const fn of docListeners[type] || []) fn(ev); };
   const dialog = nodes.get("#export-modal");
   dialog.children = all.filter((e) => e.tag === "input" && e.getAttribute("name") === "exp-fmt");
   h.context.window.addEventListener = () => {};
@@ -97,7 +109,7 @@ function harness() {
   const plots = [];
   h.context.libPlotly = async () => {};
   h.context.window.Plotly = h.context.Plotly = { newPlot: (...args) => { plots.push(args); return Promise.resolve(); }, Plots: { resize() {} } };
-  return { ...h, el: (id) => nodes.get("#" + id), nodes, plots, ready, load: (file) => vm.runInContext(read("docs/" + file + ".js"), h.context) };
+  return { ...h, el: (id) => nodes.get("#" + id), nodes, plots, ready, docListeners, load: (file) => vm.runInContext(read("docs/" + file + ".js"), h.context) };
 }
 
 test("exportação usa dialog nativo nomeado, foca o primeiro controle e devolve foco nos dois contextos", () => {
@@ -111,10 +123,49 @@ test("exportação usa dialog nativo nomeado, foca o primeiro controle e devolve
     const opener = h.el(id);
     opener.focus(); opener.click();
     assert.equal(modal.open, true);
+    assert.equal(modal.getAttribute("data-fallback"), null);
     assert.equal(h.context.document.activeElement.getAttribute("name"), "exp-fmt");
     h.el("exp-cancelar").click();
     assert.equal(modal.open, false);
     assert.equal(h.context.document.activeElement, opener);
+  }
+});
+
+test("modal sem showModal/close: open, ciclo de foco, Esc, Cancelar e retorno ao acionador", () => {
+  const h = harness(); h.get("init()");
+  const modal = h.el("export-modal"), [pdf, md] = modal.children, last = h.el("exp-confirmar");
+  modal.showModal = undefined;
+  modal.close = undefined;
+  for (const el of [pdf, md, last]) el.getClientRects = () => [{}];
+  for (const el of [pdf, md]) { el.type = "radio"; el.name = "exp-fmt"; }
+  modal.querySelectorAll = () => [pdf, md, last];
+  for (const id of ["btn-export", "btn-cmp-export"]) {
+    const opener = h.el(id);
+    opener.focus(); opener.click();
+    assert.equal(modal.getAttribute("open"), "");
+    assert.equal(modal.getAttribute("role"), "dialog");
+    assert.equal(modal.getAttribute("aria-modal"), "true");
+    assert.equal(h.context.document.activeElement, pdf);
+    pdf.focus(); modal.dispatch("keydown", { key: "Tab", shiftKey: true });
+    assert.equal(h.context.document.activeElement, last);
+    modal.dispatch("keydown", { key: "Tab", shiftKey: false });
+    assert.equal(h.context.document.activeElement, pdf);
+    opener.focus(); h.context.document.dispatch("focusin", { target: opener });
+    assert.equal(h.context.document.activeElement, pdf);
+    let prevented = false;
+    modal.dispatch("keydown", { key: "Escape", preventDefault() { prevented = true; } });
+    assert.ok(prevented);
+    assert.equal(modal.getAttribute("open"), null);
+    assert.equal(modal.getAttribute("role"), null);
+    assert.equal(modal.getAttribute("aria-modal"), null);
+    assert.equal(modal.getAttribute("data-fallback"), null);
+    assert.equal(h.context.document.activeElement, opener);
+    assert.equal(h.docListeners.focusin.length, 0);
+    opener.click();
+    h.el("exp-cancelar").click();
+    assert.equal(modal.getAttribute("open"), null);
+    assert.equal(h.context.document.activeElement, opener);
+    assert.equal(h.docListeners.focusin.length, 0);
   }
 });
 
@@ -180,6 +231,7 @@ test("pockets: botões ordenam, aria-sort alterna e foco é recuperado após rec
   h.get('estado.pockets = [{ name: "P_0", volume: 20 }, { name: "P_1", volume: 10 }]; renderTabelaPockets(estado.pockets)');
   const original = h.el("pocket-sort-volume");
   assert.equal(original.tag, "button");
+  assert.match(h.el("pockets-resultado").innerHTML, /<th class="th-sort-cell" scope="col" aria-sort="none"><button[^>]+id="pocket-sort-volume"/);
   original.focus(); original.click();
   assert.notEqual(h.el("pocket-sort-volume"), original);
   assert.equal(h.context.document.activeElement, h.el("pocket-sort-volume"));
@@ -189,6 +241,18 @@ test("pockets: botões ordenam, aria-sort alterna e foco é recuperado após rec
   assert.match(h.el("pockets-resultado").innerHTML, /aria-sort="descending"><button[^>]+id="pocket-sort-volume"/);
   assert.equal(h.context.document.activeElement, h.el("pocket-sort-volume"));
   await Promise.resolve();
+});
+
+test("cabeçalho de pockets: botão ocupa a célula e recebe seu padding, inclusive nos cantos", () => {
+  const css = read("docs/style.css");
+  const cell = css.match(/\.th-sort-cell\s*\{([^}]+)\}/)[1];
+  const button = css.match(/\.th-sort\s*\{([^}]+)\}/)[1];
+  assert.match(cell, /padding:\s*0\s*;/);
+  assert.match(button, /display:\s*block\s*;/);
+  for (const dimension of ["width", "height"]) assert.match(button, new RegExp(dimension + ":\\s*100%\\s*;"));
+  assert.match(button, /padding:\s*var\(--cell-padding\)\s*;/);
+  assert.match(button, /text-align:\s*inherit\s*;/);
+  assert.match(button, /border-radius:\s*0\s*;/);
 });
 
 test("aminoácidos: tabela acompanha escopo, valores e ordenação do gráfico sem mudar os dados", async () => {
@@ -272,4 +336,15 @@ test("contraste: texto secundário e títulos passam de 4,5:1 nos fundos e aviso
   }
   assert.ok(contrast("ffffff", "3a6fd6") >= 4.5, "botão primário escuro");
   assert.ok(contrast("ffffff", "2a5599") >= 4.5, "botão primário e hover escuro");
+});
+
+test("pocket 3D: hover escuro usa tom distinto e mantém contraste sobre cartão e linha destacada", () => {
+  const css = read("docs/style.css");
+  const dark = css.match(/\[data-theme="dark"\]\s*\{([^}]+)\}/)[1];
+  const vars = Object.fromEntries([...dark.matchAll(/--([\w-]+): #([0-9a-f]{6})/g)].map((m) => [m[1], m[2]]));
+  assert.notEqual(vars.primary, vars["primary-dark"]);
+  assert.match(css, /\.pocket-3d:hover\s*\{\s*color:\s*var\(--primary-dark\)/);
+  for (const bg of [vars.bg, vars.card, blend("2ea05a", vars.card, .12)]) {
+    assert.ok(contrast(vars["primary-dark"], bg) >= 4.5);
+  }
 });
