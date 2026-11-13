@@ -55,20 +55,30 @@ function harness() {
     set innerHTML(value) {
       this._html = value;
       for (const n of this.children) { n.isConnected = false; all = all.filter((e) => e !== n); }
-      this.children = parse(value);
+      this.children = parse(value, this);
     }
     appendChild(n) {
       if (n.parent) n.parent.children = n.parent.children.filter((el) => el !== n);
-      n.parent = this; this.children.push(n); return n;
+      n.parent = this; n.parentElement = this; this.children.push(n); return n;
     }
   }
-  function parse(source) {
-    return [...source.matchAll(/<([a-z][a-z0-9-]*)\b([^>]*)>/gi)].map((m) => {
-      const e = new El(m[1]);
-      for (const a of m[2].matchAll(/([^\s=]+)(?:="([^"]*)")?/g)) e.setAttribute(a[1], a[2] ?? "");
-      all.push(e);
-      return e;
-    });
+  function parse(source, root = null) {
+    const parsed = [], stack = [];
+    const voidTags = new Set(["area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "source", "track", "wbr"]);
+    for (const m of source.matchAll(/<(\/?)([a-z][a-z0-9-]*)\b([^>]*)>/gi)) {
+      const tag = m[2].toLowerCase();
+      if (m[1]) {
+        const i = stack.map((e) => e.tag).lastIndexOf(tag);
+        if (i >= 0) stack.length = i;
+        continue;
+      }
+      const e = new El(tag);
+      for (const a of m[3].matchAll(/([^\s=]+)(?:="([^"]*)")?/g)) e.setAttribute(a[1], a[2] ?? "");
+      e.parentElement = stack.at(-1) || root;
+      all.push(e); parsed.push(e);
+      if (!voidTags.has(tag) && !m[3].trimEnd().endsWith("/")) stack.push(e);
+    }
+    return parsed;
   }
   parse(html);
   const tabs = (prefix) => all.filter((n) => n.getAttribute("role") === "tab" && n.id.startsWith(prefix));

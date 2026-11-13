@@ -46,6 +46,7 @@ let exportContexto = "single";
 let exportAcionador = null;
 let exportFecharTimer = null;
 let exportFallback = false;
+let exportDevolverFoco = true;
 
 const EXPORT_SECOES = {
   single: () => [
@@ -71,6 +72,7 @@ const EXPORT_SECOES = {
 function abrirExport(ctx, acionador = document.activeElement) {
   clearTimeout(exportFecharTimer);
   exportAcionador = acionador;
+  exportDevolverFoco = true;
   exportContexto = ctx;
   const itens = EXPORT_SECOES[ctx]().filter((s) => s.on());
   $("#exp-itens").innerHTML = itens.map((s) =>
@@ -94,7 +96,7 @@ function abrirExport(ctx, acionador = document.activeElement) {
 }
 
 function fecharExport(devolverFoco = true) {
-  if (devolverFoco === false) exportAcionador = null;
+  exportDevolverFoco = devolverFoco !== false;
   const dialogo = $("#export-modal");
   if (exportFallback) {
     dialogo.removeAttribute("open");
@@ -110,8 +112,27 @@ function aoFecharExport() {
     ["data-fallback", "role", "aria-modal"].forEach((atributo) => dialogo.removeAttribute(atributo));
     exportFallback = false;
   }
-  if (exportAcionador && exportAcionador.isConnected) exportAcionador.focus();
+  if (exportDevolverFoco) restaurarFocoExport();
+}
+
+function acionadorExportVisivel(el) {
+  if (!el || !el.isConnected || el.disabled) return false;
+  for (let no = el; no; no = no.parentElement || no.parent) {
+    if (no.hidden || no.inert) return false;
+  }
+  if (el.getClientRects && el.getClientRects().length === 0) return false;
+  if (typeof getComputedStyle === "function") {
+    const estilo = getComputedStyle(el);
+    if (estilo.visibility === "hidden" || estilo.visibility === "collapse" || estilo.opacity === "0") return false;
+  }
+  return true;
+}
+
+function restaurarFocoExport() {
+  const acionador = exportAcionador;
   exportAcionador = null;
+  if (acionadorExportVisivel(acionador)) acionador.focus();
+  else if (typeof focarTituloAtual === "function") focarTituloAtual();
 }
 
 function manterFocoExportFallback(ev) {
@@ -168,7 +189,7 @@ async function imgPlotly(spec, w = 760, h = 400) {
 function guardarAnalise() {
   const status = $("#guardar-status");
   if (typeof AnalysisUI === "undefined" || typeof AnalysisSnapshot === "undefined") {
-    if (status) status.textContent = "O módulo de análise guardada não carregou.";
+    if (status) status.textContent = "Não foi possível salvar o JSON. Recarregue a página e tente de novo.";
     return;
   }
   try {
@@ -177,7 +198,7 @@ function guardarAnalise() {
       baixarTexto(nome, texto, "application/json;charset=utf-8");
     }, { preparo });
     if (status) {
-      status.textContent = "Arquivo " + salvo.nome + " baixado neste computador. Ele não foi enviado a um servidor. Para comparar, reabra o JSON em Comparar análises guardadas.";
+      status.textContent = "Download de " + salvo.nome + " iniciado. Guarde o JSON no seu computador para reabrir em Comparar JSONs. O arquivo não foi enviado a um servidor.";
     }
   } catch (e) {
     if (status) status.textContent = e.message;

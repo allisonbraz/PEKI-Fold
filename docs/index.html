@@ -50,7 +50,7 @@
 
       <div id="dropzone" class="dropzone">
         <input id="file-input" type="file" accept=".pdb,.ent,.cif,.mmcif" aria-describedby="upload-dica" hidden />
-        <p>📁 Arraste um arquivo aqui ou <button id="btn-file" class="link-btn" type="button" aria-describedby="upload-dica">selecione</button></p>
+        <p>📁 Arraste um arquivo aqui ou <button id="btn-file" class="link-btn" type="button" aria-describedby="upload-dica" aria-invalid="false" aria-busy="false">Selecionar arquivo</button></p>
         <p id="upload-dica" class="muted small">Leitura local, sem envio do arquivo. Arquivos grandes dependem da memória disponível.</p>
         <details class="ajuda"><summary>Formatos e limites da leitura</summary><p>Não há limite fixo de tamanho. O mmCIF é lido pela categoria <code>_atom_site</code>, não como colunas de PDB.</p></details>
         <div id="feedback-arquivo" class="feedback-acao"></div>
@@ -63,7 +63,7 @@
         <button class="chip" data-id="1CRN">1CRN (crambina)</button>
       </div>
 
-      <div class="ou">— ou compare proteínas —</div>
+      <div class="ou">— ou compare estruturas —</div>
       <label class="entrada-lbl" for="cmp-ids">Códigos PDB para comparar</label>
       <div class="entrada-row">
         <input id="cmp-ids" type="text" placeholder="ex.: 4HHB 1CRN" aria-describedby="cmp-ajuda" aria-invalid="false" />
@@ -72,17 +72,17 @@
       <div id="feedback-comparacao" class="feedback-acao"></div>
       <p id="cmp-ajuda" class="muted small">De 2 a 4 PDBs, lidos na hora. Compara estatísticas, aminoácidos e pockets.</p>
 
-      <div class="ou">— ou compare análises guardadas —</div>
-      <p class="muted small">De 2 a 5 arquivos JSON baixados por Guardar análise. Eles ficam no seu computador; a comparação roda neste navegador e não envia os arquivos a um servidor.</p>
+      <div class="ou">— ou compare arquivos JSON —</div>
+      <p class="muted small">Reabra de 2 a 5 JSONs baixados por Salvar JSON. Os arquivos ficam no seu computador. A comparação roda neste navegador, sem enviar os arquivos a um servidor.</p>
       <div class="entrada-row">
-        <button id="btn-abrir-analises" class="primary-btn" type="button">Abrir comparação de análises</button>
+        <button id="btn-abrir-analises" class="primary-btn" type="button">Comparar JSONs</button>
       </div>
 
       <div id="ens-entrada" class="ens-entrada">
         <div class="ou">— ou analise um ensemble —</div>
         <p class="ens-nota">Vários IDs da mesma proteína, ou um PDB com MODEL/ENDMDL. A fila chama o DoGSiteScorer uma estrutura por vez.</p>
-        <label for="ens-ids" class="ens-lbl">IDs da mesma proteína</label>
-        <textarea id="ens-ids" class="ens-ids" rows="2" placeholder="ex.: 4EYL 1GZM"></textarea>
+        <label for="ens-ids" class="ens-lbl">Códigos PDB da mesma proteína</label>
+        <textarea id="ens-ids" class="ens-ids" rows="2" placeholder="ex.: 1A00 4HHB"></textarea>
         <div class="ens-home-acoes">
           <button id="ens-abrir" class="primary-btn" type="button">Abrir ensemble</button>
           <button id="btn-ens-file" class="ghost-btn ens-file-lbl" type="button">Arquivo multimodelo</button>
@@ -99,8 +99,8 @@
           <li><strong>Nome da proteína</strong> (ex.: <code>hemoglobin</code>): não é cortado para 4 letras e não é usado como código. O RCSB busca em inglês e lista depósitos experimentais, com título, método, resolução e componentes quando a API os devolve. A estrutura só abre depois que você escolhe um código da lista.</li>
           <li><strong>Upload</strong> de <code>.pdb</code> ou <code>.cif</code>: leitura local. A ficha de preparo e o download de cadeia em PDB continuam só no PDB.</li>
           <li><strong>Comparar</strong>: 2 a 4 IDs para ver estatísticas, aminoácidos e pockets lado a lado.</li>
-          <li>No workspace: <strong>abas</strong> (visão geral, qualidade, cadeias, estatísticas, aminoácidos, motivos, pockets, preparo), <strong>viewer 3D</strong>, <strong>Guardar análise</strong> (JSON no seu computador) e <strong>Exportar</strong> (PDF/Markdown/CSV).</li>
-          <li><strong>Comparar análises guardadas</strong>: reabra de 2 a 5 JSON. O ranking segue os critérios e pesos que você informa. É apoio, não uma nota biológica. Sem UniProt resíduo a resíduo e sem alinhamento estrutural.</li>
+          <li>Na tela da estrutura: <strong>abas</strong> (visão geral, qualidade, cadeias, estatísticas, aminoácidos, motivos, pockets, preparo), <strong>visualizador 3D</strong>, <strong>Salvar JSON</strong> (arquivo local para reabrir) e <strong>Exportar relatório</strong> (PDF ou Markdown para compartilhar). Os botões CSV ficam nas tabelas.</li>
+          <li><strong>Comparar JSONs</strong>: reabra de 2 a 5 JSON. O ranking segue os critérios e pesos que você informa. É apoio, não uma nota biológica. Sem UniProt resíduo a resíduo e sem alinhamento estrutural.</li>
           <li><strong>Cadeias</strong>: ver ou ocultar muda só o desenho 3D. Contagens, FASTA, PDB e exportação continuam com a cadeia. O arquivo não é regravado.</li>
           <li><strong>Aminoácidos</strong>: “Todas as cadeias” soma os resíduos modelados dos 20 aminoácidos padrão. Uma cadeia deixa as outras de fora. Resíduo ausente não entra.</li>
           <li><strong>Motivos</strong>: sequência curta e contígua, montada pelos resíduos do modelo. Não é motivo estrutural, sítio funcional nem pocket.</li>
@@ -120,13 +120,14 @@
         <p class="muted small" id="ws-resumo">—</p>
       </div>
       <div class="ws-acoes">
-        <button id="btn-guardar-analise" class="ghost-btn" type="button">Guardar análise</button>
-        <button id="btn-export" class="ghost-btn">⬇ Exportar</button>
-        <button id="btn-novo" class="ghost-btn">↻ Nova análise</button>
+        <button id="btn-guardar-analise" class="ghost-btn" type="button" aria-describedby="arquivos-dica">Salvar JSON</button>
+        <button id="btn-export" class="ghost-btn" aria-describedby="arquivos-dica">Exportar relatório</button>
+        <button id="btn-novo" class="ghost-btn">Início</button>
         <a id="ir-resultados" class="ghost-btn resultados-atalho" href="#resultados-titulo">Ir para resultados</a>
       </div>
     </div>
 
+    <p id="arquivos-dica" class="muted small">JSON: salve no seu computador para reabrir depois. Relatório: compartilhe em PDF ou Markdown.</p>
     <p id="ws-status" class="muted small" role="status" aria-live="polite"></p>
     <p id="guardar-status" class="muted small guardar-status" aria-live="polite"></p>
     <section id="ws-meta" class="ws-meta card" hidden></section>
@@ -245,12 +246,13 @@
         <p class="muted small" id="cmp-resumo">—</p>
       </div>
       <div class="ws-acoes">
-        <button id="btn-cmp-export" class="ghost-btn">⬇ Exportar</button>
-        <button id="btn-cmp-novo" class="ghost-btn">↻ Nova análise</button>
+        <button id="btn-cmp-export" class="ghost-btn" aria-describedby="cmp-export-dica">Exportar relatório</button>
+        <button id="btn-cmp-novo" class="ghost-btn">Início</button>
         <a id="ir-cmp-resultados" class="ghost-btn resultados-atalho" href="#cmp-resultados-titulo">Ir para resultados</a>
       </div>
     </div>
 
+    <p id="cmp-export-dica" class="muted small">Compartilhe o relatório em PDF ou Markdown.</p>
     <p id="cmp-status" class="muted small" role="status" aria-live="polite"></p>
     <div class="card cmp-estruturas" data-tam="m">
       <div class="viewer-atalhos">
@@ -299,11 +301,11 @@
   <main id="analises" class="workspace" hidden>
     <div class="ws-header">
       <div>
-        <h2 id="an-titulo" tabindex="-1">Comparar análises guardadas</h2>
+        <h2 id="an-titulo" tabindex="-1">Comparar JSONs</h2>
         <p class="muted small" id="an-contagem">0 de 5 análises neste navegador.</p>
       </div>
       <div class="ws-acoes">
-        <button id="btn-an-voltar" class="ghost-btn" type="button">↻ Início</button>
+        <button id="btn-an-voltar" class="ghost-btn" type="button">Início</button>
       </div>
     </div>
 
@@ -312,7 +314,7 @@
       <p class="rotulo-fixo">O ranking é apoio calculado com os critérios e os pesos que você definir. Não é verdade biológica, não é nota universal de qualidade e não substitui a sua decisão.</p>
       <p class="muted small">Não há mapa resíduo a resíduo com o UniProt nem sobreposição de estruturas. Um heterocomponente observado não prova estado holo. O drugScore não identifica sítio funcional nem pocket equivalente entre análises.</p>
       <div class="an-importar">
-        <button id="btn-an-arquivo" class="primary-btn an-file" type="button">Importar JSON</button>
+        <button id="btn-an-arquivo" class="primary-btn an-file" type="button">Selecionar JSONs</button>
         <input id="an-arquivo" type="file" accept="application/json,.json" multiple hidden>
         <button id="an-limpar" class="ghost-btn" type="button">Limpar comparação</button>
       </div>
@@ -380,7 +382,7 @@
         <p class="ens-nota" id="ens-resumo">Estruturas da mesma proteína, bolsões do DoGSiteScorer.</p>
       </div>
       <div class="ws-acoes">
-        <button id="ens-novo" class="ghost-btn" type="button">↻ Nova análise</button>
+        <button id="ens-novo" class="ghost-btn" type="button">Início</button>
       </div>
     </div>
 
@@ -443,12 +445,12 @@
       </div>
 
       <div class="ens-acoes">
-        <button id="ens-calcular" class="primary-btn" type="button">Obter bolsões (DoGSite)</button>
+        <button id="ens-calcular" class="primary-btn" type="button">Detectar pockets (DoGSiteScorer)</button>
         <button id="ens-exemplo" class="ghost-btn" type="button">Carregar exemplo sintético</button>
         <button id="ens-atualizar" class="ghost-btn" type="button">Atualizar grupos</button>
         <button id="ens-cancelar" class="ghost-btn" type="button" hidden>Cancelar</button>
         <button id="ens-csv" class="ghost-btn" type="button">CSV dos grupos</button>
-        <button id="ens-csv-matriz" class="ghost-btn" type="button">CSV estrutura × bolsão</button>
+        <button id="ens-csv-matriz" class="ghost-btn" type="button">CSV estrutura × pocket</button>
         <button id="ens-json" class="ghost-btn" type="button">JSON</button>
       </div>
 
@@ -472,7 +474,7 @@
 
   <!-- Modal de exportação -->
   <dialog id="export-modal" class="modal" aria-labelledby="exp-titulo">
-      <h3 id="exp-titulo">Exportar análise</h3>
+      <h3 id="exp-titulo">Exportar relatório</h3>
 
       <div class="modal-corpo">
       <div class="modal-secao">
