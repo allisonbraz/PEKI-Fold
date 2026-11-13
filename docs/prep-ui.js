@@ -16,7 +16,7 @@ const PrepUI = (() => {
   const decisoes = {};
   const cacheRes = new Map();
   const raios = { metal: 2.8, ss: 2.5, glic: 1.8, his: 3.2 };
-  const vina = { margem: 4, sugerida: null, editada: null, pocketIdx: "", residuosTxt: "" };
+  const vina = { margem: 4, sugerida: null, editada: null, pocketIdx: "", residuosTxt: "", formato: { modo: "linhas", sep: "espaco" } };
 
   function ativo() { return ATIVO; }
   function temFicha() { return !!(ATIVO && resultado); }
@@ -47,6 +47,20 @@ const PrepUI = (() => {
     return String(v ?? "").replace(/\|/g, "/").replace(/\r?\n/g, " ");
   }
 
+  function copiarTexto(texto, okMsg) {
+    const valor = String(texto || "");
+    const avisar = (msg) => {
+      const st = document.getElementById("prep-vina-status") || document.getElementById("prep-previa");
+      if (st) st.textContent = msg;
+    };
+    if (!valor) { avisar("Não há texto para copiar."); return; }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(valor).then(() => avisar(okMsg), () => avisar("A cópia automática não ficou disponível. Selecione o texto e copie."));
+      return;
+    }
+    avisar("A cópia automática não ficou disponível. Selecione o texto e copie.");
+  }
+
   function baixar(nome, conteudo, mime) {
     const blob = new Blob([conteudo], { type: mime || "text/plain;charset=utf-8" });
     const url = URL.createObjectURL(blob);
@@ -69,6 +83,8 @@ const PrepUI = (() => {
       aguasManter: [...selecao.aguas],
       removerAguas: selecao.removerAguas,
       altloc: selecao.altloc,
+      removerHidrogenios: !!selecao.removerHidrogenios,
+      garantirTerEnd: selecao.garantirTerEnd !== false,
     };
   }
 
@@ -115,7 +131,7 @@ const PrepUI = (() => {
       if (h.classe === "agua") continue;
       for (const cp of h.copias) hets.add(cp.chave);
     }
-    selecao = { cadeias, hets, aguas: new Set(), removerAguas: true, altloc: "A" };
+    selecao = { cadeias, hets, aguas: new Set(), removerAguas: true, altloc: "A", removerHidrogenios: false, garantirTerEnd: true };
   }
 
   function recalcular() {
@@ -191,6 +207,26 @@ const PrepUI = (() => {
       p.conhecido ? "lista ou HETNAM" : "C1 fora da lista",
       p.noLink ? "não" : "sim",
     ]);
+  }
+
+  function linhasGlicO() {
+    return (resultado.glicosilacao.sitiosO || []).map((p) => [
+      res(p.residuo), res(p.acucar), num(p.distancia, 2),
+      p.conhecido ? "lista ou HETNAM" : "C1 fora da lista",
+      p.noLink ? "não" : "sim",
+    ]);
+  }
+
+  function linhasLinksGlicano() {
+    return (resultado.glicosilacao.linksProteina || []).map((l) => {
+      const prot = (l.a.resname === "ASN" || l.a.resname === "SER" || l.a.resname === "THR") ? l.a : l.b;
+      const acucar = prot === l.a ? l.b : l.a;
+      return [
+        fim(prot), fim(acucar), num(l.distancia, 2),
+        l.identidade ? "1555" : "simetria",
+        l.coberto ? "sim" : "não",
+      ];
+    });
   }
 
   function linhasArvores() {
@@ -297,9 +333,38 @@ const PrepUI = (() => {
         <button type="button" class="primary-btn" data-acao="vina-desenhar">Desenhar caixa no 3D</button>
         <button type="button" class="ghost-btn" data-acao="vina-restaurar">Restaurar sugestão</button>
         ${vina.residuosTxt ? `<button type="button" class="dl-btn" data-acao="vina-residuos">Baixar resíduos do pocket</button>` : ""}
-      </div>` : "";
+      </div>
+      ${htmlResiduosPocket()}` : "";
 
     return { pocketOpts, vinaCampos };
+  }
+
+  function htmlResiduosPocket() {
+    if (!vina.residuosTxt) return "";
+    const fmt = vina.formato || { modo: "linhas", sep: "espaco" };
+    const saida = PrepAnalysis.formatarResiduosPocket(vina.residuosTxt, fmt);
+    const sel = (grupo, valor) => fmt[grupo] === valor ? " selected" : "";
+    return `
+      <h4>Resíduos em texto</h4>
+      <p class="muted small">Além do PDB, os mesmos resíduos saem como texto: cadeia, resíduo e número. Uma linha por resíduo, ou uma lista separada por vírgula. O separador dos campos é configurável. Não é uma lista validada de sítio.</p>
+      <div class="prep-linha">
+        <label>Formato
+          <select id="prep-res-modo">
+            <option value="linhas"${sel("modo", "linhas")}>Uma linha por resíduo</option>
+            <option value="virgula"${sel("modo", "virgula")}>Lista separada por vírgula</option>
+          </select>
+        </label>
+        <label>Campos
+          <select id="prep-res-sep">
+            <option value="espaco"${sel("sep", "espaco")}>espaço</option>
+            <option value="tab"${sel("sep", "tab")}>tabulação</option>
+            <option value="virgula"${sel("sep", "virgula")}>vírgula</option>
+          </select>
+        </label>
+        <button type="button" class="dl-btn" data-acao="copiar-residuos">Copiar resíduos</button>
+      </div>
+      <p class="muted small">${saida.n} resíduo(s) distinto(s).</p>
+      <textarea id="prep-res-txt" class="prep-cfg" rows="5" readonly>${esc(saida.texto)}</textarea>`;
   }
 
   function dadosIonsMontagem() {
@@ -325,7 +390,7 @@ const PrepUI = (() => {
       <div class="prep-controles">
         <label>Metais (Å) <input id="prep-raio-metal" data-raio="metal" type="number" min="0" max="15" step="0.1" value="${esc(raios.metal)}"/></label>
         <label>SG–SG (Å) <input id="prep-raio-ss" data-raio="ss" type="number" min="0" max="15" step="0.1" value="${esc(raios.ss)}"/></label>
-        <label>ND2–C1 (Å) <input id="prep-raio-glic" data-raio="glic" type="number" min="0" max="15" step="0.1" value="${esc(raios.glic)}"/></label>
+        <label>Açúcar (Å) <input id="prep-raio-glic" data-raio="glic" type="number" min="0" max="15" step="0.1" value="${esc(raios.glic)}"/></label>
         <label>Histidinas (Å) <input id="prep-raio-his" data-raio="his" type="number" min="0" max="15" step="0.1" value="${esc(raios.his)}"/></label>
         <button type="button" class="primary-btn" data-acao="raios">Atualizar raios</button>
       </div>
@@ -367,6 +432,9 @@ const PrepUI = (() => {
         <p class="muted small">O viewer continua mostrando a estrutura original. Os arquivos abaixo são uma cópia filtrada, sem hidrogênios adicionados e sem ANISOU. ${esc(F.serial)}</p>
         <div class="prep-linha">${checksCadeia}</div>
         <label class="prep-check"><input type="checkbox" data-sel="aguas" ${selecao.removerAguas ? "checked" : ""}/> Remover águas (HOH e aliases), exceto as marcadas abaixo</label>
+        <label class="prep-check"><input type="checkbox" data-sel="hidrogenios" ${selecao.removerHidrogenios ? "checked" : ""}/> Remover hidrogênios já presentes no arquivo</label>
+        <label class="prep-check"><input type="checkbox" data-sel="terend" ${selecao.garantirTerEnd !== false ? "checked" : ""}/> Garantir registros TER e END</label>
+        <p class="muted small">Confirme com o responsável pelo seu protocolo de simulação. Estas opções não seguem a regra de um cluster. A regra de altloc mantém só um conjunto de coordenadas.</p>
         <div class="prep-linha">
           <label class="prep-check"><input type="radio" name="prep-altloc" data-sel="altloc" value="A" ${selecao.altloc === "A" ? "checked" : ""}/> Altloc em branco ou A</label>
           <label class="prep-check"><input type="radio" name="prep-altloc" data-sel="altloc" value="ocupacao" ${selecao.altloc === "ocupacao" ? "checked" : ""}/> Maior ocupação</label>
@@ -406,6 +474,12 @@ const PrepUI = (() => {
       <section class="prep-secao">
         <h3>Pontes dissulfeto</h3>
         <p class="rotulo-fixo">${esc(F.contato)} Pares SG–SG de CYS ou CYX até ${esc(raios.ss)} Å, comparados ao SSBOND.</p>
+        <h4>Resumo copiável</h4>
+        <p class="muted small">Informativo. O texto repete os pares já calculados e não escolhe qual ponte manter.</p>
+        <textarea id="prep-ss-resumo" class="prep-cfg" rows="3" readonly>${esc(PrepAnalysis.resumoDissulfetos(resultado.dissulfetos))}</textarea>
+        <div class="prep-linha">
+          <button type="button" class="dl-btn" data-acao="copiar-ss">Copiar resumo</button>
+        </div>
         ${tabela(["Cisteína 1", "Cisteína 2", "Distância (Å)", "Consta no SSBOND?"], linhasSS().map((row, i) => {
           const copia = row.slice();
           copia[0] = { html: `${esc(row[0])} <button type="button" class="link-btn" data-acao="ver-ss" data-idx="${i}">ver</button>` };
@@ -419,15 +493,31 @@ const PrepUI = (() => {
       </section>
 
       <section class="prep-secao">
-        <h3>Glicosilação (Asn–açúcar)</h3>
-        <p class="rotulo-fixo">${esc(F.contato)} ND2 de ASN até ${esc(raios.glic)} Å de um C1. ${esc(F.acucar)} Se o arquivo não traz o glicano, o módulo não o adiciona. Açúcares devem permanecer HETATM; um TER entre eles é decisão sua, não é gravado automaticamente.</p>
+        <h3>Glicosilação</h3>
+        <p class="rotulo-fixo">${esc(F.contato)} ND2 de ASN, OG de SER e OG1 de THR até ${esc(raios.glic)} Å de um C1, além dos registros LINK com ASN, SER ou THR. ${esc(F.acucar)} Se o arquivo não traz o glicano, o módulo não o adiciona. Esta ficha não calcula protonação.</p>
+        <p class="prep-aviso">Manter ou remover os glicanos não escolhe o campo de força. A parametrização depende do campo de força usado depois. Confirme com o responsável pelo seu protocolo de simulação.</p>
+        ${inv.hets.some((h) => h.classe === "acucar") ? `<div class="prep-linha">
+          <button type="button" class="ghost-btn" data-acao="glicanos-manter">Manter glicanos</button>
+          <button type="button" class="ghost-btn" data-acao="glicanos-remover">Remover glicanos</button>
+        </div>` : ""}
+        <h4>Sítios N (Asn)</h4>
         ${tabela(["ASN", "Açúcar C1", "Distância (Å)", "Origem do código", "Consta no LINK?"], linhasGlic().map((row, i) => {
           const copia = row.slice();
           copia[0] = { html: `${esc(row[0])} <button type="button" class="link-btn" data-acao="ver-glic" data-idx="${i}">ver</button>` };
           return copia;
         }))}
+        <h4>Sítios O (Ser/Thr)</h4>
+        ${tabela(["Ser ou Thr", "Açúcar C1", "Distância (Å)", "Origem do código", "Consta no LINK?"], linhasGlicO().map((row, i) => {
+          const copia = row.slice();
+          copia[0] = { html: `${esc(row[0])} <button type="button" class="link-btn" data-acao="ver-glic-o" data-idx="${i}">ver</button>` };
+          return copia;
+        }))}
+        <h4>LINK com ASN, SER ou THR</h4>
+        <p class="muted small">Inclui ligações anotadas fora do raio. "Par no raio" diz se a geometria também achou o par.</p>
+        ${tabela(["Proteína", "Açúcar", "Distância no LINK (Å)", "Simetria", "Par no raio?"], linhasLinksGlicano())}
+        ${(resultado.glicosilacao.avisosNumeracao || []).map((a) => `<p class="prep-aviso">${esc(a)}</p>`).join("")}
         <h4>Açúcares por árvore</h4>
-        <p class="muted small">A numeração sugerida continua depois do último resíduo polimérico (${inv.maxResProteina == null ? "nenhum" : inv.maxResProteina}). Ela não é aplicada ao arquivo.</p>
+        <p class="muted small">A numeração sugerida continua depois do último resíduo polimérico (${inv.maxResProteina == null ? "nenhum" : inv.maxResProteina}). Ela não é aplicada ao arquivo. Açúcares permanecem HETATM; um TER entre eles não é gravado automaticamente.</p>
         ${tabela(["Árvore", "Código", "Cadeia", "Número atual", "Número sugerido", "HETNAM", "ASN no raio"], linhasArvores())}
         ${campoDecisao("glicosilacao")}
       </section>
@@ -477,6 +567,7 @@ const PrepUI = (() => {
       ${resultado.nModelos > 1 ? `<p class="aviso-predita">A ficha usa só o primeiro MODEL (há ${resultado.nModelos}).</p>` : ""}
       <p class="muted small">${esc(cabecalhoTexto().slice(0, 4).join(" · "))}</p>
 ${htmlControlesPreparo()}
+${htmlChecklist()}
 ${htmlInventarioPreparo(F, inv, headCad, rowsCad, headHet, rowsHet)}
 ${htmlLimpezaPreparo(F, checksCadeia, hetHtml, aguasHtml)}
 ${htmlIonsPreparo(F, ionHtmlRows, nPares, nSem, linksId, linksCob)}
@@ -485,6 +576,28 @@ ${htmlVinaPreparo(F, pocketOpts, vinaCampos)}
 
       <p class="muted small">${esc(F.auxiliar)} ${esc(F.contato)} ${esc(F.escore)} ${esc(F.serial)} ${esc(F.protonacao)} ${esc(F.vina)}</p>
     `;
+  }
+
+  function htmlChecklist() {
+    const c = PrepAnalysis.checklistEnvio(estado.pdbText, resultado, selecao, estado && estado.estrutura);
+    const itens = c.itens.map((it) =>
+      `<li class="chk chk-${esc(it.status)}"><strong>${esc(it.titulo)}</strong> <span class="chk-status">${esc(PrepAnalysis.rotuloStatusChecklist(it.status))}</span> ${esc(it.texto)}</li>`
+    ).join("");
+    return `<section class="prep-secao" id="prep-checklist"><h3>Checklist antes do envio</h3><p class="muted small">${esc(c.nota)}</p><ul class="prep-checklista">${itens}</ul></section>`;
+  }
+
+  function atualizarChecklist() {
+    const raiz = document.getElementById("prep-checklist");
+    if (!raiz || !resultado || !selecao) return;
+    const c = PrepAnalysis.checklistEnvio(estado.pdbText, resultado, selecao, estado && estado.estrutura);
+    const ul = raiz.querySelector("ul");
+    const nota = raiz.querySelector("p");
+    if (nota) nota.textContent = c.nota;
+    if (ul) {
+      ul.innerHTML = c.itens.map((it) =>
+        `<li class="chk chk-${esc(it.status)}"><strong>${esc(it.titulo)}</strong> <span class="chk-status">${esc(PrepAnalysis.rotuloStatusChecklist(it.status))}</span> ${esc(it.texto)}</li>`
+      ).join("");
+    }
   }
 
   function atualizarPrevia() {
@@ -496,6 +609,7 @@ ${htmlVinaPreparo(F, pocketOpts, vinaCampos)}
     } catch (e) {
       el.textContent = e.message;
     }
+    atualizarChecklist();
   }
 
   function render() {
@@ -526,6 +640,8 @@ ${htmlVinaPreparo(F, pocketOpts, vinaCampos)}
     if (t.dataset.sel === "het") { if (on) selecao.hets.add(ch); else selecao.hets.delete(ch); }
     if (t.dataset.sel === "agua") { if (on) selecao.aguas.add(ch); else selecao.aguas.delete(ch); }
     if (t.dataset.sel === "aguas") selecao.removerAguas = on;
+    if (t.dataset.sel === "hidrogenios") selecao.removerHidrogenios = on;
+    if (t.dataset.sel === "terend") selecao.garantirTerEnd = on;
     if (t.dataset.sel === "altloc") selecao.altloc = t.value;
     atualizarPrevia();
   }
@@ -658,11 +774,20 @@ ${htmlVinaPreparo(F, pocketOpts, vinaCampos)}
     const F = PrepAnalysis.FRASES;
     const inv = resultado.inventario;
     const limpo = PrepAnalysis.limparPdb(estado.pdbText, opcoesLimpeza());
+    const chk = PrepAnalysis.checklistEnvio(estado.pdbText, resultado, selecao, estado && estado.estrutura);
     const decisao = (id) => decisoes[id] && decisoes[id].trim() ? decisoes[id].trim() : "(em branco)";
     return {
       titulo: `Ficha de preparo — ${baseNome()}`,
       cabecalho: cabecalhoTexto(),
       secoes: [
+        {
+          id: "checklist", titulo: "Checklist antes do envio",
+          paragrafos: [chk.nota].concat(chk.itens.map((it) => it.titulo + " (" + PrepAnalysis.rotuloStatusChecklist(it.status) + "): " + it.texto)).concat([
+            "Hidrogênios: " + (selecao.removerHidrogenios ? "removidos na exportação." : "não há remoção extra."),
+            "TER e END: " + (selecao.garantirTerEnd !== false ? "gravados." : "não acrescentados."),
+          ]),
+          tabelas: [],
+        },
         {
           id: "inventario", titulo: "Inventário",
           paragrafos: inv.alertas.concat([F.gap]),
@@ -688,15 +813,17 @@ ${htmlVinaPreparo(F, pocketOpts, vinaCampos)}
         },
         {
           id: "dissulfetos", titulo: "Pontes dissulfeto",
-          paragrafos: [F.contato, F.tleap],
+          paragrafos: [F.contato, PrepAnalysis.resumoDissulfetos(resultado.dissulfetos), "Este resumo não decide quais pares entram na simulação.", F.tleap],
           tabelas: [{ head: ["Cisteína 1", "Cisteína 2", "Distância (Å)", "SSBOND"], rows: linhasSS() }],
           pre: resultado.bonds,
         },
         {
           id: "glicosilacao", titulo: "Glicosilação",
-          paragrafos: [F.contato, F.acucar, "Açúcares permanecem HETATM. O módulo não insere TER entre eles."],
+          paragrafos: [F.contato, F.acucar, "Açúcares permanecem HETATM. O módulo não insere TER entre eles.", "A parametrização do glicano depende do campo de força. Esta ficha não calcula protonação."].concat(resultado.glicosilacao.avisosNumeracao || []),
           tabelas: [
             { head: ["ASN", "C1", "Distância (Å)", "Origem", "LINK"], rows: linhasGlic() },
+            { head: ["Ser ou Thr", "C1", "Distância (Å)", "Origem", "LINK"], rows: linhasGlicO() },
+            { head: ["Proteína", "Açúcar", "Distância no LINK", "Simetria", "Par no raio"], rows: linhasLinksGlicano() },
             { head: ["Árvore", "Código", "Cadeia", "Número atual", "Número sugerido", "HETNAM", "ASN"], rows: linhasArvores() },
           ],
         },
@@ -707,7 +834,9 @@ ${htmlVinaPreparo(F, pocketOpts, vinaCampos)}
         },
         {
           id: "vina", titulo: "Caixa sugerida para o Vina",
-          paragrafos: [F.vina, F.descritor, F.escore, vina.editada ? "Valores editados no momento da exportação:" : "Nenhuma caixa calculada nesta exportação."],
+          paragrafos: [F.vina, F.descritor, F.escore, vina.editada ? "Valores editados no momento da exportação:" : "Nenhuma caixa calculada nesta exportação."].concat(
+            vina.residuosTxt ? ["Resíduos do pocket em texto (cadeia, resíduo, número). Não é uma lista validada de sítio.", PrepAnalysis.formatarResiduosPocket(vina.residuosTxt, vina.formato).texto] : []
+          ),
           pre: vina.editada ? PrepAnalysis.formatarConfigVina(vina.editada) : "",
           tabelas: [],
         },
@@ -816,6 +945,21 @@ ${htmlVinaPreparo(F, pocketOpts, vinaCampos)}
       return;
     }
     if (t.dataset && t.dataset.sel) atualizarSelecao(t);
+    if (t.id === "prep-res-modo" || t.id === "prep-res-sep") {
+      const modo = document.getElementById("prep-res-modo");
+      const sep = document.getElementById("prep-res-sep");
+      vina.formato = {
+        modo: modo && modo.value === "virgula" ? "virgula" : "linhas",
+        sep: sep && (sep.value === "tab" || sep.value === "virgula") ? sep.value : "espaco",
+      };
+      const ta = document.getElementById("prep-res-txt");
+      const nota = ta && ta.previousElementSibling;
+      if (vina.residuosTxt && ta) {
+        const saida = PrepAnalysis.formatarResiduosPocket(vina.residuosTxt, vina.formato);
+        ta.value = saida.texto;
+        if (nota) nota.textContent = saida.n + " resíduo(s) distinto(s).";
+      }
+    }
   }
 
   function onInput(e) {
@@ -881,12 +1025,38 @@ ${htmlVinaPreparo(F, pocketOpts, vinaCampos)}
       ]);
       return;
     }
+    if (acao === "ver-glic-o") {
+      const p = (resultado.glicosilacao.sitiosO || [])[Number(btn.dataset.idx)];
+      if (!p) return;
+      mostrar3d([
+        itemEsfera({ ...p.residuo, nome: p.residuo.nome }, "#7dffb3", 0.45),
+        itemEsfera({ ...p.acucar, nome: "C1" }, "#ff9d6e", 0.45),
+      ]);
+      return;
+    }
+    if (acao === "glicanos-manter" || acao === "glicanos-remover") {
+      for (const h of resultado.inventario.hets) {
+        if (h.classe !== "acucar") continue;
+        for (const cp of h.copias) {
+          if (acao === "glicanos-manter") selecao.hets.add(cp.chave);
+          else selecao.hets.delete(cp.chave);
+        }
+      }
+      lerDecisoes();
+      render();
+      return;
+    }
     if (acao === "limpar-3d") {
       destaque = null;
       caixaDesenhada = false;
       if (estado && estado.viewer) estado.viewer.removeAllShapes();
       const estilo = document.getElementById("estilo-3d");
       if (estilo) estilo.dispatchEvent(new Event("change"));
+      return;
+    }
+    if (acao === "copiar-ss") {
+      const ta = document.getElementById("prep-ss-resumo");
+      copiarTexto(ta && ta.value, "Resumo das pontes copiado. Ele não escolhe o par.");
       return;
     }
     if (acao === "bonds") baixar("rascunho_bond_tleap.txt", resultado.bonds);
@@ -926,6 +1096,11 @@ ${htmlVinaPreparo(F, pocketOpts, vinaCampos)}
         size_x: vina.sugerida.size_x, size_y: vina.sugerida.size_y, size_z: vina.sugerida.size_z,
       };
       preencherNumeros();
+      return;
+    }
+    if (acao === "copiar-residuos") {
+      const ta = document.getElementById("prep-res-txt");
+      copiarTexto(ta && ta.value, "Resíduos do pocket copiados.");
       return;
     }
     if (acao === "vina-residuos" && vina.residuosTxt) {

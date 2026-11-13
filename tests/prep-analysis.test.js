@@ -97,6 +97,23 @@ function testeSintetico() {
   assert(regraO.pdb.includes(" B") || regraO.contagens.atom === 1, "maior ocupação fica com uma linha");
   const occ = Prep.parseAtomos(regraO.pdb);
   assert(occ.length === 1 && occ[0].altloc === "B", "maior ocupação escolhe B (0,75)");
+  assert(regraA.pdb.includes("\nTER\n") && regraA.pdb.trim().endsWith("END"), "padrão grava TER e END");
+  const h = atomo({ serial: 9, nome: " H  ", el: " H", x: 3 });
+  const comH = [altA, h, "END"].join("\n");
+  const semOpcao = Prep.limparPdb(comH, { removerAguas: true, altloc: "A", hets: [] });
+  assert(Prep.parseAtomos(semOpcao.pdb).some((a) => a.elemento === "H"), "sem a opção, o hidrogênio permanece");
+  const semH = Prep.limparPdb(comH, { removerAguas: true, altloc: "A", hets: [], removerHidrogenios: true });
+  assert(!Prep.parseAtomos(semH.pdb).some((a) => a.elemento === "H"), "opção remove hidrogênio");
+  assert(semH.linhasResumo.some((l) => l === "Hidrogênios removidos: 1."), "resumo conta o hidrogênio");
+  const semTer = Prep.limparPdb(bruto, { removerAguas: true, altloc: "A", hets: [], garantirTerEnd: false });
+  assert(!semTer.pdb.split("\n").some((l) => l === "TER" || l === "END"), "opção desligada não acrescenta TER nem END");
+  const chk = Prep.checklistEnvio(bruto, Prep.analisar(bruto), {
+    cadeias: new Set(["A"]), hets: new Set(), aguas: new Set(),
+    removerAguas: true, altloc: "A", removerHidrogenios: false, garantirTerEnd: true,
+  }, null);
+  assert(chk.itens.find((i) => i.id === "altloc").status === "atencao", "checklist marca altloc");
+  assert(chk.itens.find((i) => i.id === "hidrogenios").status === "ok", "checklist sem hidrogênio");
+  assert(chk.nota.includes("protocolo de simulação"), "nota genérica do protocolo");
 
   const cys1 = atomo({ serial: 1, nome: " SG ", res: "CYS", seq: 10, el: " S", x: 0, y: 0, z: 0 });
   const cys2 = atomo({ serial: 2, nome: " SG ", res: "CYS", seq: 20, el: " S", x: 2.0, y: 0, z: 0 });
@@ -106,6 +123,9 @@ function testeSintetico() {
   ].join("\n");
   const ss = Prep.paresSS(Prep.parseAtomos(ssTxt), Prep.parseSsbond(ssTxt), 2.5);
   assert(ss.pares.length === 1 && ss.registros[0].coberto === true, "par SG–SG casa com SSBOND");
+  const resumoSs = Prep.resumoDissulfetos(ss);
+  assert(resumoSs === "1 par de cisteína candidato: Cadeia A CYS 10 – Cadeia A CYS 20 (d = 2.00 Å).", "resumo copiável: " + resumoSs);
+  assert(Prep.resumoDissulfetos({ pares: [] }) === "0 pares de cisteína candidatos.", "resumo sem pares");
 
   const ssSim = [
     "SSBOND   1 CYS A   10    CYS A   20                          1555   2555  2.00",
@@ -121,6 +141,14 @@ function testeSintetico() {
   const gTxt = [link, asn, c1, "REMARK 465     ALA A     4", "REMARK 465     ALA A     5"].join("\n");
   const g = Prep.glicosilacao(Prep.parseAtomos(gTxt), Prep.parseLinks(gTxt), { NAG: "2-acetamido-2-deoxy-beta-D-glucopyranose" }, 1.8, 10);
   assert(g.pares.length === 1 && g.linksAsnC1[0].coberto === true, "ND2–C1 casa com LINK");
+  const ser = atomo({ serial: 3, nome: " OG ", res: "SER", seq: 5, el: " O", x: 0 });
+  const nag = atomo({ rec: "HETATM", serial: 4, nome: " C1 ", res: "NAG", seq: 5, el: " C", x: 1.5 });
+  const ala5 = atomo({ serial: 5, seq: 5, x: 8 });
+  const linkO = "LINK         OG  SER A   5                 C1  NAG A   5     1555   1555  1.50";
+  const gOtxt = [linkO, ser, nag, ala5].join("\n");
+  const gO = Prep.glicosilacao(Prep.parseAtomos(gOtxt), Prep.parseLinks(gOtxt), { NAG: "2-acetamido-2-deoxy-beta-D-glucopyranose" }, 1.8, 10);
+  assert(gO.pares.length === 0 && gO.sitiosO.length === 1 && gO.sitiosO[0].noLink === false, "OG–C1 de SER casa com LINK e não entra na lista de ASN");
+  assert(gO.avisosNumeracao.some((t) => t.includes("mesmo número")), "aviso de numeração coincidente: " + gO.avisosNumeracao.join(" | "));
 
   const gapTxt = [
     "REMARK 465     ALA A     3",
@@ -147,6 +175,15 @@ function testeSintetico() {
   assert(caixa.size_x === 10 && caixa.size_y === 12 && caixa.size_z === 14, "tamanho com margem 4: " + [caixa.size_x, caixa.size_y, caixa.size_z]);
   const cfg = Prep.formatarConfigVina(caixa);
   assert(cfg.includes("center_x = 0.500") && cfg.includes("size_z = 14.0"), "texto no formato do Vina");
+  const pocketRes = [
+    atomo({ serial: 1, res: "ALA", seq: 12, x: 0 }),
+    atomo({ serial: 2, nome: " CB ", res: "ALA", seq: 12, x: 1 }),
+    atomo({ serial: 3, res: "HIS", chain: "B", seq: 63, icode: "A", x: 2 }),
+  ].join("\n");
+  const porLinha = Prep.formatarResiduosPocket(pocketRes, { modo: "linhas", sep: "espaco" });
+  assert(porLinha.n === 2 && porLinha.texto === "A ALA 12\nB HIS 63A\n", "linhas de resíduos: " + JSON.stringify(porLinha.texto));
+  const porVirgula = Prep.formatarResiduosPocket(pocketRes, { modo: "virgula", sep: "tab" });
+  assert(porVirgula.texto === "A\tALA\t12, B\tHIS\t63A", "lista com tabulação: " + JSON.stringify(porVirgula.texto));
 
   const af = "TITLE     ALPHAFOLD MONOMER V2.0 PREDICTION\nEXPDTA    THEORETICAL MODEL\n";
   assert(Prep.avisoPredita(af, null) === Prep.FRASES.predita, "aviso de estrutura predita");

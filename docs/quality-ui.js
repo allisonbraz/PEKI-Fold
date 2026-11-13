@@ -450,6 +450,7 @@ const QualityUI = (() => {
         <div id="ql-rel" aria-live="polite"></div>
         <h3>Qualidade local</h3>
         <div id="ql-loc"></div>
+        <div id="ql-lacunas"></div>
         <h3>Componentes do modelo selecionado</h3>
         <div id="ql-comp" aria-live="polite"></div>
       </section>`;
@@ -459,6 +460,8 @@ const QualityUI = (() => {
     const comp = raiz.querySelector("#ql-comp");
     if (rel) rel.innerHTML = htmlRelatorio();
     if (loc) loc.innerHTML = htmlLocal();
+    const lac = raiz.querySelector("#ql-lacunas");
+    if (lac && typeof LacunasUI !== "undefined") LacunasUI.sincronizar(lac, appRef, relatorio);
     if (comp) comp.innerHTML = htmlComponentes();
   }
 

@@ -391,6 +391,20 @@ tr.pocket-visto td:first-child { box-shadow: inset 3px 0 0 var(--primary); }
 .prep-scroll { overflow-x: auto; max-width: 100%; }
 .prep-tabela { font-size: .82rem; }
 .het-grupo { margin: 6px 0; }
+.prep-checklista { list-style: none; margin: 8px 0; padding: 0; }
+.chk { margin: 6px 0; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border); }
+.chk-ok { border-left: 4px solid #2ea05a; }
+.chk-atencao { border-left: 4px solid #e0a800; }
+.chk-conferir { border-left: 4px solid var(--primary); }
+.chk-status { font-weight: 700; margin-right: 4px; }
+.lac-viewer { width: 100%; height: 280px; background: #0b1020; position: relative; margin-bottom: 8px; }
+.lac-views { display: grid; gap: 12px; grid-template-columns: 1fr; }
+@media (min-width: 1100px) {
+  .lac-views { grid-template-columns: 1fr 1fr; }
+}
+.lac-passos { margin: 8px 0 8px 1.2em; padding: 0; }
+.lac-legenda { font-size: .8rem; }
+.lac-painel h4 { margin: 12px 0 6px; }
 
 .rodape { text-align: center; padding: 20px; color: var(--muted); font-size: .85rem; }
 .rodape .creditos { margin: 0 0 8px; color: var(--text); font-size: .92rem; line-height: 1.6; }

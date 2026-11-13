@@ -8,10 +8,11 @@ Versão do módulo: `preparo-1`, em `docs/prep-analysis.js` e `docs/prep-ui.js`.
 
 - Inventário do primeiro MODEL: cadeias, ATOM, HETATM, águas, altloc, ANISOU, código de inserção, lacunas de numeração e REMARK 465.
 - Classificação grosseira dos HET (água, metal, íon não metálico, açúcar, aditivo frequente, ou não classificado). A lista de códigos foi conferida no Chemical Component Dictionary; o que não está nela fica como não classificado.
-- PDB filtrado, um arquivo por íon metálico e um arquivo por cópia de HET marcada. Sem hidrogênio novo e sem ANISOU.
+- Checklist antes do envio: resíduos ATOM fora dos 20 padrão, hidrogênios, altloc, numeração e inserção, lacunas, cadeias, heteroátomos marcados e águas. Os estados são Ok, Atenção ou Conferir. O texto pede confirmação com o responsável pelo protocolo de simulação e não aplica regra de um cluster.
+- PDB filtrado, um arquivo por íon metálico e um arquivo por cópia de HET marcada. Sem hidrogênio novo e sem ANISOU. Opções da `proteina_limpa.pdb`: remover hidrogênios já presentes, manter só altloc em branco/A ou o de maior ocupação, e garantir TER/END. Com as opções no padrão, o arquivo continua como antes: hidrogênios que já existiam permanecem e TER/END são gravados.
 - Vizinhos N, O e S de cada metal até 2,8 Å, comparados aos registros LINK. O elemento sai das colunas 77–78, para não tratar carbono alfa como cálcio.
-- Pares SG–SG de CYS/CYX até 2,5 Å, comparados ao SSBOND.
-- Pares ND2 de ASN com C1 de açúcar até 1,8 Å, comparados ao LINK, com uma numeração sequencial só sugerida.
+- Pares SG–SG de CYS/CYX até 2,5 Å, comparados ao SSBOND. O resumo copiável lista esses pares (`N pares de cisteína candidatos: Cadeia A CYS x – Cadeia A CYS y (d = z Å)`). Ele é informativo e não escolhe a ponte.
+- Pares ND2 de ASN com C1 de açúcar até 1,8 Å, comparados ao LINK, com uma numeração sequencial só sugerida. O mesmo raio vale para OG de SER e OG1 de THR. LINK com ASN, SER ou THR entra mesmo fora do raio. Avisos de numeração apontam açúcar com o mesmo número de um resíduo polimérico, número dentro do intervalo da cadeia ou sugestão diferente da numeração atual. Em Preparo, manter ou remover os glicanos só altera a cópia filtrada e avisa que a parametrização depende do campo de força. Não há cálculo de protonação.
 - Rascunho de linhas `bond` no formato genérico do tleap.
 - Candidatos geométricos de histidina (HID/HIE) quando um metal está perto de ND1 ou NE2. O rótulo da seção é "indício geométrico, não protonação".
 - Caixa editável no formato de configuração do Vina, a partir do centroide de um pocket já detectado pelo DoGSite, com margem. O desenho usa o `addBox` do 3Dmol.js.
@@ -28,7 +29,7 @@ Os raios são editáveis. A ficha sai em Markdown, CSV e PDF, e também entra no
 - Não usa o número de série do PDB original como identificador depois que outro programa renumerar o arquivo.
 - Não constrói contato de simetria cristalográfica (operador diferente de 1555) nem a montagem biológica.
 - Não lê mmCIF. Um arquivo mmCIF aberto na visão geral não é passado para esta ficha: o preparo continua nas colunas PDB, para não tratar o CIF como se fosse PDB. Não adiciona glicano que o arquivo não tenha.
-- Não grava o nome interno de arquivo de pocket usado em rotina de laboratório. Os resíduos do pocket, se baixados, saem como `pocket_residuos.pdb`.
+- Não grava o nome interno de arquivo de pocket usado em rotina de laboratório. Os resíduos do pocket, se baixados, saem como `pocket_residuos.pdb`. O mesmo conjunto também pode ser copiado em texto: cadeia, resíduo e número, uma linha por resíduo ou uma lista separada por vírgula. O separador entre os campos (espaço, tabulação ou vírgula) é escolhido na ficha.
 
 Estrutura predita (AlphaFold e equivalentes, pelo título, pelo método ou por pLDDT): a ficha avisa que o pLDDT é confiança por resíduo e não diz se o pocket está apo ou holo.
 

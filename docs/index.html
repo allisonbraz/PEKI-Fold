@@ -104,8 +104,8 @@
           <li><strong>Cadeias</strong>: ver ou ocultar muda só o desenho 3D. Contagens, FASTA, PDB e exportação continuam com a cadeia. O arquivo não é regravado.</li>
           <li><strong>Aminoácidos</strong>: “Todas as cadeias” soma os resíduos modelados dos 20 aminoácidos padrão. Uma cadeia deixa as outras de fora. Resíduo ausente não entra.</li>
           <li><strong>Motivos</strong>: sequência curta e contígua, montada pelos resíduos do modelo. Não é motivo estrutural, sítio funcional nem pocket.</li>
-          <li><strong>Qualidade</strong> lê o relatório wwPDB quando há ID do PDB. Métrica ausente não vira zero. O relatório global não garante o sítio. Sem ID, a consulta remota não roda.</li>
-          <li><strong>Preparo</strong> é uma ficha auxiliar. Ela não valida a estrutura e não substitui a conferência humana. O drugScore dos pockets continua descritor geométrico, não afinidade.</li>
+          <li><strong>Qualidade</strong> lê o relatório wwPDB quando há ID do PDB. Métrica ausente não vira zero. O relatório global não garante o sítio. Sem ID, a consulta remota não roda. Se a leitura achar lacuna, <strong>Modelar lacunas</strong> copia a FASTA da cadeia e abre o Swiss-Model em outra aba, sem enviar a sequência. O AlphaFold DB é consultado pela API pública; se o navegador não ler o arquivo, ficam os links e a importação de um PDB local.</li>
+          <li><strong>Preparo</strong> é uma ficha auxiliar. Ela não valida a estrutura e não substitui a conferência humana. O checklist antes do envio marca resíduos não padrão, hidrogênios, altloc, numeração, lacunas, cadeias, heteroátomos e águas. Na <code>proteina_limpa.pdb</code> dá para remover hidrogênios, manter um altloc e garantir TER/END. Glicanos (NAG, MAN, BMA e outros da lista) podem ser mantidos ou removidos na cópia filtrada; a parametrização depende do campo de força. Confirme com o responsável pelo seu protocolo de simulação. O resumo das pontes dissulfeto pode ser copiado e não escolhe o par. Os resíduos do pocket, além do PDB, saem em texto (uma linha por resíduo ou lista separada por vírgula) com o separador dos campos configurável. O drugScore dos pockets continua descritor geométrico, não afinidade.</li>
         </ul>
       </details>
 
@@ -513,6 +513,8 @@
   <script src="network.js"></script>
   <script src="pdb-analysis.js"></script>
   <script src="structure-model.js"></script>
+  <script src="lacunas-modelo.js"></script>
+  <script src="lacunas-ui.js"></script>
   <script src="quality-model.js"></script>
   <script src="quality-ui.js"></script>
   <script src="prep-analysis.js"></script>
