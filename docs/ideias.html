@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Roadmap e ideias do PEKI Fold: o que já está em desenvolvimento, o que entrou na fila e o que ainda será avaliado. Documento vivo, para consulta pública.">
+<title>Roadmap e ideias do PEKI Fold</title>
+<link rel="icon" type="image/jpeg" href="favicon_peki.jpeg" />
+<style>
+:root {
+  --bg: #f4f6fb;
+  --card: #ffffff;
+  --text: #1c2433;
+  --muted: #6b7689;
+  --primary: #2a5599;
+  --primary-dark: #1a3d6d;
+  --accent: #e8513a;
+  --border: #e2e7f0;
+  --shadow: 0 2px 10px rgba(20, 40, 80, 0.08);
+  --dev: #2a5599;
+  --fila: #1e673a;
+  --cand: #8a5a00;
+  --aval: #6b4ea3;
+  --orient: #8a3d00;
+  --desc: #8a3a32;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f1623;
+    --card: #1a2436;
+    --text: #e7edf7;
+    --muted: #93a0b5;
+    --primary: #5b8def;
+    --primary-dark: #8ab0ff;
+    --accent: #ff6b52;
+    --border: #2a3850;
+    --shadow: 0 2px 14px rgba(0, 0, 0, 0.4);
+    --dev: #5b8def;
+    --fila: #4dcc7e;
+    --cand: #e0a800;
+    --aval: #b79bff;
+    --orient: #ffb074;
+    --desc: #ff8a7a;
+  }
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+[id] { scroll-margin-top: 88px; }
+body {
+  margin: 0;
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.55;
+  font-size: 1rem;
+}
+a { color: var(--primary); font-weight: 600; }
+a:hover { color: var(--primary-dark); }
+.wrap { max-width: 920px; margin: 0 auto; padding: 0 20px 64px; }
+.topbar {
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  padding: 14px 0;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+.topbar-inner {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+  align-items: center;
+  justify-content: space-between;
+}
+.brand { display: flex; flex-direction: column; gap: 2px; }
+.brand strong { color: var(--primary-dark); font-size: 1.05rem; }
+.brand span { color: var(--muted); font-size: .85rem; }
+.back {
+  display: inline-block;
+  background: var(--primary);
+  color: #fff !important;
+  text-decoration: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: .92rem;
+}
+.back:hover { background: var(--primary-dark); }
+@media (prefers-color-scheme: dark) {
+  .back { background: #3a6fd6; }
+  .back:hover { background: #2a5599; }
+}
+header.hero { padding: 28px 0 8px; }
+header.hero h1 { margin: 0 0 8px; font-size: 1.85rem; color: var(--primary-dark); line-height: 1.25; }
+.lead { color: var(--muted); margin: 0 0 12px; }
+.meta { font-size: .9rem; color: var(--muted); }
+h2 { margin: 36px 0 12px; font-size: 1.35rem; color: var(--primary-dark); }
+h3 { margin: 22px 0 8px; font-size: 1.08rem; }
+p { margin: 0 0 12px; }
+ul, ol { margin: 0 0 14px; padding-left: 1.25rem; }
+li { margin: 0 0 6px; }
+code {
+  background: rgba(127,127,127,.15);
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: .9em;
+}
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  padding: 16px 18px;
+  margin: 0 0 12px;
+}
+.toc a { text-decoration: none; }
+.toc ol { margin-bottom: 0; }
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 8px 0 18px;
+}
+.filter {
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  border-radius: 20px;
+  padding: 6px 12px;
+  font-size: .85rem;
+  cursor: pointer;
+  font-family: inherit;
+}
+.filter:hover { border-color: var(--primary); }
+.filter[aria-pressed="true"] {
+  background: rgba(42,85,153,.14);
+  border-color: var(--primary);
+  color: var(--primary);
+  font-weight: 600;
+}
+.badge {
+  display: inline-block;
+  font-size: .75rem;
+  font-weight: 700;
+  letter-spacing: .02em;
+  text-transform: uppercase;
+  border-radius: 20px;
+  padding: 3px 9px;
+  margin: 0 6px 0 0;
+  vertical-align: middle;
+}
+.s-dev { background: rgba(42,85,153,.14); color: var(--dev); }
+.s-fila { background: rgba(46,160,90,.16); color: var(--fila); }
+.s-cand { background: rgba(224,168,0,.18); color: var(--cand); }
+.s-aval { background: rgba(107,78,163,.16); color: var(--aval); }
+.s-orient { background: rgba(232,130,40,.18); color: var(--orient); }
+.s-desc { background: rgba(232,81,58,.14); color: var(--desc); }
+.idea { border-left: 4px solid var(--border); }
+.idea[data-status="dev"] { border-left-color: var(--dev); }
+.idea[data-status="fila"] { border-left-color: var(--fila); }
+.idea[data-status="candidato"] { border-left-color: var(--cand); }
+.idea[data-status="avaliar"] { border-left-color: var(--aval); }
+.idea[data-status="orientador"] { border-left-color: var(--orient); }
+.idea[data-status="descartado"] { border-left-color: var(--desc); }
+.idea h3 { margin-top: 0; }
+.idea.is-hidden { display: none; }
+.note {
+  background: rgba(42,85,153,.08);
+  border-left: 4px solid var(--primary);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: .92rem;
+  margin: 0 0 14px;
+}
+table { width: 100%; border-collapse: collapse; font-size: .95rem; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+th { color: var(--muted); font-weight: 600; }
+footer {
+  margin-top: 40px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: .88rem;
+}
+.empty {
+  display: none;
+  color: var(--muted);
+  font-style: italic;
+  margin: 0 0 16px;
+}
+@media print {
+  .topbar { position: static; box-shadow: none; }
+  .filters, .back { display: none !important; }
+  .card, .idea { box-shadow: none; break-inside: avoid; }
+  body { background: #fff; color: #111; }
+}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <strong>PEKI Fold</strong>
+      <span>Roadmap e ideias</span>
+    </div>
+    <a class="back" href="index.html">Voltar ao PEKI Fold</a>
+  </div>
+</div>
+
+<div class="wrap">
+  <header class="hero">
+    <h1>Roadmap e ideias do PEKI Fold</h1>
+    <p class="lead">Documento vivo com possibilidades da plataforma: o que já está em desenvolvimento, o que entrou na fila de implementação, o que ainda será avaliado e o que não cabe num site estático. Atualizado em 13 de novembro de 2026 (horário de Brasília).</p>
+    <p class="meta">Ferramenta pública: <a href="index.html">PEKI Fold</a>. Exemplos de teste: 4HHB e 1CRN. Esta página não substitui o protocolo do laboratório e não faz afirmações de afinidade a partir de scores.</p>
+  </header>
+
+  <nav class="card toc" aria-label="Índice">
+    <h2 style="margin-top:0">Índice</h2>
+    <ol>
+      <li><a href="#premissas">Premissas</a></li>
+      <li><a href="#ja-aproveitar">O que o PEKI já faz e o fluxo pode aproveitar</a></li>
+      <li><a href="#situacao">Situação atual</a></li>
+      <li><a href="#ideias">Ideias por status</a></li>
+      <li><a href="#bibliotecas">Bibliotecas científicas</a></li>
+      <li><a href="#desenvolvimento">Apoio a desenvolvimento e testes</a></li>
+      <li><a href="#modelos">Modelos de linguagem de proteínas</a></li>
+      <li><a href="#perguntas">Perguntas em aberto</a></li>
+      <li><a href="#acrescentar">Como acrescentar novas ideias</a></li>
+    </ol>
+  </nav>
+
+  <h2 id="premissas">Premissas</h2>
+  <div class="card">
+    <ul>
+      <li>O PEKI Fold continua sendo um site 100% estático (HTML, CSS e JavaScript, com 3Dmol.js), publicado a partir da pasta pública do projeto, no plano gratuito da hospedagem. Sem backend, sem build obrigatório e sem dependência paga.</li>
+      <li>Em textos públicos, exemplos e testes, usam-se só estruturas neutras, como a hemoglobina 4HHB e a crambina 1CRN.</li>
+      <li>A plataforma não copia comandos, scripts ou rotinas internas do cluster do laboratório.</li>
+      <li>Score não é afinidade e não prova sítio biológico.</li>
+      <li>A ferramenta é multi-usuário: não existe só para um fluxo de pesquisa.</li>
+      <li>O PEKI informa. Quem decide sobre ciência, formato de entrada e prática do laboratório é a pessoa usuária, com o orientador quando for o caso.</li>
+    </ul>
+  </div>
+
+  <h2 id="ja-aproveitar">O que o PEKI já faz e o fluxo pode aproveitar</h2>
+  <p>Parte do ganho vem só de adaptar o procedimento, sem esperar funcionalidade nova.</p>
+  <div class="card">
+    <ol>
+      <li><strong>PDB limpo como entrada.</strong> Preparar a estrutura no PEKI e enviar só o arquivo limpo reduz erro na preparação da topologia no cluster do laboratório.</li>
+      <li><strong>Pockets já detectados.</strong> O PEKI aponta cavidades e exporta os resíduos de cada uma. Se o formato servir, isso pode evitar uma ida manual a um servidor externo de pockets (por exemplo o DoGSiteScorer).</li>
+      <li><strong>Ficha de preparo antes da dinâmica.</strong> A ficha já mostra pontes dissulfeto, heteroátomos, lacunas e histidinas, para consultar antes de escolher opções de preparação.</li>
+      <li><strong>Dossiê antes do envio.</strong> A aba Qualidade, o JSON e o relatório podem acompanhar cada execução; a comparação entre análises ajuda a escolher a estrutura antes de simular.</li>
+    </ol>
+    <p>Essa adaptação de procedimento depende de validação do laboratório, sobretudo o formato de entrada da topologia. As abas já publicadas incluem Visão geral, Qualidade, Cadeias, Estatísticas, Aminoácidos, Motivos, Pockets e Preparo, além de salvar JSON, exportar relatório, comparar análises e obter FASTA.</p>
+  </div>
+
+  <h2 id="situacao">Situação atual</h2>
+  <div class="card">
+    <p>Em 13/11/2026 está em andamento um conjunto de melhorias (checklist e exportação do PDB, resumo das pontes, pocket em texto reutilizável, apoio a modelar lacunas e suporte a glicoproteínas), ainda <strong>sem publicação</strong> até haver revisão. A leitura de séries de RMSD e o preparo de ligante entram só como avaliação, sem implementação neste momento. Os testes previstos usam 4HHB e 1CRN.</p>
+  </div>
+
+  <h2 id="ideias">Ideias por status</h2>
+  <p>Use os filtros para ver só um status. A lista completa permanece abaixo.</p>
+  <div class="filters" role="group" aria-label="Filtrar ideias por status">
+    <button type="button" class="filter" data-filter="all" aria-pressed="true">Todos</button>
+    <button type="button" class="filter" data-filter="dev" aria-pressed="false">Em desenvolvimento</button>
+    <button type="button" class="filter" data-filter="fila" aria-pressed="false">Fila aprovada</button>
+    <button type="button" class="filter" data-filter="candidato" aria-pressed="false">Candidato</button>
+    <button type="button" class="filter" data-filter="avaliar" aria-pressed="false">Avaliar no futuro</button>
+    <button type="button" class="filter" data-filter="orientador" aria-pressed="false">Avaliar com o orientador</button>
+    <button type="button" class="filter" data-filter="descartado" aria-pressed="false">Descartado no site</button>
+  </div>
+  <p id="filtro-vazio" class="empty">Nenhuma ideia neste filtro.</p>
+
+  <h3 id="em-desenvolvimento">Já em desenvolvimento</h3>
+
+  <article class="card idea" data-status="dev">
+    <h3><span class="badge s-dev">Em desenvolvimento</span> Resumo das pontes dissulfeto</h3>
+    <p>Mostrar um resumo copiável dos pares de cisteína candidatos, com as distâncias já calculadas. Só informar. A ferramenta não escolhe a opção de preparação no lugar da pessoa usuária.</p>
+  </article>
+
+  <article class="card idea" data-status="dev">
+    <h3><span class="badge s-dev">Em desenvolvimento</span> Resíduos do pocket em formato reutilizável</h3>
+    <p>Além do download atual, exportar texto simples (cadeia, resíduo e número), com uma linha por resíduo e uma variante em lista separada por vírgula. O formato exato esperado pelo roteiro de análise do laboratório fica configurável até ser confirmado.</p>
+  </article>
+
+  <article class="card idea" data-status="dev">
+    <h3><span class="badge s-dev">Em desenvolvimento</span> Apoio a modelar lacunas</h3>
+    <p>Quando a aba Qualidade encontrar lacunas, um botão copia a FASTA completa e abre o Swiss-Model em nova aba, com instruções curtas. A integração com o AlphaFold DB busca o modelo pelo UniProt, carrega-o ao lado ou sobreposto ao cristal, destaca as regiões das lacunas e mostra o pLDDT — se a API aceitar chamadas do navegador; senão, ficam só os links. Dá para reimportar o modelo e comparar com a estrutura original. O site não submete jobs ao Swiss-Model nem guarda tokens no navegador.</p>
+  </article>
+
+  <article class="card idea" data-status="dev">
+    <h3><span class="badge s-dev">Em desenvolvimento</span> Checklist e PDB pronto para a topologia</h3>
+    <p>Na aba Preparo, um checklist aponta resíduos não padrão, hidrogênios, posições alternativas (altloc), numeração descontínua, lacunas, cadeias, heteroátomos e águas restantes. Ao baixar o PDB limpo, há opções para remover hidrogênios, manter só o altloc A (ou o de maior ocupação) e garantir as linhas TER/END. As regras seguem referências públicas de limpeza de PDB (por exemplo pdb-tools), reimplementadas em JavaScript. O formato exigido pelo cluster do laboratório permanece configurável até validação.</p>
+  </article>
+
+  <article class="card idea" data-status="dev">
+    <h3><span class="badge s-dev">Em desenvolvimento</span> Suporte a glicoproteínas</h3>
+    <p>Detectar açúcares comuns e ligações a asparagina, serina ou treonina, listar sítios de glicosilação com numeração e cadeia, e avisar inconsistências. Em Preparo, a pessoa decide manter ou remover os glicanos, com o aviso de que a parametrização depende do campo de força. O PEKI não calcula protonação. O item permanece mesmo quando não é o caso de uso mais frequente, porque a ferramenta é multi-usuário.</p>
+  </article>
+
+  <h3 id="fila">Aprovado para implementar (fila)</h3>
+  <p class="note">Estas ideias foram aprovadas em 13/11/2026 para implementação, depois do conjunto que já está em desenvolvimento, para não conflitar nos mesmos arquivos.</p>
+
+  <article class="card idea" data-status="fila">
+    <h3><span class="badge s-fila">Fila aprovada</span> Cores por polaridade e carga nas barras de frequência</h3>
+    <p>Sugestão do orientador. As barras da aba Aminoácidos passam a usar uma paleta estável (por exemplo hidrofóbico, polar, positivo, negativo e especial), com legenda. É um ajuste de interface sobre um gráfico que já existe.</p>
+  </article>
+
+  <article class="card idea" data-status="fila">
+    <h3><span class="badge s-fila">Fila aprovada</span> Anotações do UniProt na estrutura</h3>
+    <p>Projetar no visualizador variantes, domínios, sítios e modificações pós-traducionais. Complementa a leitura só estrutural e depende, na prática, do mapeamento SIFTS. Se a API não aceitar chamada direta do navegador, o caminho é oferecer links e importação.</p>
+  </article>
+
+  <article class="card idea" data-status="fila">
+    <h3><span class="badge s-fila">Fila aprovada</span> Mapeamento SIFTS (numeração PDB e UniProt)</h3>
+    <p>A numeração do cristal quase nunca coincide com a da sequência de referência. Sem esse mapa, as anotações do UniProt caem no resíduo errado.</p>
+  </article>
+
+  <article class="card idea" data-status="fila">
+    <h3><span class="badge s-fila">Fila aprovada</span> Superposição e RMSD entre duas estruturas</h3>
+    <p>Além da comparação atual de análises em JSON, alinhar duas estruturas no navegador (cristal e modelo, ou duas conformações) e informar o RMSD. Útil depois de reimportar um modelo. Não envolve trajetórias.</p>
+  </article>
+
+  <article class="card idea" data-status="fila">
+    <h3><span class="badge s-fila">Fila aprovada</span> Contatos e interfaces entre cadeias</h3>
+    <p>Listar pontes salinas e ligações de hidrogênio aproximadas por distância e geometria simples, no mesmo espírito do cálculo já existente das pontes dissulfeto. Só informar; não classificar automaticamente a relevância biológica.</p>
+  </article>
+
+  <article class="card idea" data-status="fila">
+    <h3><span class="badge s-fila">Fila aprovada</span> SASA por resíduo</h3>
+    <p>Estimar a área acessível ao solvente para destacar resíduos expostos ou enterrados, inclusive no pocket. É calculável no navegador, com cuidado ao custo em proteínas grandes. É uma estimativa geométrica, não um resultado de dinâmica.</p>
+  </article>
+
+  <article class="card idea" data-status="fila">
+    <h3><span class="badge s-fila">Fila aprovada</span> Relatório de validação wwPDB</h3>
+    <p>Quando disponível, exibir Ramachandran, choques estéricos e outliers a partir do relatório oficial da estrutura, em vez de reimplementar um validador completo. Pode depender de o navegador obter o relatório ou de a pessoa importar o arquivo.</p>
+  </article>
+
+  <article class="card idea" data-status="fila">
+    <h3><span class="badge s-fila">Fila aprovada</span> Ligantes já cristalizados em estruturas semelhantes</h3>
+    <p>Mostrar, a partir de bases públicas, ligantes resolvidos em estruturas relacionadas. É anotação, não docking e nem preparo automático do ligante para simulação.</p>
+  </article>
+
+  <article class="card idea" data-status="fila">
+    <h3><span class="badge s-fila">Fila aprovada</span> Figura em alta resolução ou PDF</h3>
+    <p>Exportar imagem ou página para tese, aula e relatório, a partir da vista atual e de painéis selecionados. Não substitui figuras feitas em software dedicado, mas reduz o atrito no uso cotidiano.</p>
+  </article>
+
+  <article class="card idea" data-status="fila">
+    <h3><span class="badge s-fila">Fila aprovada</span> Modo aula guiado com 4HHB</h3>
+    <p>Percurso curto, com a hemoglobina 4HHB, apresentando qualidade, cadeias, pockets e preparo. Reforça o uso didático e multi-usuário da ferramenta.</p>
+  </article>
+
+  <h3 id="candidatos">Candidatos</h3>
+
+  <article class="card idea" data-status="candidato">
+    <h3><span class="badge s-cand">Candidato</span> Referências para validar pockets</h3>
+    <p>O fpocket é um detector geométrico clássico e serve de referência externa; rodá-lo no navegador exigiria um esforço alto. O P2Rank e o serviço online PrankWeb preveem sítios com aprendizado de máquina. No site, o caminho realista é um link para comparar e, talvez, importar o resultado.</p>
+  </article>
+
+  <article class="card idea" data-status="candidato">
+    <h3><span class="badge s-cand">Candidato</span> Mol* como visualização avançada</h3>
+    <p>O Mol* (Molstar) é o visualizador usado pelo RCSB PDB e pelo PDBe. Roda num site estático e é mais capaz com estruturas grandes, criomicroscopia e densidade eletrônica, mas é bem mais pesado que o 3Dmol.js. Faria sentido como modo avançado, não como substituição imediata.</p>
+  </article>
+
+  <article class="card idea" data-status="candidato">
+    <h3><span class="badge s-cand">Candidato</span> Práticas de desenvolvimento, teste e interface</h3>
+    <p>Há skills e repositórios públicos úteis para planejar, testar o site no navegador, revisar segurança e aprimorar a interface, sem mudar o caráter estático da ferramenta. São apoios ao processo de implementação, não funcionalidades do PEKI em si. Ver a seção de desenvolvimento.</p>
+  </article>
+
+  <h3 id="avaliar">Avaliar no futuro</h3>
+
+  <article class="card idea" data-status="avaliar">
+    <h3><span class="badge s-aval">Avaliar no futuro</span> Gráfico de séries de RMSD</h3>
+    <p>Ler no navegador arquivos locais pequenos, de duas colunas, e traçar o gráfico para ajudar a escolher um intervalo estável. Arquivos de trajetória ficam de fora: são pesados demais para um site estático. Avaliar custo e benefício antes de implementar.</p>
+  </article>
+
+  <article class="card idea" data-status="avaliar">
+    <h3><span class="badge s-aval">Avaliar no futuro</span> Preparo básico de ligante</h3>
+    <p>Levantar o que é viável no navegador: extrair o ligante do PDB, exportar SDF ou MOL2 e mostrar informações básicas. Só implementar com aprovação específica. A listagem de ligantes cristalizados (já na fila) é um passo menor e separado.</p>
+  </article>
+
+  <article class="card idea" data-status="avaliar">
+    <h3><span class="badge s-aval">Avaliar no futuro</span> NGL Viewer</h3>
+    <p>Outro visualizador em JavaScript, mais leve que o Mol* e capaz de ler trajetórias pequenas, mas pouco mantido. Sem vantagem clara hoje sobre o 3Dmol.js já usado.</p>
+  </article>
+
+  <article class="card idea" data-status="avaliar">
+    <h3><span class="badge s-aval">Avaliar no futuro</span> Camada de triagem sobre o resumo</h3>
+    <p>Um classificador de texto genérico não deve substituir as contas de distância, pontes, lacunas ou cavidades, que o código já faz com exatidão e de graça no navegador. Uma camada opcional de perguntas fixas por cima do resumo já calculado (por exemplo, pronta para simular: sim ou não) exigiria validação da regra de decisão e, se dependesse de chave de API, sairia do modelo estático gratuito.</p>
+  </article>
+
+  <article class="card idea" data-status="avaliar">
+    <h3><span class="badge s-aval">Avaliar no futuro</span> ESM e ProtT5</h3>
+    <p>Modelos de linguagem treinados em sequências de proteínas, úteis para desordem, efeito de mutação e comparação de modelos. Não rodam bem num site estático gratuito. O caminho realista é um serviço externo, um caderno ou o cluster do laboratório, com reimportação do resultado. Ver a seção própria.</p>
+  </article>
+
+  <h3 id="orientador">Avaliar com o orientador</h3>
+  <p class="note">Itens fora do site. Não entram na fila de implementação da plataforma até haver uma conversa específica.</p>
+
+  <article class="card idea" data-status="orientador">
+    <h3><span class="badge s-orient">Avaliar com o orientador</span> Pacote ou script Python de apoio</h3>
+    <p>Um complemento local, fora do site estático, para encaixar a saída do PEKI no roteiro do laboratório (checagens ou conversões). Não deve publicar procedimentos internos do cluster. Só avança com o formato e o aval do orientador.</p>
+  </article>
+
+  <article class="card idea" data-status="orientador">
+    <h3><span class="badge s-orient">Avaliar com o orientador</span> Artigo de software</h3>
+    <p>Possibilidade de descrever a ferramenta em um periódico de software, como o JOSS ou o Bioinformatics Advances. Escopo, autoria e trâmite institucional dependem de conversa específica. O objeto principal do trabalho acadêmico continua sendo a pesquisa, não a plataforma isolada.</p>
+  </article>
+
+  <h3 id="descartado">Descartado por limitação do site estático</h3>
+
+  <article class="card idea" data-status="descartado">
+    <h3><span class="badge s-desc">Descartado no site</span> Dinâmica, minimização, solvatação ou topologia</h3>
+    <p>Esse trabalho é do cluster do laboratório, não do navegador.</p>
+  </article>
+
+  <article class="card idea" data-status="descartado">
+    <h3><span class="badge s-desc">Descartado no site</span> Abrir trajetórias grandes</h3>
+    <p>Arquivos de trajetória são pesados demais para um site estático. Séries tabulares pequenas, se tanto, ficam na avaliação do gráfico de RMSD.</p>
+  </article>
+
+  <article class="card idea" data-status="descartado">
+    <h3><span class="badge s-desc">Descartado no site</span> Conectar ao cluster ou submeter jobs</h3>
+    <p>O navegador não deve guardar credenciais nem operar a fila do laboratório.</p>
+  </article>
+
+  <article class="card idea" data-status="descartado">
+    <h3><span class="badge s-desc">Descartado no site</span> Protonação real ou pKa</h3>
+    <p>Calcular estados de protonação com métodos como PROPKA ou H++ exige um motor que o site estático não deve fingir ter.</p>
+  </article>
+
+  <article class="card idea" data-status="descartado">
+    <h3><span class="badge s-desc">Descartado no site</span> Motor próprio de modelagem de lacunas</h3>
+    <p>Servidores especializados fazem isso melhor. O PEKI apoia com links, importação e comparação, sem submeter jobs com tokens no navegador.</p>
+  </article>
+
+  <article class="card idea" data-status="descartado">
+    <h3><span class="badge s-desc">Descartado no site</span> Decidir sozinho opções de preparação</h3>
+    <p>A ferramenta não escolhe, por conta própria, opções de preparação da dinâmica nem o estado das histidinas. Só informa.</p>
+  </article>
+
+  <article class="card idea" data-status="descartado">
+    <h3><span class="badge s-desc">Descartado no site</span> Módulo completo de docking agora</h3>
+    <p>Fora do escopo imediato. Ligantes para a dinâmica ficam para uma avaliação posterior; a listagem de ligantes cristalizados é apenas anotação.</p>
+  </article>
+
+  <h2 id="bibliotecas">Bibliotecas científicas</h2>
+  <div class="card">
+    <table>
+      <thead>
+        <tr><th>Recurso</th><th>O que é</th><th>Uso possível no PEKI</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><a href="https://molstar.org/">Mol*</a></td>
+          <td>Visualizador oficial do RCSB PDB e do PDBe, em JavaScript.</td>
+          <td>Candidato a modo avançado; não substitui o 3Dmol.js de imediato.</td>
+        </tr>
+        <tr>
+          <td><a href="https://nglviewer.org/">NGL Viewer</a></td>
+          <td>Visualizador JavaScript mais leve; pouco mantido.</td>
+          <td>Avaliar com baixa prioridade; sem vantagem clara hoje.</td>
+        </tr>
+        <tr>
+          <td><a href="https://github.com/haddocking/pdb-tools">pdb-tools</a></td>
+          <td>Conjunto de scripts em Python para limpar e editar PDB.</td>
+          <td>Referência das regras do checklist, reimplementadas em JavaScript.</td>
+        </tr>
+        <tr>
+          <td><a href="https://github.com/Discngine/fpocket">fpocket</a></td>
+          <td>Detector de cavidades geométrico, escrito em C.</td>
+          <td>Referência para validar os pockets do PEKI.</td>
+        </tr>
+        <tr>
+          <td><a href="https://github.com/rdk/p2rank">P2Rank</a> / <a href="https://prankweb.cz/">PrankWeb</a></td>
+          <td>Previsão de sítios com aprendizado de máquina e serviço online.</td>
+          <td>Link para comparar e, talvez, importação do resultado.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 id="desenvolvimento">Apoio a desenvolvimento e testes</h2>
+  <div class="card">
+    <p>Para implementar e testar o PEKI sem quebrar o que já funciona, estes recursos públicos (licenças MIT ou Apache-2.0) foram considerados úteis:</p>
+    <ul>
+      <li><a href="https://github.com/obra/superpowers">superpowers</a> e <a href="https://github.com/mattpocock/skills">mattpocock/skills</a>: planejar, escrever testes primeiro e revisar.</li>
+      <li><a href="https://github.com/DietrichGebert/ponytail">Ponytail</a>: escrever o mínimo de código e reaproveitar o que já existe.</li>
+      <li><a href="https://github.com/anthropics/skills">skills da Anthropic</a>: inclui teste de aplicativos web.</li>
+      <li><a href="https://github.com/vercel-labs/agent-browser">agent-browser</a>: abrir o site, clicar e conferir fluxos (carregar PDB, exportar) sem backend.</li>
+      <li><a href="https://github.com/cloudflare/security-audit-skill">security-audit-skill</a>: revisão de segurança antes de uma divulgação mais ampla.</li>
+      <li><a href="https://github.com/nextlevelbuilder/ui-ux-pro-max-skill">UI UX Pro Max</a> e <a href="https://github.com/Leonxlnx/taste-skill">taste-skill</a>: paleta, tipografia e identidade visual, se houver uma revisão de interface.</li>
+    </ul>
+  </div>
+
+  <h2 id="modelos">Modelos de linguagem de proteínas</h2>
+  <div class="card">
+    <p>Classificadores de texto genéricos não substituem as contas que o PEKI já faz. Os análogos certos, se a pesquisa quiser ir além da estrutura cristalográfica, são modelos treinados em sequências de proteínas.</p>
+    <ul>
+      <li><a href="https://github.com/facebookresearch/esm">ESM</a> (incluindo ESM-2, ESMFold e ESM-3): embeddings, efeito de mutações e previsão de estrutura a partir da sequência. O <a href="https://esmatlas.com/">ESM Atlas</a> é um caminho possível de consulta, com limite de tamanho.</li>
+      <li><a href="https://github.com/agemagician/ProtTrans">ProtT5 / ProtTrans</a>: embeddings usados como base para desordem, conservação, localização e sítios. O uso típico pede mais recurso computacional.</li>
+    </ul>
+    <p>Nenhum dos dois roda bem dentro de um site estático gratuito. O uso mais realista é um serviço externo, um caderno ou o cluster do laboratório, com reimportação no PEKI para regiões desordenadas, conservação ou comparação de modelos.</p>
+  </div>
+
+  <h2 id="perguntas">Perguntas em aberto</h2>
+  <div class="card">
+    <p>Pontos que dependem de validação científica ou do formato do laboratório:</p>
+    <ol>
+      <li>Quais regras o PDB limpo precisa cumprir para entrar na preparação da topologia (hidrogênios, altloc, TER/END, resíduos não padrão, numeração)?</li>
+      <li>A detecção de pockets e o export de resíduos podem substituir a consulta manual a um servidor de cavidades? Qual o formato de lista esperado?</li>
+      <li>O resumo de pares de cisteína candidatos, com distâncias, é suficiente para apoiar a preparação, sem o PEKI sugerir a opção?</li>
+      <li>Vale tornar habitual anexar o dossiê (qualidade, JSON, relatório) a cada envio?</li>
+      <li>Confirma-se a paleta de cores por polaridade e carga nas barras de frequência?</li>
+      <li>Há interesse em projetar anotações do UniProt com numeração SIFTS?</li>
+      <li>Superposição e RMSD, contatos entre cadeias e SASA por resíduo são leituras aceitáveis como apoio qualitativo, com as devidas ressalvas?</li>
+      <li>Faz sentido exibir o relatório wwPDB como validação oficial da estrutura de partida?</li>
+      <li>A listagem de ligantes cristalizados em estruturas semelhantes é bem-vinda agora, sem avançar o preparo do ligante para simulação?</li>
+      <li>Há interesse no modo aula com 4HHB e na exportação de figuras em alta resolução ou PDF?</li>
+      <li>Vale incluir ESM ou ProtT5 no desenho do trabalho, ainda que fora do site?</li>
+      <li>Há espaço, mais adiante, para um pacote Python de apoio no cluster do laboratório e para um artigo de software (JOSS ou Bioinformatics Advances)?</li>
+    </ol>
+  </div>
+
+  <h2 id="acrescentar">Como acrescentar novas ideias</h2>
+  <div class="card">
+    <p>Este é um documento vivo. Cada ideia nova deve entrar com data e com um destes status: já em desenvolvimento; aprovado para implementar (fila); candidato; avaliar no futuro; avaliar com o orientador; ou descartado por limitação. Ideias descartadas não são apagadas: ficam com o motivo.</p>
+    <p>Modelo:</p>
+    <ul>
+      <li>Data (AAAA-MM-DD) e título curto</li>
+      <li>Status</li>
+      <li>Origem (conversa, orientador, literatura ou outro)</li>
+      <li>Resumo em uma a três frases</li>
+      <li>Restrições (site estático, permissões de rede, aval científico, privacidade)</li>
+    </ul>
+    <p>A primeira entrada é de 13/11/2026: abertura deste roadmap, com o conjunto em desenvolvimento e a fila aprovada no mesmo dia. O pacote Python de apoio e o artigo de software permaneceram para avaliar com o orientador.</p>
+  </div>
+
+  <footer>
+    <p>Página pública e autocontida, pensada para acompanhar o <a href="index.html">PEKI Fold</a>. Não contém alvos de pesquisa específicos nem procedimentos internos de cluster. Última atualização: 13/11/2026 (horário de Brasília).</p>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var buttons = document.querySelectorAll(".filter");
+  var ideas = document.querySelectorAll(".idea");
+  var empty = document.getElementById("filtro-vazio");
+  var i;
+
+  function applyFilter(status) {
+    var visible = 0;
+    var j;
+    for (j = 0; j < ideas.length; j++) {
+      var show = status === "all" || ideas[j].getAttribute("data-status") === status;
+      if (show) {
+        ideas[j].className = ideas[j].className.replace(/\s*is-hidden\b/g, "");
+        visible += 1;
+      } else if (ideas[j].className.indexOf("is-hidden") === -1) {
+        ideas[j].className += " is-hidden";
+      }
+    }
+    if (empty) {
+      empty.style.display = visible === 0 ? "block" : "none";
+    }
+  }
+
+  function setPressed(active) {
+    var k;
+    for (k = 0; k < buttons.length; k++) {
+      var on = buttons[k].getAttribute("data-filter") === active;
+      buttons[k].setAttribute("aria-pressed", on ? "true" : "false");
+    }
+  }
+
+  for (i = 0; i < buttons.length; i++) {
+    buttons[i].onclick = (function (btn) {
+      return function () {
+        var status = btn.getAttribute("data-filter");
+        setPressed(status);
+        applyFilter(status);
+      };
+    })(buttons[i]);
+  }
+})();
+</script>
+</body>
+</html>
