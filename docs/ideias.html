@@ -263,7 +263,7 @@ footer {
 
   <h2 id="situacao">Situação atual</h2>
   <div class="card">
-    <p>Em 13/11/2026 foi publicado o conjunto que estava em desenvolvimento: resumo das pontes dissulfeto, resíduos do pocket em formato reutilizável, apoio a modelar lacunas, checklist e PDB pronto para a topologia, e suporte a glicoproteínas. A tela inicial segmentada em caixas também entrou no ar nesse dia. Em desenvolvimento ficaram as cores por polaridade e carga nas barras de frequência da aba Aminoácidos. A leitura de séries de RMSD e o preparo de ligante continuam só como avaliação, sem implementação neste momento. Os exemplos de teste são 4HHB e 1CRN.</p>
+    <p>Em 13/11/2026 foi publicado o conjunto que estava em desenvolvimento: resumo das pontes dissulfeto, resíduos do pocket em formato reutilizável, apoio a modelar lacunas, checklist e PDB pronto para a topologia, e suporte a glicoproteínas. A tela inicial segmentada em caixas também entrou no ar nesse dia. Em desenvolvimento ficaram as cores por polaridade e carga nas barras de frequência da aba Aminoácidos. Em 14/11/2026 entrou em desenvolvimento o mapa da sequência com exposição ao solvente (SASA), também na aba Aminoácidos. A leitura de séries de RMSD e o preparo de ligante continuam só como avaliação, sem implementação neste momento. Os exemplos de teste são 4HHB e 1CRN.</p>
   </div>
 
   <h2 id="ideias">Ideias por status</h2>
@@ -318,6 +318,11 @@ footer {
   <article class="card idea" data-status="dev">
     <h3><span class="badge s-dev">Em desenvolvimento</span> Cores por polaridade e carga nas barras de frequência</h3>
     <p>Sugestão do orientador. As barras da aba Aminoácidos usam uma paleta estável em cinco grupos: hidrofóbico/apolar, polar não carregado, positivo (básico), negativo (ácido) e especial (glicina, prolina e cisteína), com legenda visível. A cor não segue a cadeia. A frequência por todas as cadeias permanece a soma dos resíduos modelados. Entrou em desenvolvimento em 13/11/2026.</p>
+  </article>
+
+  <article class="card idea" data-status="dev">
+    <h3><span class="badge s-dev">Em desenvolvimento</span> Mapa da sequência com exposição (SASA)</h3>
+    <p>Na aba Aminoácidos, um mapa por cadeia mostra cada resíduo com a letra, o número e a cor do grupo químico já usada nas barras. Acima da célula, uma barra indica a exposição relativa ao solvente (RSA). A SASA é estimada no navegador por Shrake e Rupley (1973), com todas as cadeias da estrutura carregada e sem águas, e a RSA divide esse valor pelo máximo teórico de Tien et al., PLOS ONE 8(11):e80635 (2013), Tabela 1. O limiar de 25% separa enterrado e exposto. Clicar no resíduo centraliza o visualizador 3D. Um bolsão aberto no PEKI marca os resíduos dele no mapa. É uma estimativa geométrica, não um resultado de dinâmica. Entrou em desenvolvimento em 14/11/2026. Exemplos de conferência: hemoglobina 4HHB e crambina 1CRN.</p>
   </article>
 
   <h3 id="fila">Aprovado para implementar (fila)</h3>
@@ -551,11 +556,11 @@ footer {
       <li>Resumo em uma a três frases</li>
       <li>Restrições (site estático, permissões de rede, aval científico, privacidade)</li>
     </ul>
-    <p>A primeira entrada é de 13/11/2026: abertura deste roadmap, com o conjunto em desenvolvimento e a fila aprovada no mesmo dia. Ainda em 13/11/2026, esse conjunto e a tela inicial segmentada em caixas passaram a Publicado, e as cores por polaridade e carga saíram da fila para Em desenvolvimento. O pacote Python de apoio e o artigo de software permaneceram para avaliar com o orientador.</p>
+    <p>A primeira entrada é de 13/11/2026: abertura deste roadmap, com o conjunto em desenvolvimento e a fila aprovada no mesmo dia. Ainda em 13/11/2026, esse conjunto e a tela inicial segmentada em caixas passaram a Publicado, e as cores por polaridade e carga saíram da fila para Em desenvolvimento. Em 14/11/2026, o mapa da sequência com exposição (SASA) entrou em desenvolvimento. O pacote Python de apoio e o artigo de software permaneceram para avaliar com o orientador.</p>
   </div>
 
   <footer>
-    <p>Página pública e autocontida, pensada para acompanhar o <a href="index.html">PEKI Fold</a>. Não contém alvos de pesquisa específicos nem procedimentos internos de cluster. Última atualização: 13/11/2026 (horário de Brasília).</p>
+    <p>Página pública e autocontida, pensada para acompanhar o <a href="index.html">PEKI Fold</a>. Não contém alvos de pesquisa específicos nem procedimentos internos de cluster. Última atualização: 14/11/2026 (horário de Brasília).</p>
   </footer>
 </div>
 
