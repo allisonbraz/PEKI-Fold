@@ -105,6 +105,31 @@ function aplicarEstilo() {
   }
 }
 
+function reaplicarResiduoMapa() {
+  const alvo = estado.residuoMapa;
+  const v = estado.viewer;
+  if (!alvo || !v) return;
+  const sel = { chain: alvo.cadeia === "_" ? "" : alvo.cadeia, resi: alvo.resi };
+  if (alvo.icode && (estado.viewerFormato !== "cif" || alvo.icode !== " ")) sel.icode = alvo.icode;
+  v.setStyle(sel, { stick: { color: "#ffb703", radius: 0.22 }, sphere: { color: "#ffb703", radius: 0.55 } });
+  v.render();
+}
+
+function destacarResiduoMapa(alvo) {
+  if (!alvo || !estado.viewer || alvo.resi == null || Number.isNaN(Number(alvo.resi))) return false;
+  estado.residuoMapa = { cadeia: alvo.cadeia, resi: Number(alvo.resi), icode: alvo.icode || "" };
+  aplicarEstilo();
+  const vista = estado.vistaPocket && estado.vistaPocket.visivel ? estado.vistaPocket : null;
+  if (vista && vista.sels) pintarResiduosPocket(vista.sels);
+  if (estado.motivoNo3D && estado.motivoNo3D.length) pintarMotivo(estado.motivoNo3D);
+  reaplicarResiduoMapa();
+  const sel = { chain: alvo.cadeia === "_" ? "" : alvo.cadeia, resi: estado.residuoMapa.resi };
+  if (estado.residuoMapa.icode) sel.icode = estado.residuoMapa.icode;
+  try { estado.viewer.zoomTo(sel); } catch (e) { /* a seleção pode ficar vazia no formato atual */ }
+  estado.viewer.render();
+  return true;
+}
+
 // Estilo, ligantes e preparo continuam valendo com um pocket aberto.
 // Trocar o estilo tira o amarelo do motivo, como antes. Não mexe nas cadeias ocultas.
 function aplicarEstiloMantendoPocket() {
@@ -112,8 +137,8 @@ function aplicarEstiloMantendoPocket() {
   if (vista) vista.motivoPorCima = null;
   estado.motivoNo3D = null;
   aplicarEstilo();
-  if (!vista || estado.vistaPocket !== vista || !vista.sels) return;
-  pintarResiduosPocket(vista.sels);
+  if (vista && estado.vistaPocket === vista && vista.sels) pintarResiduosPocket(vista.sels);
+  reaplicarResiduoMapa();
 }
 
 // Ocultar cadeia redesenha o que já estava ligado, sem apagar o estado dessas camadas.
@@ -122,6 +147,7 @@ function aplicarVisaoCadeias() {
   const vista = estado.vistaPocket && estado.vistaPocket.visivel ? estado.vistaPocket : null;
   if (vista && vista.sels) pintarResiduosPocket(vista.sels);
   if (estado.motivoNo3D && estado.motivoNo3D.length) pintarMotivo(estado.motivoNo3D);
+  reaplicarResiduoMapa();
   aplicarSuperficie();
 }
 
@@ -199,6 +225,7 @@ function invalidarVistaPocket() {
   geracaoVistaPocket += 1;
   estado.vistaPocket = null;
   sincronizarBotoesPocket();
+  if (typeof SasaUI !== "undefined" && SasaUI.sincronizarBolsão) SasaUI.sincronizarBolsão();
 }
 
 function vistaPocketCobre(idx) {
@@ -308,16 +335,19 @@ function ocultarVistaPocket() {
         : "";
     }
     sincronizarBotoesPocket();
+    if (typeof SasaUI !== "undefined" && SasaUI.sincronizarBolsão) SasaUI.sincronizarBolsão();
     return;
   }
   if (estado.viewer) {
     const motivo = vista.motivoPorCima;
     aplicarEstilo();
     if (motivo && motivo.length) pintarMotivo(motivo);
+    reaplicarResiduoMapa();
     restaurarSuperficieDaVista(vista);
   }
   if (status) status.textContent = `✓ ${vista.nome} oculto no 3D.`;
   sincronizarBotoesPocket();
+  if (typeof SasaUI !== "undefined" && SasaUI.sincronizarBolsão) SasaUI.sincronizarBolsão();
 }
 
 function aoAlternarSuperficie(ligada) {
@@ -369,6 +399,8 @@ async function destacarPocket(idx) {
     aplicarSuperficie();
     if (status) status.textContent = `✓ ${p.name}: resíduos destacados e superfície exibida no 3D.` + avisoLinhasPocket(diagnostico.descartadas);
     sincronizarBotoesPocket();
+    reaplicarResiduoMapa();
+    if (typeof SasaUI !== "undefined" && SasaUI.sincronizarBolsão) SasaUI.sincronizarBolsão();
   } catch (e) {
     if (geracao !== geracaoVistaPocket) return;
     const falha = estado.vistaPocket;

@@ -47,6 +47,7 @@ function invalidarConsultasEstrutura() {
   if (typeof geracaoVistaPocket !== "undefined") geracaoVistaPocket += 1;
   if (typeof QualityUI !== "undefined") QualityUI.invalidar();
   if (typeof PrepUI !== "undefined" && PrepUI.invalidarConsultas) PrepUI.invalidarConsultas();
+  if (typeof SasaUI !== "undefined" && SasaUI.cancelar) SasaUI.cancelar();
   if (typeof EnsembleUI !== "undefined" && EnsembleUI.invalidarConsultas) EnsembleUI.invalidarConsultas();
   return geracaoEstrutura;
 }
@@ -408,6 +409,7 @@ async function iniciarWorkspace(dados, g = geracaoEstrutura) {
   estado.motivoNo3D = null;
   estado.cadeiasOcultas = new Set();
   estado.superficie = null;
+  estado.residuoMapa = null;
   invalidarVistaPocket();
   estado.pocketSort = null;
   estado.meta = dados.pdb_text ? ProtAnalysis.extrairMetadados(dados.pdb_text) : metaVazio();
@@ -950,6 +952,7 @@ function renderAA() {
   sel.value = valores.includes(anterior) ? anterior : "*";
   sel.onchange = plotAA;
   plotAA();
+  atualizarMapaExposicao();
 }
 
 // Ordena os itens de frequência conforme o seletor (alfabética/percentual/contagem).
@@ -1038,6 +1041,11 @@ async function plotAA() {
       });
     }
   }, atual, plotAA);
+}
+
+function atualizarMapaExposicao() {
+  if (typeof SasaUI === "undefined" || !SasaUI.aoCarregar) return;
+  try { SasaUI.aoCarregar(); } catch (e) { /* o gráfico de frequência não depende do mapa */ }
 }
 
 function renderAtalhoMotivo(freq) {
